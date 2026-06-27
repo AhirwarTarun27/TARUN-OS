@@ -10,17 +10,30 @@ Read `references/3ms-framework.md` once. It's how {{Your Name}} thinks about AI 
 
 ## Your skills
 
+**Operating rhythm:**
+- `/weekly-review` — Sunday execution ritual. Score the week, bank what shipped, reset next week's 3 outcomes. THIS is the follow-through engine. Don't skip it.
 - `/onboard` — already run if you're seeing this filled in. Re-run any time to refresh from an edited `aios-intake.md`.
 - `/audit` — Four-Cs gap report. Run on Day 7, then weekly. Watch your score climb.
 - `/level-up` — Weekly 3Ms interview. Find one automation, scope it, ship it. One per week.
 
+**Project pipeline (every new product runs through this, in order):**
+- `/scout-problem` — Run FIRST. Data-driven idea validation: small underserved problem, enough demand, beatable top-10. Honest go/no-go.
+- `/explore-project` — Run after a GO. Scopes the build (domain → stack → architecture → setup kit) into one Pre-Build Brief. Orchestrates the four below.
+- `/domain-namer` — Brandable, SEO, available `.com`, with live checks.
+- `/pick-stack` — Fastest-loading, best-ranking stack for the build.
+- `/design-architecture` — System design + the "why" (doubles as front-end system-design practice).
+- `/setup-kit` — Design direction + which skills/MCPs to install (via subagent).
+
 ## Where things live
 
+- `week.md` — **your single source of truth.** This week's 3 outcomes + today's one must-ship. Open it first, every session.
+- `shipped.md` — the done-log + streak counter. Everything you've shipped. Never delete from it.
 - `context/` — about you, your business, your priorities (filled by `/onboard`)
 - `references/` — frameworks, voice samples, API guides as you connect tools
 - `connections.md` — registry of every system your AIOS can reach
 - `decisions/log.md` — append-only record of decisions and why
 - `archives/` — old stuff. Don't delete. Move here.
+- `.claude/skills/` & `.claude/agents/` — your skills, and the subagents they delegate to (e.g. `kit-researcher` for build-tooling research).
 
 See `EXPANSIONS.md` for what to add as you grow.
 
@@ -38,6 +51,7 @@ Match the register in `references/voice.md`. Casual but professional. Short sent
 
 ## How you work with me
 
+- **Start every session by opening `week.md`.** Ground the work in this week's 3 outcomes and today's must-ship before anything else.
 - Be direct, concise, and clear. No fluff.
 - Lead with what needs action, not status updates.
 - When I ask a question, answer it. Don't pad with restating the question.
