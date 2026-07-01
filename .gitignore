@@ -1,5 +1,7 @@
 .env
 .env.local
+secrets/
+*-service-account*.json
 .DS_Store
 *.log
 __pycache__/

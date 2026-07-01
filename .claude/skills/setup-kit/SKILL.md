@@ -28,16 +28,16 @@ Recommend a concrete UI/design direction for the wedge: visual tone, layout patt
 ### 3. Assemble the checklist
 From the subagent's findings:
 - **Skills to install** — name, one-line why, exact install/add command, only if not already present.
-- **MCPs to add** — name, why, the `claude mcp add ...` command, least-privilege scope.
+- **MCPs** — name, why, and type. **Doc-reference MCPs (read-only — they only fetch docs/knowledge that rarely changes): do NOT install.** On approval, research the resource and write `references/mcp/<tool-name>.md` (the functions/params/usage the MCP would surface) so future sessions read locally instead of paying MCP-call tokens. **Action MCPs (they execute things — GitHub / DB / filesystem):** install the real server with `claude mcp add ...` at least-privilege scope. Playwright is the standing pre-approved exception.
 - **Skip list** — what you deliberately did NOT recommend and why (avoid bloat).
 
 ## Output
 1. **Design direction** — a short, concrete paragraph + 2-3 references.
-2. **Install checklist** — copy-paste commands for skills + MCPs, least-privilege.
+2. **Install checklist** — copy-paste commands for skills + action MCPs (least-privilege); for doc-reference MCPs, the `references/mcp/<tool>.md` file to research on approval instead of an install command.
 3. **What you already have** — existing skills/MCPs that already cover needs, so nothing is double-installed.
 
 ## Rules
 1. **Install, don't reinvent.** Prefer famous, maintained, existing skills/MCPs.
 2. **Delegate the research to a subagent**, and make it verify live — popularity + maintenance, not vibes.
-3. **Least privilege on MCPs.** Recommend the narrowest scope/token that works.
+3. **Prefer local reference files over live MCPs for docs; least privilege on the rest.** Doc-reference (read-only) MCPs should be captured as `references/mcp/<tool-name>.md` files instead of installed — saves tokens since docs rarely change (refresh on command). Only action MCPs (which execute things) get installed, at the narrowest scope/token that works. Playwright is the standing exception.
 4. **No bloat.** Every recommendation earns its place; list what you skipped.
