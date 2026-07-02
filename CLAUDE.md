@@ -15,6 +15,7 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 - `/onboard` — already run if you're seeing this filled in. Re-run any time to refresh from an edited `aios-intake.md`.
 - `/audit` — Four-Cs gap report. Run on Day 7, then weekly. Watch your score climb.
 - `/level-up` — Weekly 3Ms interview. Find one automation, scope it, ship it. One per week.
+- `/site-report` — Live traffic + revenue for a product (JsonBeam now, GradeJar at go-live). Runs `scripts/report.mjs`, banks a dated snapshot to `reports/metrics-log.md`, then diagnoses the funnel and prescribes 2-3 simple growth moves. Trigger any time you ask how a site is doing.
 
 **Project pipeline (every new product runs through this, in order):**
 - `/scout-problem` — Run FIRST. Data-driven idea validation: small underserved problem, enough demand, beatable top-10. Honest go/no-go.
