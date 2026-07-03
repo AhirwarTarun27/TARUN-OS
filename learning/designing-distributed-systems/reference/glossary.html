@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Glossary — Designing Distributed Systems</title>
+  <link rel="stylesheet" href="../assets/course.css" />
+  <style>
+    dl.gloss { font-family: ui-sans-serif, "Segoe UI", system-ui, sans-serif; font-size: 0.94rem; }
+    dl.gloss dt { font-weight: 600; margin-top: 1.1rem; }
+    dl.gloss dd { margin: 0.2rem 0 0; color: var(--ink); }
+    dl.gloss .ch { color: var(--muted); font-size: 0.72rem; letter-spacing: .08em; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <p class="kicker">Reference · Living Document</p>
+  <h1>Glossary</h1>
+  <p class="dek">The shared vocabulary of the track. Every term here is fair game to drop in an interview. Grows one chapter at a time.</p>
+
+  <dl class="gloss">
+    <dt>Distributed system <span class="ch">Ch 1</span></dt>
+    <dd>An application made of multiple components running on multiple machines, coordinating over a network to act as a single service. Reliability and scale come from the coordination, not any one box.</dd>
+
+    <dt>Pattern <span class="ch">Ch 1</span></dt>
+    <dd>A reusable, named solution to a recurring design problem. It's not code you copy — it's a shape of solution you recognize and adapt. Naming it gives a team a shared language.</dd>
+
+    <dt>Practice <span class="ch">Ch 1</span></dt>
+    <dd>A repeatable way of working that reliably produces good systems (e.g. code review, health checks, canary rollouts). Patterns are *what* to build; practices are *how* you work.</dd>
+
+    <dt>Component <span class="ch">Ch 1</span></dt>
+    <dd>A reusable, independently-deployable building block (often a container) with a defined interface. Components let you assemble a system from parts instead of writing everything from scratch.</dd>
+
+    <dt>Container <span class="ch">Ch 1</span></dt>
+    <dd>A packaged unit of software with its code and dependencies, isolated so it runs the same anywhere. The book's basic unit of reuse — most patterns are arrangements of containers.</dd>
+
+    <dt>Orchestrator (Kubernetes) <span class="ch">Ch 1</span></dt>
+    <dd>The system that places, runs, connects, and heals containers across many machines. Kubernetes is the book's default. It's the substrate the patterns are expressed on.</dd>
+  </dl>
+
+  <p class="ask">Term unclear or missing? <b>Ask your teacher</b> — this glossary is meant to be corrected and extended.</p>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lesson 1 — Why Patterns Win Interviews (Ch. 1)</title>
+  <link rel="stylesheet" href="../assets/course.css" />
+  <script src="../assets/quiz.js"></script>
+</head>
+<body>
+  <p class="kicker">Lesson 01 · Part I, Chapter 1</p>
+  <h1>Why Patterns Win Interviews</h1>
+  <p class="dek">The whole reason this book exists — and the single mental shift that makes you sound senior in a design round.</p>
+
+  <div class="mission">
+    <b>Your mission:</b> reason fluently in system design interviews. This lesson gives you the frame the rest of the book hangs on. Every later pattern is a named tool you'll pull off <i>this</i> shelf.
+  </div>
+
+  <h2>The one idea</h2>
+  <p>
+    Burns' argument in Chapter 1 is simple: we already did this once. Single-machine
+    programming got dramatically easier when we stopped reinventing everything and
+    started sharing three things —
+    <strong>patterns</strong> (named solutions),
+    <strong>practices</strong> (repeatable ways of working), and
+    <strong>components</strong> (reusable building blocks).
+    Sorting, hashing, linked lists — nobody rewrites those. You <em>name</em> them and move on.
+  </p>
+  <p>
+    Distributed systems are roughly where single-machine code was decades ago:
+    everyone hand-rolls the same load balancers, queues, and retry loops from scratch.
+    The book's whole project is to give distributed systems the same shared vocabulary.
+    <a href="https://www.oreilly.com/library/view/designing-distributed-systems/9781098156343/ch01.html">(Ch. 1, O'Reilly)</a>
+  </p>
+
+  <div class="key">
+    <span class="label">Why this is an interview superpower</span>
+    An interview is a <b>language test</b> as much as a design test. A candidate who says
+    "I'd put a <i>sidecar</i> next to it for TLS termination" lands harder than one who
+    describes the same thing in five vague sentences. Naming the pattern signals you've
+    seen the problem before. That's exactly the shared language Chapter 1 is selling.
+  </div>
+
+  <div class="say">
+    "Rather than build this from scratch, I'd reach for a well-known pattern here —
+    it's a solved shape, so let me name it and spend our time on the tradeoffs."
+  </div>
+
+  <h2>The map you're about to fill in</h2>
+  <p>The book groups its patterns into three families. Hold this map — every future lesson slots into one box.</p>
+
+  <dl class="card">
+    <dt>Single-node</dt><dd>Multiple containers cooperating <em>on one machine</em>: sidecar, ambassador, adapter. Small, cheap, high-leverage.</dd>
+    <dt>Serving</dt><dd>Handling live user traffic <em>at scale</em>: replicated/load-balanced, sharded, scatter/gather, functions, ownership election.</dd>
+    <dt>Batch</dt><dd>Chewing through <em>bulk work</em>, not live requests: work queues, event-driven batch, coordinated batch.</dd>
+  </dl>
+  <p style="font-size:.9rem;color:var(--muted)">
+    (The 2nd edition adds universal concerns on top — observability, AI inference, and failure patterns. We'll get there.)
+  </p>
+
+  <h2>Check yourself</h2>
+  <p style="font-size:.92rem;color:var(--muted)">Retrieval beats re-reading. Answer from memory before moving on.</p>
+
+  <div class="quiz">
+    <div class="q">1. Chapter 1's core claim is that distributed systems today most resemble which earlier era?</div>
+    <button class="opt" data-correct>Early single-machine coding before shared libraries</button>
+    <button class="opt">The modern cloud era with mature managed tools</button>
+    <button class="opt">The mainframe era with one centralized computer</button>
+    <div class="feedback" data-right="Right. Everyone still hand-rolls the same distributed plumbing — the book wants to end that by naming reusable patterns." data-miss="Burns' analogy is to early single-machine coding: before shared libraries, everyone rewrote sorting and hashing by hand."></div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">2. In the book's vocabulary, a reusable named solution to a recurring design problem is a…</div>
+    <button class="opt" data-correct>Pattern, a shape you adapt</button>
+    <button class="opt">Practice, a way you work</button>
+    <button class="opt">Product, a thing you buy</button>
+    <div class="feedback" data-right="Yes. A pattern is the shape of a solution. A practice is a way of working; a component is a deployable building block." data-miss="That's a pattern — a named, reusable shape of solution. A practice is how you work; a component is a building block you deploy."></div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">3. Which family would a load-balanced service handling live user traffic belong to?</div>
+    <button class="opt" data-correct>Serving patterns, for scaled traffic</button>
+    <button class="opt">Single-node patterns, one machine</button>
+    <button class="opt">Batch patterns, for bulk work</button>
+    <div class="feedback" data-right="Correct. Serving patterns handle live requests at scale. Batch is for bulk offline work; single-node is containers cooperating on one box." data-miss="Live user traffic at scale is the Serving family. Batch handles bulk offline work; single-node is co-located containers."></div>
+  </div>
+
+  <h2>Take it to the source</h2>
+  <p>
+    <strong>Primary source (read next):</strong>
+    <a href="https://www.oreilly.com/library/view/designing-distributed-systems/9781098156343/ch01.html">Chapter 1, "Introduction"</a>
+    — skim "The Value of Patterns, Practices, and Components." 10 minutes.
+    No O'Reilly access? The <a href="https://info.microsoft.com/rs/157-GQE-382/images/EN-CNTNT-eBook-DesigningDistributedSystems.pdf">free 1st-edition PDF</a> covers the same idea.
+  </p>
+
+  <p><a href="../reference/glossary.html">→ Glossary</a> · six terms seeded from this chapter.</p>
+
+  <p class="ask">
+    <b>I'm your teacher, not a static page.</b> Confused about "why containers?" or want a
+    real interview prompt to try this framing on? <b>Ask me.</b> That back-and-forth is where the learning sticks.
+  </p>
+
+  <div class="nav">
+    <span>Lesson 01 — Ch. 1</span>
+    <span>Next → Ch. 2: the concepts that decide every design (latency, consistency, idempotency)</span>
+  </div>
+</body>
+</html>

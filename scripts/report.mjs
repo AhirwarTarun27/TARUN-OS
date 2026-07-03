@@ -1,4 +1,4 @@
-// report.mjs — AIOS dashboard: GA4 traffic + AdSense earnings for all sites.
+// report.mjs — AIOS dashboard: GA4 traffic + AdSense earnings + Bing search for all sites.
 // Run: node scripts/report.mjs
 // Optional flags: --days=30  (default 7)  |  --realtime
 import { readFileSync } from 'node:fs';
@@ -189,6 +189,157 @@ async function ga4Report(token) {
   }
 }
 
+// ── Cloudflare Web Analytics (zone-level, for sites without a GA4 property) ──
+async function cfGraphQL(query, variables) {
+  return j(await fetch('https://api.cloudflare.com/client/v4/graphql', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, variables }),
+  }));
+}
+
+async function cfReport(label, zoneId) {
+  if (!zoneId) return;
+  console.log(hdr(`Cloudflare Web Analytics — ${label} — last ${DAYS} days`));
+  console.log(sub('Edge-log traffic (includes bots/crawlers) — not JS-beacon like GA4'));
+
+  const now = new Date();
+  const since = new Date(now.getTime() - DAYS * 86400000);
+
+  // daily summary, summed over the range
+  const daily = await cfGraphQL(`
+    query ($zoneTag: string!, $since: string!, $until: string!) {
+      viewer {
+        zones(filter: { zoneTag: $zoneTag }) {
+          httpRequests1dGroups(
+            limit: 31
+            filter: { date_geq: $since, date_leq: $until }
+          ) {
+            sum { requests, pageViews, threats }
+            uniq { uniques }
+          }
+        }
+      }
+    }`, {
+    zoneTag: zoneId,
+    since: since.toISOString().slice(0, 10),
+    until: now.toISOString().slice(0, 10),
+  });
+
+  const rows = daily?.data?.viewer?.zones?.[0]?.httpRequests1dGroups ?? [];
+  if (daily?.errors) {
+    console.log(`  ${c.red}Error: ${daily.errors[0]?.message}${c.reset}`);
+    return;
+  }
+  const totalPV   = rows.reduce((s, r) => s + (r.sum?.pageViews ?? 0), 0);
+  const totalReq  = rows.reduce((s, r) => s + (r.sum?.requests ?? 0), 0);
+  const totalThr  = rows.reduce((s, r) => s + (r.sum?.threats ?? 0), 0);
+  const avgUniq   = rows.length ? Math.round(rows.reduce((s, r) => s + (r.uniq?.uniques ?? 0), 0) / rows.length) : 0;
+
+  console.log(row('Page views',        totalPV));
+  console.log(row('Total requests',    totalReq));
+  console.log(row('Daily avg uniques', avgUniq));
+  if (totalThr) console.log(row('Threats blocked', totalThr));
+
+  // top pages + countries: adaptive groups capped at a 1-day window on free plans
+  const breakdown = await cfGraphQL(`
+    query ($zoneTag: string!, $since: Time!, $until: Time!) {
+      viewer {
+        zones(filter: { zoneTag: $zoneTag }) {
+          topPaths: httpRequestsAdaptiveGroups(
+            limit: 8
+            filter: { datetime_geq: $since, datetime_leq: $until, clientRequestPath_like: "%/" }
+            orderBy: [count_DESC]
+          ) { count, dimensions { clientRequestPath } }
+          topCountries: httpRequestsAdaptiveGroups(
+            limit: 5
+            filter: { datetime_geq: $since, datetime_leq: $until, clientRequestPath_like: "%/" }
+            orderBy: [count_DESC]
+          ) { count, dimensions { clientCountryName } }
+        }
+      }
+    }`, {
+    zoneTag: zoneId,
+    since: new Date(now.getTime() - 86400000).toISOString(),
+    until: now.toISOString(),
+  });
+
+  const zone = breakdown?.data?.viewer?.zones?.[0];
+  if (zone?.topPaths?.length) {
+    console.log(`\n  ${c.bold}Top pages (last 24h)${c.reset}`);
+    for (const p of zone.topPaths) {
+      console.log(`  ${c.dim}${(p.dimensions?.clientRequestPath ?? '?').slice(0, 35).padEnd(36)}${c.reset}${String(p.count).padStart(6)} hits`);
+    }
+  }
+  if (zone?.topCountries?.length) {
+    console.log(`\n  ${c.bold}Top countries (last 24h)${c.reset}`);
+    for (const ct of zone.topCountries) {
+      console.log(`  ${c.dim}${(ct.dimensions?.clientCountryName ?? '?').padEnd(28)}${c.reset}${String(ct.count).padStart(6)} hits`);
+    }
+  }
+}
+
+// ── Bing Webmaster Tools (search traffic + indexing, per verified site) ──────
+// API key auth (?apikey=), one key per user covers all sites. See references/bing-webmaster-api.md.
+async function bingGet(method, siteUrl) {
+  const url = `https://ssl.bing.com/webmaster/api.svc/json/${method}`
+    + `?siteUrl=${encodeURIComponent(siteUrl)}&apikey=${env.BING_WEBMASTER_API_KEY}`;
+  return j(await fetch(url));
+}
+
+async function bingReport(label, siteUrl) {
+  if (!env.BING_WEBMASTER_API_KEY) {
+    console.log(hdr(`Bing Webmaster — ${label}`));
+    console.log(`  ${c.yellow}Not configured — add BING_WEBMASTER_API_KEY to .env${c.reset}`);
+    console.log(sub('Generate: Bing Webmaster Tools → Settings → API Access → Generate API Key'));
+    return;
+  }
+  if (!siteUrl) return;
+
+  console.log(hdr(`Bing Webmaster — ${label} — last ${DAYS} days`));
+  const since = Date.now() - DAYS * 86400000;
+
+  // clicks + impressions (full history; filter to window and sum). Date is "/Date(ms-offset)/".
+  const traffic = await bingGet('GetRankAndTrafficStats', siteUrl);
+  if (traffic?.Message || traffic?.ErrorCode !== undefined) {
+    console.log(`  ${c.red}Error: ${traffic.Message ?? 'ErrorCode ' + traffic.ErrorCode}${c.reset}`);
+    return;
+  }
+  const days = (traffic?.d ?? []).filter(r => {
+    const ms = Number(String(r.Date ?? '').match(/\/Date\((\d+)/)?.[1]);
+    return Number.isFinite(ms) && ms >= since;
+  });
+  const clicks = days.reduce((s, r) => s + (r.Clicks ?? 0), 0);
+  const impr   = days.reduce((s, r) => s + (r.Impressions ?? 0), 0);
+  console.log(row('Clicks', clicks));
+  console.log(row('Impressions', impr));
+  if (clicks === 0 && impr === 0) {
+    const seen = (traffic?.d ?? []).length;
+    console.log(sub(seen
+      ? 'Connected — no Bing search activity in this window yet (normal for a newly indexed site)'
+      : 'Connected — Bing has no traffic rows for this site yet (still crawling; give it days–weeks)'));
+  }
+
+  // URL submission quota (relevant right after submitting the money pages)
+  const quota = await bingGet('GetUrlSubmissionQuota', siteUrl);
+  if (quota?.d) {
+    console.log(row('Submit quota left', `${quota.d.DailyQuota ?? '—'}/day`, `· ${quota.d.MonthlyQuota ?? '—'}/mo`));
+  }
+
+  // top search queries
+  const q = await bingGet('GetQueryStats', siteUrl);
+  const queries = (q?.d ?? []).sort((a, b) => (b.Clicks ?? 0) - (a.Clicks ?? 0)).slice(0, 8);
+  if (queries.length) {
+    console.log(`\n  ${c.bold}Top Bing queries${c.reset}`);
+    for (const r2 of queries) {
+      const pos = r2.AvgImpressionPosition ?? r2.AvgClickPosition;
+      console.log(`  ${c.dim}${String(r2.Query ?? '?').slice(0, 30).padEnd(31)}${c.reset}`
+        + `${String(r2.Clicks ?? 0).padStart(4)} clk  ${String(r2.Impressions ?? 0).padStart(6)} impr`
+        + `${pos != null ? `  pos ${parseFloat(pos).toFixed(1)}` : ''}`);
+    }
+  }
+}
+
 // ── AdSense report ────────────────────────────────────────────────────────────
 async function adsenseReport(token) {
   const acct = env.ADSENSE_ACCOUNT_ID;
@@ -275,7 +426,10 @@ if (REALTIME) console.log(`${c.dim}Realtime mode on${c.reset}`);
 try {
   const [gaToken, asToken] = await Promise.all([ga4Token(), adsenseToken()]);
   await ga4Report(gaToken);
+  await cfReport('GradeJar', env.CLOUDFLARE_ZONE_ID_GRADEJAR);
   await adsenseReport(asToken);
+  await bingReport('JsonBeam', env.BING_SITE_URL_JSONBEAM);
+  await bingReport('GradeJar', env.BING_SITE_URL_GRADEJAR);
 } catch (e) {
   console.error(`\n${c.red}Fatal: ${e.message}${c.reset}`);
   process.exit(1);

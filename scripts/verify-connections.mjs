@@ -1,4 +1,4 @@
-// verify-connections.mjs — smoke-tests Cloudflare, Google AdSense, and GA4 using .env.
+// verify-connections.mjs — smoke-tests Cloudflare, Google AdSense, GA4, and Bing using .env.
 // Reads .env from repo root, hits each API read-only, prints PASS/FAIL. Prints NO secrets.
 // Run:  node scripts/verify-connections.mjs
 import { readFileSync } from 'node:fs';
@@ -24,6 +24,7 @@ function loadEnv() {
 const env = loadEnv();
 const ok = (s) => `\x1b[32m[OK] ${s}\x1b[0m`;
 const fail = (s) => `\x1b[31m[!!] ${s}\x1b[0m`;
+const skip = (s) => `\x1b[33m[--] ${s}\x1b[0m`;
 const results = [];
 
 async function json(res) { try { return await res.json(); } catch { return null; } }
@@ -150,14 +151,37 @@ async function checkGA4() {
   results.push(['GA4', pass]);
 }
 
+// ---- 4. Bing Webmaster Tools (API key) -------------------------------------
+async function checkBing() {
+  if (!env.BING_WEBMASTER_API_KEY) {
+    console.log(skip('Bing: BING_WEBMASTER_API_KEY not set yet — generate it in Bing Webmaster Tools → Settings → API Access, then add to .env'));
+    results.push(['Bing', 'skip']);
+    return;
+  }
+  const site = env.BING_SITE_URL_GRADEJAR || env.BING_SITE_URL_JSONBEAM;
+  if (!site) { console.log(fail('Bing: no BING_SITE_URL_* set')); results.push(['Bing', false]); return; }
+  // cheapest per-key call: quota for one verified site
+  const url = `https://ssl.bing.com/webmaster/api.svc/json/GetUrlSubmissionQuota`
+    + `?siteUrl=${encodeURIComponent(site)}&apikey=${env.BING_WEBMASTER_API_KEY}`;
+  const r = await json(await fetch(url));
+  if (r?.d && r.ErrorCode === undefined) {
+    console.log(ok(`Bing quota OK for ${site} (daily ${r.d.DailyQuota ?? '?'}, monthly ${r.d.MonthlyQuota ?? '?'})`));
+    results.push(['Bing', true]);
+  } else {
+    console.log(fail(`Bing check failed: ${r?.Message || `ErrorCode ${r?.ErrorCode}` || JSON.stringify(r)}`));
+    results.push(['Bing', false]);
+  }
+}
+
 // ---- run -------------------------------------------------------------------
 console.log('\n=== Connection check ===\n');
 console.log('— Cloudflare —');        await checkCloudflare().catch((e) => { console.log(fail(`Cloudflare threw: ${e.message}`)); results.push(['Cloudflare', false]); });
 console.log('\n— Google AdSense —');   await checkAdSense().catch((e) => { console.log(fail(`AdSense threw: ${e.message}`)); results.push(['AdSense', false]); });
 console.log('\n— Google Analytics 4 —'); await checkGA4().catch((e) => { console.log(fail(`GA4 threw: ${e.message}`)); results.push(['GA4', false]); });
+console.log('\n— Bing Webmaster Tools —'); await checkBing().catch((e) => { console.log(fail(`Bing threw: ${e.message}`)); results.push(['Bing', false]); });
 
 console.log('\n=== Summary ===');
-for (const [name, p] of results) console.log(p ? ok(name) : fail(name));
-const allGood = results.every(([, p]) => p);
+for (const [name, p] of results) console.log(p === 'skip' ? skip(`${name} (not configured yet)`) : p ? ok(name) : fail(name));
+const allGood = results.every(([, p]) => p !== false);
 console.log(allGood ? '\n\x1b[32mAll connections OK.\x1b[0m\n' : '\n\x1b[33mSome checks need attention (see above).\x1b[0m\n');
 process.exit(allGood ? 0 : 1);

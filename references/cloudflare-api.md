@@ -111,12 +111,39 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
 
 ## 5. Web Analytics (read traffic without Google)
 
-Cloudflare Web Analytics is queried via the **GraphQL Analytics API**, not REST:
+**Verified working 2026-07-03** (wired into `scripts/report.mjs` for GradeJar). This is
+zone-level edge-log traffic — not the RUM/JS-beacon product. It includes bot/crawler
+requests, unlike GA4's JS-beacon numbers, so treat it as a directional zero-cost source
+before GA4 is wired, not a like-for-like replacement.
+
 - **Endpoint:** `POST https://api.cloudflare.com/client/v4/graphql`
-- Auth: same Bearer token (needs Account Analytics Read).
-- Query the `viewer.accounts.rumPageloadEventsAdaptiveGroups` dataset for pageviews,
-  visits, by path/country/referrer over a time range. (GradeJar already uses CF Web
-  Analytics per the build, so this is the zero-cost traffic source before GA4 is wired.)
+- **Auth:** same Bearer token, but needs **Zone → Analytics → Read** permission scoped to
+  that zone (or "All zones") — NOT "Account Analytics Read", which is a different
+  permission group and does not cover this. Editing an existing token's permissions/zone
+  scope is done in the dashboard (My Profile → API Tokens → Edit); cannot be self-granted
+  via the API.
+- **Datasets:**
+  - `viewer.zones(filter:{zoneTag}).httpRequests1dGroups` — daily pre-aggregated rollup.
+    Use for headline totals over any range (`date_geq`/`date_leq` filters, `YYYY-MM-DD`
+    strings). Fields: `sum { requests, pageViews, threats, bytes }`, `uniq { uniques }`.
+    `pageViews` here is Cloudflare's own asset-excluded page-load count — good headline
+    metric. No `orderBy` needed/available unless `dimensions{ date }` is also selected.
+  - `viewer.zones(filter:{zoneTag}).httpRequestsAdaptiveGroups` — per-request breakdown
+    (top paths, top countries) via `dimensions { clientRequestPath }` /
+    `dimensions { clientCountryName }`, `count`, `orderBy:[count_DESC]`. **Free-plan zones
+    are capped at a 1-day (`datetime_geq`/`datetime_leq`, ISO datetime) range** — wider
+    ranges error with `"cannot request a time range wider than 1d"`. `edgeResponseContentTypeName`
+    filter is a paid-plan-only field (`"does not have access to the field"` on free); to
+    exclude static assets on free plans, filter `clientRequestPath_like: "%/"` instead
+    (works for Astro's trailing-slash URL convention — adjust per site's URL shape).
+  - `viewer.accounts.rumPageloadEventsAdaptiveGroups` (the actual RUM/JS-beacon dataset)
+    was NOT used — the account-level `/accounts/{id}/rum/site_info` management endpoint
+    returned `10405 Method not allowed for this authentication scheme` with this token;
+    untested whether a differently-scoped token unlocks it. Zone-level `httpRequests*`
+    above was simpler and worked immediately once the Zone Analytics Read permission was
+    added, so that's the path in use.
+- **Types:** `string!` (not `String!`) for `zoneTag`/date filters passed as GraphQL
+  variables; `Time!` for ISO-datetime variables on the adaptive-groups query.
 
 ---
 

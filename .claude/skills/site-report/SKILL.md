@@ -11,7 +11,7 @@ Data is already wired — see [[connections-wired]]. Never say it isn't. Pull it
 
 ## Files this skill touches
 
-- `scripts/report.mjs` — the data source. Run it, read its stdout. (GA4 + AdSense, all sites.)
+- `scripts/report.mjs` — the data source. Run it, read its stdout. (GA4 + AdSense + Cloudflare + Bing Webmaster, all sites.)
 - `reports/metrics-log.md` — append-only snapshot log (create `reports/` on first run). This is the track record.
 - `week.md` — read for current priority so advice respects it (GradeJar go-live is the active bet; JsonBeam is observe-mode).
 - `references/voice.md` — match the register. Casual, short sentences, no em dashes, bullets over paragraphs.
@@ -22,6 +22,8 @@ Data is already wired — see [[connections-wired]]. Never say it isn't. Pull it
 
 Run `node scripts/report.mjs` from repo root. For a fuller read on a normal request, also run `node scripts/report.mjs --days=30` so you can state the 7-day pace against the 30-day trend. Add `--realtime` only if the user asks who's on right now.
 
+The script now returns **both search ecosystems**: Google (GA4 traffic + AdSense) and Microsoft (Bing Webmaster — clicks, impressions, URL-submission quota, top Bing queries) per verified site. If the Bing section prints "not configured", the API key isn't in `.env` yet — report the Google side normally and note Bing is pending a key (don't treat it as an error).
+
 If the script errors on auth, don't guess — run `node scripts/verify-connections.mjs` and report which connection is down.
 
 ### 2. Bank a snapshot (the track record)
@@ -29,8 +31,10 @@ If the script errors on auth, don't guess — run `node scripts/verify-connectio
 Append one dated row to `reports/metrics-log.md` (create the file with a header if missing). One line per run, newest at the bottom, so week-over-week trend is visible at a glance:
 
 ```
-| Date | Site | Users 7d | Sessions 7d | Views 7d | Organic % | Eng. rate | US % | Earnings 7d | Approval |
+| Date | Site | Users 7d | Sessions 7d | Views 7d | Organic % | Eng. rate | US % | Earnings 7d | Approval | Bing clk 7d | Bing impr 7d |
 ```
+
+Bing columns come from the report's Bing Webmaster section; use `—` when the key isn't wired yet.
 
 This is what makes "good track record" real — each run compounds. Never delete rows.
 
@@ -39,7 +43,7 @@ This is what makes "good track record" real — each run compounds. Never delete
 Don't recite every metric. Find the binding constraint and name it first. Work the funnel top-down:
 
 - **Approval gate (AdSense).** If a site is `GETTING_READY`, revenue is *supposed* to be $0 — say so, don't treat it as a problem, don't give RPM advice. `READY` = ads live, now RPM/CTR matter. `NEEDS_ATTENTION`/`REQUIRES_REVIEW` = a real blocker to surface.
-- **Traffic source mix is the health signal for a search tool.** High **Direct %** with low **Organic Search %** = SEO isn't landing yet (Google barely sends anyone). This is the usual bottleneck early. Rising organic share is the single best sign the tool is earning its ranking.
+- **Traffic source mix is the health signal for a search tool.** High **Direct %** with low **Organic Search %** = SEO isn't landing yet (Google barely sends anyone). This is the usual bottleneck early. Rising organic share is the single best sign the tool is earning its ranking. **Read Bing alongside Google** — it's a second organic channel. Bing impressions climbing before clicks means you're getting indexed and starting to rank there; Bing clicks are pure additive traffic (and often less competitive than Google). New sites can read 0 on Bing for a while — that's expected, not a problem.
 - **Volume + trend.** Is 7-day pace ahead of or behind the 30-day run rate? Growing, flat, or sliding?
 - **Engagement.** Low engagement rate + short session = either wrong-intent traffic or the landing page doesn't hook. Cross-check against which pages pull traffic.
 - **Top pages.** Is the homepage soaking up most views (brand/direct) while the money tool/keyword pages get scraps (no organic intent)? That confirms an SEO problem, not a product one.
@@ -53,6 +57,7 @@ Only the highest-impact, lowest-effort actions. No laundry list. Each move = one
 
 **If organic search is thin (the common case):**
 - Confirm the site + sitemap are submitted in Google Search Console; check index coverage (are pages even indexed?).
+- Do the same on **Bing Webmaster Tools** — submit the sitemap, check the URL-submission quota in the report, and push the money pages (SubmitUrlBatch / IndexNow). Bing is a fast, low-competition second front door; the quota tells you how many URLs you can still push.
 - Tighten the top pages' `<title>`/meta to lead with the exact keyword users search (matches the CLAUDE.md "every page is an SEO asset" contract).
 - Ship more tool/keyword landing pages (JsonBeam Phase 3; GradeJar's M4 waves) — each is a new organic front door.
 - Earn a few quality backlinks: submit to dev-tool directories, relevant subreddits/forums, a Show HN. US-first placements.
@@ -76,7 +81,7 @@ One line: the single most leveraged next action, and whether it's a do-now or an
 ## Output contract
 
 Every run produces:
-1. A tight scoreboard of the live numbers (7-day, with 30-day context) — not a raw paste of the script.
+1. A tight scoreboard of the live numbers (7-day, with 30-day context) — not a raw paste of the script. Cover both organic ecosystems: Google (traffic/earnings) and Bing (clicks/impressions), per site.
 2. A new row in `reports/metrics-log.md`.
 3. A 2-4 line diagnosis leading with the binding constraint.
 4. 2-3 ranked moves, each tied to the metric it shifts and flagged do-now vs after-GradeJar.

@@ -1,0 +1,207 @@
+/* course.css — shared styles for the Designing Distributed Systems track.
+   Tufte-inspired: serif body, generous margins, restrained color.
+   DARK THEME (Tarun's default — light hurts his eyes). All color flows from
+   the variables below, so this is the one place to retune the palette. */
+
+:root {
+  --ink: #e7e2d6;          /* warm off-white body text */
+  --paper: #17150f;        /* warm near-black page */
+  --surface: #211e17;      /* raised cards / callouts */
+  --muted: #9c9483;
+  --rule: #37322a;
+  --accent: #e08a5f;       /* warm oxide, brightened for dark */
+  --accent-soft: #2a1f18;
+  --ok: #86cfa0;
+  --ok-soft: #1c271f;
+  --no: #e79191;
+  --no-soft: #2c1f1f;
+  --maxw: 42rem;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 18px; }
+
+body {
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 6rem;
+  max-width: var(--maxw);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Masthead ---- */
+.kicker {
+  font-family: ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.4rem;
+}
+h1 {
+  font-size: 2.1rem;
+  line-height: 1.12;
+  font-weight: 600;
+  margin: 0 0 0.6rem;
+  letter-spacing: -0.01em;
+}
+.dek {
+  font-size: 1.12rem;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0 0 2rem;
+}
+h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 2.6rem 0 0.4rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 1.05rem; font-weight: 600; margin: 1.6rem 0 0.3rem; }
+
+p { margin: 0.7rem 0; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(224,138,95,.35); }
+a:hover { border-bottom-color: var(--accent); }
+strong { font-weight: 600; }
+
+/* ---- Mission tie-in banner ---- */
+.mission {
+  font-family: ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.9rem;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  padding: 0.85rem 1.1rem;
+  border-radius: 0 4px 4px 0;
+  margin: 1.6rem 0;
+  color: #e6cbb8;
+}
+.mission b { color: var(--accent); }
+
+/* ---- Key idea callout ---- */
+.key {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  margin: 1.4rem 0;
+  background: var(--surface);
+}
+.key .label {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+/* ---- Pattern card ---- */
+.card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.9rem 1.1rem;
+  margin: 1rem 0;
+  background: var(--surface);
+  font-family: ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  font-size: 0.92rem;
+}
+.card dt { font-weight: 600; color: var(--muted); grid-column: 1; }
+.card dd { margin: 0; grid-column: 2; }
+
+/* ---- Interview-line: quotable one-liner ---- */
+.say {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.95rem;
+  background: var(--surface);
+  border: 1px dashed var(--rule);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  margin: 1.2rem 0;
+}
+.say::before {
+  content: "SAY IT LIKE THIS";
+  display: block;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+/* ---- Quiz (styled by quiz.js) ---- */
+.quiz {
+  font-family: ui-sans-serif, "Segoe UI", system-ui, sans-serif;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 1.1rem 1.2rem;
+  margin: 1.6rem 0;
+  background: var(--surface);
+}
+.quiz .q { font-weight: 600; margin-bottom: 0.7rem; font-size: 0.98rem; }
+.quiz button.opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  padding: 0.55rem 0.8rem;
+  margin: 0.4rem 0;
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+.quiz button.opt:hover:not(:disabled) { border-color: var(--accent); }
+.quiz button.opt:disabled { cursor: default; }
+.quiz button.opt.correct { background: var(--ok-soft); border-color: var(--ok); color: var(--ink); }
+.quiz button.opt.wrong { background: var(--no-soft); border-color: var(--no); color: var(--ink); }
+.quiz .feedback {
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 5px;
+  display: none;
+}
+.quiz .feedback.show { display: block; }
+.quiz .feedback.right { background: var(--ok-soft); color: var(--ok); }
+.quiz .feedback.miss { background: var(--no-soft); color: var(--no); }
+
+/* ---- Footer nav ---- */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.ask {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 0.85rem 1.1rem;
+  margin: 2.4rem 0 0;
+  color: var(--muted);
+}
+.ask b { color: var(--ink); }
+
+hr.soft { border: none; border-top: 1px solid var(--rule); margin: 2rem 0; }
+
+@media print {
+  :root { --paper: #fff; --surface: #fff; --ink: #1a1a1a; --muted: #555; --rule: #ccc; --accent: #7a2e1d; }
+  body { padding: 0; max-width: 100%; }
+  a { color: var(--ink); border: none; }
+}
