@@ -8,7 +8,7 @@ The `/marketing` skill turns this file into daily queues in `marketing/queue/`.
 The 2026-07-03 audit found the site is invisible to every acquisition system. Nothing below
 matters until these five are done. All are Tarun tasks (auth required); AIOS preps each step.
 
-- [x] **Google Search Console:** DNS TXT verification confirmed live 2026-07-03 (`google-site-verification=pSYsZ-QBCk3Sb0t1U-NplmKatcxv_krAfoBGwmyE4NU` resolving on gradejar.com). Verify inside GSC shows the dashboard (not a "Verify ownership" screen) — confirm, then still need: submit `sitemap-index.xml`, request indexing on the 6 money pages (/, /ez-grader, /grade-calculator, /final-grade-calculator, /gradebook, /test-grade-calculator).
+- [x] **Google Search Console, VERIFIED 2026-07-03:** property live (DNS TXT `google-site-verification=pSYsZ-QBCk3Sb0t1U-NplmKatcxv_krAfoBGwmyE4NU`). All 6 money pages (/, /ez-grader, /grade-calculator, /final-grade-calculator, /gradebook, /test-grade-calculator) indexed via URL Inspection — confirmed done. NOTE: pages were indexed through URL Inspection (the top search-bar tool), which does NOT populate the "Submitted sitemaps" list. Optional follow-up (won't speed already-indexed pages, only helps future discovery + coverage reporting): Sitemaps -> Add a new sitemap -> `sitemap-index.xml`.
 - [x] **AdSense:** gradejar.com is now listed in the account, status `GETTING_READY` (confirmed via `scripts/report.mjs` 2026-07-03). Review clock is running. Nothing else to do but wait.
 - [x] **Analytics:** wired 2026-07-03. Cloudflare zone-level Web Analytics (`httpRequests1dGroups`/`httpRequestsAdaptiveGroups`, edge-log traffic incl. bots) added to `scripts/report.mjs` — GradeJar now shows page views, daily uniques, top pages, top countries alongside JsonBeam's GA4 block. Details: `references/cloudflare-api.md` §5. GA4 property is still an option later (Option B) but not needed now.
 - [x] **Unblock AI-search crawlers:** confirmed via robots.txt fetch 2026-07-03 — `OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`, `Claude-SearchBot`/`Claude-User` are NOT blocked (fall through to wildcard `Allow: /`). Only pure-training bots (`GPTBot`, `ClaudeBot`, `CCBot`, `Bytespider`, `Google-Extended`, `Amazonbot`, `Applebot-Extended`, `meta-externalagent`) stay blocked, which is the desired state.
@@ -26,7 +26,7 @@ Back-to-school editorial lists are being assembled NOW. July is pitch month.
 **PR/outreach (AIOS drafts, Tarun sends):**
 - [ ] `outreach-targets.md`: 25 targets (WeAreTeachers, Edutopia, Larry Ferlazzo, Cult of Pedagogy, TeachThought, Bored Teachers, edtech roundup authors, .edu teacher-resource pages).
 - [ ] Pitch 12+ back-to-school roundups in July. Hook: free + private + no-login gradebook.
-- [ ] Sign up: Source of Sources, Qwoted (free), Featured. AIOS scans daily, drafts answers.
+- [~] PARKED 2026-07-03 — Source of Sources / Qwoted / Featured. SOS apex domain is broken (persistent "index file not found"); Qwoted free tier rejects personal Gmail (wants a domain email). HARO-style PR is low-leverage for a no-authority Day-1 site anyway; revisit after traction or once `tarun@gradejar.com` is set up. The PR that works NOW is direct blog pitches (Larry-style), which need no platform.
 
 **Pinterest:**
 - [ ] Create business account + 4 boards (Grading Tips, Gradebook Setup, GPA Help, Teacher Time-Savers).

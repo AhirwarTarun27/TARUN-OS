@@ -10,9 +10,9 @@ free + private (grades never leave the browser) + no-login gradebook, built by a
 |---|---|---|---|
 | WeAreTeachers | Constant "best free tools" roundups, huge teacher reach | weareteachers.com (contact/pitch page) | todo |
 | Edutopia | Tool articles + newsletters, high authority (.org) | edutopia.org "Your Turn"/pitches | todo |
-| Larry Ferlazzo | Posts daily tool roundups ("Websites of the Day") | larryferlazzo.edublogs.org | todo |
+| Larry Ferlazzo | Posts daily tool roundups ("Websites of the Day") | larryferlazzo.edublogs.org (MrFerlazzo@aol.com) | pitched 2026-07-03 (follow up ~07-10, then stop) |
 | Cult of Pedagogy (Jennifer Gonzalez) | The Teacher's Guide to Tech + tool reviews | cultofpedagogy.com | todo |
-| Free Technology for Teachers (Richard Byrne) | THE free-tool review blog for teachers | freetech4teachers.com | todo |
+| Free Technology for Teachers (Richard Byrne) | THE free-tool review blog for teachers | freetech4teachers.com (press@freetech4teachers.com) | pitched 2026-07-07 (follow up ~07-14, then stop) |
 | Ditch That Textbook (Matt Miller) | Free-tool lists, big newsletter | ditchthattextbook.com | todo |
 | Shake Up Learning (Kasey Bell) | Tool features, podcast + newsletter | shakeuplearning.com | todo |
 | TeachThought | Tool listicles, evergreen SEO pages | teachthought.com | todo |

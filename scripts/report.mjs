@@ -60,12 +60,12 @@ function b64url(buf) {
   return Buffer.from(buf).toString('base64')
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
-async function ga4Token() {
+async function googleSAToken(scope) {
   const keyPath = resolve(process.cwd(), env.GOOGLE_APPLICATION_CREDENTIALS);
   const sa = JSON.parse(readFileSync(keyPath, 'utf8'));
   const now = Math.floor(Date.now() / 1000);
   const hd  = { alg: 'RS256', typ: 'JWT' };
-  const cl  = { iss: sa.client_email, scope: 'https://www.googleapis.com/auth/analytics.readonly',
+  const cl  = { iss: sa.client_email, scope,
                 aud: sa.token_uri || 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 };
   const si  = `${b64url(JSON.stringify(hd))}.${b64url(JSON.stringify(cl))}`;
   const sgn = crypto.createSign('RSA-SHA256'); sgn.update(si); sgn.end();
@@ -75,9 +75,11 @@ async function ga4Token() {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: jwt }),
   }));
-  if (!r?.access_token) throw new Error(`GA4 token failed: ${JSON.stringify(r)}`);
+  if (!r?.access_token) throw new Error(`Google SA token failed (${scope}): ${JSON.stringify(r)}`);
   return r.access_token;
 }
+const ga4Token = () => googleSAToken('https://www.googleapis.com/auth/analytics.readonly');
+const gscToken = () => googleSAToken('https://www.googleapis.com/auth/webmasters.readonly');
 
 // ── GA4 report ───────────────────────────────────────────────────────────────
 async function ga4Report(token) {
@@ -340,6 +342,54 @@ async function bingReport(label, siteUrl) {
   }
 }
 
+// ── Google Search Console (organic query data, ~2-3 day reporting lag) ───────
+async function gscReport(label, siteUrl, token) {
+  if (!siteUrl) {
+    console.log(hdr(`Google Search Console — ${label}`));
+    console.log(`  ${c.yellow}Not configured — add GSC_SITE_URL_${label.toUpperCase()} to .env${c.reset}`);
+    return;
+  }
+  const iso = (d) => d.toISOString().slice(0, 10);
+  const end   = new Date(Date.now() - 3 * 86400000); // GSC data lags ~2-3 days
+  const start = new Date(end.getTime() - DAYS * 86400000);
+  const base  = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
+  const H     = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+
+  console.log(hdr(`Google Search Console — ${label} — last ${DAYS} days (as of ~3d ago)`));
+
+  const totals = await j(await fetch(base, {
+    method: 'POST', headers: H,
+    body: JSON.stringify({ startDate: iso(start), endDate: iso(end) }),
+  }));
+  if (totals?.error) {
+    console.log(`  ${c.red}Error: ${totals.error.message}${c.reset}`);
+    return;
+  }
+  const t = totals?.rows?.[0];
+  if (t) {
+    console.log(row('Clicks', t.clicks ?? 0));
+    console.log(row('Impressions', t.impressions ?? 0));
+    console.log(row('Avg CTR', `${((t.ctr ?? 0) * 100).toFixed(2)}%`));
+    console.log(row('Avg position', (t.position ?? 0).toFixed(1)));
+  } else {
+    console.log(sub('No search data yet for this window (normal for a newly indexed site)'));
+  }
+
+  const queries = await j(await fetch(base, {
+    method: 'POST', headers: H,
+    body: JSON.stringify({ startDate: iso(start), endDate: iso(end), dimensions: ['query'], rowLimit: 8 }),
+  }));
+  if (queries?.rows?.length) {
+    console.log(`\n  ${c.bold}Top Google queries${c.reset}`);
+    for (const r2 of queries.rows) {
+      const qy = r2.keys?.[0] ?? '?';
+      console.log(`  ${c.dim}${qy.slice(0, 30).padEnd(31)}${c.reset}`
+        + `${String(r2.clicks ?? 0).padStart(4)} clk  ${String(r2.impressions ?? 0).padStart(6)} impr`
+        + `  pos ${(r2.position ?? 0).toFixed(1)}`);
+    }
+  }
+}
+
 // ── AdSense report ────────────────────────────────────────────────────────────
 async function adsenseReport(token) {
   const acct = env.ADSENSE_ACCOUNT_ID;
@@ -424,10 +474,12 @@ console.log(`\n${c.bold}${c.cyan}═══ AIOS Dashboard ═══${c.reset}  $
 if (REALTIME) console.log(`${c.dim}Realtime mode on${c.reset}`);
 
 try {
-  const [gaToken, asToken] = await Promise.all([ga4Token(), adsenseToken()]);
+  const [gaToken, asToken, gscTok] = await Promise.all([ga4Token(), adsenseToken(), gscToken()]);
   await ga4Report(gaToken);
   await cfReport('GradeJar', env.CLOUDFLARE_ZONE_ID_GRADEJAR);
   await adsenseReport(asToken);
+  await gscReport('JsonBeam', env.GSC_SITE_URL_JSONBEAM, gscTok);
+  await gscReport('GradeJar', env.GSC_SITE_URL_GRADEJAR, gscTok);
   await bingReport('JsonBeam', env.BING_SITE_URL_JSONBEAM);
   await bingReport('GradeJar', env.BING_SITE_URL_GRADEJAR);
 } catch (e) {

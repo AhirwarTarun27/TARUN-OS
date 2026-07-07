@@ -1,6 +1,6 @@
 ---
 name: site-report
-description: Pull live traffic + revenue for a product (JsonBeam now, GradeJar at go-live) and turn it into a diagnosis + 2-3 simple growth moves. Runs scripts/report.mjs, banks a dated snapshot for trend tracking, then reads the funnel and prescribes the highest-leverage next action. Trigger on "status of jsonbeam", "how's jsonbeam / gradejar doing", "traffic report", "analytics", "adsense report", "how's the site", "site metrics", "are we ranking". One run = live numbers + a track-record entry + a ranked action list.
+description: Pull live traffic + revenue for a product (both JsonBeam and GradeJar are live) and turn it into a diagnosis + 2-3 simple growth moves. Runs scripts/report.mjs, banks a dated snapshot for trend tracking, then reads the funnel and prescribes the highest-leverage next action. Trigger on "status of jsonbeam", "how's jsonbeam / gradejar doing", "traffic report", "analytics", "adsense report", "how's the site", "site metrics", "are we ranking". One run = live numbers + a track-record entry + a ranked action list.
 ---
 
 # Site Report — numbers into moves
@@ -13,7 +13,7 @@ Data is already wired — see [[connections-wired]]. Never say it isn't. Pull it
 
 - `scripts/report.mjs` — the data source. Run it, read its stdout. (GA4 + AdSense + Cloudflare + Bing Webmaster, all sites.)
 - `reports/metrics-log.md` — append-only snapshot log (create `reports/` on first run). This is the track record.
-- `week.md` — read for current priority so advice respects it (GradeJar go-live is the active bet; JsonBeam is observe-mode).
+- `week.md` — read for current priority so advice respects it (both products are live; the shared `/marketing` queue is the active work, not a go-live push).
 - `references/voice.md` — match the register. Casual, short sentences, no em dashes, bullets over paragraphs.
 
 ## Execution — run in order
@@ -72,7 +72,7 @@ Only the highest-impact, lowest-effort actions. No laundry list. Each move = one
 **If a site is `READY` and earning:**
 - Read RPM vs CTR: low RPM = geo/niche pricing; low CTR = ad placement/fill. Tune placement only after real fill data.
 
-**Always respect the active priority.** Read `week.md` first. If JsonBeam growth work would pull focus off the GradeJar go-live, say so and mark those moves "after GradeJar is live." The one exception is anything that just starts a slow clock (GSC submission, indexing) — flag those as "do now, they compound while you wait." Give the ideas either way; let him choose.
+**Always respect the active priority.** Read `week.md` first. Both products are live and share one daily `/marketing` queue with a ~15-min/day cap — if a move for one product would crowd out the other, say so and flag which one wins the queue slot that day (GradeJar's back-to-school window wins ties through mid-September per `marketing/jsonbeam/action-plan.md`). Anything that just starts a slow clock (GSC submission, indexing) is do-now regardless. Give the ideas either way; let him choose.
 
 ### 5. Close
 
@@ -93,6 +93,6 @@ Every run produces:
 2. **Diagnose, don't dump.** Lead with the one binding constraint. The scoreboard supports the diagnosis; it isn't the point.
 3. **$0 under `GETTING_READY` is not a problem.** State it plainly and move on. No monetization advice until `READY`.
 4. **Two or three moves, never more.** Simple and effective beats exhaustive. Rank by leverage.
-5. **Respect the priority.** GradeJar go-live is the active bet; JsonBeam is observe-mode. Flag anything that pulls focus — except slow-clock SEO (GSC/indexing), which is do-now.
+5. **Respect the priority.** Both products are live, sharing one ~15-min/day `/marketing` queue. Flag anything that pulls focus from the other product's queue slot — except slow-clock SEO (GSC/indexing), which is do-now.
 6. **The log only grows.** Append snapshots; never delete. That's the track record.
 7. **His voice.** Casual, direct, short sentences, no em dashes, bullets over paragraphs.

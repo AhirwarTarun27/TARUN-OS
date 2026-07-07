@@ -12,6 +12,46 @@ This is an orchestrator. It runs four sub-skill steps in order, then synthesizes
 ## Preconditions
 - A GO verdict exists (from `/scout-problem`). If not, stop and tell the user to run `/scout-problem` first. Don't scope an unvalidated idea.
 - Read the problem brief: the problem, keyword cluster, the wedge, rough MVP scope.
+- **Check `research/<slug>-status.md` first (see "## Pipeline status file").** If it exists, this is a RESUME — read it and continue from its ▶ NEXT ACTION; do NOT restart completed steps. If it's missing, create it from the template (all steps pending, ▶ NEXT ACTION = step 1 Domain) so the run is resumable from step one.
+
+## Pipeline status file — keep the run resumable
+
+Every run maintains ONE living status file so a compacted or brand-new session can pick up exactly where planning stopped. This is not optional bookkeeping — it's how the pipeline survives a context reset.
+
+- **Path:** `research/<slug>-status.md` (co-located with the scout brief + the future `-prebuild.md`).
+- **Create** it at the start of the run if missing; **read + resume** from it if present (see Preconditions).
+- **Update it FIRST at every confirmation gate**, before running the next sub-skill: tick the step, log the decision one-liner + date, reset ▶ NEXT ACTION. Log the step, THEN move — never advance without ticking the one behind you.
+- **On completion** (both output artifacts written), set Stage = `COMPLETE — ready to build`.
+- **The first time you create it, drop a one-line pointer in `week.md`** (North Star or parking lot), e.g. "Bet #N <Product> in build-planning — status + next step in `research/<slug>-status.md`", so the session that opens `week.md` first is routed to it. Optionally bank a one-line auto-memory pointing at the status file for the strongest cross-session catch.
+
+**Template:**
+
+```markdown
+# Pipeline Status — <Project> (`/explore-project`)
+
+> Resumable state of the build-planning pipeline for this product.
+> **New session:** open `week.md`, then read THIS file, then resume from ▶ NEXT ACTION.
+> Do NOT redo completed steps. After each confirmed gate, update this file BEFORE proceeding.
+
+**Product:** <name>   **Domain:** <domain> (LOCKED / tbd)   **Stage:** <e.g. Step 2 of 4>
+**▶ NEXT ACTION:** <one imperative line the next session executes>
+
+## Pipeline checklist
+- [x] Scout → GO — <brief path> — <date>
+- [x] 1. Domain → <domain> LOCKED (<one-line why>) — <date>
+- [~] 2. Stack → <one-line recommendation>. Awaiting confirm — <date>
+- [ ] 3. Architecture → pending
+- [ ] 4. Setup kit → pending
+- [ ] Output 1: Pre-Build Brief → `research/<slug>-prebuild.md`
+- [ ] Output 2: Handoff prompt → `handoff-prompts/<slug>.md`
+
+## Decisions captured so far
+- <domain rationale one-liner>
+- <stack rationale one-liner>
+(Formal record lands in `decisions/log.md` when the Pre-Build Brief is written.)
+```
+
+Legend: `[x]` done · `[~]` presented / awaiting confirm · `[ ]` pending.
 
 ## Pipeline — run in order, gated by user confirmation
 
@@ -20,22 +60,22 @@ Each step is a hard stop. Do NOT proceed to the next step until the user explici
 ### 1. Domain → `domain-namer`
 Run `domain-namer` with the product brief. Present the recommended `.com` + top-3 shortlist with live availability.
 
-**STOP. Ask:** "Are you happy with a domain choice, or do you want to explore more options?" Do not move to step 2 until the user confirms one specific domain is finalized. Domain discussions may take multiple rounds — that is expected. Only carry the locked domain forward.
+**STOP. Ask:** "Are you happy with a domain choice, or do you want to explore more options?" Do not move to step 2 until the user confirms one specific domain is finalized. Domain discussions may take multiple rounds — that is expected. Only carry the locked domain forward. Once the user confirms, UPDATE `research/<slug>-status.md` FIRST (tick Domain, record the chosen domain + one-line why + date, set ▶ NEXT ACTION = step 2 Stack) — then run step 2.
 
 ### 2. Stack → `pick-stack`
 (Only run after domain is confirmed.) Run `pick-stack` for this project type. Present the recommended framework/libraries optimized for max page speed + top SEO, with the rationale.
 
-**STOP. Ask:** "Does this stack work for you, or do you want to adjust anything before we design the architecture?" Do not move to step 3 until the user confirms.
+**STOP. Ask:** "Does this stack work for you, or do you want to adjust anything before we design the architecture?" Do not move to step 3 until the user confirms. Once the user confirms, UPDATE `research/<slug>-status.md` FIRST (tick Stack, record the stack one-liner + date, set ▶ NEXT ACTION = step 3 Architecture) — then run step 3.
 
 ### 3. Architecture → `design-architecture`
 (Only run after stack is confirmed.) Run `design-architecture`. Present the recommended system design + the "why" + the front-end system-design learning notes.
 
-**STOP. Ask:** "Are you good with this architecture, or do you want to change anything before we build the setup checklist?" Do not move to step 4 until the user confirms.
+**STOP. Ask:** "Are you good with this architecture, or do you want to change anything before we build the setup checklist?" Do not move to step 4 until the user confirms. Once the user confirms, UPDATE `research/<slug>-status.md` FIRST (tick Architecture, record the design one-liner + date, set ▶ NEXT ACTION = step 4 Setup kit) — then run step 4.
 
 ### 4. Setup kit → `setup-kit`
 (Only run after architecture is confirmed.) Run `setup-kit` (it delegates research to a subagent). Capture: design direction, the skills to install (with commands), and the MCPs that *could* help (as suggestions only — see MCP rule below; doc-reference MCPs become local `references/mcp/` files on approval, action MCPs get installed).
 
-**STOP. Ask:** "Setup kit looks good to proceed?" Confirm before writing the final artifacts.
+**STOP. Ask:** "Setup kit looks good to proceed?" Confirm before writing the final artifacts. Once the user confirms, UPDATE `research/<slug>-status.md` FIRST (tick Setup kit, record the design-direction one-liner + date, set ▶ NEXT ACTION = write the two output artifacts) — then write the outputs.
 
 ## Output 1 — the Pre-Build Brief
 Write `research/<slug>-prebuild.md` consolidating:
@@ -71,7 +111,7 @@ It must read like it was written by a top-0.5% engineer: precise, opinionated, n
 - **Update trigger:** when the user says "update the `<tool-name>` reference" (or similar), re-research the resource and overwrite `references/mcp/<tool-name>.md`. These files are refreshed on command, not automatically.
 - The same restraint applies to any tooling install that isn't strictly required for the milestone in front of you. Suggest, don't auto-install. Keep the kit lean.
 
-After both files are written, append a decision entry to `decisions/log.md`. Close by offering to set the first build week in `week.md`, and tell the user the exact path of the handoff prompt to copy into the new repo.
+After both files are written, UPDATE `research/<slug>-status.md` one last time: tick both outputs, set **Stage = `COMPLETE — ready to build`**, and ▶ NEXT ACTION = "hand the prompt at `handoff-prompts/<slug>.md` to the new repo." Then append a decision entry to `decisions/log.md`. Close by offering to set the first build week in `week.md`, and tell the user the exact path of the handoff prompt to copy into the new repo.
 
 ## Rules
 1. **Never run on an unvalidated idea.** GO from `/scout-problem` is the gate.
@@ -81,3 +121,4 @@ After both files are written, append a decision entry to `decisions/log.md`. Clo
 5. **Never skip a confirmation gate.** A step is not done until the user says it is. If the user is still discussing or undecided, keep iterating — do not move forward.
 6. **MCP servers and non-essential tooling are suggest-only — never auto-install — with ONE standing exception: the Playwright MCP**, which is pre-approved and included in every web project (the verification backbone). All other MCPs: recommend with a one-liner, ask first. On approval, branch by type — **doc-reference (read-only) MCPs get researched into a local `references/mcp/<tool-name>.md` file instead of installed** (saves tokens; docs rarely change, refresh on command), while **action MCPs (GitHub / DB / filesystem) are the exemption and do get installed** at least-privilege. Treat `astro-docs` + Tailwind v4 docs as near-default for the Astro/Tailwind stack, captured as reference files. Bake the Playwright-standard + suggest-first + doc-MCP-as-local-file rule into every handoff prompt you write.
 7. **Domain purchase is the last step.** Unless the user says otherwise, the brief and handoff prompt build and deploy on the platform's preview URL; registering the domain and attaching DNS is the final go-live milestone, never a prerequisite. Still run live availability checks early (so the name is known to be free), but don't tell the user to buy early — flag squat risk once, then respect the decision.
+8. **Keep the run resumable.** Maintain `research/<slug>-status.md` — create it on start (or resume from it), update it FIRST at every gate before advancing, and complete it at the end. A step logged after the fact is a bug: log it *before* you move on. See "## Pipeline status file".

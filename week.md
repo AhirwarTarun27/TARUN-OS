@@ -3,34 +3,40 @@
 > **Your single source of truth.** If it's not here, it's not happening this week.
 > Open this file FIRST, every session. Notion, Calendar, your head — all noise until it lands here.
 > Reset every Sunday by running `/weekly-review` (next: Sun Jul 5).
+> **Updated 2026-07-03** — GradeJar shipped live mid-week; outcomes below reflect where things actually stand, not the Jun 30 plan. Full reset still happens at Sunday's `/weekly-review`.
 
 ## North Star (why any of this matters)
 
-- **Floor:** Your day job (thinksys). Stable, grow in place, no job hunt. Pays the bills, de-risks everything.
-- **Engine:** A portfolio of front-end-heavy tools built for scale, money-led (AdSense). **JsonBeam = bet #1: live, observe mode** (watch Analytics/AdSense, don't add code). **GradeJar = bet #2: BUILT + benchmarked #1, now shipping live.** Future bets get *researched before built.*
+- **Floor:** Your day job (thinksys). Keep it stable as the floor **while you actively interview for the next role** (2-3 month target, declared 2026-07-07). Pays the bills and de-risks the switch. Employer boundary still holds — no thinksys email/comms in the AIOS.
+- **Engine:** A portfolio of front-end-heavy tools built for scale, money-led (AdSense). **JsonBeam = bet #1: live, Phase 0 visibility fixes closed 2026-07-03.** **GradeJar = bet #2: LIVE at gradejar.com, Phase 0 visibility fixes closed 2026-07-03.** Both now run on the shared daily `/marketing` queue. Future bets get *researched before built.* **AccentWallPlanner = bet #3: in `/explore-project` build-planning — live status + next step in `research/accent-wall-trim-planner-status.md`.**
 - **Edge:** Get better as a developer *through building*. Front-end system design now. Backend depth later.
-- **The rule:** Ship ugly. "Ranks #1 and loads fast" beats "best editor." Done beats perfect. **A #1-benchmarked product earning $0 because it isn't live is the only failure that matters right now.**
+- **The rule:** Ship ugly. "Ranks #1 and loads fast" beats "best editor." Done beats perfect. Both products are live and plumbed — the only failure that matters now is **letting the daily marketing queue lapse** while AdSense review runs its multi-week clock.
 
 ## This week's 3 outcomes (max 3 — done or NOT done)
 
-M1 + M2 core are done and benchmarked **#1**, but the build isn't fully finished — **named roster + rankings is in progress, and CSV import + M3 are still open**. Go-live is greenlit and the AdSense account is approved. The deploy is still blocked on **Cloudflare auth** — that's today's must-ship and the one thing gating everything else.
+GradeJar deployed, bought the domain, and closed Phase 0 (GSC verified, AdSense listed, Cloudflare
+Web Analytics wired, AI-crawlers correctly allowed) on 2026-07-03. JsonBeam's Phase 0 also closed
+2026-07-03 (ads.txt confirmed serving, WAF 403 on bots resolved, robots.txt correct, Bing Webmaster
+connected for both sites). Both sites: AdSense status `GETTING_READY` (real review clock running,
+$0 expected until approved). Remaining open items are below, not blockers.
 
-- [ ] **GradeJar live on gradejar.com.** Authenticate Cloudflare → deploy to CF Pages (`gradejar.pages.dev`) → buy `gradejar.com` → attach custom domain + DNS → set canonical `site` to the real domain → regenerate sitemap/canonicals. *Done = https://gradejar.com loads the live site.*
-- [ ] **AdSense earning + indexed.** Set the real `ca-pub-…` client + swap placeholder ad `unit` ids → **add gradejar.com as a site in AdSense the day it deploys** (review = "Getting ready" → "Ready" takes days-to-2wks; start the clock EARLY — this is why JsonBeam shows 700 views/wk but $0) → validate ads fill once approved → re-confirm CWV with real ads → submit sitemap to Google Search Console. *Done = site submitted to AdSense + GSC; real ads serving once Google approves.*
-- [ ] **Ship M3 — second keyword page.** `/test-grade-calculator` reusing `grade-core` (own SEO meta + JSON-LD, in sitemap, cross-linked with `/ez-grader`). *Done = a second ranked landing page is live.*
+- [x] **GradeJar live on gradejar.com.** Deployed, domain attached, DNS live. Verified 2026-07-03.
+- [ ] **AdSense earning.** Both sites submitted + listed (`GETTING_READY`); GSC verified for GradeJar, JsonBeam's GSC in-dashboard confirmation still open. Real ads won't serve until Google flips approval — nothing to do but keep the queue running and check status weekly. *Done = at least one site shows `READY` with ads filling.*
+- [x] **GradeJar M2 backlog — named roster + rankings, CSV import — DONE.** Verified 2026-07-07 against the canonical repo (`C:\Users\ahirwar.tarun\Documents\Learning\MyProjects\GradeJar\.claude\learning\TASKS.md`): roster+rankings (D18), CSV import (D21), GPA-per-band, weighting all shipped 2026-06-30. The whole M4 GPA/grade ecosystem (Waves 1-3) is shipped too. Only open GradeJar item = go-live/deploy (CF auto-deploy dashboard fix).
 
 ## Today — ONE must-ship
 
 > The single thing that, if you do nothing else today, makes the day count.
 
-- **Date:** Tue Jun 30
-- **Must-ship:** Authenticate Cloudflare and deploy GradeJar to `gradejar.pages.dev`. Clear the one blocker that's held everything. (All deploy work happens in the GradeJar repo, not here.)
+- **Date:** Tue Jul 7
+- **Must-ship:** Run today's `/marketing` queue (~15 min) — the only lever keeping either site discoverable while AdSense review runs. (GradeJar M2 backlog reconciled done today; only go-live/deploy remains.)
 
 ## Parking lot (capture, do NOT act)
 
 Brain-dump here so it leaves your head. Triage it during the weekly review. Nothing here is this week's problem.
 
-- AI/AIOS-run daily marketing system (Priority 2) — scope it the week AFTER GradeJar is live; pick a channel that is NOT LinkedIn.
+- AI/AIOS-run daily marketing system (Priority 2) — **built 2026-07-03**, generalized to both products. Now in execution mode via daily `/marketing`, not a scoping task anymore.
 - GradeJar M2 backlog (finish after go-live): named roster + rankings (in progress — additive, index-aligned, no migration) + CSV import. GPA-per-band and per-assignment weighting already shipped.
-- JsonBeam: monthly Analytics/AdSense check (observe mode, no code).
+- JsonBeam: on-page SEO pass (meta/FAQ/schema) needs a code-side decision — observe mode currently blocks it. Tarun's call, log in `decisions/log.md` if it changes.
+- Wire the Google Search Console API into `scripts/report.mjs` (needs one-time service-account auth grant) — would close the last blind spot in both action plans.
 - DSA practice (Priority 3) — light; gut-check whether interview prep is real this quarter or just the day-job Floor talking.

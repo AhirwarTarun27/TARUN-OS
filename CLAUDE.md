@@ -11,6 +11,7 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 ## Your skills
 
 **Operating rhythm:**
+- `/daily-log` — Weekday execution ritual. `plan` at 10:30am sets today's per-block focus; `wrap` at 12:15am runs a short QnA and banks one compact log entry. Tracks the fixed routine in `daily/schedule.md`, keeps a terse rolling log, and compresses to a monthly summary at month-end. The hours-level engine under `/weekly-review`.
 - `/weekly-review` — Sunday execution ritual. Score the week, bank what shipped, reset next week's 3 outcomes. THIS is the follow-through engine. Don't skip it.
 - `/onboard` — already run if you're seeing this filled in. Re-run any time to refresh from an edited `aios-intake.md`.
 - `/audit` — Four-Cs gap report. Run on Day 7, then weekly. Watch your score climb.
@@ -28,6 +29,7 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 ## Where things live
 
 - `week.md` — **your single source of truth.** This week's 3 outcomes + today's one must-ship. Open it first, every session.
+- `daily/` — the weekday execution tracker (run by `/daily-log`): `schedule.md` (the fixed routine), `log.md` (this month's terse daily entries), `summaries/` (compressed monthly records). Granular months age out to `archives/daily/`.
 - `shipped.md` — the done-log + streak counter. Everything you've shipped. Never delete from it.
 - `context/` — about you, your business, your priorities (filled by `/onboard`)
 - `references/` — frameworks, voice samples, API guides as you connect tools
@@ -55,9 +57,13 @@ no-login gradebook, zero backend; core M1+M2 done, roster/rankings + CSV import 
 (GradeJar) = K-12 + college teachers, US-first; students secondary. Audience priority is
 US first, then global.
 
-**This quarter (90 days):** (1) ship GradeJar live + rank it for AdSense revenue;
-(2) build an AI/AIOS-run daily marketing system that runs hands-off (NOT on LinkedIn);
-(3) get sharper at DSA + system design + interview questions. See `context/priorities.md`.
+**This quarter (90 days):** (1) **land a new job — active switch, 2-3 month target** (declared
+2026-07-07): a frontend-heavy full-stack role now, complete full-stack long-term. This is a real
+priority, not background — the `dsa` / `machine-coding` / `sysdesign` / `interview-qa` blocks are the
+prep engine (DSA is the gate; system design via Xu Vol 1, mainly design-out-loud; LinkedIn is fair
+game for *this*). (2) keep GradeJar + JsonBeam ranking on the hands-off `/marketing` queue (autopilot);
+(3) keep building the side-hustle portfolio (AI-assisted, in the 8pm `project` block — non-negotiable
+for Tarun). See `context/priorities.md`.
 
 **Revenue:** Google AdSense, currently $0 (pre-revenue). Marketing is his top pain and
 **the AIOS owns it** — drafting promo, researching quick US-first marketing hacks, and

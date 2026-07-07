@@ -137,3 +137,92 @@ Keep it terse. Future-you will thank present-you for capturing the *why*, not ju
 **Alternatives considered:** A Bing/Microsoft MCP server (rejected — recurring token cost for a stable reporting API). Manual dashboard checks (rejected — doesn't compound into the metrics-log track record). Traffic-only depth (rejected — the submission quota is directly useful right after submitting the money pages, and top queries mirror the GA4 read).
 
 **Owner:** Tarun. One manual step remaining: generate the Bing API key and paste it into `.env` as `BING_WEBMASTER_API_KEY`.
+
+---
+
+## 2026-07-06 — Reframed `/scout-problem`: greenfield + impact-first, no preset wedge, backend allowed
+
+**Decision:** Rewrote the selection philosophy in `.claude/skills/scout-problem/SKILL.md` across three of Tarun's corrections in one session:
+1. **Greenfield + impact-first.** Every product is judged as a standalone build from scratch and ranked by **impact = demand × CPM × winnability**. Code/template reuse (GradeJar, JsonBeam, etc.) is forbidden from entering the verdict — it only tells you what NOT to re-scout.
+2. **No preset wedge.** Persistence / "it remembers" is no longer assumed to be *the* differentiator. Some products need it, most don't. The wedge is whatever the data shows incumbents are concretely weak on, derived fresh in the teardown.
+3. **Front-end-heavy is a priority, not a hard gate.** A project that's ~30-40% backend is in-scope when demand, usability, and rankability are strong. Restructured the criteria into **three make-or-break gates** (demand floor / beatable top-10 / money-model viable) plus priorities (front-end, small-niche, 3-4wk MVP). Added a cost-to-serve guardrail to the money gate so loosening the backend rule can't break the free+AdSense economics (cheap/cacheable/edge/static backend fine; per-request paid API or server LLM per pageview is not).
+
+**Why:** Tarun flagged three biases baked into prior runs: (a) crediting GradeJar code reuse as a plus (biases toward clones over higher-impact problems); (b) treating persistence as a required feature (it's a past-project hangover, not a rule); (c) hard-gating pure front-end (closes an open window on high-demand, easily-rankable ideas that happen to carry a modest backend). All three narrowed the hunt artificially. The real bar is **highly viable + highly usable + highly rankable in the top 10** — everything else is a priority that breaks ties. Would change my mind: nothing — this is the intended selection logic going forward.
+
+**Alternatives considered:** Keep reuse/persistence/front-end as tiebreakers only (rejected — even as tiebreakers they distort the ranking). Drop the front-end preference entirely (rejected — it's still the default for speed/SEO/cost, just not a gate). Remove the cost-to-serve check when allowing backends (rejected — it's the one guardrail that keeps free+AdSense solvent).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-06 — NO-GO: Lawn-care schedule / program tracker
+
+**Decision:** Killed the persistent lawn-care schedule tracker. First scout run under the reframed skill (greenfield + impact-first). It was the data-backed top pick of a 6-candidate impact shortlist; the full teardown killed it.
+
+**Why:** Demand passes easily (Scotts ×2, Sunday, Lawn Doctor, Milorganite, Consumer Reports, Bob Vila, Lowe's + Illinois Extension all maintain pages; r/lawncare + thelawnforum active). Two strikes kill it. (1) **Beatable top-10 FAILS** — the head money keywords ("lawn fertilizer schedule", "when to apply lawn fertilizer") return a pure authority-article fortress (national brands + a `.edu` extension + Consumer Reports/Bob Vila, YMYL-adjacent). Zero tools rank on the head; only the thin tail ("lawn care schedule calculator") surfaces small sites (lawncalcpro, lawnscal). A zero-authority domain can't crack the head in the MVP window. (2) **Wedge already executed, free** — the "remembers your lawn's program + reminds you" differentiator is already delivered by Yard Mastery (Allyn Hane's app: schedule by zip+grass, tracks applications w/ rates+dates, smart reminders), Scotts' My Lawn (calendar + push reminders + custom plan), and TruGreen's app. A web tool with no push notifications is strictly worse at the core "remind me" job. High home-services CPM is real but moot once #3 fails.
+
+**Structural lessons banked (carry forward):** (1) Before believing a "persistent tracker for X" wedge, check the APP STORES, not just the web SERP — the persistence/reminder job is often already owned by a free app (lawn: Yard Mastery/Scotts My Lawn; sewing: Threadloop/Stash Hub). (2) High-CPM home-services lanes are article/authority fortresses on the head terms (Scotts/Sunday/TruGreen/Lawn Doctor + .edu) — reconfirmed. (3) **Saturation wave:** the "lone dated incumbent" gap closes fast — pool-chemical and aquarium-stocking SERPs both now carry 8-10 freshly built modern tools (AquaFindr, FishHuddle, pooldose, thepoolnerd, etc.); verify an incumbent is actually still weak, don't trust an old leader's reputation (AqAdvisor is no longer alone).
+
+**Alternatives considered:** Target only the tool-intent tail where small sites rank (rejected — thin volume, and the job is owned by free apps with reminders). Ship a stateless fertilizer-rate calculator (rejected — commodity; Omni/completecalculators/Scotts own it, no wedge). Deep-validate sewing/quilting instead (still on the table — soft yardage-calc SERP + Pinterest distribution, but its persistence wedge is also app-owned).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-06 — `/scout-problem` gets a mandatory Step 0 (demand-gated brainstorm)
+
+**Decision:** Added a required **Step 0 — demand-gated brainstorm** to `scout-problem/SKILL.md` for the "user arrives with nothing" path. The no-idea flow must now: generate a wide raw list (~12-20), run a *fast live-search demand pre-screen on every candidate*, kill everything below the demand floor, and present only the 6-7 verified survivors — each row carrying its demand evidence + confidence + a CPM/winnability hunch. A candidate that wasn't searched cannot reach the user. Also clarified Rule 4: the *deep teardown* stays 1-2 candidates, but the *pre-screen* is deliberately wide.
+
+**Why:** First run of the no-idea path produced a shortlist brainstormed from memory ("tile/flooring layout planner" as top pick); Tarun checked it and found near-zero US search volume. The old skill only demanded data *after* the user picked — so the shortlist itself was vibes. Fix moves a lightweight demand check *before* anything is presented. Would change my mind: nothing — a shortlist without per-candidate demand data is a process failure.
+
+**Alternatives considered:** Keep demand research post-pick only (rejected — that's the exact failure). Require exact volumes for every candidate (rejected — free tools can't; triangulation + confidence is the honest bar, exact numbers get pulled in the deep teardown / explore-project).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-06 — GO: Accent-wall trim layout planner (bet #3 candidate)
+
+**Decision:** GO on a visual, to-scale accent-wall trim layout planner (board & batten + picture-frame/box molding + wainscoting + slat wall). Brief: `research/accent-wall-trim-planner.md`. Chosen from a 7-candidate demand-verified shortlist; deep-teardown'd alongside raised-bed soil (NO-GO).
+
+**Why:** Only candidate that clears all three gates *and* has a concrete, still-open wedge. Demand PASS (trend confirmed "everywhere in 2026," 8-12 dedicated tools per sub-term, TikTok/Pinterest presence; med-high confidence, exact volume TBD via Semrush/Ahrefs in explore-project). Beatable top-10 PASS — the #1 tool (inchcalculator) is explicitly "a calculation tool, not a visualization engine" (numbers-only, single-row, no box grids); Omni is purely numeric; the visual tools that exist (FrameLayoutPro/HangCalc) solve a *different* job (hanging existing art). The gap was quoted verbatim by a DIY creator on TikTok: "Online calculators only work if your boxes are the same size." Money-model PASS — home-decor CPM, low-adblock DIY audience, $0 static backend. Front-end-heavy (an SVG/canvas renderer *is* the product), 3-4wk MVP, and the shareable render doubles as the Pinterest/TikTok distribution asset. Caveat: inchcalculator's authority likely holds the exact head term — win the visual/adjacent/long-tail + programmatic per-style pages instead; move now before the AI-calc-farm saturation wave reaches the visual-grid niche.
+
+**Alternatives considered:** Raised-bed soil (NO-GO, below). Recessed lighting / chicken coop / wheelchair ramp / party drinks / BBQ (shortlisted, not picked for teardown this run).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-06 — NO-GO: Raised-bed soil / garden-soil calculator
+
+**Decision:** Killed the raised-bed soil calculator after full teardown.
+
+**Why:** Demand passes easily (garden, 10+ dedicated tools incl. Almanac, tens of thousands/mo, spring-peaked). Beatable top-10 FAILS — the wedge I hypothesized (soil-mix ratios + bag counts + multiple bed shapes) is *already fully built and clean*: Eartheasy ships 6 bed shapes (rect, square, hex, octagon, L, U) + mix breakdown + bag counts across bag sizes + reference tables, ad-free; Gardener's Supply adds mix ratios + fertilizer; Almanac (Old Farmer's Almanac, high authority) guards it (403'd on fetch = strong-brand signal). Modern, feature-complete, authoritative top-10 with no concrete gap left. A visual bed render adds little decision value (soil volume isn't a spatial-layout problem); cost estimation is a thin add-on Eartheasy nearly covers. Reconfirms the banked lesson: verify the incumbent is *actually* still weak — here they're strong.
+
+**Alternatives considered:** Add cost-per-bag estimation as the wedge (rejected — too thin, near-covered). Visual 3D bed render (rejected — low decision value for a volume problem).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-07 — Added a resumable pipeline-status tracker to `/explore-project`
+
+**Decision:** Every `/explore-project` run now maintains a living per-project status file at `research/<slug>-status.md` — a checklist of the four gated steps (Domain → Stack → Architecture → Setup kit) + the two output artifacts, each with state + a decision one-liner + date, topped by a single ▶ NEXT ACTION line. The skill creates it on start (or resumes from it if present) and updates it FIRST at every confirmation gate, before advancing — "log the step, then move." Discovery is handled by a one-line pointer in `week.md` + an auto-memory pointer, both aimed at the status file. Backfilled it for the in-flight bet #3 (AccentWallPlanner): Scout GO + domain locked done, stack awaiting confirm, architecture next.
+
+**Why:** the pipeline is multi-step and gated, but the only durable record was a single `decisions/log.md` entry written at the very END (the scoped Pre-Build Brief). A context compaction mid-run — which just happened to AccentWallPlanner, with the domain locked and the stack already presented — left the continuation with no idea where planning stood. A living status file + discovery pointers make any run resumable by a cold session. Would change my mind: nothing — cheap insurance against a failure we already hit.
+
+**Alternatives considered:** A dedicated top-level `pipeline/` folder (rejected — co-locating in `research/` matches the existing `<slug>.md` / `<slug>-prebuild.md` convention; discovery is handled by pointers, not folder placement). Rely on `decisions/log.md` alone (rejected — it's append-only history, not a resumable "where am I / what's next" surface, and only fires at the end). Memory-only (rejected — memory step-detail goes stale between gates; the file is the source of truth, memory just points at it).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-07 — Active job switch (2-3 months) + system-design track pivot (DDIA → Xu)
+
+**Decision:** Tarun declared an **active job hunt with a 2-3 month target** — a frontend-heavy full-stack role now, complete full-stack long-term. This overrides the prior "stable day job, no job hunt" North Star. Updated `CLAUDE.md` (quarter priorities), `context/priorities.md` (job switch is now Priority 1, ordered by leverage), and `week.md` (Floor line reframed). The four learning blocks (`dsa`, `machine-coding`, `sysdesign`, `interview-qa`) are now the interview-prep engine. Side-hustle building stays a real priority (AI-assisted, in the 8pm `project` block). Marketing stays on autopilot. Paired pivot: **demoted DDIA-style deep reading for system design** — archived the old `/teach` track (which was actually Brendan Burns' *Designing Distributed Systems*, mislabeled "DDIA") to `archives/learning/`, and switched the `sysdesign` slot to **Alex Xu's *System Design Interview* Vol 1 then Vol 2** via `/teach` at `learning/system-design-interview/`, video-first (curated in `learning/system-design-video-path.md`, spine = ByteByteGo/Hello Interview), prep **mainly design-out-loud**.
+
+**Why:** A 2-3 month job switch is a pipeline, not a reading project — it rewards breadth, a repeatable design framework, DSA volume (the usual gate), and mock reps, not 600 pages of deep data-systems theory. DDIA cover-to-cover wouldn't finish in time and wouldn't move the interview needle; it's the reward read for after landing. Xu is the interview canon and pairs with its author's own YouTube channel (ByteByteGo). Implementation stays light because Tarun's money-products are backend-free by design, so they lack the surface to practice real system design — the interview skill is verbal/whiteboard. Would change my mind: if interviews turn out not to be real (Tarun confirmed they are).
+
+**Alternatives considered:** Read DDIA for 1-2 months as planned (rejected — too slow, mistargeted for interviews, wouldn't finish). Pause the side-hustle build to focus fully on the hunt (rejected — Tarun set it as non-negotiable; kept it bounded to the 8pm block, AI-assisted). Learn system design mainly by implementing it in projects (rejected — his projects are backend-free; interview SD is design-out-loud). Hard-delete the old track (rejected — AIOS never-delete rule; archived instead).
+
+**Owner:** Tarun.
