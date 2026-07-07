@@ -13,3 +13,8 @@ notes: <block=one-liner on what got done; learning blocks = what /teach covered>
 -->
 
 <!-- entries below -->
+
+## 2026-07-07 Tue · 4/7 · energy 2/5 · office ✗
+✓ sysdesign workout project interview-qa
+✗ reading — avoidance · dsa — avoidance · machine-coding — clarity+avoidance
+notes: sysdesign+interview-qa=built the learning base + declared tomorrow's + upcoming path (counted done) · project=held · office ~40% adherence · must-ship=✅ /marketing queue ran

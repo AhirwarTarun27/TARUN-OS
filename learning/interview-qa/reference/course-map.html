@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course Map — Frontend Interview Q&A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap wide">
+
+  <header class="masthead">
+    <p class="eyebrow">Interview Q&A · Course Map</p>
+    <h1>The dependency-ordered path</h1>
+    <p class="subtitle">All ~212 non-Angular questions from the ebook, re-sequenced so every lesson
+    builds on the one before it. You never meet a keyword before the lesson that owns it.</p>
+  </header>
+
+  <div class="note">
+    <span class="callout-label">How to read this</span>
+    The ebook is filed by <em>format</em> (67 theory, then 50 output, then 27 problems, then React).
+    Great for reference, bad for learning — a closure question shows up long before closures are taught.
+    Here it's filed by <em>dependency</em>. Each module absorbs the matching theory <strong>and</strong>
+    its output-prediction questions <strong>and</strong> its coding problems, so you learn a concept and
+    immediately use it. Progress: <span class="pip done"></span> done ·
+    <span class="pip now"></span> current · <span class="pip"></span> upcoming.
+  </div>
+
+  <p class="part-label">Part A — JavaScript foundations</p>
+
+  <div class="module">
+    <h3><span class="modnum">M1</span> Types & coercion <span class="status now">You are here</span></h3>
+    <p>The ground floor. Why JS lets a variable be anything, the 8 types, and the coercion rules that
+    make half the "guess the output" questions solvable instead of scary.</p>
+    <ul>
+      <li>Theory: dynamic typing · primitive vs non-primitive types · <code>==</code> vs <code>===</code> · undeclared vs undefined vs null · <code>typeof</code></li>
+      <li>Output drills: <code>3+2+"7"</code> · <code>true+1</code> · <code>true+"1"</code> · <code>[]+[]</code> · truthy/falsy chains</li>
+      <li><a href="../lessons/0001-types-and-coercion.html">→ Start Lesson 1</a></li>
+    </ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M2</span> Scope, hoisting & the TDZ <span class="status next">upcoming</span></h3>
+    <p>Where variables live and when they exist. This is the prerequisite for closures.</p>
+    <ul><li>Theory: hoisting · what gets hoisted · temporal dead zone · <code>let</code>/<code>var</code>/<code>const</code> · block vs function scope</li>
+    <li>Output drills: the classic <code>var</code>-in-a-loop "prints 6 every time" + how to fix it</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M3</span> Functions, closures & HOFs <span class="status next">upcoming</span></h3>
+    <p>The 99%-asked topic. Closures, callbacks, higher-order functions, pure vs impure, IIFE, arrow-fn limits.</p>
+    <ul><li>Theory: closure · callback · higher-order function · pure vs impure · IIFE · arrow-function limitations & advantages</li>
+    <li>Problems: counter with closure · once/memoize-style tasks</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M4</span> The <code>this</code> keyword & binding <span class="status next">upcoming</span></h3>
+    <p>How <code>this</code> is decided at call time, and how to force it. Builds directly on arrow functions from M3.</p>
+    <ul><li>Theory: the four binding rules · <code>call()</code> / <code>apply()</code> / <code>bind()</code> · why arrow functions have no own <code>this</code></li>
+    <li>Output drills: <code>this</code> inside methods, callbacks, and arrows</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M5</span> Objects & prototypes <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: ways to create objects · prototype chain · <code>Object.keys/values/entries</code> · <code>freeze</code> vs <code>seal</code> · shallow vs deep copy · pass by value vs reference · destructuring · spread · rest</li>
+    <li>Problems: unique objects from an array · string → object</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M6</span> Arrays & iteration <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: array methods · <code>map</code> vs <code>filter</code> vs <code>forEach</code> · <code>find</code> vs <code>findIndex</code> · <code>some</code> vs <code>every</code> · <code>for-in</code> vs <code>for-of</code> · <code>slice</code> vs <code>splice</code> · Map vs Set vs WeakMap/WeakSet</li>
+    <li>Problems (big batch): dedupe · max/2nd-largest · longest/shortest word · flatten nested array · char count · sort · reverse words · find pairs</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M7</span> Async JavaScript & the event loop <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: single-threaded / sync vs async · call stack · <code>setTimeout</code> / <code>setInterval</code> / <code>clearInterval</code> · Promises · <code>Promise.all/allSettled/any/race</code> · event loop, tasks vs microtasks</li>
+    <li>Output drills: setTimeout-vs-Promise ordering · the tricky async logs</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M8</span> Browser, DOM & networking <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: event bubbling · local vs session storage (+ follow-ups) · CORS · web workers · interceptors · <code>fetch</code> vs <code>axios</code></li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M9</span> ES6+, modules & tooling <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: ES6 feature roundup · modules · Babel · tree shaking · <code>^</code> vs <code>~</code> in package.json · TS vs JS · authentication vs authorization</li></ul>
+  </div>
+
+  <p class="part-label">Part B — React (your core library)</p>
+
+  <div class="module">
+    <h3><span class="modnum">M10</span> React mental model <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: what React is & why · features · JSX · real DOM vs Virtual DOM & reconciliation</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M11</span> State & props <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: state · props · state vs props · controlled vs uncontrolled · lifting state up</li>
+    <li>Scenarios: parent→child · child→parent · display user input elsewhere</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M12</span> Hooks I — useState & useEffect <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: <code>useState</code> · <code>useEffect</code> vs <code>useLayoutEffect</code> · class lifecycle → hook mapping</li>
+    <li>Scenarios: run on mount · run on value change · update document title · data-fetching hook</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M13</span> Hooks II — refs & memoization <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: <code>useRef</code> · <code>forwardRef</code> · <code>useMemo</code> vs <code>useCallback</code> · <code>useReducer</code> · <code>React.memo</code> · PureComponent</li>
+    <li>Scenarios: access a DOM node · optimize with useMemo · force/skip re-render</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M14</span> Hooks III — custom hooks & context <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: custom hooks · Context API · props drilling & how to kill it</li>
+    <li>Scenarios: build a custom hook · share data via context</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M15</span> Component patterns & advanced <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: HOC · render props · compound · container/presentational · fragments · keys · error boundaries · lazy loading · Suspense · Portals · StrictMode</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M16</span> Routing & optimization <span class="status next">upcoming</span></h3>
+    <ul><li>Theory: react-router · protected routes · CSR vs SSR · how to optimize a React app</li></ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">M17</span> React machine-coding scenarios <span class="status next">upcoming</span></h3>
+    <p>The live-coding round. Build from a blank editor, under time.</p>
+    <ul><li>Scenarios: debounce · search/filter box · dependent dropdowns · char-remaining counter · dynamic checkbox counter · popup via portal · prop-types checking · file upload · cancel API on timeout · error boundary</li></ul>
+  </div>
+
+  <div class="ask-teacher">
+    <strong>I'm your teacher, not just a doc.</strong> At any lesson, ask me to go deeper, slow down,
+    re-order, or drill you harder on a topic. The map bends to you — say the word and I'll re-sequence.
+  </div>
+
+  <div class="lesson-nav">
+    <span></span>
+    <a href="../lessons/0001-types-and-coercion.html">Begin → Lesson 1: Types & Coercion</a>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1 · Types & Coercion — Interview Q&A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 1 · Module 1 — JavaScript Foundations</p>
+    <h1>Types &amp; Coercion</h1>
+    <p class="subtitle">Why a variable can be anything, the 8 types, and the rules that turn "guess the
+    output" from luck into logic.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Why this is Lesson 1</span>
+    Interviews open here, and it's load-bearing: <strong>coercion</strong> — JavaScript silently
+    converting one type into another — is the hidden engine behind roughly half the ebook's output
+    questions. Own it now and those "trick" questions stop being tricks. Everything later (scope,
+    closures, <code>this</code>) assumes you're fluent with types.
+  </div>
+
+  <h2>1 · JavaScript is dynamically typed</h2>
+  <p>You never declare a variable's type. The <em>same</em> variable can hold a number, then a string,
+  and JavaScript won't complain — because type checks happen at <strong>run time</strong>, as the
+  program executes, not before.</p>
+  <pre><code>let a;
+a = 0;
+console.log(a);      <span class="tok-com">// 0        (a number)</span>
+a = "Hello";
+console.log(a);      <span class="tok-com">// "Hello"  (now a string — totally fine)</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "JavaScript is dynamically typed — types are resolved at run time, so a variable can hold any type
+    and be reassigned to another. TypeScript is <em>statically</em> typed: those checks move to compile time."
+  </div>
+
+  <h2>2 · The types: primitive vs non-primitive</h2>
+  <p>There are <strong>7 primitive</strong> types and then <strong>objects</strong>. Primitives are
+  immutable and compared by value; everything else is an object (compared by reference — we'll feel
+  that difference in Module 5).</p>
+  <ul>
+    <li><strong>Primitives (7):</strong> <code>string</code>, <code>number</code>, <code>boolean</code>,
+      <code>null</code>, <code>undefined</code>, <code>bigint</code>, <code>symbol</code></li>
+    <li><strong>Non-primitive:</strong> <code>object</code> — and arrays, functions, dates are all objects underneath</li>
+  </ul>
+  <div class="note">
+    <span class="callout-label">Memory hook</span>
+    "Seven primitives — <em>string, number, boolean, null, undefined, bigint, symbol</em> — everything
+    else is an object." Interviewers love when you know <code>bigint</code> and <code>symbol</code>;
+    most candidates forget them.
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures">MDN: Data types</a>
+  </div>
+
+  <h2>3 · <code>typeof</code> — and its two famous liars</h2>
+  <p><code>typeof</code> returns a type as a string. Learn the normal cases, then memorize the two that
+  surprise everyone:</p>
+  <pre><code>typeof "John"      <span class="tok-com">// "string"</span>
+typeof 33          <span class="tok-com">// "number"</span>
+typeof 3.14        <span class="tok-com">// "number"   (no separate float type)</span>
+typeof true        <span class="tok-com">// "boolean"</span>
+typeof 1234n       <span class="tok-com">// "bigint"</span>
+typeof Symbol()    <span class="tok-com">// "symbol"</span>
+typeof undefined   <span class="tok-com">// "undefined"</span>
+
+<span class="tok-out">// The two you must not miss:</span>
+typeof null        <span class="tok-com">// "object"   ← historical bug, kept for back-compat</span>
+typeof NaN         <span class="tok-com">// "number"   ← NaN is a numeric value ("Not a Number", but a number type)</span>
+typeof [1,2,3]     <span class="tok-com">// "object"   ← arrays are objects</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">Interview gold</span>
+    "<code>typeof null</code> is <code>'object'</code> — a long-standing bug kept for backwards
+    compatibility. And <code>typeof NaN</code> is <code>'number'</code>, because <code>NaN</code> is a
+    special value <em>of</em> the number type." Two crisp facts that signal depth.
+  </div>
+
+  <h2>4 · undefined vs null vs undeclared</h2>
+  <p>Three "nothing" states people blur together:</p>
+  <div class="qa">
+    <p class="q">What's the difference between undeclared, undefined, and null?</p>
+    <ul>
+      <li><strong>undeclared</strong> — the variable was never created. Accessing it throws a
+        <code>ReferenceError</code>.</li>
+      <li><strong>undefined</strong> — declared but no value assigned yet. JavaScript's default "empty."
+        It's a <em>type and a value</em>.</li>
+      <li><strong>null</strong> — an <em>intentional</em> "no value," assigned by <em>you</em> to say
+        "deliberately empty."</li>
+    </ul>
+  </div>
+  <pre><code>let x;
+console.log(x);          <span class="tok-com">// undefined  (declared, unassigned)</span>
+let y = null;
+console.log(y);          <span class="tok-com">// null       (you chose emptiness)</span>
+console.log(z);          <span class="tok-com">// ReferenceError: z is not defined (undeclared)</span></code></pre>
+
+  <h2>5 · <code>==</code> vs <code>===</code> (the coercion gate)</h2>
+  <p>This is where coercion first bites. <code>===</code> is <strong>strict</strong>: it compares value
+  <em>and</em> type, no conversion. <code>==</code> is <strong>loose</strong>: if the types differ, it
+  <em>coerces</em> one to match the other, then compares.</p>
+  <pre><code>5 === "5"    <span class="tok-com">// false — number vs string, no conversion</span>
+5 ==  "5"    <span class="tok-com">// true  — "5" is coerced to 5 first</span>
+0 ==  false  <span class="tok-com">// true  — false coerces to 0</span>
+null == undefined  <span class="tok-com">// true  — special-cased as equal</span>
+null === undefined <span class="tok-com">// false — different types</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">The one-liner</span>
+    "Always use <code>===</code> in real code to avoid surprise coercions. <code>==</code> only exists in
+    interviews to test whether you understand coercion."
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness">MDN: Equality &amp; sameness</a>
+  </div>
+
+  <h2>6 · The <code>+</code> coercion rule (memorize this)</h2>
+  <p>The <code>+</code> operator is overloaded — it does math <em>or</em> string concatenation. One rule
+  decides which, and it unlocks a pile of output questions:</p>
+  <div class="note">
+    <span class="callout-label">The rule</span>
+    <strong>If either side of <code>+</code> is a string, JavaScript converts the other side to a string
+    and concatenates.</strong> Otherwise it converts both to numbers and adds. (Booleans →
+    <code>true</code>=1, <code>false</code>=0 when going numeric.) Evaluation is <strong>left to
+    right</strong>.
+  </div>
+
+  <h3>Now predict these before revealing</h3>
+
+  <details class="reveal">
+    <summary>What is <code>3 + 2 + "7"</code>?</summary>
+    <p><strong><code>"57"</code></strong>. Left to right: <code>3 + 2</code> are both numbers → <code>5</code>.
+    Now <code>5 + "7"</code> — one side is a string, so <code>5</code> becomes <code>"5"</code> →
+    <code>"57"</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>What is <code>true + 1</code>?</summary>
+    <p><strong><code>2</code></strong>. No string in sight, so go numeric: <code>true</code> → <code>1</code>,
+    then <code>1 + 1 = 2</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>What is <code>true + "1"</code>?</summary>
+    <p><strong><code>"true1"</code></strong>. A string is present, so both go to string:
+    <code>true</code> → <code>"true"</code>, concatenated with <code>"1"</code> → <code>"true1"</code>.
+    (Careful: the boolean stringifies to the word <code>"true"</code>, not to <code>"1"</code>.)</p>
+  </details>
+
+  <details class="reveal">
+    <summary>What is <code>const s = "hello"; s.data = "val"; console.log(s.data)</code>?</summary>
+    <p><strong><code>undefined</code></strong>. Strings are <em>primitives</em> — they can't hold
+    properties. JavaScript wraps <code>"hello"</code> in a temporary <code>String</code> object to run
+    the assignment, then throws that wrapper away. Reading <code>s.data</code> back finds nothing →
+    <code>undefined</code>. This is the payoff of "primitives are immutable."</p>
+  </details>
+
+  <h2>7 · Retrieval check</h2>
+  <p>No peeking at the notes above. Answer, then read the explanation.</p>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">What does <code>typeof null</code> return?</p>
+    <ul class="quiz-opts">
+      <li><button>the string "null"</button></li>
+      <li><button>the value undefined</button></li>
+      <li><button>the string "object"</button></li>
+      <li><button>throws a TypeError</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>"object".</strong> A historical bug in the very first JavaScript
+    engine, now permanent for backwards compatibility. It's the single most-quoted <code>typeof</code> quirk.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">Evaluate: <code>1 + 2 + "3"</code></p>
+    <ul class="quiz-opts">
+      <li><button>the string "123" here</button></li>
+      <li><button>the string "33" as text</button></li>
+      <li><button>the number 6 exactly</button></li>
+      <li><button>throws a type error</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>"33".</strong> Left to right: <code>1 + 2 = 3</code> (both numbers),
+    then <code>3 + "3"</code> hits a string → <code>"3" + "3"</code> → <code>"33"</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">Which comparison is <code>true</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>0 == false is a match</button></li>
+      <li><button>0 === false is a match</button></li>
+      <li><button>1 === "1" is a match</button></li>
+      <li><button>null === undefined ok</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>0 == false.</strong> Loose <code>==</code> coerces <code>false</code>
+    to <code>0</code>, so they match. The strict <code>===</code> ones all fail on differing types, and
+    <code>null === undefined</code> is <code>false</code> (only <code>==</code> treats them as equal).</div>
+  </div>
+
+  <details class="reveal">
+    <summary>Bonus (harder): why is <code>1 &lt; 2 &lt; 3</code> true but <code>3 &gt; 2 &gt; 1</code> false?</summary>
+    <p>Comparison is also left-to-right and returns a <em>boolean</em>, which then coerces to a number.
+    <code>1 &lt; 2</code> → <code>true</code> → <code>1</code>; then <code>1 &lt; 3</code> → <code>true</code>.
+    But <code>3 &gt; 2</code> → <code>true</code> → <code>1</code>; then <code>1 &gt; 1</code> →
+    <code>false</code>. Same coercion rule, sneaky result.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/type-conversions">javascript.info — Type Conversions</a>. The
+    clearest treatment of numeric / string / boolean coercion, with a rules table worth screenshotting.
+    Skim it before Lesson 2.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Stuck or curious?</strong> I'm your teacher — ask me anything from this lesson. Want more
+    coercion drills, a deeper dive on <code>Symbol</code>/<code>bigint</code>, or to just say your
+    answers out loud and have me grade them? Say the word.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="../reference/course-map.html">← Course map</a>
+    <a href="#">Lesson 2: Scope, Hoisting &amp; the TDZ →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

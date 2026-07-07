@@ -490,13 +490,19 @@
 
   const DATA = {
     month: '2026-07',            // heatmap month
-    today: '2026-07-07',
+    today: '2026-07-08',
     weekOutcomes: 'This week — keep the /marketing queue alive (AdSense review clock) · AccentWallPlanner into build.',
     entries: [
-      // No scored days yet — Day 0. Today is in progress:
       {
-        date: '2026-07-07', day: 'Tue', pending: true,
-        mustShip: 'Run today’s /marketing queue (~15 min).',
+        date: '2026-07-07', day: 'Tue',
+        mustShip: true,
+        blocks: { reading:false, dsa:false, machineCoding:false, sysdesign:true, workout:true, project:true, interviewQa:true },
+        energy: 2, office: false,
+        notes: 'Built the learning base for sysdesign+interview-qa (declared tomorrow’s path). reading/dsa/machine-coding all missed — avoidance + clarity. /marketing queue ran.'
+      },
+      {
+        date: '2026-07-08', day: 'Wed', pending: true,
+        mustShip: 'Set at morning plan.',
         blocks: { reading:false, dsa:false, machineCoding:false, sysdesign:false, workout:false, project:false, interviewQa:false },
         office: null
       }
