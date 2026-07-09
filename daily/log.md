@@ -14,6 +14,16 @@ notes: <block=one-liner on what got done; learning blocks = what /teach covered>
 
 <!-- entries below -->
 
+## 2026-07-09 Thu · 1/7 · energy 1/5 · office ✓
+✓ workout
+✗ reading — personal/family matter · dsa — personal/family matter (3rd day running, must-ship missed) · machine-coding — personal/family matter · sysdesign — personal/family matter · project — personal/family matter · interview-qa — personal/family matter
+notes: personal/family matter derailed the day · office adherence held despite it · must-ship=❌ · dsa queue still empty (0 D0s logged) — 3 days of avoidance/disruption now, needs a reset tomorrow
+
+## 2026-07-08 Wed · 2/7 · energy 1/5 · office ✗
+✓ workout project
+✗ reading — avoidance · dsa — avoidance (2nd day running, must-ship missed) · machine-coding — avoidance · sysdesign — skimmed ch.1 only, not deep-read · interview-qa — skipped
+notes: project=AdSense rejected on low-value content, fixed the flagged pages + redeployed · dsa=planned tomorrow's problem but didn't solve one · must-ship=❌ · energy 1/5 — root cause behind most misses
+
 ## 2026-07-07 Tue · 4/7 · energy 2/5 · office ✗
 ✓ sysdesign workout project interview-qa
 ✗ reading — avoidance · dsa — avoidance · machine-coding — clarity+avoidance

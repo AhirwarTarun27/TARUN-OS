@@ -27,6 +27,7 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
 - `archives/daily/YYYY-MM.md` — raw month archived at month-end (never deleted)
 - `week.md` — read at plan-time to tie the day to this week's 3 outcomes
 - `learning/*/learning-records/` — read at wrap to pull what `/teach` covered for `sysdesign` / `interview-qa`
+- `learning/dsa/queue.md` — the DSA spaced-rep tracker (read at plan for what's due; advance the rung + recompute due dates at wrap)
 - `shipped.md` — if the day shipped something real, also bank a one-liner there (don't double-track routine)
 
 ## Mode: `plan` (morning)
@@ -35,6 +36,7 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
 2. Open `daily/schedule.md`. The routine is fixed, so planning = deciding the **focus** for the
    flexible blocks, not rebuilding the timetable. Ask a tight set (descriptive, not a wall):
    - **Must-ship:** the ONE thing that makes today count (mirror it into `week.md` → "Today — ONE must-ship").
+   - **`dsa`:** read `learning/dsa/queue.md` → surface 🔴 revisions **due today** (problem + rung), then ask which NEW problem is today's D0. The due revisions + one new problem ARE the block's plan. (See "DSA spaced-rep engine" below.)
    - **`machine-coding`:** which problem/pattern today?
    - **`sysdesign`:** which Xu Vol 1 chapter/topic → confirm to run via `/teach` (interview-focused; see learning/system-design-video-path.md for the watch-first video).
    - **`project`:** which task on the current product?
@@ -51,6 +53,9 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
    - For each **miss**, one honest question: capacity, clarity, or avoidance? Log the real cause in a few words.
    - For each **learning block** (`sysdesign`, `interview-qa`): one line on what `/teach` covered. Pull it from
      `learning/<topic>/learning-records/` if written there; otherwise ask and let `/teach` own the depth.
+   - **`dsa` block:** if it hit, update `learning/dsa/queue.md` — add any new **D0** problem(s) solved (pattern + one-line key idea);
+     for each **revision** done, ask the 1–5 smoothness rating, advance the rung, and recompute Next due per the ladder
+     (see "DSA spaced-rep engine" below). Notes stay one-line — depth is in Tarun's notebook.
    - **Energy** for the day, 1–5.
    - Did the **must-ship** land? ✅ / ❌.
 3. **Write ONE compact entry** to the top of `daily/log.md` (newest on top), ~4 lines:
@@ -90,6 +95,17 @@ the new day's entry:
 - **plan run:** this week's 3 outcomes restated, today's per-block focus set, `week.md` must-ship updated. No log entry.
 - **wrap run:** the QnA answered, one compact entry prepended to `daily/log.md`, any real ship banked to `shipped.md`, the streak dashboard refreshed + redeployed, a one-line close.
 - **month-end run:** a written monthly summary, raw month archived, `daily/log.md` reset clean.
+
+## DSA spaced-rep engine
+
+`learning/dsa/queue.md` is the source of truth (full method + tables live there). This ritual only
+reads/advances it — it never teaches DSA (Rule 3). The ladder, offsets from **D0** (first-solve date):
+
+- **D2 = D0+2** — always. Rated **≥ 3** → skip D5, next due **D10 (D0+10)**. Rated **< 3** → next due **D5 (D0+5)**.
+- **D5 = D0+5** — only if D2 was < 3. After D5, next due **D10 (D0+10)** regardless.
+- **D10 = D0+10** — compulsory. Rated **≥ 3** → **Graduated** (Graduated table). Rated **< 3** → flag **🔁 Revisit** (stays surfaced until re-cleared).
+
+At **plan**, surface rows whose Next due ≤ today. At **wrap**, bank the rating + recompute Next due. Detailed notes = Tarun's notebook, not here.
 
 ## Rules
 

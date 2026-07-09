@@ -21,15 +21,16 @@ connected for both sites). Both sites: AdSense status `GETTING_READY` (real revi
 $0 expected until approved). Remaining open items are below, not blockers.
 
 - [x] **GradeJar live on gradejar.com.** Deployed, domain attached, DNS live. Verified 2026-07-03.
-- [ ] **AdSense earning.** Both sites submitted + listed (`GETTING_READY`); GSC verified for GradeJar, JsonBeam's GSC in-dashboard confirmation still open. Real ads won't serve until Google flips approval — nothing to do but keep the queue running and check status weekly. *Done = at least one site shows `READY` with ads filling.*
+- [ ] **AdSense earning.** Updated 2026-07-08: **JsonBeam** got a **low-value-content rejection** during review (not just the passive `GETTING_READY` wait) — flagged pages fixed and redeployed same day. Resubmission/re-review clock now running again. GradeJar unaffected — check separately. Real ads won't serve until Google flips approval. *Done = at least one site shows `READY` with ads filling.*
 - [x] **GradeJar M2 backlog — named roster + rankings, CSV import — DONE.** Verified 2026-07-07 against the canonical repo (`C:\Users\ahirwar.tarun\Documents\Learning\MyProjects\GradeJar\.claude\learning\TASKS.md`): roster+rankings (D18), CSV import (D21), GPA-per-band, weighting all shipped 2026-06-30. The whole M4 GPA/grade ecosystem (Waves 1-3) is shipped too. Only open GradeJar item = go-live/deploy (CF auto-deploy dashboard fix).
 
 ## Today — ONE must-ship
 
 > The single thing that, if you do nothing else today, makes the day count.
 
-- **Date:** Tue Jul 7
-- **Must-ship:** Run today's `/marketing` queue (~15 min) — the only lever keeping either site discoverable while AdSense review runs. (GradeJar M2 backlog reconciled done today; only go-live/deploy remains.)
+- **Date:** Fri Jul 10
+- **Must-ship:** Reset DSA — land the `dsa` block with one clean Arrays/Two-Pointers problem solved (D0). 3 days running now with an empty queue (Jul 7 avoidance, Jul 8 avoidance, Jul 9 personal/family matter derailed the day). No hiding tomorrow.
+- **Today's plan:** `dsa` = Merge Sorted Arrays (D0, first entry in the queue) · rest of the day's blocks TBD at `/daily-log plan`.
 
 ## Parking lot (capture, do NOT act)
 

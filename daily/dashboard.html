@@ -490,7 +490,7 @@
 
   const DATA = {
     month: '2026-07',            // heatmap month
-    today: '2026-07-08',
+    today: '2026-07-10',
     weekOutcomes: 'This week — keep the /marketing queue alive (AdSense review clock) · AccentWallPlanner into build.',
     entries: [
       {
@@ -501,8 +501,22 @@
         notes: 'Built the learning base for sysdesign+interview-qa (declared tomorrow’s path). reading/dsa/machine-coding all missed — avoidance + clarity. /marketing queue ran.'
       },
       {
-        date: '2026-07-08', day: 'Wed', pending: true,
-        mustShip: 'Set at morning plan.',
+        date: '2026-07-08', day: 'Wed',
+        mustShip: false,
+        blocks: { reading:false, dsa:false, machineCoding:false, sysdesign:false, workout:true, project:true, interviewQa:false },
+        energy: 1, office: false,
+        notes: 'DSA avoidance 2nd day running — planned but didn’t solve. sysdesign only skimmed ch.1, not deep-read. project=fixed AdSense low-value-content rejection + redeployed. Energy 1/5 — root cause behind most misses.'
+      },
+      {
+        date: '2026-07-09', day: 'Thu',
+        mustShip: false,
+        blocks: { reading:false, dsa:false, machineCoding:false, sysdesign:false, workout:true, project:false, interviewQa:false },
+        energy: 1, office: true,
+        notes: 'Personal/family matter derailed the whole day — only workout landed. DSA missed 3rd day running, queue still empty (0 D0s logged). Office adherence held despite it.'
+      },
+      {
+        date: '2026-07-10', day: 'Fri', pending: true,
+        mustShip: 'Reset DSA — solve one clean Arrays/Two-Pointers problem (D0), no more avoidance.',
         blocks: { reading:false, dsa:false, machineCoding:false, sysdesign:false, workout:false, project:false, interviewQa:false },
         office: null
       }

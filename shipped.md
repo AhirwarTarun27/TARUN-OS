@@ -7,12 +7,14 @@
 ## Streak
 
 - **Weeks reviewed in a row:** 1
-- **Total things shipped:** 13
+- **Total things shipped:** 14
 
 ## Log (newest on top)
 
 <!-- Format: ## YYYY-MM-DD — one line on what you shipped -->
 <!-- Example: ## 2026-06-28 — Deployed dark-mode toggle to Jsonbeam -->
+
+## 2026-07-08 — Fixed AdSense low-value-content rejection (site flagged in review) and redeployed
 
 ## 2026-07-02 — GradeJar company/legal pages + secure contact form shipped — about/privacy/terms/contact, Web3Forms (zero backend, email never in bundle), axe-clean
 

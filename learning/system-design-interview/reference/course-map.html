@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course Map — System Design Interview (Xu Vol 1)</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap wide">
+
+  <header class="masthead">
+    <p class="eyebrow">Reference · Roadmap</p>
+    <h1>System Design Interview — Xu Vol 1</h1>
+    <p class="subtitle">The 15-chapter ladder to the design round. Watch-first loop: watch → read the chapter →
+    do the lesson → design it out loud. One tangible interview skill per chapter.</p>
+  </header>
+
+  <p style="font-family:var(--sans);font-size:0.9rem;color:var(--ink-soft)">
+    Progress:
+    <span class="pip now"></span>
+    <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+    <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+    <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+    <span class="pip"></span><span class="pip"></span>
+    &nbsp; 1 of 15 · <strong>on Chapter 1</strong>
+  </p>
+
+  <p class="part-label">Part I — Foundations (do these in order)</p>
+
+  <div class="module">
+    <h3><span class="modnum">Ch 1</span> Scale from Zero to Millions <span class="status now">Now</span></h3>
+    <ul>
+      <li>The scaling ladder: single server → LB → replication → cache → CDN → stateless → multi-DC → queue → sharding.</li>
+      <li>Win: narrate a system growing to millions of users, one lever at a time.</li>
+      <li><a href="../lessons/0001-scale-zero-to-millions.html">Lesson 1 →</a> · <a href="scaling-ladder.html">Cheat sheet →</a></li>
+    </ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">Ch 2</span> Back-of-the-Envelope Estimation <span class="status next">Next</span></h3>
+    <ul>
+      <li>QPS, storage, bandwidth math without freezing. Powers of two, latency numbers, the 80/20 rule.</li>
+      <li>Win: turn "millions of users" into concrete load numbers on demand.</li>
+    </ul>
+  </div>
+
+  <div class="module">
+    <h3><span class="modnum">Ch 3</span> A Framework for SD Interviews <span class="status next">Load-bearing</span></h3>
+    <ul>
+      <li>The 4 steps: scope → high-level design + buy-in → deep dive → wrap up. Watch BOTH framework videos.</li>
+      <li>Win: run the 45 minutes on autopilot so your brain is free for the actual design.</li>
+    </ul>
+  </div>
+
+  <p class="part-label">Part II — The systems (apply the framework)</p>
+
+  <div class="module">
+    <h3><span class="modnum">Ch 4</span> Rate Limiter <span class="status next">Later</span></h3>
+    <ul><li>Token bucket vs leaky bucket vs sliding window; where the limiter lives; distributed counting.</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 5</span> Consistent Hashing <span class="status next">Later</span></h3>
+    <ul><li>The resharding fix from Ch 1. Virtual nodes; the hash ring. Underpins Ch 6.</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 6</span> Key-Value Store <span class="status next">Later</span></h3>
+    <ul><li>CAP in practice, replication, quorum, versioning, the anatomy of a distributed store.</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 7</span> Unique ID Generator <span class="status next">Later</span></h3>
+    <ul><li>Snowflake IDs, why not auto-increment at scale, clock/ordering tradeoffs.</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 8</span> URL Shortener <span class="status next">Later</span></h3>
+    <ul><li>The classic warmup. Hashing vs base-62, read-heavy design, cache. (Hello Interview "Design Bitly".)</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 9</span> Web Crawler <span class="status next">Later</span></h3>
+    <ul><li>BFS at scale, politeness, dedup, the URL frontier.</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 10</span> Notification System <span class="status next">Later</span></h3>
+    <ul><li>Fan-out, providers, retries, the message queue from Ch 1 in anger.</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 11</span> News Feed System <span class="status next">Later</span></h3>
+    <ul><li>Fan-out on write vs read, the celebrity problem, feed ranking. (Gaurav Sen for depth.)</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 12</span> Chat System <span class="status next">Later</span></h3>
+    <ul><li>WebSockets, presence, message ordering + delivery, storage. (Design WhatsApp.)</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 13</span> Search Autocomplete <span class="status next">Later</span></h3>
+    <ul><li>Tries, top-k, prefix caching. (Gaurav Sen typeahead.)</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 14</span> Design YouTube <span class="status next">Later</span></h3>
+    <ul><li>Video upload/transcode pipeline, CDN, storage at scale. (Hello Interview "Design YouTube".)</li></ul>
+  </div>
+  <div class="module">
+    <h3><span class="modnum">Ch 15</span> Design Google Drive <span class="status next">Later</span></h3>
+    <ul><li>Sync, chunking, dedup, metadata vs blob storage.</li></ul>
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Ch 16</strong> ("The learning continues") is a wrap-up — no new system. Consolidate and review the
+    learning records. After Vol 1, the same loop runs on Vol 2 (proximity, Maps, payments, S3, etc.).
+  </div>
+
+  <div class="lesson-nav">
+    <a href="../lessons/0001-scale-zero-to-millions.html">← Lesson 1</a>
+    <a href="scaling-ladder.html">Scaling ladder cheat sheet →</a>
+  </div>
+
+</div>
+</body>
+</html>

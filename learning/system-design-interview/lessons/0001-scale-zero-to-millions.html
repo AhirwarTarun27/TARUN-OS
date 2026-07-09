@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1 · Scale from Zero to Millions — System Design (Xu Vol 1)</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 1 · Xu Vol 1, Chapter 1</p>
+    <h1>Scale from Zero to Millions of Users</h1>
+    <p class="subtitle">One server to a system that serves millions — as a ladder you can climb out loud.
+    Learn each rung, why you add it, and the one tradeoff it buys.</p>
+  </header>
+
+  <div class="note">
+    <span class="callout-label">Watch first, then read (your loop)</span>
+    <strong>Watch:</strong> <a href="https://www.youtube.com/results?search_query=ByteByteGo+scale+from+zero+to+millions">ByteByteGo
+    on YouTube</a> — open their latest scaling / load-balancing + replication walkthrough to prime the core rungs.
+    <strong>Read (canonical):</strong> <a href="https://bytebytego.com/courses/system-design-interview/scale-from-zero-to-millions-of-users">ByteByteGo
+    — Scale From Zero To Millions Of Users</a>, the free web version of this chapter by Alex Xu.
+    <strong>Skim (visual):</strong> <a href="https://github.com/ByteByteGoHq/system-design-101">ByteByteGo
+    system-design-101</a> — the scaling and load-balancing diagrams. This lesson is the <em>active recall</em>
+    layer where it sticks.
+  </div>
+
+  <div class="why">
+    <span class="callout-label">Why this is Lesson 1</span>
+    Almost every "design X" prompt is really "start simple, then scale it." This chapter is the
+    <strong>backbone move</strong>: you narrate a system growing from one box to millions of users, adding one
+    lever at a time and justifying each. Nail this and you always have something to say — even on a system
+    you've never seen. Chapters 4-15 are just this ladder applied to specific products.
+  </div>
+
+  <p><strong>Your win for today:</strong> close the laptop and narrate the whole ladder from memory — every rung,
+  in order, with the one-line reason you added it. That narration <em>is</em> the interview skill.</p>
+
+  <h2>Rung 1 · A single server</h2>
+  <p>Everything on one box: web app, database, cache. A user types <code>gradejar.com</code>, and:</p>
+  <div class="arch">
+    <span class="node">User / browser</span>
+    <span class="arrow">→</span>
+    <span class="node">DNS</span>
+    <span class="arrow">→ IP →</span>
+    <span class="node hi">Web server (app + DB + cache)</span>
+    <span class="arrow">→ HTML/JSON →</span>
+    <span class="node">User</span>
+  </div>
+  <p><strong>DNS</strong> (usually a managed 3rd-party service) turns the domain into an IP address. The browser
+  hits that IP; the server returns HTML or a JSON response. Web browsers and mobile apps are the two traffic
+  sources. This works fine — until one box can't keep up.</p>
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "I'll start with the simplest thing that works: a single server handling requests, with DNS resolving the
+    domain. Then I'll scale it as we find the bottlenecks." Interviewers <em>want</em> you to start simple.
+  </div>
+
+  <h2>Rung 2 · Split the web tier and data tier</h2>
+  <p>Move the database off the web server onto its own machine. Now the <strong>web tier</strong> and
+  <strong>data tier</strong> can be scaled <em>independently</em> — the whole game from here on.</p>
+  <div class="note">
+    <span class="callout-label">Which database?</span>
+    A quick fork most candidates fumble. Default to <strong>relational (SQL)</strong> — Postgres, MySQL — for
+    structured data and multi-row transactions. Reach for <strong>non-relational (NoSQL)</strong> when you need
+    very low latency, unstructured or huge data, or massive scale with simple query patterns.
+  </div>
+  <div class="tradeoff">
+    <div>
+      <h4>Relational (SQL)</h4>
+      <ul>
+        <li class="pro">Joins, transactions, strong consistency</li>
+        <li class="pro">Battle-tested, well understood</li>
+        <li class="con">Harder to scale horizontally (sharding)</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Non-relational (NoSQL)</h4>
+      <ul>
+        <li class="pro">Scales horizontally with ease</li>
+        <li class="pro">Flexible schema, low latency</li>
+        <li class="con">Weak joins, often eventual consistency</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Rung 3 · Vertical vs horizontal scaling</h2>
+  <p>Two ways to add power. This distinction is the vocabulary the whole chapter turns on.</p>
+  <div class="tradeoff">
+    <div>
+      <h4>Vertical (scale up)</h4>
+      <ul>
+        <li class="pro">Simple — just a bigger box</li>
+        <li class="con">Hard ceiling on one machine</li>
+        <li class="con">No failover — it's a single point of failure</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Horizontal (scale out)</h4>
+      <ul>
+        <li class="pro">No real ceiling — add more boxes</li>
+        <li class="pro">Redundancy / failover built in</li>
+        <li class="con">More complex — needs a load balancer</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "Vertical scaling is simplest but it has a hard ceiling and no failover. At scale I'll go horizontal — more
+    servers behind a load balancer — for both capacity and redundancy."
+  </div>
+
+  <h2>Rung 4 · Load balancer</h2>
+  <p>Put a <strong>load balancer</strong> in front of multiple web servers. Users hit the load balancer's public
+  IP; it forwards each request to a healthy server over private IPs. This removes the web tier's single point of
+  failure and lets you add servers as traffic grows.</p>
+  <div class="arch">
+    <span class="node">Users</span>
+    <span class="arrow">→</span>
+    <span class="node hi">Load balancer</span>
+    <span class="arrow">→</span>
+    <span class="node">Web server 1</span>
+    <span class="node">Web server 2</span>
+    <span class="node">Web server N</span>
+  </div>
+
+  <h2>Rung 5 · Database replication</h2>
+  <p>The DB is now the weak link. <strong>Replication</strong>: one <strong>master</strong> (a.k.a. primary)
+  takes all <em>writes</em>; multiple <strong>slaves</strong> (replicas) take <em>reads</em>. Most apps read far
+  more than they write, so this scales the common case, and gives you reliability and availability.</p>
+  <ul>
+    <li><strong>Better performance</strong> — reads spread across many replicas.</li>
+    <li><strong>Reliability</strong> — data survives if one node dies.</li>
+    <li><strong>Availability</strong> — if a replica goes down, others serve; if the master dies, a replica is
+    promoted (failover).</li>
+  </ul>
+
+  <h2>Rung 6 · Cache</h2>
+  <p>A <strong>cache</strong> is a fast in-memory store (e.g. Redis) for the results of expensive or frequent
+  reads. The web server checks the cache first (a <em>read-through</em> cache): hit → return it; miss → read the
+  DB, store it in cache, return it.</p>
+  <div class="tip">
+    <span class="callout-label">Interview gold — cache considerations</span>
+    Name these unprompted and you sound senior: <strong>when to use</strong> (read often, write rarely);
+    <strong>expiration / TTL</strong> (too short = thrash, too long = stale); <strong>consistency</strong> (cache
+    vs source of truth can drift); <strong>eviction</strong> (LRU when full); and it's a
+    <strong>single point of failure</strong> unless replicated.
+  </div>
+
+  <h2>Rung 7 · CDN</h2>
+  <p>A <strong>CDN</strong> is a network of geographically distributed edge servers that cache
+  <strong>static</strong> content — images, CSS, JS, video. A user in Tokyo gets assets from a nearby edge node
+  instead of your origin in Virginia, so latency drops. Watch: <em>TTL</em> (how long to cache), a
+  <em>fallback</em> if the CDN is down, and <em>invalidation</em> when assets change.</p>
+  <div class="note">
+    <span class="callout-label">Cache vs CDN — don't blur them</span>
+    <strong>Cache</strong> = your dynamic data / query results, near the <em>server</em>.
+    <strong>CDN</strong> = static assets, near the <em>user</em>. Different problems, different tiers.
+  </div>
+
+  <h2>Rung 8 · Stateless web tier</h2>
+  <p>To scale the web tier freely, make it <strong>stateless</strong>: move session data <em>out</em> of the
+  individual web servers into a shared store (a NoSQL store or cache). Now any server can handle any request, so
+  you can add, remove, or auto-scale servers without breaking a user's session.</p>
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "I'll keep the web tier stateless — session state lives in a shared store, not on the server — so I can
+    autoscale horizontally and any request can hit any node."
+  </div>
+
+  <h2>Rung 9 · Multiple data centers</h2>
+  <p>For global reach and disaster resilience, run in multiple <strong>data centers</strong>.
+  <strong>geoDNS</strong> routes each user to the nearest one. If one DC fails, traffic reroutes to another. The
+  hard parts to name: <em>traffic redirection</em>, <em>data synchronization</em> across DCs, and
+  <em>test/deploy</em> consistency.</p>
+
+  <h2>Rung 10 · Message queue</h2>
+  <p>A <strong>message queue</strong> decouples producers from consumers. The web server drops a job on the queue
+  and returns immediately; workers consume and process asynchronously. Producers and consumers scale
+  independently, and a slow consumer can't block the request. Think: sending emails, processing uploads,
+  generating thumbnails.</p>
+
+  <h2>Rung 11 · Database sharding (scale the data tier)</h2>
+  <p>Replication scales <em>reads</em>, not writes or storage. When one master can't hold or write the data,
+  <strong>shard</strong>: split the data across many databases by a <strong>sharding key</strong> (e.g.
+  <code>user_id % 4</code>). Each shard holds a slice; each is independent.</p>
+  <div class="tip">
+    <span class="callout-label">Interview gold — sharding challenges</span>
+    <strong>Resharding</strong> (adding a shard forces data movement — consistent hashing helps, that's Ch 5),
+    <strong>hotspots / the "celebrity problem"</strong> (one shard gets hammered), and <strong>cross-shard
+    joins</strong> (queries spanning shards get painful). Naming these is what separates a real answer.
+  </div>
+  <div class="napkin">
+    <b>Taste of Ch 2 (estimation):</b> "millions of users" isn't a number — turn it into load.<br>
+    10M daily users × 10 requests/day = 100M req/day.<br>
+    100M ÷ 86,400 s ≈ <b>~1,160 QPS average</b>, peak maybe 2-3x → ~3,000 QPS.<br>
+    That number is what tells you how many web servers and replicas you actually need. We drill this next lesson.
+  </div>
+
+  <h2>The whole ladder — your narration script</h2>
+  <p>This is the thing to memorize. Not the diagrams — <em>this order</em>. Each rung = the bottleneck it fixes.</p>
+  <ol class="ladder">
+    <li><span class="rung-t">Single server.</span> <span class="rung-why">Simplest thing that works; DNS → one box.</span></li>
+    <li><span class="rung-t">Split web / data tier.</span> <span class="rung-why">Scale them independently.</span></li>
+    <li><span class="rung-t">Go horizontal.</span> <span class="rung-why">Vertical hits a ceiling and has no failover.</span></li>
+    <li><span class="rung-t">Load balancer.</span> <span class="rung-why">Spread traffic; kill the web-tier SPOF.</span></li>
+    <li><span class="rung-t">DB replication.</span> <span class="rung-why">Master writes, replicas read; reliability + failover.</span></li>
+    <li><span class="rung-t">Cache.</span> <span class="rung-why">Absorb hot reads in memory.</span></li>
+    <li><span class="rung-t">CDN.</span> <span class="rung-why">Serve static assets from the edge, near the user.</span></li>
+    <li><span class="rung-t">Stateless web tier.</span> <span class="rung-why">Session in a shared store → autoscale freely.</span></li>
+    <li><span class="rung-t">Multiple data centers.</span> <span class="rung-why">geoDNS routing; survive a DC outage.</span></li>
+    <li><span class="rung-t">Message queue.</span> <span class="rung-why">Decouple + async; scale workers apart.</span></li>
+    <li><span class="rung-t">Shard the database.</span> <span class="rung-why">Scale writes + storage past one box.</span></li>
+  </ol>
+
+  <h2>Retrieval check</h2>
+  <p>No scrolling up. Answer, then read why.</p>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">What is the main weakness of vertical scaling?</p>
+    <ul class="quiz-opts">
+      <li><button>It always costs far more money</button></li>
+      <li><button>It needs a load balancer first</button></li>
+      <li><button>It has a ceiling and no failover</button></li>
+      <li><button>It cannot serve any static files</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Ceiling and no failover.</strong> One machine can only get so big, and if
+    that single box dies the whole service dies. That's why large systems scale out, not just up.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">In database replication, who handles write operations?</p>
+    <ul class="quiz-opts">
+      <li><button>Any replica that is free</button></li>
+      <li><button>Only the master / primary</button></li>
+      <li><button>The load balancer decides</button></li>
+      <li><button>Whichever node is closest</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Only the master.</strong> Writes go to the single master; replicas take
+    reads. Most apps read far more than they write, so this scales the common path — and a replica can be
+    promoted if the master fails.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">Which problem does sharding solve that replication does not?</p>
+    <ul class="quiz-opts">
+      <li><button>Scaling writes and storage size</button></li>
+      <li><button>Serving images closer to users</button></li>
+      <li><button>Removing the web-tier bottleneck</button></li>
+      <li><button>Keeping the web servers stateless</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Writes and storage.</strong> Replication only scales reads — every write
+    still hits one master, and every node still holds the whole dataset. Sharding splits the data across many
+    databases so writes and storage scale horizontally.</div>
+  </div>
+
+  <details class="reveal">
+    <summary>Harder: a user reports their new post is missing right after they publish it. What's a likely cause?</summary>
+    <p><strong>Replication lag.</strong> The write hit the master, but the read went to a replica that hasn't
+    caught up yet — so the user reads stale data. Common fix: read-your-own-writes (route that user's reads to
+    the master briefly, or read from cache). This is the everyday face of "eventual consistency."</p>
+  </details>
+
+  <div class="drill">
+    <span class="callout-label">Design out loud — the real rep</span>
+    <p>Stand up. Out loud, no notes, narrate scaling <strong>a photo-sharing app</strong> from its first user to
+    10 million. Force yourself to hit, in order:</p>
+    <ol>
+      <li>Single server + DNS → why you split the data tier off.</li>
+      <li>Horizontal web tier + load balancer → why not just a bigger box.</li>
+      <li>Replication → cache → CDN (and <em>which</em> content goes to the CDN, and why).</li>
+      <li>Stateless tier → message queue (what async job? thumbnail generation).</li>
+      <li>Sharding → name one challenge (celebrity user? resharding?).</li>
+    </ol>
+    <p>Then tell your teacher (me) to grade it — or record it and self-grade against the ladder above. If you can
+    do this in ~3 minutes without peeking, Chapter 1 is banked.</p>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">Primary source — the canonical read</span>
+    <a href="https://bytebytego.com/courses/system-design-interview/scale-from-zero-to-millions-of-users">ByteByteGo
+    — Scale From Zero To Millions Of Users</a>. It's the free web version of this exact chapter, by Alex Xu, with
+    the diagrams that match the book. Reread it once after this lesson and the ladder will lock in.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Stuck or curious?</strong> I'm your teacher — ask me anything from this lesson. Want a harder drill,
+    a diagram of any rung, me to play interviewer and grade your photo-app narration, or a deeper dive on
+    replication lag / sharding? Say the word.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="../reference/course-map.html">← Course map</a>
+    <a href="../reference/scaling-ladder.html">Cheat sheet: the scaling ladder →</a>
+  </div>
+  <div class="lesson-nav" style="margin-top:1rem;border-top:none;padding-top:0;">
+    <span></span>
+    <a href="#">Next — Lesson 2: Back-of-the-envelope estimation (Ch 2) →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

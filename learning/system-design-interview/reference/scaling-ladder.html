@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cheat Sheet — The Scaling Ladder (Ch 1)</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Reference · Chapter 1 · Print-friendly</p>
+    <h1>The Scaling Ladder</h1>
+    <p class="subtitle">The compressed essence of "Scale from Zero to Millions." Memorize the order and the
+    one-line reason for each rung. This is your interview narration script.</p>
+  </header>
+
+  <ol class="ladder">
+    <li><span class="rung-t">Single server.</span> <span class="rung-why">DNS → one box (app + DB + cache). Start simple.</span></li>
+    <li><span class="rung-t">Split web / data tier.</span> <span class="rung-why">DB on its own machine → scale tiers independently.</span></li>
+    <li><span class="rung-t">Horizontal &gt; vertical.</span> <span class="rung-why">Up = ceiling + SPOF. Out = capacity + redundancy.</span></li>
+    <li><span class="rung-t">Load balancer.</span> <span class="rung-why">Public IP front; spreads traffic; removes web-tier SPOF.</span></li>
+    <li><span class="rung-t">DB replication.</span> <span class="rung-why">Master = writes, replicas = reads. Reliability + failover.</span></li>
+    <li><span class="rung-t">Cache.</span> <span class="rung-why">In-memory hot reads (read-through). Near the server.</span></li>
+    <li><span class="rung-t">CDN.</span> <span class="rung-why">Static assets from the edge, near the user.</span></li>
+    <li><span class="rung-t">Stateless web tier.</span> <span class="rung-why">Session → shared store → autoscale freely.</span></li>
+    <li><span class="rung-t">Multiple data centers.</span> <span class="rung-why">geoDNS routing; survive a DC outage.</span></li>
+    <li><span class="rung-t">Message queue.</span> <span class="rung-why">Decouple + async; scale workers independently.</span></li>
+    <li><span class="rung-t">Shard the database.</span> <span class="rung-why">Split by sharding key → scale writes + storage.</span></li>
+  </ol>
+
+  <h2>The "name the considerations" table</h2>
+  <p>Interviewers reward you for naming the gotchas <em>before</em> they ask. Keep these on the tip of your tongue.</p>
+
+  <div class="qa">
+    <p class="q" style="--x:0">Cache</p>
+    <p style="font-family:var(--sans);font-size:0.9rem;color:var(--ink-soft);margin:0">
+      When to use (read-heavy) · TTL / expiration · consistency with source of truth · eviction (LRU) · it's a SPOF unless replicated.</p>
+  </div>
+  <div class="qa">
+    <p class="q">CDN</p>
+    <p style="font-family:var(--sans);font-size:0.9rem;color:var(--ink-soft);margin:0">
+      Cost (cache only hot assets) · TTL · fallback if CDN down · invalidation when assets change.</p>
+  </div>
+  <div class="qa">
+    <p class="q">Sharding</p>
+    <p style="font-family:var(--sans);font-size:0.9rem;color:var(--ink-soft);margin:0">
+      Resharding (→ consistent hashing, Ch 5) · celebrity / hotspot problem · cross-shard joins get hard.</p>
+  </div>
+  <div class="qa">
+    <p class="q">Multi data center</p>
+    <p style="font-family:var(--sans);font-size:0.9rem;color:var(--ink-soft);margin:0">
+      Traffic redirection (geoDNS) · data synchronization across DCs · consistent test / deploy.</p>
+  </div>
+
+  <h2>Glossary — Chapter 1 terms</h2>
+  <ul style="font-family:var(--sans);font-size:0.92rem;color:var(--ink-soft)">
+    <li><strong>Web tier / data tier</strong> — the request-handling layer vs the storage layer; scaled separately.</li>
+    <li><strong>Vertical scaling</strong> — a bigger single machine. <strong>Horizontal scaling</strong> — more machines.</li>
+    <li><strong>Load balancer</strong> — distributes incoming traffic across web servers over private IPs.</li>
+    <li><strong>Replication (master/replica)</strong> — master takes writes, replicas take reads; enables failover.</li>
+    <li><strong>Replication lag</strong> — a replica trailing the master → temporarily stale reads.</li>
+    <li><strong>Cache</strong> — fast in-memory store for hot data. <strong>Read-through</strong> — check cache, then DB on miss.</li>
+    <li><strong>CDN</strong> — geographically distributed edge servers caching static content near users.</li>
+    <li><strong>Stateless</strong> — server holds no session state; any node can serve any request.</li>
+    <li><strong>SPOF</strong> — single point of failure; a component whose death takes the whole system down.</li>
+    <li><strong>Message queue</strong> — buffer that decouples producers from consumers for async work.</li>
+    <li><strong>Sharding</strong> — splitting one database into many by a <em>sharding key</em>; scales writes + storage.</li>
+    <li><strong>Sharding key</strong> — the column that decides which shard a row lives on (e.g. <code>user_id</code>).</li>
+    <li><strong>geoDNS</strong> — DNS that returns a different IP based on the user's location.</li>
+  </ul>
+
+  <div class="lesson-nav">
+    <a href="../lessons/0001-scale-zero-to-millions.html">← Lesson 1</a>
+    <a href="course-map.html">Course map →</a>
+  </div>
+
+</div>
+</body>
+</html>

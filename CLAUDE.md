@@ -11,7 +11,7 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 ## Your skills
 
 **Operating rhythm:**
-- `/daily-log` — Weekday execution ritual. `plan` at 10:30am sets today's per-block focus; `wrap` at 12:15am runs a short QnA and banks one compact log entry. Tracks the fixed routine in `daily/schedule.md`, keeps a terse rolling log, and compresses to a monthly summary at month-end. The hours-level engine under `/weekly-review`.
+- `/daily-log` — Weekday execution ritual. `plan` at 10:30am sets today's per-block focus; `wrap` at 12:15am runs a short QnA and banks one compact log entry. Tracks the fixed routine in `daily/schedule.md`, keeps a terse rolling log, and compresses to a monthly summary at month-end. The hours-level engine under `/weekly-review`. Also reads/advances `learning/dsa/queue.md` — the DSA spaced-rep tracker (Namaste DSA ladder D0→D2→D5-if-struggling→D10) — surfacing due revisions at plan and banking ratings at wrap.
 - `/weekly-review` — Sunday execution ritual. Score the week, bank what shipped, reset next week's 3 outcomes. THIS is the follow-through engine. Don't skip it.
 - `/onboard` — already run if you're seeing this filled in. Re-run any time to refresh from an edited `aios-intake.md`.
 - `/audit` — Four-Cs gap report. Run on Day 7, then weekly. Watch your score climb.
