@@ -1,8 +1,35 @@
 # JsonBeam — Marketing Action Plan (30/60/90)
 
-Written 2026-07-03. Budget $0. Shares Tarun's ~15 min/day + ~30 min Sunday with GradeJar:
-ONE combined queue, and GradeJar's Phase 0 + back-to-school window (Aug 1 - Sep 15) win
-ties through mid-September. The `/marketing` skill turns this file into daily queues.
+Written 2026-07-03. Budget $0. ONE combined queue with GradeJar; GradeJar's back-to-school
+window (Aug 1 - Sep 15) wins ties through mid-September. Engine is **weekly-first** as of
+2026-07-10 — the REPLAN below supersedes the 30/60/90 cadences; the checklists survive as
+the item inventory with status tags (`[>]` moved, `[~]` parked).
+
+## REPLAN 2026-07-10 — maintenance mode (through GradeJar's window; re-decide at Day-90)
+
+Reality check: GA4 users fell 60 → 25 across the first week of tracking, and AdSense
+rejected the site for low-value content on Jul 8 (flagged pages fixed + redeployed same
+day; re-review clock running). Neither breaks the plan's logic — the organic discovery
+work simply hasn't landed yet — but the dev-adblock ceiling plus GradeJar's seasonal
+window mean JsonBeam runs MAINTENANCE until the Day-90 rescore. The decline is observed,
+not panic-actionable: don't spend budget chasing it before organic assets exist.
+
+**Product repo (build mode):** _confirm local path at first build-mode run and record it here._
+
+**Allowed items only:**
+
+- [ ] **M1 — Directory "Starter 5" batch** (drafts ready in `marketing/queue/2026-07-08.md`:
+  AlternativeTo, SaaSHub, StackShare, Slant, Toolify). One sitting; one-time backlinks.
+- [ ] **M2 — BUILD: privacy-audit flagship article** ("I checked what 10 online JSON
+  formatters do with your data", network-tab receipts). AIOS writes it complete in the
+  JsonBeam repo → `[ ] BUILT` · published on-site, canonical → `[ ] SHIPPED`.
+  NOTE: on-site publishing needs the observe-mode exception decision (Days 1-30 note
+  below) — Tarun's call, log it in `decisions/log.md`.
+- [ ] **M3 — Show HN gate, UPDATED:** prereqs = Phase 0 ✓ + privacy verified ✓ + pages
+  polished + **AdSense re-review PASSED**. Never spend the one shot while the low-value
+  cloud is unresolved and a traffic spike can't monetize.
+- **Cap: ≤2 human items/week.** Everything else in the 30/60/90 below is parked to the
+  Day-90 rescore.
 
 **Baseline (live via `scripts/report.mjs`, 2026-07-03):** 36 users / 46 sessions / 84
 pageviews in the last 7 days. Direct 34 sessions, organic search 7, social 4. US 18 users,
@@ -78,6 +105,8 @@ That's a fine outcome; the plumbing and backlinks keep paying anyway.
 
 ## Standing rules
 
-- One queue with GradeJar, ≤15 min/day total. GradeJar's back-to-school window wins ties through mid-September.
+- One weekly Sunday queue with GradeJar (≤45 min total, chained from `/weekly-review`);
+  JsonBeam gets ≤2 human items/week in maintenance. GradeJar's back-to-school window wins
+  ties through mid-September.
 - Never: LinkedIn, work email, paid ads, auto-posting to communities, unreviewed external copy, unverified privacy claims.
 - Show HN and newsletter pitches are one-shots. Never send early just to hit a date.

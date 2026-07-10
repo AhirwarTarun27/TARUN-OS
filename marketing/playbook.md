@@ -10,9 +10,12 @@ Products through it so far: **GradeJar** (teachers, US-first) and **JsonBeam** (
 global with US priority). To onboard the next product: add a priority column, rescore the
 table for that audience, generate `marketing/<product>/`.
 
-Built: 2026-07-03. Generalized to multi-product: 2026-07-03. Budget assumption: $0 (organic
-only). Human time: ~15 min/day approve-and-post TOTAL across all products (one shared
-queue), plus ~30 min Sundays.
+Built: 2026-07-03. Generalized to multi-product: 2026-07-03. Inverted to weekly-first:
+2026-07-10 (the daily engine stalled in week one; see `decisions/log.md`). Budget
+assumption: $0 (organic only). Human time: one ~30-45 min Sunday session (chained from
+`/weekly-review`, one shared queue across all products), plus optional triggered
+micro-sessions ≤15 min. AIOS build effort (pSEO pages, articles) is unlimited and doesn't
+count against his window.
 
 ## The model
 
@@ -22,6 +25,7 @@ AdSense products make money one way: **traffic x RPM**. So marketing optimizes f
 2. **US traffic** beats global (US RPM is 3-10x higher). And *realized* RPM depends on the audience: dev audiences run ad blockers heavily (~40-60%), teachers mostly don't. Score volume AND what a view actually pays.
 3. **Compounding channels** (SEO, pins, videos, backlinks) beat feed channels (posts that die in 24h).
 4. **Tool queries survive AI search.** AI Overviews eat informational queries, but a user still has to visit to USE a calculator or formatter. Bias toward "do a thing" keywords over "learn a thing" keywords.
+5. **The engine's unit of work is a compounding asset shipped, reviewed weekly.** Feed items are opportunistic garnish, not the engine. A week that ships one pSEO page set beats a week of ten social posts — and the AIOS can build the former end-to-end, so the human bottleneck only touches review + deploy.
 
 ## Scoring criteria (1-5 each)
 
@@ -93,9 +97,11 @@ Why paid is X even beyond budget: AdSense RPM on tool sites runs roughly $5-25 p
 
 ## SOPs (what the engine runs)
 
-**Daily (AIOS drafts, Tarun approves ~15 min):** run `/marketing`. It reads every active `marketing/<product>/action-plan.md` + content strategy, drafts today's items across all products (pin, Reddit comment/post, pitch, page copy), writes them to ONE `marketing/queue/YYYY-MM-DD.md`. Tarun approves, posts, marks done. Posted items land in `marketing/log.md`. The 15-minute budget is total, not per product.
+**Weekly (primary — Sunday, chained from /weekly-review):** run `/marketing`. It pulls `node scripts/report.mjs`, scores channels per product (feed / hold / kill — fair test = 4-6 weeks for feed channels, 3 months for SEO), banks the scorecard in `marketing/log.md`, then sets the week: exactly ONE build-mode assignment + ≤4 human items in ONE `marketing/queue/YYYY-MM-DD.md`. Tarun approves and posts in ≤45 min. A missed Sunday is made up at the next session, never skipped.
 
-**Weekly (Sunday, with /weekly-review):** pull `node scripts/report.mjs`; compare channels per product; kill what's flat after a fair test (4-6 weeks for feed channels, 3 months for SEO); double down on what moves; adjust next week's calendar.
+**Build mode (AIOS builds, any day):** the week's compounding asset — pSEO page sets, on-site articles, FAQ/GEO passes — produced END-TO-END by the AIOS directly in the local product repo, ready to commit. Tarun reviews, commits, deploys. Tracked BUILT → SHIPPED in the action plan; stuck >2 weeks at BUILT = kill-or-carry. Never counts against his time window.
+
+**Opportunistic daily (optional, trigger-only):** only on a dated trigger — pitch follow-up due, live thread, launch window. ≤2 items, ≤15 min. No standing daily obligation.
 
 **Monthly:** rank check on money keywords per product, backlink review, refresh 1-2 old pages, GEO citation spot-check (ask ChatGPT/Perplexity/Claude the money questions, log who gets cited).
 

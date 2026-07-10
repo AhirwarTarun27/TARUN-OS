@@ -1,7 +1,39 @@
 # GradeJar — Marketing Action Plan (30/60/90)
 
-Written 2026-07-03. Budget $0. Tarun ~15 min/day + ~30 min Sundays. AIOS drafts everything.
-The `/marketing` skill turns this file into daily queues in `marketing/queue/`.
+Written 2026-07-03. Budget $0. AIOS drafts everything. Engine is **weekly-first** as of
+2026-07-10 — the REPLAN below supersedes the 30/60/90 cadences; the checklists survive as
+the item inventory with status tags (`[>]` moved, `[~]` parked).
+
+## REPLAN 2026-07-10 — weekly engine + back-to-school sprint (now → Sep 15)
+
+Reality check: the daily engine produced 3 queues in week one, then lapsed (the job hunt
+is Priority 1 and the queue needed daily human posting). The engine is now one Sunday
+session + AIOS build mode — see `marketing/playbook.md` SOPs. What survives is what
+compounds: this sprint exists because **the Aug 1 - Sep 15 teacher window opens in ~3
+weeks and indexing takes weeks** — the seasonal pages must go live NOW, not in August.
+
+**Product repo (build mode):** `C:\Users\ahirwar.tarun\Documents\Learning\MyProjects\GradeJar`
+(confirm conventions on first build-mode run).
+
+**Sprint priorities, in order:**
+
+- [ ] **P1 — BUILD: need-on-final + gradebook-setup pSEO set** (pulled forward from Days
+  31-60 — hardest deadline in the portfolio: live + indexed by mid-Sept for both the
+  teacher window and Dec finals). AIOS builds the pages end-to-end in the GradeJar repo;
+  Tarun reviews + deploys. Target: drafts complete ~Jul 19 → `[ ] BUILT` · deployed +
+  indexing requested ~Jul 26 → `[ ] SHIPPED`.
+- [ ] **P2 — Directory one-time batch** (AIOS pre-fills 20 submissions; one Sunday sitting).
+- [ ] **P3 — July pitch follow-ups, dated:** `[ ]` Larry Ferlazzo (due ~Jul 10) ·
+  `[ ]` Free Tech for Teachers (due ~Jul 14). One follow-up each, then stop (outreach SOP).
+- [ ] **P4 — Pinterest decision** (first weekly session): monthly batch via the native
+  30-day scheduler (one sitting/month) vs park. Not a daily channel either way.
+- [ ] **Measurement (headlines every queue until done):** `[ ]` GSC API wiring (Tarun
+  one-time auth grant) · `[ ]` decide GradeJar user analytics — add a GA4 property vs
+  accept bot-inclusive CF edge logs.
+
+**Parked at replan:** email newsletter (ongoing human cost doesn't fit the weekly reality),
+`/ez-grader/N` pSEO batch (behind the seasonal set now), HARO platforms (already parked),
+YouTube / Bluesky / Quora / influencer wave (revisit at the Day-90 rescore).
 
 ## Phase 0 — STOP-THE-BLEED (this week, Jul 3-6)
 
@@ -20,7 +52,7 @@ Back-to-school editorial lists are being assembled NOW. July is pitch month.
 
 **SEO/pSEO (AIOS drafts, Tarun ships):**
 - [ ] Keyword map for the full niche (AIOS, week 1) -> `marketing/gradejar/keyword-map.md`
-- [ ] First pSEO batch: `/ez-grader/N-questions` for the 15 most-searched N values. Real per-page charts + unique copy. Watch GSC before scaling.
+- [~] PARKED 2026-07-10 — First pSEO batch: `/ez-grader/N-questions` for the 15 most-searched N values. Behind the need-on-final seasonal set (REPLAN P1); revisit after it ships.
 - [ ] Front-load every existing FAQ answer (GEO extraction pass over the 15 tool pages).
 
 **PR/outreach (AIOS drafts, Tarun sends):**
@@ -38,17 +70,17 @@ Back-to-school editorial lists are being assembled NOW. July is pitch month.
 - [ ] AIOS daily thread scan + drafted replies in the queue.
 
 **Email:**
-- [ ] MailerLite/Buttondown free account + signup box on gradejar.com ("Grading tips, 2x/month").
-- [ ] Issue #1 drafted for Aug 1 (back-to-school gradebook setup guide).
+- [~] PARKED 2026-07-10 — MailerLite/Buttondown + signup box + Issue #1. Ongoing human
+  cost doesn't fit the weekly-first reality; revisit at Day-90 rescore.
 
 **Directories (one-time batch):**
-- [ ] AIOS pre-fills 20 submissions (EdTech Index, AlternativeTo, free-tool + startup directories). Tarun submits in one sitting.
+- [>] MOVED 2026-07-10 to REPLAN P2 — AIOS pre-fills 20 submissions (EdTech Index, AlternativeTo, free-tool + startup directories). Tarun submits in one sitting.
 
 ## Days 31-60 (Aug 3 - Sep 1) — Back-to-school push
 
 - [ ] Reddit value post week of Aug 17-24 (peak setup time): the honest maker post with the privacy hook. Same week: FB group recommendation-thread activity.
 - [ ] Pinterest to 2 pins/day through Sep 15 (gradebook setup + grading scale content).
-- [ ] pSEO batch 2: grading-scale pages + need-on-final set (prep for Dec finals: pages need 3 months to rank).
+- [>] MOVED 2026-07-10 to REPLAN P1 — pSEO batch 2: grading-scale pages + need-on-final set (prep for Dec finals: pages need 3 months to rank). Pulled forward; building NOW.
 - [ ] Newsletter issues Aug 1 + Aug 15 to whatever list exists.
 - [ ] First YouTube screencast IF Tier 1 is humming: "Private gradebook setup in 5 minutes" (AIOS scripts it, faceless screen recording is fine).
 - [ ] Follow up all July pitches (one follow-up each, day 7).
@@ -74,7 +106,8 @@ Back-to-school editorial lists are being assembled NOW. July is pitch month.
 
 ## Standing rules
 
-- Daily: run `/marketing` -> approve queue (≤15 min) -> post -> log.
-- Sunday: channel scorecard inside `/weekly-review` (+ ~30 min pin batching).
+- Weekly: Sunday `/marketing` session chained from `/weekly-review` — scorecard + ONE
+  build-mode assignment + ≤4 human items (≤45 min total). Micro-days only on dated triggers.
+- Build-mode assets track BUILT → SHIPPED here; stuck >2 weeks at BUILT = kill-or-carry.
 - Never: LinkedIn, work email, paid ads, auto-posting to communities, unreviewed external copy.
 - Dec finals season is the biggest student-side spike of the year: the need-on-final pages MUST be live and indexed by mid-September. Do not let this slip.

@@ -1,13 +1,16 @@
 ---
 name: marketing
-description: The daily marketing engine for every product in the portfolio (GradeJar, JsonBeam, future launches). Reads each active marketing/<product>/action-plan.md + content-strategy.md, drafts today's content (pins, Reddit replies, pitches, page copy) into ONE marketing/queue/YYYY-MM-DD.md for a 15-minute approve-and-post, and logs posted items to marketing/log.md. Weekly mode (Sundays or "marketing week") scores channels per product against live data and adjusts each plan. Trigger on "run marketing", "daily marketing", "marketing queue", "draft today's posts", "promote gradejar", "promote jsonbeam", "what should I post". Drafts only — Tarun posts everything himself.
+description: The weekly-first marketing engine for every product in the portfolio (GradeJar, JsonBeam, future launches). One Sunday session (chained from /weekly-review, ≤45 min of Tarun's time) scores channels against live data, assigns ONE build-mode asset the AIOS produces end-to-end (pSEO pages, articles — ready-to-commit in the product repo), and queues ≤4 human items into marketing/queue/YYYY-MM-DD.md. Daily micro-mode is optional and trigger-only (pitch follow-up due, live thread, launch window). Trigger on "run marketing", "marketing week", "marketing queue", "build <asset>", "promote gradejar", "promote jsonbeam", "what should I post". Drafts only for external posting — Tarun posts and deploys everything himself.
 ---
 
-# Marketing — the daily engine
+# Marketing — the weekly-first engine
 
-Priority 2 made real: hands-off, consistent promotion for the whole portfolio. The AIOS
-drafts, Tarun approves and posts in ~15 min/day TOTAL across all products. Strategy lives
-in `marketing/` — this skill executes it one day at a time. Never invent strategy mid-run;
+Rebuilt 2026-07-10. The daily-queue engine stalled in week one (3 queues, then 3 empty
+days) because it demanded daily human posting from a person whose Priority 1 is a job
+hunt. The playbook's own model says compounding channels beat feed channels — so the
+engine now optimizes for that: **the unit of work is a compounding asset shipped, not a
+feed item posted.** The AIOS builds; Tarun reviews, posts, and deploys. Strategy lives in
+`marketing/` — this skill executes it one week at a time. Never invent strategy mid-run;
 if a plan looks wrong, say so and propose an edit to the plan file instead.
 
 ## Products
@@ -19,37 +22,48 @@ products join by getting a folder (see `marketing/playbook.md`, per-launch SOP).
 ## Files this skill touches
 
 Per product `<p>` (e.g. `gradejar`, `jsonbeam`):
-- `marketing/<p>/action-plan.md` — what phase we're in, what's open. THE driver.
-- `marketing/<p>/content-strategy.md` — cadences, calendar spine, repurposing chain.
+- `marketing/<p>/action-plan.md` — current priorities + the BUILT→SHIPPED asset tracker. THE driver.
+- `marketing/<p>/content-strategy.md` — content angles, calendar spine, repurposing chain.
 - `marketing/<p>/channels.md` — per-channel rules (90/10, disclosure, anti-spam).
 - `marketing/<p>/outreach-targets.md` — PR/blog target list with status per target.
 - `marketing/<p>/idea-bank.md` — content ideas; every idea runs the repurposing chain.
 
 Shared:
 - `marketing/playbook.md` — criteria, master channel table, SOPs. The strategy home.
-- `marketing/queue/YYYY-MM-DD.md` — today's output. ONE file per day, all products.
-- `marketing/log.md` — append-only record of everything posted/sent. Never delete.
+- `marketing/queue/YYYY-MM-DD.md` — ONE file per session (normally Sunday-dated), all products.
+- `marketing/log.md` — append-only record of everything posted/sent/shipped. Never delete.
 - `references/voice.md` — every external draft matches this register.
 - `week.md` — respect the week's outcomes; marketing never trumps the must-ship.
+- The **local product repos** (build mode only) — confirm each repo's path on its first
+  build-mode run and record it at the top of that product's `action-plan.md`.
 
-## Daily run — in order
+## Weekly session — primary mode (Sundays, chained from /weekly-review)
 
 ### 1. Orient
 
-For each active product: read its `action-plan.md` (current phase + open checkboxes) and
-`content-strategy.md` (today's position on its calendar). Then the last 7 days of
-`marketing/log.md` (never repeat or crowd a channel) and yesterday's queue (carry over
-anything unposted, marked CARRIED).
+Read each product's `action-plan.md` (current priorities + open items + assets stuck at
+BUILT) and `content-strategy.md`. Then the recent `marketing/log.md` (dated follow-ups
+due, nothing repeated/crowded) and the previous queue (carry unposted items once, marked
+CARRIED). Run `node scripts/report.mjs` (and `--days=30`). Bing search data is live in
+the report; read GSC once wired.
 
-### 2. Build today's queue
+### 2. Scorecard
 
-Write `marketing/queue/YYYY-MM-DD.md`. Pick 3-6 items max ACROSS ALL PRODUCTS — a
-15-minute approval budget, not a backlog dump. Prioritize: (1) Phase-0/blocking tasks for
-any product, (2) time-sensitive items (pitch windows, live threads, scheduled issues,
-seasonal spikes), (3) steady-state cadence items. Split attention by need, not evenly: a
-product in Phase 0 or a seasonal window outranks another product's routine items.
+Score each active channel PER PRODUCT: sessions, trend, anything shipped vs. results in
+the log. Verdicts, honestly: **feed it** (working), **hold** (fair test still running —
+feed channels get 4-6 weeks, SEO gets 3 months), **kill** (fair test failed — mark it L
+in that product's column in `marketing/playbook.md` and log why in `decisions/log.md`).
+Bank one line per product-channel in `marketing/log.md` under a `### Weekly scorecard`
+heading. A channel that shipped nothing gets "no test yet", not a verdict.
 
-Every item must be **ready to ship**, formatted as:
+### 3. Set the week
+
+Write `marketing/queue/YYYY-MM-DD.md` (Sunday's date):
+- **Exactly ONE build-mode assignment** — the compounding asset the AIOS produces this
+  week (see Build mode below). Named, scoped, with its target ship date.
+- **≤4 human items**, time-sensitive first: dated pitch follow-ups from the log are swept
+  automatically, then Phase-0/blocking tasks, then anything seasonal. Every item
+  paste-ready in the standard format:
 
 ```
 ## [product · channel] Short title
@@ -65,39 +79,61 @@ Drafting rules:
 - Pitches: personalized to the target (name what they publish), value-first, short. From
   personal email only.
 - Pins: title + description + alt text + image copy spec (headline, subline, style note).
-- Page drafts: full copy + meta title/description + FAQ JSON-LD block.
 - US-first phrasing everywhere. No em dashes. Short sentences.
 
-### 3. Present for approval
+### 4. Present for approval
 
 Show the queue as a tight numbered list: product, channel, title, one-line why. Ask
 nothing except "approve, edit, or skip per item." He posts manually; never post for him.
 
-### 4. Log what shipped
+### 5. Log
 
-When he confirms items went out (same session or next run), append each to
-`marketing/log.md`: `| date | product | channel | title | destination/URL | result notes |`.
-Unconfirmed items carry into the next queue once, then drop with a note.
+Append shipped/sent items to `marketing/log.md`:
+`| date | product | channel | title | destination/URL | result notes |`.
+Unconfirmed items carry into the next session once, then drop with a note.
 
-## Weekly mode — Sundays, or on "marketing week" (pairs with /weekly-review)
+**Anti-lapse rule:** a missed Sunday means the NEXT session starts with the missed
+scorecard — the engine never silently skips a week.
 
-1. Run `node scripts/report.mjs` (and `--days=30`). Bing Webmaster search data (clicks/impressions + top Bing queries per site) is now live in the report — score it as a second organic channel. Read GSC once wired.
-2. Score each active channel PER PRODUCT: sessions, trend, anything shipped vs. results
-   in the log.
-3. Verdicts, honestly: **feed it** (working), **hold** (fair test still running — feed
-   channels get 4-6 weeks, SEO gets 3 months), **kill** (fair test failed — mark it L in
-   that product's column in `marketing/playbook.md` and log why in `decisions/log.md`).
-4. Update each product's `action-plan.md` checkboxes + next week's emphasis. Propose, he
-   approves.
-5. Bank one line per product-channel in `marketing/log.md` under a `### Weekly scorecard`
-   heading.
+## Build mode — the AIOS produces the asset
 
-## Monthly (first weekly run of the month)
+What qualifies: compounding assets only — pSEO page sets, on-site articles, FAQ/GEO
+passes, comparison pages. Feed posts never.
+
+- **Where:** directly in the LOCAL product repo, matching that repo's stack and
+  conventions — ready-to-commit pages, not markdown sketches. First run per product:
+  confirm the repo path with Tarun, record it in the action plan, and read that repo's
+  conventions before writing.
+- **Definition of done:** page(s) complete with copy, meta title/description, front-loaded
+  one-line answer, FAQ + JSON-LD, internal links — buildable and previewable.
+- **Never commits, never deploys.** Tarun reviews, commits, pushes, deploys. Provide the
+  commit message.
+- **Track BUILT → SHIPPED** as checkbox pairs in the product's action plan. An asset
+  stuck at BUILT for >2 weeks gets the kill-or-carry treatment at the next session —
+  built-but-not-live is the new failure mode to watch.
+- Build mode is AIOS effort: it does NOT count against Tarun's 45-minute window. It can
+  run any day of the week ("build <asset>"), not just Sundays.
+
+## Daily micro-mode — optional, trigger-only
+
+Runs ONLY on an explicit ask or a live dated trigger: a pitch follow-up due today, a
+relevant live thread, a launch window. ≤2 items, same format, ≤15 min of his time. No
+standing daily expectation — a quiet day is a fine day.
+
+## Monthly (first weekly session of the month)
 
 - AI-citation spot check per product: ask ChatGPT/Claude/Perplexity the money questions
   ("best free gradebook for teachers", "best online json formatter"), log who gets cited.
 - Rank spot-check on 5 money keywords per product. Refresh 1-2 aging pages.
 - Prune each product's `idea-bank.md`; every surviving idea gets scheduled or cut.
+
+## Priorities through Sep 15
+
+1. **GradeJar back-to-school sprint is build-mode assignment #1** until its pSEO set is
+   SHIPPED and indexed (the Aug 1 - Sep 15 teacher window + Dec-finals pages both hang on
+   it). GradeJar wins all ties.
+2. **JsonBeam runs maintenance:** finish the one-time directory batch, ship the privacy
+   article, hold Show HN until AdSense re-review passes. ≤2 human items/week.
 
 ## Hard rules
 
@@ -105,9 +141,12 @@ Unconfirmed items carry into the next queue once, then drop with a note.
 2. **Never LinkedIn. Never the work email.** No exceptions, not even "just a repost".
 3. **No paid anything** while the plan says $0.
 4. **Never automate community posting** (Reddit/FB/HN) — drafts only, human hands only.
-5. **≤15 min of his time TOTAL across all products.** If the queue can't be cleared in
-   15 minutes, it's too long.
+5. **≤45 min of his time on Sundays; micro-days ≤15 min and only when triggered.** If the
+   queue can't be cleared in the window, it's too long.
 6. **The log only grows.** It's the marketing track record — same rule as metrics-log.
 7. **Blocked items stay visible.** Any product's Phase-0 items (GSC, AdSense, robots.txt,
    WAF) headline every queue until done — they gate everything else for that product.
 8. **His voice** (`references/voice.md`): casual, direct, short sentences, no em dashes.
+9. **A missed Sunday is made up, never skipped** — next session opens with the missed scorecard.
+10. **Build mode never commits or deploys.** Ready-to-commit is the ceiling; hands on the
+    trigger are his.

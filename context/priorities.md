@@ -11,8 +11,9 @@ _Updated 2026-07-07: job switch is now an active, real goal (was previously "no 
    The day job stays as the stable floor during the switch.
 2. **Keep the side-hustle portfolio shipping** — build GradeJar/JsonBeam/next bets, AI-assisted,
    in the dedicated 8pm `project` block. Non-negotiable, runs alongside the job hunt.
-3. **Keep GradeJar + JsonBeam ranking** on the hands-off `/marketing` queue (~15 min/day,
-   autopilot — the engine's already built).
+3. **Keep GradeJar + JsonBeam ranking** on the weekly-first `/marketing` engine (one Sunday
+   session ≤45 min, chained from `/weekly-review`; the AIOS builds the compounding assets,
+   Tarun reviews + deploys — inverted from daily 2026-07-10 after the daily queue lapsed).
 
 _Order = priority. #1 wins the scarce prep hours; the four learning blocks are its engine.
 Edit this file and re-run `/onboard` any time priorities shift._

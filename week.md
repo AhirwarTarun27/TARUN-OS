@@ -10,7 +10,7 @@
 - **Floor:** Your day job (thinksys). Keep it stable as the floor **while you actively interview for the next role** (2-3 month target, declared 2026-07-07). Pays the bills and de-risks the switch. Employer boundary still holds — no thinksys email/comms in the AIOS.
 - **Engine:** A portfolio of front-end-heavy tools built for scale, money-led (AdSense). **JsonBeam = bet #1: live, Phase 0 visibility fixes closed 2026-07-03.** **GradeJar = bet #2: LIVE at gradejar.com, Phase 0 visibility fixes closed 2026-07-03.** Both now run on the shared daily `/marketing` queue. Future bets get *researched before built.* **AccentWallPlanner = bet #3: in `/explore-project` build-planning — live status + next step in `research/accent-wall-trim-planner-status.md`.**
 - **Edge:** Get better as a developer *through building*. Front-end system design now. Backend depth later.
-- **The rule:** Ship ugly. "Ranks #1 and loads fast" beats "best editor." Done beats perfect. Both products are live and plumbed — the only failure that matters now is **letting the daily marketing queue lapse** while AdSense review runs its multi-week clock.
+- **The rule:** Ship ugly. "Ranks #1 and loads fast" beats "best editor." Done beats perfect. Both products are live and plumbed — the only failure that matters now is **skipping the Sunday marketing session or letting sprint assets rot at BUILT** while AdSense review runs its multi-week clock. (Engine went weekly-first 2026-07-10 — daily queues are no longer the contract.)
 
 ## This week's 3 outcomes (max 3 — done or NOT done)
 
@@ -36,7 +36,7 @@ $0 expected until approved). Remaining open items are below, not blockers.
 
 Brain-dump here so it leaves your head. Triage it during the weekly review. Nothing here is this week's problem.
 
-- AI/AIOS-run daily marketing system (Priority 2) — **built 2026-07-03**, generalized to both products. Now in execution mode via daily `/marketing`, not a scoping task anymore.
+- AI/AIOS-run marketing system (Priority 2) — **built 2026-07-03**, generalized to both products; **inverted to weekly-first 2026-07-10** (Sunday sessions + AIOS build mode). In execution mode, not a scoping task anymore.
 - GradeJar M2 backlog (finish after go-live): named roster + rankings (in progress — additive, index-aligned, no migration) + CSV import. GPA-per-band and per-assignment weighting already shipped.
 - JsonBeam: on-page SEO pass (meta/FAQ/schema) needs a code-side decision — observe mode currently blocks it. Tarun's call, log in `decisions/log.md` if it changes.
 - Wire the Google Search Console API into `scripts/report.mjs` (needs one-time service-account auth grant) — would close the last blind spot in both action plans.

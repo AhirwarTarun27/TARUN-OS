@@ -66,7 +66,14 @@ Rewrite `week.md` for the new week:
 - Empty parking lot.
 - Leave the North Star block unchanged unless the user explicitly changed strategy.
 
-### 8. Cadence handoff
+### 8. Chain: marketing week
+
+Same sitting, immediately — run `/marketing` weekly mode (30-45 min budget). The weekly
+marketing session is habit-stacked here so it can't lapse the way the daily queue did.
+If genuinely out of time, schedule it within 24h and write the debt into `week.md`'s
+parking lot — never silently skip.
+
+### 9. Cadence handoff
 
 Once a month, or whenever structure feels messy, suggest: *"Run `/audit` to check the AIOS structure, and `/level-up` to find one automation to ship."* Three different jobs: weekly-review = did I execute; /audit = is the OS built right; /level-up = what to automate next.
 
@@ -76,7 +83,8 @@ Every run produces:
 1. An honest score for the week just ended (X of 3, with the real reason for each miss).
 2. Updated `shipped.md` — new log entries + bumped streak.
 3. A reset `week.md` for the week ahead with theme + 3 outcomes.
-4. A one-line close: streak count + next week's theme + "don't break the chain."
+4. The weekly `/marketing` session run in the same sitting (or explicitly scheduled within 24h).
+5. A one-line close: streak count + next week's theme + "don't break the chain."
 
 ## Rules
 

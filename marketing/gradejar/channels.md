@@ -66,7 +66,7 @@ All traffic/conversion numbers are estimates to set expectations, not promises.
 - **Traffic potential:** Direct referral is modest; the SEO lift is the point. 10-30 quality links in 90 days changes what the domain can rank for.
 - **Difficulty:** Medium. **Time:** AIOS drafts everything; Tarun sends. **Budget:** $0. **ROI:** Very high (multiplies channel #1).
 - **Automatable:** High. AIOS builds/maintains target list, drafts every pitch and HARO answer; Tarun approves + sends.
-- **Workflow:** AIOS keeps `marketing/gradejar/outreach-targets.md` -> daily queue includes any live SOS/Qwoted matches + 1 outreach draft -> Tarun sends -> log -> follow-up reminder day 7.
+- **Workflow:** AIOS keeps `marketing/gradejar/outreach-targets.md` -> weekly queue includes any live SOS/Qwoted matches + 1 outreach draft -> Tarun sends -> log -> follow-up reminder day 7.
 
 ### 5. Pinterest
 
@@ -89,9 +89,9 @@ All traffic/conversion numbers are estimates to set expectations, not promises.
 - **Frequency:** 3-5 helpful comments/week + at most 1 tool mention/week early on. One sub at a time.
 - **Mistakes:** Link-dropping day one. Posting the same thing across subs. Arguing with mods. Using new accounts that smell like marketing.
 - **Traffic potential:** Spiky: a good thread = 500-5,000 visits; steady-state modest. The AI-citation echo is the real long-term payoff.
-- **Difficulty:** Medium (tone). **Time:** inside the 15 min/day. **Budget:** $0. **ROI:** High.
-- **Automatable:** Medium. AIOS monitors relevant threads daily and drafts replies in Tarun's voice; a human must review and post every one.
-- **Workflow:** Daily queue lists 1-3 live threads worth answering + drafted replies -> Tarun edits 10%, posts -> log thread URLs -> AIOS tracks which mentions get traffic (UTM-free: watch referral spikes).
+- **Difficulty:** Medium (tone). **Time:** inside the weekly window (live threads can trigger a micro-day). **Budget:** $0. **ROI:** High.
+- **Automatable:** Medium. AIOS scans relevant threads and drafts replies in Tarun's voice; a human must review and post every one.
+- **Workflow:** The queue (weekly session, or a triggered micro-day for a live thread) lists 1-3 threads worth answering + drafted replies -> Tarun edits 10%, posts -> log thread URLs -> AIOS tracks which mentions get traffic (UTM-free: watch referral spikes).
 
 ### 7. Email newsletter (own list)
 
@@ -131,7 +131,7 @@ All traffic/conversion numbers are estimates to set expectations, not promises.
 ## Tier 3 — not for GradeJar (L)
 
 - **Instagram/TikTok/Threads:** Teacher presence is real but links are hostile or dead, video production is heavy, and TikTok skews student + volatile. Revisit only if a repurposing pipeline (YouTube -> Shorts -> TikTok/Reels) becomes free to run.
-- **Discord/Slack:** Communities exist but are small, private, and human-only. Not worth the 15 min/day.
+- **Discord/Slack:** Communities exist but are small, private, and human-only. Not worth the human budget.
 - **Medium/Dev.to/Hashnode/GitHub/HN/Indie Hackers:** Wrong audience (devs/builders). Note: several fit JsonBeam well: reuse this table there. HN gets one shot only if we ever want to tell the "local-first, zero-backend gradebook" engineering story.
 - **Podcasts/guest posts:** Real but slow and human-heavy. Revisit at 10k+ visits/mo when there's a story to tell.
 - **Cold email/affiliates/local:** Spam, no margin, and not-applicable respectively.

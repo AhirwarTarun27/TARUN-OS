@@ -29,6 +29,8 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
 - `learning/*/learning-records/` — read at wrap to pull what `/teach` covered for `sysdesign` / `interview-qa`
 - `learning/dsa/queue.md` — the DSA spaced-rep tracker (read at plan for what's due; advance the rung + recompute due dates at wrap)
 - `shipped.md` — if the day shipped something real, also bank a one-liner there (don't double-track routine)
+- `daily/dashboard/` — the streak dashboard engine: Write `today.json` + run `build.mjs` only.
+  NEVER read `template.html` or `daily/dashboard.html` (build output) — the build owns them.
 
 ## Mode: `plan` (morning)
 
@@ -42,7 +44,12 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
    - **`project`:** which task on the current product?
    - **`reading`:** which book / where.
    - **Flex:** any block you already know you'll move or skip today, and why.
-3. Keep it to ~15 min. Don't write a log entry — that happens at wrap. End by pointing at the
+3. Refresh the dashboard's pending day (write-only): Write `daily/dashboard/today.json` =
+   `{ "entry": { "date": "YYYY-MM-DD", "day": "Ddd", "pending": true, "mustShip": "<today's must-ship>" } }`
+   (add `"weekOutcomes": "…"` only when `week.md` was just reset), run
+   `node daily/dashboard/build.mjs --ingest`, then republish the Artifact
+   (`file_path: daily/dashboard.html` + url/favicon from the `daily-streak-dashboard` memory).
+4. Keep it to ~15 min. Don't write a log entry — that happens at wrap. End by pointing at the
    first block and, for `sysdesign`/`interview-qa`, remind that those run through `/teach`.
 
 ## Mode: `wrap` (midnight)
@@ -68,11 +75,17 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
    Terse. This file must stay scannable across a full month.
 4. If something **real** shipped (a deploy, a decision, a finished feature — not routine adherence),
    also append a one-liner to `shipped.md` and suggest logging any decision in `decisions/log.md`.
-5. **Refresh the streak dashboard** (`daily/dashboard.html` → the Momentum Console). Convert today's
-   `pending:true` day into a scored entry object in `DATA.entries[]` (blocks/energy/office/mustShip
-   match the log entry), add tomorrow's pending day, then redeploy the Artifact to its saved URL. All
-   stats are derived — only touch `DATA.entries[]`, never the computed numbers. Full workflow + URL in
-   the `daily-streak-dashboard` memory. Scoring: >=4 of 7 blocks = a WIN.
+5. **Refresh the streak dashboard — write-only, never read the HTML.**
+   a. Write `daily/dashboard/today.json`: `{ "entry": { …today's scored entry… } }` — same facts as
+      the log entry: `date`, `day`, `blocks` (7 booleans), a `reasons` tag per missed block
+      (`avoidance|capacity|clarity|energy|disruption|other`), `energy` 1-5, `office`, `mustShip`
+      true/false, terse `notes`, optional `shipped: [ … ]` (mirrors what went to `shipped.md`).
+   b. Run `node daily/dashboard/build.mjs --ingest` — it validates, merges into `data/YYYY-MM.json`,
+      seeds tomorrow's pending day, rebuilds `daily/dashboard.html`, and deletes `today.json`.
+      Echo its one-line summary.
+   c. Publish the Artifact: `file_path: daily/dashboard.html`, url + favicon from the
+      `daily-streak-dashboard` memory. If the dashboard LOOKS wrong, fix `template.html` in a
+      dedicated session — never at wrap.
 6. Close with one line: blocks hit today + the single thing to fix tomorrow. No lecture.
 
 ## Month-end: compress + reset
@@ -89,11 +102,13 @@ the new day's entry:
 3. Copy the raw month verbatim to `archives/daily/YYYY-MM.md` (**never delete** — AIOS rule).
 4. Reset `daily/log.md`: new `# Daily Log — YYYY-MM (Month)` header, the format comment block, empty entries.
 5. Update the summary's "carry-in" note at the top of the fresh `daily/log.md` so next month starts informed.
+6. Dashboard: nothing to do — `data/YYYY-MM.json` rolls over automatically at the first ingest of
+   the new month. Never delete old month files (they feed habit-strength history).
 
 ## Output contract
 
 - **plan run:** this week's 3 outcomes restated, today's per-block focus set, `week.md` must-ship updated. No log entry.
-- **wrap run:** the QnA answered, one compact entry prepended to `daily/log.md`, any real ship banked to `shipped.md`, the streak dashboard refreshed + redeployed, a one-line close.
+- **wrap run:** the QnA answered, one compact entry prepended to `daily/log.md`, any real ship banked to `shipped.md`, the dashboard ingested via `build.mjs` + redeployed, a one-line close.
 - **month-end run:** a written monthly summary, raw month archived, `daily/log.md` reset clean.
 
 ## DSA spaced-rep engine
@@ -117,3 +132,5 @@ At **plan**, surface rows whose Next due ≤ today. At **wrap**, bank the rating
 6. **Name the real blocker.** For every miss, the honest cause in a few words — not "no time."
 7. **Never delete a month.** Compress → summary, archive → raw, then reset. The record survives.
 8. **Ladder to `week.md`.** The day exists to move this week's 3 outcomes. If a day's blocks don't, say so.
+9. **Dashboard is write-only at ritual time.** One `today.json` Write + one build command + one
+   Artifact publish. Never open `dashboard.html` or `template.html` during plan or wrap.

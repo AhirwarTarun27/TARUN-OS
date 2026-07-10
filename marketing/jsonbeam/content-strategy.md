@@ -1,7 +1,8 @@
 # JsonBeam — Content Strategy & Calendar
 
 Written 2026-07-03. Everything here is draftable by the AIOS; Tarun approves and posts
-(inside the shared 15 min/day with GradeJar).
+(inside the shared weekly Sunday session with GradeJar — cadences below are weekly-batch
+targets under the weekly-first engine, 2026-07-10, not daily obligations).
 Voice: dev-to-dev, plain, zero hype. Always disclose "I built this" in communities. Never
 claim privacy benefits before the claim is verified end-to-end.
 

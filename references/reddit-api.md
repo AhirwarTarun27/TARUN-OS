@@ -137,7 +137,7 @@ answers.
 - **Scoring a thread (only surface the real ones):** a genuine question (not a rant/meme),
   recent, low-answer-count, where our tool is *actually* the best fit. Everything else is
   listening-only (audience insight → SEO pages + copy), not a reply target.
-- **Draft, never post.** The engine outputs a 90/10 reply into the daily queue: answer fully
+- **Draft, never post.** The engine outputs a 90/10 reply into the queue: answer fully
   first, tool mention only if it genuinely fits, always disclose "I built this." Tarun edits
   and posts by hand. No write scope exists on this token.
 - **Account-age caveat:** a brand-new account replying with links gets torched. Hold real

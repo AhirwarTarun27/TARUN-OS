@@ -99,7 +99,7 @@ All traffic/conversion numbers are estimates to set expectations, not promises.
 - **Own email newsletter:** nobody subscribes to a formatter's newsletter. The retention play here is bookmark + default-tool habit, not inbox. Revisit only if the error-guide content grows a real readership.
 - **Quora:** devs ask Stack Overflow, not Quora. Skip.
 - **Stack Overflow:** tempting, but mods + the rep system remove tool links on sight. Ban risk > payoff. Individual genuine answers are fine; as a channel, skip.
-- **Discord/Slack dev servers:** private, anti-promo, human-only. Not worth the 15 min/day.
+- **Discord/Slack dev servers:** private, anti-promo, human-only. Not worth the human budget.
 - **Podcasts / guest posts / cold email:** slow, heavy, or spam. Revisit at 10k+ visits/mo.
 
 ## Excluded (X)

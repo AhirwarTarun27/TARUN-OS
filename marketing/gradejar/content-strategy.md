@@ -1,6 +1,8 @@
 # GradeJar — Content Strategy & Calendar
 
-Written 2026-07-03. Everything here is draftable by the AIOS; Tarun approves and posts (~15 min/day).
+Written 2026-07-03. Everything here is draftable by the AIOS; Tarun approves and posts.
+Cadences below are weekly-batch targets under the weekly-first engine (2026-07-10), not
+daily obligations — the Sunday session picks from them.
 Voice: teacher-respectful, practical, zero hype. Always disclose "I built this" in communities.
 
 ## The seasonal spine (US school year)
@@ -30,7 +32,7 @@ Voice: teacher-respectful, practical, zero hype. Always disclose "I built this" 
 
 ## Per-channel cadence (steady state)
 
-| Channel | Cadence | AIOS does | Tarun does (15 min/day total) |
+| Channel | Cadence | AIOS does | Tarun does (Sunday window) |
 |---|---|---|---|
 | Site pages (SEO/pSEO/GEO) | 1-2 pages/wk | Keyword pick, full draft, meta, schema | Review, build, deploy |
 | Pinterest | 1-2 pins/day (batched weekly) | Titles, descriptions, image copy specs | ~30 min Sunday: render + schedule |

@@ -226,3 +226,15 @@ Keep it terse. Future-you will thank present-you for capturing the *why*, not ju
 **Alternatives considered:** Read DDIA for 1-2 months as planned (rejected — too slow, mistargeted for interviews, wouldn't finish). Pause the side-hustle build to focus fully on the hunt (rejected — Tarun set it as non-negotiable; kept it bounded to the 8pm block, AI-assisted). Learn system design mainly by implementing it in projects (rejected — his projects are backend-free; interview SD is design-out-loud). Hard-delete the old track (rejected — AIOS never-delete rule; archived instead).
 
 **Owner:** Tarun.
+
+---
+
+## 2026-07-10 — Marketing engine inverted: daily queue → weekly-first + AIOS build mode
+
+**Decision:** Replaced the daily `/marketing` queue with a **weekly-first engine**: one Sunday session (chained as step 8 of `/weekly-review`, ≤45 min of Tarun's time) that scores channels against live data, assigns exactly ONE **build-mode** asset — a compounding asset (pSEO page set, on-site article) the AIOS produces end-to-end, ready-to-commit, **directly in the local product repo** — and queues ≤4 human items. Daily runs demoted to an optional trigger-only micro-mode (≤2 items, dated triggers like pitch follow-ups). Priorities through Sep 15: **GradeJar back-to-school sprint is build assignment #1** (need-on-final + gradebook-setup pSEO set, live + indexed by mid-Sept); **JsonBeam runs maintenance** (Starter-5 directory batch, privacy-audit article, ≤2 items/wk) and its **Show HN gate now requires AdSense re-review PASSED**. Assets tracked BUILT → SHIPPED in each action plan; stuck >2 weeks at BUILT = kill-or-carry. All hard boundaries unchanged (draft-only community posting, never LinkedIn/work email, no paid, AIOS never commits/deploys/posts).
+
+**Why:** The daily engine failed its first week on its own evidence: 3 queues ever (Jul 3/7/8) then 3 straight empty days, weekly scoring never ran, zero compounding content shipped — only Phase-0 plumbing + 2 pitch emails — while JsonBeam's GA4 users fell 60→25 and AdSense rejected it for low-value content. The playbook's own model (rule 3: compounding beats feed) contradicted the engine's unit of work (daily human-posted feed items). With the job hunt as Priority 1, daily human posting is not a realistic dependency; weekly batch + AIOS-built assets moves the human to review-and-deploy only. Would change my mind: if two consecutive weekly sessions produce assets that stall at BUILT, the bottleneck is review capacity, not cadence — rescope then.
+
+**Alternatives considered:** Keep daily but lighter (rejected — the failure mode was the daily dependency itself, not queue size). Build-mode drafts as markdown handoffs in TARUN-OS (rejected — adds a porting step where assets rot; Tarun chose direct-in-repo). Fully autonomous posting/deploying (rejected — hard boundary: every external word and deploy stays human).
+
+**Owner:** Tarun.
