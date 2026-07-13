@@ -18,13 +18,17 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 - `/level-up` — Weekly 3Ms interview. Find one automation, scope it, ship it. One per week.
 - `/site-report` — Live traffic + revenue for a product (JsonBeam now, GradeJar at go-live). Runs `scripts/report.mjs`, banks a dated snapshot to `reports/metrics-log.md`, then diagnoses the funnel and prescribes 2-3 simple growth moves. Trigger any time you ask how a site is doing.
 
+**Shipping:**
+- `/cloudflare-go-live` — Domain to live site on Cloudflare Workers, end to end. Zone, nameservers (BigRock is external, so that repoint is manual), Worker custom domain, www redirect, Turnstile, Email Routing for `info@`, Resend as the free sender. Runs `scripts/cloudflare-go-live.mjs`, which is a **dry run by default** and idempotent, so a half-finished go-live is safe to re-run. Trigger on "I bought a domain", "go live", "www isn't working", "set up email for the domain". Built from doing kesrienterprise.com the hard way. **Everything it touches is free-tier; it flags anything that would cost money before acting.** Reference: `references/cloudflare-go-live.md`.
+
 **Project pipeline (every new product runs through this, in order):**
-- `/scout-problem` — Run FIRST. Data-driven idea validation: small underserved problem, enough demand, beatable top-10. Honest go/no-go.
-- `/explore-project` — Run after a GO. Scopes the build (domain → stack → architecture → setup kit) into one Pre-Build Brief. Orchestrates the four below.
+- `/scout-problem` — Run FIRST. Data-driven idea validation: small underserved problem, enough demand, beatable top-10, **and a real revenue band**. Honest go/no-go. **Traffic is not revenue** — it models CPC tier, ad-block exposure, session depth, and geo mix, so a rankable-but-unpayable niche gets killed before it's built (the JsonBeam lesson).
+- `/explore-project` — Run after a GO. Scopes the build (domain → stack → architecture → setup kit → **AdSense compliance**) into one Pre-Build Brief. Orchestrates the five below.
 - `/domain-namer` — Brandable, SEO, available `.com`, with live checks.
 - `/pick-stack` — Fastest-loading, best-ranking stack for the build.
 - `/design-architecture` — System design + the "why" (doubles as front-end system-design practice).
 - `/setup-kit` — Design direction + which skills/MCPs to install (via subagent).
+- `/adsense-ready` — **The approval gate.** `contract` mode writes the AdSense Compliance Contract into every handoff prompt (trust pages, content-depth bar, interlinking map, ad placement, pre-application gate). `audit` mode walks a repo against every official Google policy and returns a ranked blocker list. **Gets copied into every product repo** and run at every milestone. Built because JsonBeam was rejected for low-value content on 2026-07-08 and GradeJar's trust pages were bolted on after the fact. **A site Google won't approve earns $0 no matter how well it ranks.** Also usable standalone — trigger on "will this get approved", "audit for adsense", "am I ready to apply". Paste `handoff-prompts/adsense-retrofit.md` into an existing product repo to retrofit it.
 
 ## Where things live
 
@@ -33,6 +37,8 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 - `shipped.md` — the done-log + streak counter. Everything you've shipped. Never delete from it.
 - `context/` — about you, your business, your priorities (filled by `/onboard`)
 - `references/` — frameworks, voice samples, API guides as you connect tools
+- `references/adsense-policy.md` — **how to get approved.** The official Google policy corpus, distilled and source-cited. The `/adsense-ready` skill inlines this so it stays portable; read the reference when you need the citation or the full rule.
+- `references/adsense-economics.md` — **how much you'll make.** The revenue identity (`sessions × pages/session × RPM ÷ 1000`), CPC-by-niche tiers, ad-block rates by audience, RPM bands, the post-AI-Overviews CTR curve. Read by `/scout-problem`. Benchmarks age fast — refresh yearly.
 - `references/mcp/` — local copies of doc-reference MCP knowledge (one `<tool-name>.md` per source). Read these instead of calling the live MCP. See MCP & doc-reference tooling below.
 - `connections.md` — registry of every system your AIOS can reach
 - `decisions/log.md` — append-only record of decisions and why

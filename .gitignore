@@ -2,6 +2,9 @@
 .env.local
 secrets/
 *-service-account*.json
+# Turnstile/Resend secrets dropped by scripts/cloudflare-go-live.mjs.
+# Load them with `wrangler secret put NAME < file`, then delete the file.
+go-live.*.secrets.env
 .DS_Store
 *.log
 __pycache__/

@@ -21,7 +21,10 @@ Reason from the project, not dogma. But default toward boring, proven, fast.
 2. **Framework** — match the rendering need (e.g. Astro for content/tool sites that should ship minimal JS; Next.js for app-like + SSR/SEO; plain Vite + a light framework for a single-purpose tool). Pick the one that ships the LEAST JS for the job.
 3. **UI libraries** — keep the bundle small. Justify every dependency against page speed. Prefer system fonts, minimal CSS, no heavy UI kit unless it earns its weight.
 4. **Hosting/CDN** — default **Cloudflare Pages/Workers** (the user is set up for it): global edge, fast TTFB, cheap at scale, US-fast.
-5. **Analytics/ads** — note the lightweight, non-blocking way to load Google Analytics + AdSense so they don't wreck Core Web Vitals.
+5. **Analytics/ads** — note the lightweight, non-blocking way to load Google Analytics + AdSense so they don't wreck Core Web Vitals. Three more calls belong here, not at launch:
+   - **Ad slot reservation** — explicit `aspect-ratio` + `min-height` per breakpoint, reserved at first paint. Nothing gets inserted above the content after paint.
+   - **Consent / CMP** — if EEA/UK/Switzerland traffic is expected, a **Google-certified CMP on the IAB TCF is mandatory** (since 2024-01-16). Without one, those users get non-personalized ads only, which is a direct revenue cut. Name the CMP, or state explicitly that the site is US-only and doesn't need one yet.
+   - **`ads.txt`** — served at the domain root. Trivial, and easy to forget until an account alert fires.
 
 ## Output
 - **Recommended stack**, one line per layer (framework, rendering, UI, hosting, analytics/ads).

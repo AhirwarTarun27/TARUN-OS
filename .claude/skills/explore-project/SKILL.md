@@ -1,13 +1,13 @@
 ---
 name: explore-project
-description: Parent pipeline that scopes a GREENLIT project for build. Runs after /scout-problem returns GO. Orchestrates domain, stack, system design, and setup research into one build-ready Pre-Build Brief, then writes a top-tier handoff prompt the user drops into a fresh repo to start building. Trigger on "/explore-project", "explore this project", "scope the build for X", usually pointed at a research/<slug>.md brief. One run = one Pre-Build Brief + one handoff prompt.
+description: Parent pipeline that scopes a GREENLIT project for build. Runs after /scout-problem returns GO. Orchestrates domain, stack, system design, setup research, and the AdSense compliance contract into one build-ready Pre-Build Brief, then writes a top-tier handoff prompt the user drops into a fresh repo to start building — approvable by construction, not by cleanup. Trigger on "/explore-project", "explore this project", "scope the build for X", usually pointed at a research/<slug>.md brief. One run = one Pre-Build Brief + one handoff prompt.
 ---
 
 # Explore Project — turn a validated idea into a build-ready brief + handoff prompt
 
 Runs the pre-build pipeline AFTER `/scout-problem` returns GO. Input: a `research/<slug>.md` problem brief (or a clearly-described greenlit idea). Outputs: (1) one consolidated **Pre-Build Brief** in `research/`, and (2) one **handoff prompt** in `handoff-prompts/` — a single, paste-ready, top-0.5%-engineer-grade prompt the user hands to a brand-new repository's agent to start building immediately.
 
-This is an orchestrator. It runs four sub-skill steps in order, then synthesizes two artifacts. Run each step, capture its output, roll everything into the brief, then distill the brief into the handoff prompt. If a sub-skill surfaces a blocker (no decent domain, stack can't hit the SEO need), pause and flag it — don't barrel ahead.
+This is an orchestrator. It runs **five** sub-skill steps in order, then synthesizes two artifacts. Run each step, capture its output, roll everything into the brief, then distill the brief into the handoff prompt. If a sub-skill surfaces a blocker (no decent domain, stack can't hit the SEO need, a route list that can't be made AdSense-approvable), pause and flag it — don't barrel ahead.
 
 ## Preconditions
 - A GO verdict exists (from `/scout-problem`). If not, stop and tell the user to run `/scout-problem` first. Don't scope an unvalidated idea.
@@ -33,7 +33,7 @@ Every run maintains ONE living status file so a compacted or brand-new session c
 > **New session:** open `week.md`, then read THIS file, then resume from ▶ NEXT ACTION.
 > Do NOT redo completed steps. After each confirmed gate, update this file BEFORE proceeding.
 
-**Product:** <name>   **Domain:** <domain> (LOCKED / tbd)   **Stage:** <e.g. Step 2 of 4>
+**Product:** <name>   **Domain:** <domain> (LOCKED / tbd)   **Stage:** <e.g. Step 2 of 5>
 **▶ NEXT ACTION:** <one imperative line the next session executes>
 
 ## Pipeline checklist
@@ -42,12 +42,14 @@ Every run maintains ONE living status file so a compacted or brand-new session c
 - [~] 2. Stack → <one-line recommendation>. Awaiting confirm — <date>
 - [ ] 3. Architecture → pending
 - [ ] 4. Setup kit → pending
+- [ ] 5. AdSense compliance → pending
 - [ ] Output 1: Pre-Build Brief → `research/<slug>-prebuild.md`
 - [ ] Output 2: Handoff prompt → `handoff-prompts/<slug>.md`
 
 ## Decisions captured so far
 - <domain rationale one-liner>
 - <stack rationale one-liner>
+- <compliance contract one-liner>
 (Formal record lands in `decisions/log.md` when the Pre-Build Brief is written.)
 ```
 
@@ -75,7 +77,18 @@ Run `domain-namer` with the product brief. Present the recommended `.com` + top-
 ### 4. Setup kit → `setup-kit`
 (Only run after architecture is confirmed.) Run `setup-kit` (it delegates research to a subagent). Capture: design direction, the skills to install (with commands), and the MCPs that *could* help (as suggestions only — see MCP rule below; doc-reference MCPs become local `references/mcp/` files on approval, action MCPs get installed).
 
-**STOP. Ask:** "Setup kit looks good to proceed?" Confirm before writing the final artifacts. Once the user confirms, UPDATE `research/<slug>-status.md` FIRST (tick Setup kit, record the design-direction one-liner + date, set ▶ NEXT ACTION = write the two output artifacts) — then write the outputs.
+**STOP. Ask:** "Setup kit looks good to proceed?" Confirm before writing the final artifacts. Once the user confirms, UPDATE `research/<slug>-status.md` FIRST (tick Setup kit, record the design-direction one-liner + date, set ▶ NEXT ACTION = step 5 AdSense compliance) — then run step 5.
+
+### 5. AdSense compliance → `adsense-ready` (contract mode)
+(Only run after the setup kit is confirmed.) Run `adsense-ready` in **contract mode**. It produces the **AdSense Compliance Contract** for this specific product: the site skeleton (trust pages + the methodology page), the content-depth bar per route type, the interlinking map, the ad placement plan, and the pre-application gate.
+
+**This step is not paperwork. It is the money.** Every product here is AdSense-monetized, and a site Google won't approve earns exactly $0 no matter how well it ranks. **JsonBeam was rejected for low-value content on 2026-07-08** because approval was treated as a launch-day task instead of a design constraint. This step is why that stops happening.
+
+Two things to carry in from earlier steps:
+- **The route list from step 3 (architecture)** — that is what gets audited. If it contains programmatic/templated routes, they get an explicit ruling here: differentiated, or `noindex` + ad-free. Never templated + indexed + monetized.
+- **The session-depth read from the scout brief's revenue model** — a bare widget with nothing to say is *both* a low-value-content rejection *and* the 1.0-pages-per-session revenue floor. **Compliance and revenue are the same lever**, so the content ecosystem this step demands is not a tax. It is the business model.
+
+**STOP. Ask:** "Compliance contract locked? This is what makes the site approvable — confirm before I write the handoff prompt." Once the user confirms, UPDATE `research/<slug>-status.md` FIRST (tick AdSense compliance, record the contract one-liner + date, set ▶ NEXT ACTION = write the two output artifacts) — then write the outputs.
 
 ## Output 1 — the Pre-Build Brief
 Write `research/<slug>-prebuild.md` consolidating:
@@ -84,6 +97,7 @@ Write `research/<slug>-prebuild.md` consolidating:
 - **Stack** (framework/libs + speed/SEO rationale).
 - **Architecture** (system design + words-and-boxes diagram + scale-to-mass-traffic notes).
 - **Setup checklist** (skills to install, MCPs *suggested* — not auto-installed; doc-reference MCPs noted as future `references/mcp/<tool>.md` files, action MCPs as install-on-approval, design direction) — copy-paste commands where possible.
+- **AdSense compliance contract** (from step 5) — the site skeleton incl. trust pages + the methodology page, the content-depth bar per route type, the interlinking map, the ad placement plan, and the pre-application gate. **The route list here is the one the build is held to.**
 - **First 3 build outcomes** — the smallest shippable slices, ready to drop into `week.md`.
 
 ## Output 2 — the handoff prompt (the deliverable for the new repo)
@@ -96,10 +110,34 @@ It must read like it was written by a top-0.5% engineer: precise, opinionated, n
 2. **Operating rules.** The quality bar (ship fast, ranks #1 + loads fast beats "perfect"), code conventions, and the guardrails below — especially the **MCP rule**.
 3. **Stack (pinned).** Exact frameworks/libraries/hosting, with versions where known. No ambiguity about what to install.
 4. **Architecture contract.** The component model, the data schema, and the **non-negotiable invariants** (e.g. the persistence wedge, single source of truth, SEO requirements). Include the words-and-boxes diagram.
-5. **Build order.** The first 3 outcomes as concrete milestones, each with explicit **acceptance criteria** (done = X observable). Build and deploy on the hosting platform's **preview URL** (e.g. Cloudflare Pages `*.pages.dev`) — treat **buying the domain + wiring DNS as the final go-live milestone, not a prerequisite** (unless the user says otherwise).
-6. **Definition of done / quality gates.** Core Web Vitals budget, accessibility bar, SEO checklist, tests — the measurable gates every slice must pass.
-7. **Guardrails / do-NOTs.** The known traps (project-specific) + the universal ones below.
-8. **First action.** Exactly what to do first (scaffold, restate the plan back, confirm assumptions) before writing feature code.
+5. **Monetization contract — AdSense-ready by construction.** The step-5 compliance contract, **inline and in full**, so the prompt stands alone even if the builder never opens the skill. Sits here, before Build order, so the milestones can reference it. Must carry:
+   - **The site skeleton** — the complete route list, including `/about`, `/contact`, `/privacy`, `/terms`, and a `/how-it-works` (or `/methodology`) page. State plainly that the **privacy policy is the one hard requirement in Google's policy text** and must disclose Google's advertising cookies + the opt-out links.
+   - **The content-depth bar per route type** — the rule: *delete the tool mentally; if there's nothing left worth reading, it's "a screen without publisher-content" and Google will not serve ads on it.*
+   - **The programmatic-route ruling**, if the architecture has any: differentiated, or `noindex` **and** ad-free. **Never templated + indexed + monetized** — that is scaled content abuse.
+   - **The interlinking map** — footer links every trust page from every page; zero orphans; ≤2 clicks from home; child pages link up and across.
+   - **The ad placement plan** — slots reserved at first paint; **≥150px from any interactive control**; no ads on empty states or error screens; mobile ad density ≤30%.
+   - **The pre-application gate** — do not submit to AdSense until all of the above is green and the site is indexed in Search Console. **A rejection restarts a 2-4 week clock.**
+6. **Build order.** The first 3 outcomes as concrete milestones, each with explicit **acceptance criteria** (done = X observable). Build and deploy on the hosting platform's **preview URL** (e.g. Cloudflare Pages `*.pages.dev`) — treat **buying the domain + wiring DNS as the final go-live milestone, not a prerequisite** (unless the user says otherwise). Two compliance requirements are baked in here:
+   - **The trust-page routes land in the scaffold; the trust-page *content* is a named milestone that must be green BEFORE go-live** — never bolted on after. (GradeJar built its trust pages *after* the handoff prompt, by luck rather than design. Don't repeat it.)
+   - **Every milestone's acceptance criteria ends with:** *"`/adsense-ready audit` returns no new FAILs."*
+7. **Definition of done / quality gates.** Core Web Vitals budget, accessibility bar, SEO checklist, tests — the measurable gates every slice must pass. Plus, alongside them: **"AdSense: `/adsense-ready audit` returns PASS. No ad-carrying route is a bare widget."**
+8. **Guardrails / do-NOTs.** The known traps (project-specific) + the universal ones below. Always include these four:
+   - Do not ship templated programmatic pages that are indexed **and** carry ads.
+   - Do not place ads on empty states, error screens, or within 150px of an interactive control.
+   - Do not leave the trust pages until the end.
+   - Do not apply to AdSense before the pre-application gate is green.
+9. **First action.** Exactly what to do first (scaffold, restate the plan back, confirm assumptions) before writing feature code. **It must open with step 0, verbatim:**
+
+   ```
+   0. Install the compliance gate. Copy
+      C:\Users\ahirwar.tarun\Documents\Learning\MyProjects\TARUN-OS\.claude\skills\adsense-ready\
+      into <this repo>/.claude/skills/adsense-ready/ and read it now.
+      Every milestone in §6 ends with `/adsense-ready audit`
+      and does not count as done until it returns no new FAILs.
+   ```
+
+   The skill is self-contained and portable by design — copying it means the new repo can run
+   `/adsense-ready audit` as a real slash command at every gate, with no dependency on this repo.
 
 ### The MCP rule (must appear verbatim-in-spirit in every handoff prompt)
 - **One standing exception — the Playwright MCP (`@playwright/mcp`) is pre-approved and included in every web project**, current and upcoming. It is the standard verification tool (drives a real browser to prove changes work, test the wedge, keyboard flows, screenshots). Wire it by default; no need to ask.
@@ -122,3 +160,4 @@ After both files are written, UPDATE `research/<slug>-status.md` one last time: 
 6. **MCP servers and non-essential tooling are suggest-only — never auto-install — with ONE standing exception: the Playwright MCP**, which is pre-approved and included in every web project (the verification backbone). All other MCPs: recommend with a one-liner, ask first. On approval, branch by type — **doc-reference (read-only) MCPs get researched into a local `references/mcp/<tool-name>.md` file instead of installed** (saves tokens; docs rarely change, refresh on command), while **action MCPs (GitHub / DB / filesystem) are the exemption and do get installed** at least-privilege. Treat `astro-docs` + Tailwind v4 docs as near-default for the Astro/Tailwind stack, captured as reference files. Bake the Playwright-standard + suggest-first + doc-MCP-as-local-file rule into every handoff prompt you write.
 7. **Domain purchase is the last step.** Unless the user says otherwise, the brief and handoff prompt build and deploy on the platform's preview URL; registering the domain and attaching DNS is the final go-live milestone, never a prerequisite. Still run live availability checks early (so the name is known to be free), but don't tell the user to buy early — flag squat risk once, then respect the decision.
 8. **Keep the run resumable.** Maintain `research/<slug>-status.md` — create it on start (or resume from it), update it FIRST at every gate before advancing, and complete it at the end. A step logged after the fact is a bug: log it *before* you move on. See "## Pipeline status file".
+9. **AdSense approval is a build requirement, not a launch task.** Every product here is AdSense-monetized, so **a site Google won't approve earns $0 no matter how well it ranks.** The compliance contract (step 5) is designed *into* the route list and *into* the milestones — never bolted on at go-live. Two proofs this is real: JsonBeam was rejected for low-value content on 2026-07-08, and GradeJar's trust pages were built after the fact by luck. Never write a handoff prompt without §5 and the step-0 skill copy in §9. And never present the content ecosystem as a compliance tax — **session depth and approvability are the same lever**, so it is also the cheapest revenue multiplier available.

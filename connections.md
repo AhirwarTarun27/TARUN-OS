@@ -20,6 +20,8 @@ reference file instead of a live MCP server. Accounts already exist (Tarun's).
 | Tool | Used for | Reference file | Auth | Last checked |
 |---|---|---|---|---|
 | Cloudflare | Hosting (Pages), DNS, domain registrar (JsonBeam bought here; GradeJar at go-live), Web Analytics | `references/cloudflare-api.md` | Scoped API token (Bearer) | 2026-06-30 ✓ verified |
+| Cloudflare (Workers go-live) | Domain → live site: zones, Worker custom domains, www redirect, Turnstile, Email Routing. One CF account holds **every client**. Run via `/cloudflare-go-live`. | `references/cloudflare-go-live.md` | Same token, but needs **6 permission groups** the Pages-era scope lacks — the script's preflight names them | 2026-07-12 ⚠️ token scope pending |
+| Resend | Transactional send (contact forms) from `send.<domain>`. Free 3,000/mo, 100/day. **Per-client account** — each client gets their own free tier; key passed per-run, not stored | `references/cloudflare-go-live.md` §6 | API key (`re_…`), per client | 2026-07-12 ✓ live on kesrienterprise.com |
 | Google AdSense | Earnings/performance reporting (read-only) | `references/google-adsense-api.md` | OAuth2 refresh token | 2026-06-30 ✓ verified |
 | Google Analytics 4 | Traffic/behavior reporting | `references/google-analytics-api.md` | Service account (Viewer) | 2026-06-30 ✓ verified |
 | Microsoft Bing Webmaster Tools | Bing search traffic (clicks/impressions), URL submission/indexing quota, top search queries — jsonbeam.com + gradejar.com verified | `references/bing-webmaster-api.md` | API key (`?apikey=`, one per user) | 2026-07-03 (pending key — built dormant) |

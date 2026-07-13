@@ -238,3 +238,84 @@ Keep it terse. Future-you will thank present-you for capturing the *why*, not ju
 **Alternatives considered:** Keep daily but lighter (rejected — the failure mode was the daily dependency itself, not queue size). Build-mode drafts as markdown handoffs in TARUN-OS (rejected — adds a porting step where assets rot; Tarun chose direct-in-repo). Fully autonomous posting/deploying (rejected — hard boundary: every external word and deploy stays human).
 
 **Owner:** Tarun.
+
+---
+
+## 2026-07-10 — AccentWallPlanner: build-planning COMPLETE (all 4 `/explore-project` gates confirmed)
+
+**Decision:** Bet #3 is scoped and build-ready. Four decisions locked in one session:
+
+1. **Domain:** `accentwallplanner.com` (locked 07-07). Not yet purchased; purchase is the final go-live milestone, not a prerequisite.
+2. **Stack:** Astro 5 SSG + lazy Preact islands + Tailwind v4 + system fonts; SVG render engine; zero-dep SVG→canvas→PNG export; static Cloudflare Pages; native AdSense, no Partytown.
+3. **Architecture:** a **style-agnostic `Layout` model** — `solve(style, config) → { members[], panels[], cutList[] }` — so ONE dumb SVG renderer serves all four trim styles with zero conditionals. The solver is a pure, DOM-free TS core (functional core, imperative shell), which lets Astro run it at build time to emit an inline SEO/LCP SVG *and* run the identical function in-browser for live updates. URL-as-state. Zero backend.
+4. **Build order:** hardest style FIRST. Picture-frame molding with **mixed-size boxes** is outcome #1, ahead of board & batten. Milestone 1 ships with no UI at all.
+
+**Kit:** enable official `frontend-design` (already in the marketplace cache, not installed). New repo gets Playwright MCP (standing exception) + Chrome DevTools MCP (approved: it's the only tool that actually *measures* the CLS threat) and exactly two libraries, **Vitest + `@astrojs/sitemap`**. JSON-LD and `<head>` meta hand-written.
+
+**Why:** All four trim styles are the same problem — a grid drawn on a wall. The only variance is whether a rectangle *is* the trim (batten, slat) or is the opening the trim frames (panel). Encoding that in the type system, rather than in the renderer, is what keeps the ~100-page programmatic-SEO play a *data* problem instead of a *code* problem. That play is the growth engine, so it gets protected first.
+
+Build order follows from the same logic. The #1 architectural risk is style-coupling leaking into the layout model, and it fails *silently*: style four forces one branch, the page generator forces another, and by week three the renderer has conditionals you cannot remove. Building the hardest case first stress-tests the model while it is still cheap to change, and it happens to be the wedge. Ranked #2 was AdSense-induced CLS — real, but bounded and solved by slot reservation, and it cannot silently corrupt the design.
+
+Conceding `board and batten calculator` to inchcalculator's domain authority (per the scout brief) is what frees the build order from chasing the head term.
+
+**Would change my mind:** if the mixed-size-grid solver (milestone 1) cannot be expressed without style-specific branches, the `Layout` model is wrong and the whole "one renderer" thesis needs rework before any UI is written. That is exactly why milestone 1 has no UI.
+
+**Alternatives considered:** `accentwallcalculator.com` (rejected — "planner" names the visual differentiator and sits in SEO whitespace). Next.js static export (rejected — heavier JS baseline) and Vite vanilla SPA (rejected — wrong for programmatic SEO). Canvas render (rejected — loses accessibility, crispness, and build-time SVG emission). Board & batten first (rejected — see above). `astro-seo` + `schema-dts` (rejected — convenience only, `schema-dts` last tagged 2022, hand-rolling costs ~1hr and matches the zero-dep export ethos).
+
+**Open item, carried:** exact Semrush/Ahrefs volumes were never pulled — the scout brief directed this as step 1 of `/explore-project` and the run opened with Domain instead. Demand stands at triangulated medium-high confidence. Reconcile BEFORE committing build weeks to `week.md`. If real volume lands materially below the low-to-mid-tens-of-thousands estimate, re-run the demand gate rather than build anyway.
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-11 — GO: Start a local web-solutions business (Kesari Enterprise = proof-of-concept client)
+
+**Decision:** Tarun is starting a **local web-solutions business** — end-to-end websites for local/regional businesses around Gandhidham, Kutch, Gujarat: build → domain → Cloudflare deploy → Google findability → paid retainer. First client is **Kesari Enterprise** (his relative's B2B water-treatment firm; repo `…/KesariEnterprise`), priced **₹10K one-time + ₹3K/year** — a deliberate below-market relative/case-study rate, not the rate card. Kesari runs the full real process as the reusable template; a satisfied relative with real reach becomes the referral engine for paying clients. Building a repeatable **client-delivery playbook** (`references/client-delivery-playbook.md`); an agency **portfolio site comes later**, after Kesari ships with real results.
+
+**Why:** Most aligned side-business he can start — he can already build and deploy; the gap is the "around" (findability, scoping, pricing, handover, retainer), which is learnable and is exactly what clients pay for. Kesari is a safe first client (relative — no lawsuit/ghost risk) but run as a real paid engagement so it yields a true template *and* a real case study with results. Recurring retainers, not one-time builds, are the actual business. Guardrail: this stays a side-business; the #1 quarter goal (job switch, DSA gate) is the floor — when a weeknight collision hits, prep wins. Time budget ~2h weekday + 4-5h weekend.
+
+**Key calls / lessons banked:** (1) The client's *business outcome* sets the target, not "more traffic" — Kesari is B2B credibility + regional findability (Kutch/Gujarat), not mass volume. (2) ₹10K is a case-study price; market for this build quality is ~₹25-50K one-time + a tiered retainer — don't anchor future quotes to Kesari. (3) Findability is the flywheel trigger (GBP + service×location pages + India B2B directories IndiaMART/JustDial/TradeIndia + client roster + Search Console), not how pretty the site is. (4) The agency portfolio is built AFTER Kesari ships with real results — an empty portfolio is weak, and building it first is procrastination from sales/delivery.
+
+**Alternatives considered:** Treat Kesari as a casual favour (rejected — kills the template value; run it as a real client). Build the agency portfolio first (rejected — sequence it after a real case study exists). One-time builds only (rejected — the recurring retainer is the business). Go full-throttle now (rejected — job hunt is Priority 1; keep this bounded).
+
+**Owner:** Tarun.
+
+## 2026-07-12 — Standardised the Cloudflare go-live as a skill + script
+
+**Decision:** Built `/cloudflare-go-live` (skill) + `scripts/cloudflare-go-live.mjs` (dry-run-by-default, idempotent) + `references/cloudflare-go-live.md`, extracted from taking kesrienterprise.com live the hard way. 13 of the ~19 steps are now scripted against the Cloudflare/Resend APIs; the 6 that genuinely have no API (buy domain, repoint nameservers at BigRock, click the email verification link, GitHub OAuth connect, build variables, solve the real Turnstile) are named explicitly at the end of every run so they cannot be silently skipped.
+
+**Why:** The procedure is repetitive and I will run it for every future client, but four of its steps are non-obvious and two are outright Cloudflare bugs — the `www` Custom-Domain/Route dead-end, and the useless `10000: Authentication error` that a missing token permission produces. Rediscovering those costs hours each time. The script's preflight now probes every API surface and names the exact missing permission group, which turns the worst failure mode into a one-line fix.
+
+**Email stack decided: Resend (send) + Cloudflare Email Routing (receive).** Researched properly rather than assumed: Cloudflare Email *Sending* advertises "3,000/month included" but that is included with the **Workers Paid plan ($5/mo)**, not free. Resend's 3,000/month (100/day) genuinely is free. Since the rule is free-only right now, the split stack wins. Resend's free tier is per-account, so **each client gets their own Resend account**; the Cloudflare account stays single and shared across all clients.
+
+**Confirmed free at scale:** unlimited zones per CF account, and static-asset requests do not count against the Workers 100k/day. A brochure site therefore costs nothing and consumes none of the budget. The first real ceiling is **Turnstile: 20 widgets per account**, which caps the one-account model at ~20 clients. Worth knowing years early.
+
+**Lives in TARUN-OS, not `~/.claude/skills/`.** Global skills sit on the work laptop and vanish on another machine. TARUN-OS is git-backed and portable, and it is the centralised record. When working inside a product repo, point the session at the TARUN-OS path.
+
+**Alternatives considered:** (1) All-Cloudflare email — rejected, costs $5/mo and Resend is proven. (2) Global skill install — rejected, not portable, and the go-live is run from inside the *product* repo anyway. (3) Apply-by-default script — rejected; it creates real public infrastructure, and a typo in `--domain` would mint a junk zone. Dry run is the default and `--apply` is opt-in.
+
+**Owner:** Tarun.
+
+## 2026-07-13 — AdSense becomes a build-time contract, not a launch-day cleanup
+
+**Decision:** Built `/adsense-ready` (skill, two modes: `contract` + `audit`), `references/adsense-policy.md` (the official Google policy corpus, distilled and source-cited), and `handoff-prompts/adsense-retrofit.md` (a paste-ready prompt for existing repos). Wired it into `/explore-project` as a **fifth gated step**, so every handoff prompt now carries an **AdSense Compliance Contract** (§5) inline, every milestone's acceptance criteria ends with `/adsense-ready audit` returning no new FAILs, and §9 opens with a step-0 instruction to **copy the skill folder into the new repo**. Fed the same requirements down into `/design-architecture` (the route list must include trust pages, a content-depth bar, and an interlinking map) and `/pick-stack` (slot reservation, CMP, `ads.txt`).
+
+**Why:** The pipeline treated AdSense as exactly two things — a revenue-viability gate at scout, and a Core Web Vitals hazard at stack/architecture. It never treated it as an **approval surface**. Across all six pipeline skills and both generated handoff prompts, the words *privacy policy*, *about*, *contact*, *terms*, *low-value content*, *E-E-A-T*, and *ads.txt* appeared **zero times**. This has already cost real money twice: **JsonBeam was rejected for low-value content on 2026-07-08**, and GradeJar's trust pages were bolted on ad hoc on 2026-07-02 by luck rather than design. AccentWallPlanner's handoff prompt was heading for the same wall at 100x scale — its route list is `/`, four style pages, and ~100 near-identical programmatic pages, with **no trust pages at all**.
+
+**The load-bearing rule:** Google Publisher Policies prohibit ads *"on screens without publisher-content or with low-value content."* **A bare tool widget is such a screen.** The calculator is not the content — it is the functionality. The content is what a human wrote around it. Corollary, and the trap for programmatic SEO: **never templated + indexed + monetized.** Programmatic pages are either genuinely differentiated, or `noindex` **and** ad-free.
+
+**Alternatives considered:** (1) Fold the rules into the existing skills rather than build a new one — rejected; the checklist is long, it needs to run standalone at every milestone, and it has to be **copyable into a cold product repo**, which a scattered set of edits cannot be. (2) Reference the TARUN-OS skill path from the new repo without copying — rejected; a cold agent may not have read access outside its working directory, and the gate would silently no-op. (3) Inline the rules in every handoff prompt with no skill — rejected; the prompt bloats and every already-written prompt drifts from the policy the moment it updates. The chosen answer does both: the contract is inline in §5 (self-contained), **and** the skill is copied in (runnable at every gate).
+
+**Owner:** Tarun.
+
+## 2026-07-13 — `/scout-problem` now kills ideas on revenue-floor grounds, not just demand
+
+**Decision:** Rewrote Gate 3 from "money-model viable" (a *cost* check) to **"revenue floor cleared"** (a *revenue* check), added a new **Step 4 — Revenue model** that produces a three-scenario dollar band with every input shown, and added `references/adsense-economics.md` as the benchmark source. The verdict and the brief now always carry the band. New Rule 7: **"Traffic is not revenue. Never return GO without a revenue band."**
+
+**Why:** The gate checked cost-to-serve and hand-waved "decent-to-high CPM." It never estimated revenue. The actual identity is `sessions × pages-per-session × page RPM ÷ 1000`, and the scout estimated **none of the three terms** — each of which is a multiplier, so a weak one cannot be outrun by a strong one.
+
+**The forcing evidence — JsonBeam, run through the new model:** floor-tier CPC (nobody bids to reach someone formatting JSON — there is no product to sell them at that moment), a **40-60% ad-blocking developer audience** (general audiences: 5-15%), and **~1.0 pages/session** (land, paste, leave). Three multipliers, all near the floor. **It can win #1 on every JSON keyword and still sit in the $0.25-$3 RPM basement.** All three were knowable before a line of code was written. It is a good product and a good SEO play; it is a bad *AdSense* play. Meanwhile **AccentWallPlanner** — home improvement, ~$2.40 CPC with real buyer intent (Home Depot, Lowe's, contractors bidding), US homeowners who barely ad-block, and a natural content surface — is structurally the best money bet in the portfolio, and **it was not chosen for that reason.**
+
+**The through-line, and the reason both of today's decisions are really one:** **session depth and AdSense approvability are the same lever.** A bare widget is simultaneously *1.0 pages/session* (the revenue floor) and *"a screen without publisher-content"* (the rejection reason). The content ecosystem that fixes the approval also doubles the revenue. It is never a compliance tax — it is the business model.
+
+**Owner:** Tarun.

@@ -1,5 +1,15 @@
 # Cloudflare API — local reference
 
+> ⚠️ **Scope note (2026-07-12).** This file covers the **Pages** path and assumes domains are
+> bought at **Cloudflare Registrar**. Both assumptions break for Workers-based sites bought at
+> an external registrar. For anything involving **Workers, a domain go-live, Turnstile, or
+> email**, read **`references/cloudflare-go-live.md`** instead — it supersedes this file there.
+> In particular: **`@astrojs/cloudflare` does not support Pages.** Deploy Astro with
+> `wrangler deploy`, never `wrangler pages deploy`. §3 below does not apply to it.
+>
+> This file is still correct for **Web Analytics (§5)**, which `scripts/report.mjs` depends on,
+> and for the DNS + auth basics.
+
 > Researched-once-saved-forever. Read this instead of calling a live MCP or the docs site.
 > Covers the slice this AIOS actually needs: auth, Pages (deploy + custom domains), DNS,
 > and Web Analytics. Refresh on command: "update the cloudflare-api reference".
@@ -7,7 +17,8 @@
 
 Tarun's domains (JsonBeam, and GradeJar at go-live) are registered/managed in his
 Cloudflare account, so DNS + Pages custom domains wire up inside one account — no
-external registrar handoff.
+external registrar handoff. **Client domains do not work this way** — kesrienterprise.com was
+bought at BigRock, which means a manual nameserver repoint. See `cloudflare-go-live.md`.
 
 ---
 
