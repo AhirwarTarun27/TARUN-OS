@@ -28,6 +28,7 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
 - `week.md` — read at plan-time to tie the day to this week's 3 outcomes
 - `learning/*/learning-records/` — read at wrap to pull what `/teach` covered for `sysdesign` / `interview-qa`
 - `learning/dsa/queue.md` — the DSA spaced-rep tracker (read at plan for what's due; advance the rung + recompute due dates at wrap)
+- `learning/machine-coding/queue.md` — the machine-coding cold-rebuild ladder (read at plan for what's due; **`lab/ingest.mjs` writes the row itself** — at wrap just confirm it landed). **Never read `learning/machine-coding/builds/`** — that's `/machine-coding`'s job, under its read budget.
 - `shipped.md` — if the day shipped something real, also bank a one-liner there (don't double-track routine)
 - `daily/dashboard/` — the streak dashboard engine: Write `today.json` + run `build.mjs` only.
   NEVER read `template.html` or `daily/dashboard.html` (build output) — the build owns them.
@@ -38,8 +39,8 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
 2. Open `daily/schedule.md`. The routine is fixed, so planning = deciding the **focus** for the
    flexible blocks, not rebuilding the timetable. Ask a tight set (descriptive, not a wall):
    - **Must-ship:** the ONE thing that makes today count (mirror it into `week.md` → "Today — ONE must-ship").
-   - **`dsa`:** read `learning/dsa/queue.md` → surface 🔴 revisions **due today** (problem + rung), then ask which NEW problem is today's D0. The due revisions + one new problem ARE the block's plan. (See "DSA spaced-rep engine" below.)
-   - **`machine-coding`:** which problem/pattern today?
+   - **`dsa`:** read `learning/dsa/queue.md` → surface **overdue** revisions, then revisions **due today** (problem + rung), then the **one new-problem slot**: the carried `Attempting` problem if there is one, else ask which NEW problem is today's D0. **Revisions beat new problems** — if they fill the block, say so and skip the new one. (See "DSA spaced-rep engine" below.)
+   - **`machine-coding`:** read `learning/machine-coding/queue.md` → the **Phase marker**, then **overdue cold rebuilds**, then rebuilds **due today**, then the **one new-build slot** (next problem in the phase curriculum). **Rebuilds beat new builds** — if they fill the block, say so and skip the new one. Point him at `learning/machine-coding/lab/index.html`. Depth belongs to `/machine-coding`, not here.
    - **`sysdesign`:** which Xu Vol 1 chapter/topic → confirm to run via `/teach` (interview-focused; see learning/system-design-video-path.md for the watch-first video).
    - **`project`:** which task on the current product?
    - **`reading`:** which book / where.
@@ -60,9 +61,16 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
    - For each **miss**, one honest question: capacity, clarity, or avoidance? Log the real cause in a few words.
    - For each **learning block** (`sysdesign`, `interview-qa`): one line on what `/teach` covered. Pull it from
      `learning/<topic>/learning-records/` if written there; otherwise ask and let `/teach` own the depth.
-   - **`dsa` block:** if it hit, update `learning/dsa/queue.md` — add any new **D0** problem(s) solved (pattern + one-line key idea);
-     for each **revision** done, ask the 1–5 smoothness rating, advance the rung, and recompute Next due per the ladder
-     (see "DSA spaced-rep engine" below). Notes stay one-line — depth is in Tarun's notebook.
+   - **`dsa` block:** if it hit, update `learning/dsa/queue.md`. **Ask whether each new problem was actually SOLVED** —
+     a working solution banks **D0 = today** (+ tag it `solo` / `hinted` / `watched`); no working solution leaves it
+     **Attempting** with attempt-day +1 (force-bank as `watched` when that hits 2). For each **revision** done, ask the
+     1–5 smoothness rating, advance the rung, and recompute Next due per the ladder (see "DSA spaced-rep engine" below).
+     Notes stay one-line — depth is in Tarun's notebook.
+   - **`machine-coding` block:** if it hit, ask whether he ran `node learning/machine-coding/lab/ingest.mjs`.
+     If yes, the queue row is already written — just confirm it landed and note the rung in one line
+     (e.g. `machine-coding=star-rating R0 solo, P0 ✓`). If he coded but never exported, say so: an
+     un-ingested session is a rep with no record and no grade. **Never grade it here** — that's
+     `/machine-coding review`, and it has a read budget this ritual must not blow.
    - **Energy** for the day, 1–5.
    - Did the **must-ship** land? ✅ / ❌.
 3. **Write ONE compact entry** to the top of `daily/log.md` (newest on top), ~4 lines:
@@ -114,13 +122,40 @@ the new day's entry:
 ## DSA spaced-rep engine
 
 `learning/dsa/queue.md` is the source of truth (full method + tables live there). This ritual only
-reads/advances it — it never teaches DSA (Rule 3). The ladder, offsets from **D0** (first-solve date):
+reads/advances it — it never teaches DSA (Rule 3). **Revised 2026-07-14.**
 
-- **D2 = D0+2** — always. Rated **≥ 3** → skip D5, next due **D10 (D0+10)**. Rated **< 3** → next due **D5 (D0+5)**.
-- **D5 = D0+5** — only if D2 was < 3. After D5, next due **D10 (D0+10)** regardless.
-- **D10 = D0+10** — compulsory. Rated **≥ 3** → **Graduated** (Graduated table). Rated **< 3** → flag **🔁 Revisit** (stays surfaced until re-cleared).
+**D0 = the day the problem was SOLVED, not the day it was first seen.** This is the whole point —
+the ladder's offsets are meaningless if the anchor is a day nothing was learned.
 
-At **plan**, surface rows whose Next due ≤ today. At **wrap**, bank the rating + recompute Next due. Detailed notes = Tarun's notebook, not here.
+- **Attempting** (started, no working solution yet): **not on the ladder.** No D0, no due dates.
+  Carried day to day, attempt-day +1 each day it's actually worked.
+  **Carry cap = 2 attempt-days** → still stuck at the end of day 2? Watch the full solution,
+  re-solve from notes, **bank D0 that day tagged `watched`.** Never let one problem eat a week.
+- **Banking D0:** a working solution — however he got there — banks D0 **today**, with a tag:
+  `solo` (unaided) · `hinted` (nudge, but wrote it himself) · `watched` (needed the full solution).
+
+The ladder, offsets from **D0** (the *solve* date):
+
+- **D2 = D0+2** — always.
+  - D0 tagged **`watched`** → **D5 is MANDATORY**, whatever D2 rates. *(A watched problem is still
+    fresh at D2, so a high D2 rating is a false positive — D5 is the trap-door that catches it.)*
+  - Otherwise: rated **≥ 3** → skip D5, next due **D10**. Rated **< 3** → next due **D5**.
+- **D5 = D0+5** — when D2 < 3 **or** D0 was `watched`. After D5, next due **D10** regardless.
+- **D10 = D0+10** — compulsory. Rated **≥ 3** → **Graduated**. Rated **< 3** → flag **🔁 Revisit**
+  (stays surfaced every session until re-cleared).
+
+**At `plan`** — surface in this priority order, because **revisions beat new problems** (a missed
+revision decays a pattern he half-owns; a deferred new problem costs one day):
+1. **Overdue** revisions (next due < today) · 2. revisions **due today** · 3. **the one new-problem
+slot** — the carried `Attempting` problem if there is one, else ask for a fresh D0.
+**If 1+2 fill the 45-min block, say so and skip slot 3.** Never defer a revision to start something new.
+
+**At `wrap`** — for each problem worked:
+- **Attempting, solved** → bank D0 = today + the tag, compute next due (D0+2), move to Active.
+- **Attempting, not solved** → attempt-day +1. If that hits **2**, force-bank as `watched` (D0 = today).
+- **Revision done** → ask the 1–5 rating, advance the rung, recompute next due per the ladder above.
+
+Detailed notes = Tarun's notebook, not here. One-line gist only.
 
 ## Rules
 

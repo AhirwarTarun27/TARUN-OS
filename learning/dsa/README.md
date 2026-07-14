@@ -15,10 +15,14 @@ Beginner-plus — a bit past beginner, not yet intermediate.
 
 ## The method (Akshay Saini / Namaste DSA)
 
-Every problem is solved on a spaced ladder so the **pattern** sticks: **D0 → D2 → D5 (only if
-struggling) → D10.** Each revision rated 1–5; < 3 = struggling. Full engine + the live problem
-table live in **[`queue.md`](queue.md)** — that's the file `/daily-log` reads at plan and updates
-at wrap.
+Every problem is solved on a spaced ladder so the **pattern** sticks: **D0 → D2 → D5 → D10.**
+Each pass rated 1–5; < 3 = struggling.
+
+**D0 = the day you SOLVED it, not the day you first saw it** (revised 2026-07-14). A problem you
+couldn't get working stays `Attempting` — off the ladder entirely — and is carried day to day,
+capped at 2 attempt-days. Each banked D0 is tagged `solo` / `hinted` / `watched`, and a `watched`
+D0 makes the D5 pass mandatory. Full engine + the live tables live in **[`queue.md`](queue.md)** —
+that's the file `/daily-log` reads at plan and updates at wrap.
 
 The physical **notebook** is the source of truth for detailed notes (pattern, time complexity,
 mistakes, new concepts, key idea). `queue.md` only holds the schedule + a one-line gist.

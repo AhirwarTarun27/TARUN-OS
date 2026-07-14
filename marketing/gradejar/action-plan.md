@@ -44,7 +44,7 @@ matters until these five are done. All are Tarun tasks (auth required); AIOS pre
 - [x] **AdSense:** gradejar.com is now listed in the account, status `GETTING_READY` (confirmed via `scripts/report.mjs` 2026-07-03). Review clock is running. Nothing else to do but wait.
 - [x] **Analytics:** wired 2026-07-03. Cloudflare zone-level Web Analytics (`httpRequests1dGroups`/`httpRequestsAdaptiveGroups`, edge-log traffic incl. bots) added to `scripts/report.mjs` — GradeJar now shows page views, daily uniques, top pages, top countries alongside JsonBeam's GA4 block. Details: `references/cloudflare-api.md` §5. GA4 property is still an option later (Option B) but not needed now.
 - [x] **Unblock AI-search crawlers:** confirmed via robots.txt fetch 2026-07-03 — `OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`, `Claude-SearchBot`/`Claude-User` are NOT blocked (fall through to wildcard `Allow: /`). Only pure-training bots (`GPTBot`, `ClaudeBot`, `CCBot`, `Bytespider`, `Google-Extended`, `Amazonbot`, `Applebot-Extended`, `meta-externalagent`) stay blocked, which is the desired state.
-- [ ] **GSC wiring gap (AIOS follow-up):** once GSC verification is confirmed in-dashboard, wire the Search Console API into the report script (service account, same pattern as GA4) so the engine sees queries/impressions. Needs Tarun's one-time auth grant.
+- [x] **GSC wiring gap — DONE.** Confirmed live 2026-07-14: `scripts/report.mjs` returns real GradeJar Search Console data (934 impressions/wk, avg position 66.7).
 
 ## Days 1-30 (Jul 3 - Aug 2) — Foundation + pitch season
 

@@ -319,3 +319,75 @@ Conceding `board and batten calculator` to inchcalculator's domain authority (pe
 **The through-line, and the reason both of today's decisions are really one:** **session depth and AdSense approvability are the same lever.** A bare widget is simultaneously *1.0 pages/session* (the revenue floor) and *"a screen without publisher-content"* (the rejection reason). The content ecosystem that fixes the approval also doubles the revenue. It is never a compliance tax — it is the business model.
 
 **Owner:** Tarun.
+
+## 2026-07-13 — The client-delivery playbook becomes an executable pipeline
+
+**Decision:** Built the **`/client-pipeline`** parent + five phase skills (`/client-scope`, `/client-build`, `/client-findable`, `/client-handover`, `/client-retainer`), the **`listing-researcher`** subagent, a central **`clients/`** registry (`engagement.md` · `findability.md` · `handover.md` · `retainer.md` · `reports/`, plus a `_template/`), and two new reference corpora: **`references/client-platforms.md`** (every free platform, tiered by the client's actual buyer) and **`references/ai-search-visibility.md`** (the AI-answer layer). Seeded `clients/kesri-enterprise/` from the real, verified repo + live-site state.
+
+**Why:** `references/client-delivery-playbook.md` was **a document nothing read.** Every client meant re-deriving the same motion by hand at 8pm on a weeknight — discovery, scope, price, build, GBP, directories, handover, retainer. The only client-adjacent skill in the whole AIOS was `/cloudflare-go-live`, which automates one slice of Phase 3. There was no per-client state anywhere. Meanwhile Kesri had been **live for days and findable by nobody** — no Google Business Profile, no Search Console, no directory listing, no analytics — because the phase that earns the retainer had no skill behind it and kept losing to the phases that did.
+
+**The design calls:**
+
+1. **Parent + 5 phase skills**, mirroring the `/explore-project` orchestrator convention. `/client-pipeline <slug>` answers exactly one question — *what do I do next?* — with a time estimate, paste-ready copy, and a verification step. **If the output requires a decision, the skill has failed.**
+2. **Central `clients/` registry, not per-repo state.** Business data (pricing, engagement, listings) must never live in a repo that might be handed to the client, and the portfolio view has to answer "where is every client" in one read.
+3. **The four ecosystem layers get baked in at build time** — AI-search schema, lead capture → WhatsApp, review link, conversion event. Same lesson as the AdSense decision above: **retrofitting a design constraint costs 5× and usually just doesn't happen.**
+4. **Service × location pages now require a substance test.** The playbook said "build them"; Kesri's BUILD-PLAN deliberately refused, choosing one `areaServed` array over per-city doorway pages. **The BUILD-PLAN was right, and the playbook is now amended.** Build `/<service>-in-<place>` only when 3+ sentences are true *and* unique to that place. Otherwise `areaServed` + GBP + citations carry the local signal — which is what actually ranks a single-location business. The deeper reason: **a thin doorway page is structurally an invitation to invent facts**, and that is how the never-invent-a-fact rule dies. *Kesri today: all no → skip.*
+
+**The moat, and why it's real:** AI assistants recommend only **~1.2% of local businesses on ChatGPT and ~7.4% on Perplexity**, versus ~35.9% in Google's local 3-pack — and only **~11% of domains cited by ChatGPT are also cited by Perplexity.** Winning Google does **not** win AI search. No agency in Kutch is fighting on that front, and it's what makes a Growth retainer defensible instead of a line item cancelled in month four. **Promise the work and the monthly scoreboard — never a ranking.**
+
+**Two things found while seeding Kesri that no status file in its repo knew about** — both dashboard settings, both invisible to any amount of code review, which is now Rule 1 of `/client-findable` (*verify over the wire, first*):
+- **Cloudflare's zone-level managed robots.txt** blocks `ClaudeBot` (total), `GPTBot`, `Google-Extended`, `CCBot` and others. Verified live. **Precisely:** Claude can't read the site at all; OpenAI *training* is blocked but `OAI-SearchBot` isn't listed so ChatGPT search still works; `Google-Extended` kills Gemini grounding but **not** AI Overviews (those run off `Googlebot`, untouched); Perplexity is unaffected. **A real loss, not a catastrophe — and the distinction matters, because a client can check.**
+- **`PUBLIC_SITE_URL` is unset in Workers Builds.** The live site is currently healthy, but `src/lib/indexing.ts` falls back to the workers.dev origin and emits `noindex, nofollow` + `Disallow: /`. The GitHub build trigger has never been observed firing. **The day it does, it de-indexes the live domain and nothing alerts anyone.** The checked-in `dist/client/robots.txt` already says `Disallow: /` from exactly this path.
+
+**Alternatives considered:** (1) *3 fatter skills instead of 6* — rejected; it blurs the "one next action" granularity, which is the entire product. (2) *State inside each client repo (the GradeJar pattern)* — rejected; no portfolio view, and pricing data ends up in a repo the client may receive. (3) *Always build location pages, per the playbook as written* — rejected; see design call 4. (4) *Generate the client-facing process doc generically, once* — rejected; a generic version is a leaflet, a per-prospect one is a plan.
+
+**Owner:** Tarun.
+
+## 2026-07-14 — DSA ladder re-anchored: D0 = the day you SOLVE it, not the day you see it
+
+**Decision:** Rewrote the spaced-rep engine in `learning/dsa/queue.md` (+ `README.md`, the `/daily-log` skill, `CLAUDE.md`). Four changes:
+
+1. **D0 is now the solve date.** A problem with no working solution stays **`Attempting`** — off the ladder entirely, no D0, no due dates — and is carried day to day.
+2. **Carry cap = 2 attempt-days.** Still stuck at the end of day 2 → watch the full solution, re-solve from notes, **force-bank D0 tagged `watched`**.
+3. **Every D0 is tagged `solo` / `hinted` / `watched`**, and a **`watched` D0 makes the D5 pass mandatory** regardless of what D2 rates.
+4. **Revisions beat new problems** when the 45-min block can't fit both.
+
+**Why:** Tarun raised (1) — he might not solve a problem on the day he starts it. He's right, and the reason is bigger than convenience: **the ladder's offsets are meaningless if the anchor is a day nothing was learned.** A "D2 revision" of a problem he never got working is a first attempt wearing a costume, scheduled by a system that believes he already knows it.
+
+(2), (3) and (4) are mine, and each closes a hole the fix would otherwise open or leave:
+
+- Without the **cap**, the fix creates a worse bug than the one it solves — a single hard question silently eats a week of the block, with nothing in the system objecting. Patterns stick through *volume of patterns seen*; grinding one question is the anti-pattern, and D5/D10 exist precisely to catch what didn't land the first time.
+- The **`watched` tag** closes the hole the old system could not see: a solo-solved problem and a video-solved problem received the **identical** schedule. And it fails in a sneaky direction — a watched problem is still *fresh* two days later, so D2 rates high, D5 gets skipped, and by D10 the pattern is gone. **A smooth D2 on a watched problem is a false positive.** Forcing D5 is the trap-door.
+- **Revisions-first** because a missed revision decays a pattern he half-owns, while a deferred new problem costs exactly one day.
+
+**Would change my mind:** if `watched` problems consistently rate ≥ 4 at *both* D5 and D10, the forced D5 is wasted reps and can be relaxed back to the plain D2-rating rule.
+
+**Alternatives considered:** *Solo-only counts as D0* (rejected — Namaste DSA's own method assumes you'll be stuck on D0 and watch the video; requiring an unaided solve would stall throughput badly). *Any completed session banks D0* (rejected — that's the current broken behaviour with extra steps). *No carry cap* (rejected — see above). *Extend the block when revisions pile up* (rejected — it bleeds into `machine-coding` at 12:45 and quietly steals from another Priority-1 block).
+
+**Owner:** Tarun.
+
+## 2026-07-14 — Machine coding gets a lab, a ladder, and a profile — and the AI is banned from writing code in it
+
+**Decision:** Built the machine-coding system (`learning/machine-coding/` + `/machine-coding` + wiring into `/daily-log`). Five load-bearing calls:
+
+1. **The AI never writes code during the block.** Not a snippet, not "here's roughly how debounce works," not even when asked directly. The lab's editor has **no autocomplete, no bracket matching, nothing**. After the buzzer, AI is the *reviewer*, never the author.
+2. **The rep is a COLD REBUILD, not a re-solve** — and this is where it deliberately breaks from the DSA ladder. **R0 → R3 → R10**, each rung a blank file from memory on a timer. The unit of mastery is the **primitive**, not the problem.
+3. **A lab, not the terminal and not chat.** A local dark-theme page (`lab/index.html`) with four gated phases. **The code editor is physically locked until a design is submitted**, and the problem's real requirements are **hidden until he asks for them**.
+4. **`profile.md` is a fixed-size REWRITTEN model, not an append-only log.** Failure-mode counts, freeze signature, primitive mastery, and a **hint ledger** of what has actually unblocked him.
+5. **Phase-gated 0→3** (steal the process → guided solo → interviewer → full rounds). The skill **refuses** to run interviewer mode early.
+
+**Why:** Tarun named the problem himself: *"My confidence is very low. I think I will not be able to solve even a simple problem, because of AI-assisted coding. I don't write the code by my hand."* That is not one problem — it's **three muscles AI ate** (blank-file→structure; API recall without autocomplete; finishing inside a clock) **plus one he never had** (the rubric — this round grades scope clarity, structure, and a working P0 before the buzzer, so ugly+complete beats beautiful+half-done, and strong coders fail it while writing good code).
+
+The corollary set the entire curriculum: **he can't build an autocomplete because it's a four-primitive composition and he owns zero primitives.** More video doesn't fix that; starting much smaller does. So Phase 1 is deliberately *below* his level (counter, star rating, accordion) — he finishes every one, and the blank-file freeze dies.
+
+Two decisions were his and both improved the design:
+- **Ramp in, don't start with the interviewer.** He was explicit that opening at interview difficulty would just confirm the fear. Correct — the confidence rebuild is load-bearing, not a nicety.
+- **"Can the system know me well enough in two months to give a *real* hint?"** That question produced `profile.md`, which is the difference between a grader and a coach. The payoff: not *"here's a hint"* but *"you're stalling at state init again, same as Jul 14 and Jul 22 — both times the unlock was: what's the smallest thing that changes when the user clicks?"*
+
+**The cost principle (his catch, and it's the reason this survives):** *token cost is driven by what gets **read**, not what gets **stored**.* Disk is free, so the system stores every session forever and reads almost none of it. **`profile.md` is rewritten, never appended — the same size after 100 sessions as after 3.** A review reads exactly three files (~1,600 tokens, **flat forever**), never globs `builds/`, and opens a raw `session.json` only to answer a named diagnostic question. A human coach doesn't reread every past session either; they carry a model of you.
+
+**Would change my mind:** if the design-gate scaffold is still needed after week 3, the problem isn't the scaffold — it's that Phase 1 was still too hard, and the bank needs smaller problems. And if the freeze data turns out to be noise (pauses that are just thinking, not stalling), the instrumentation is over-built and should collapse to milestones only.
+
+**Alternatives considered:** *Route it through `/teach`* (rejected — `/teach` makes HTML lessons and cheat sheets; this is a *performance* skill needing a clock, a rubric, withheld requirements, and a coach that refuses to help). *Copy the DSA ladder verbatim* (rejected — re-solving the same app memorizes that app; the primitive is what transfers). *Code in VS Code with Copilot off* (rejected for drills — pure honor system, no timer, no protocol; **kept for Phase 3 full rounds**, where multi-file structure is itself graded). *Just use Namaste dev's editor* (rejected — no timer, no P0/P1/P2 discipline, and the code never lands in the repo, so cold rebuilds can't be diffed against the original). *Screenshots in the replay* (rejected — ~1,500 vision tokens each × 30/session, and they tell me less than the code does; **capture the final rendered DOM as text instead**, ~1 KB).
+
+**Owner:** Tarun.

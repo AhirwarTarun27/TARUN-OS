@@ -11,12 +11,13 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 ## Your skills
 
 **Operating rhythm:**
-- `/daily-log` — Weekday execution ritual. `plan` at 10:30am sets today's per-block focus; `wrap` at 12:15am runs a short QnA and banks one compact log entry. Tracks the fixed routine in `daily/schedule.md`, keeps a terse rolling log, and compresses to a monthly summary at month-end. The hours-level engine under `/weekly-review`. Also reads/advances `learning/dsa/queue.md` — the DSA spaced-rep tracker (Namaste DSA ladder D0→D2→D5-if-struggling→D10) — surfacing due revisions at plan and banking ratings at wrap.
+- `/daily-log` — Weekday execution ritual. `plan` at 10:30am sets today's per-block focus; `wrap` at 12:15am runs a short QnA and banks one compact log entry. Tracks the fixed routine in `daily/schedule.md`, keeps a terse rolling log, and compresses to a monthly summary at month-end. The hours-level engine under `/weekly-review`. Also reads/advances `learning/dsa/queue.md` — the DSA spaced-rep tracker (Namaste DSA ladder D0→D2→D5→D10, where **D0 = the day a problem is SOLVED, not first seen**; unsolved problems stay `Attempting` off the ladder, capped at 2 attempt-days) — surfacing due revisions at plan and banking ratings at wrap.
 - `/weekly-review` — Sunday execution ritual. Score the week, bank what shipped, reset next week's 3 outcomes. THIS is the follow-through engine. Don't skip it.
 - `/onboard` — already run if you're seeing this filled in. Re-run any time to refresh from an edited `aios-intake.md`.
 - `/audit` — Four-Cs gap report. Run on Day 7, then weekly. Watch your score climb.
 - `/level-up` — Weekly 3Ms interview. Find one automation, scope it, ship it. One per week.
 - `/site-report` — Live traffic + revenue for a product (JsonBeam now, GradeJar at go-live). Runs `scripts/report.mjs`, banks a dated snapshot to `reports/metrics-log.md`, then diagnoses the funnel and prescribes 2-3 simple growth moves. Trigger any time you ask how a site is doing.
+- `/machine-coding` — **The 12:45pm block. DSA is the gate; machine coding is the offer.** Coaches the round: reviews your design **before** you write code, grades the finished session against the rubric, and rewrites a compounding performance profile (failure modes, freeze signature, primitive mastery, the hint ledger). You code in the **lab** (`learning/machine-coding/lab/index.html`) — a local page with gated phases, a clock, and **no autocomplete**, which locks the editor until you submit a design. **The skill NEVER writes code**; every line it writes for you is a rep you don't get. Phase-gated 0→3 (steal the process → guided solo → interviewer → full rounds) — it will refuse to interview you early. Built 2026-07-14 because AI-assisted coding ate the blank-file-to-structure muscle.
 
 **Shipping:**
 - `/cloudflare-go-live` — Domain to live site on Cloudflare Workers, end to end. Zone, nameservers (BigRock is external, so that repoint is manual), Worker custom domain, www redirect, Turnstile, Email Routing for `info@`, Resend as the free sender. Runs `scripts/cloudflare-go-live.mjs`, which is a **dry run by default** and idempotent, so a half-finished go-live is safe to re-run. Trigger on "I bought a domain", "go live", "www isn't working", "set up email for the domain". Built from doing kesrienterprise.com the hard way. **Everything it touches is free-tier; it flags anything that would cost money before acting.** Reference: `references/cloudflare-go-live.md`.
@@ -30,20 +31,38 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 - `/setup-kit` — Design direction + which skills/MCPs to install (via subagent).
 - `/adsense-ready` — **The approval gate.** `contract` mode writes the AdSense Compliance Contract into every handoff prompt (trust pages, content-depth bar, interlinking map, ad placement, pre-application gate). `audit` mode walks a repo against every official Google policy and returns a ranked blocker list. **Gets copied into every product repo** and run at every milestone. Built because JsonBeam was rejected for low-value content on 2026-07-08 and GradeJar's trust pages were bolted on after the fact. **A site Google won't approve earns $0 no matter how well it ranks.** Also usable standalone — trigger on "will this get approved", "audit for adsense", "am I ready to apply". Paste `handoff-prompts/adsense-retrofit.md` into an existing product repo to retrofit it.
 
+**Client delivery — the web-solutions business (every client runs through this, in order):**
+
+The paid side-business: end-to-end websites for local businesses around Gandhidham/Kutch. Kesri Enterprise is client #1 and the template. The playbook is `references/client-delivery-playbook.md`; these skills **execute** it so no engagement is ever re-derived by hand.
+
+- `/client-pipeline` — **The parent. Start here.** No arg = portfolio view of every client. `<slug>` = read that client's state and print the ONE next action, with a time estimate and a verification step. `new` = onboard a client. Trigger on "what's next for kesri", "client status", "new client". **It verifies reality over the wire before reporting** — both of Kesri's P0 problems were invisible to every status file in its repo.
+- `/client-scope` — Phase 1. Discovery, the one-sentence business outcome, fixed scope + NOT-included list, price (one-time **and** retainer, together), the advance gate, and **the questionnaire goes out on day one** — it has the longest lead time in any project. Also writes the client-facing **"How We Take Your Business Online"** process doc, which is the sales asset.
+- `/client-build` — Phase 2. Lowest deployment tier that solves it, the house Astro + Cloudflare Workers template, and **the four ecosystem layers baked in at build time** (AI-search schema, lead capture → WhatsApp, review link, conversion event). Chains to `/cloudflare-go-live`.
+- `/client-findable` — Phase 3. **The layer clients pay for and the flywheel trigger.** Technical gate → GBP → search consoles → the buyer's directories → AI-search layer → review engine. Delegates vertical directory research to the `listing-researcher` subagent. Output is a **paste-ready** board: category, copy, NAP, verification, all pre-written.
+- `/client-handover` — Phase 4. Every account in the client's name, the plain-English one-pager, **show the win in person** (live test enquiry — the best moment in the engagement), then collect payment + testimonial + written portfolio permission + **one** referral introduction.
+- `/client-retainer` — Phase 5. **The actual business.** The monthly *"here's what people searched to find you"* report, plus the growth queue. The report is what makes them keep paying and keep referring.
+
+**The two rules that outrank everything in this pipeline:** (1) **never invent a fact about a client** — empty beats invented; one caught invention loses a B2B client permanently, and in a district this size that's the whole market. (2) **Every account in the client's name.** Tarun manages, never owns.
+
 ## Where things live
 
 - `week.md` — **your single source of truth.** This week's 3 outcomes + today's one must-ship. Open it first, every session.
 - `daily/` — the weekday execution tracker (run by `/daily-log`): `schedule.md` (the fixed routine), `log.md` (this month's terse daily entries), `summaries/` (compressed monthly records). Granular months age out to `archives/daily/`.
+- `learning/machine-coding/` — **the machine-coding round system** (run by `/machine-coding`): `lab/` (where the code actually gets written — open `index.html`), `rubric.md` (how the round is really scored), `primitives.md` (the 27 building blocks every question composes), `queue.md` (the R0→R3→R10 cold-rebuild ladder + the Phase marker), **`profile.md`** (the compounding model of how Tarun codes), `problems/` (the Phase 1 bank), `builds/` (one folder per session). **The read budget: a review reads `profile.md` + today's `session.md` + today's code. Never glob `builds/`.** `profile.md` is *rewritten*, never appended — that's why it costs the same in month six as on day one.
 - `shipped.md` — the done-log + streak counter. Everything you've shipped. Never delete from it.
+- `clients/` — **the web-solutions engagement registry.** One folder per client (`engagement.md` = source of truth, `findability.md` = the Phase 3 board, `handover.md`, `retainer.md`, `reports/`). Business data lives here; the client's *code* stays in its own repo. `_template/` gets copied for each new client. Driven by the `/client-*` skills — don't hand-edit in normal work.
 - `context/` — about you, your business, your priorities (filled by `/onboard`)
 - `references/` — frameworks, voice samples, API guides as you connect tools
+- `references/client-delivery-playbook.md` — **the client motion.** The 5 phases, the Gujarat pricing table, and the "what actually bites you" list (rarely the code). The `/client-*` skills execute it.
+- `references/client-platforms.md` — **where a client gets found.** Every free platform, tiered by who the client's buyer actually is (universal / India B2B / local-consumer / vertical), plus NAP discipline, the review engine, and the account-ownership rule. Read by `/client-findable`.
+- `references/ai-search-visibility.md` — **the moat.** How a client gets cited by ChatGPT, Perplexity and AI Overviews — entity schema, `sameAs`, question-headed content, the AI-crawler robots gate, and the monthly prompt check. Winning Google does NOT win AI search. Nobody local is selling this. Benchmarks age fast — refresh yearly.
 - `references/adsense-policy.md` — **how to get approved.** The official Google policy corpus, distilled and source-cited. The `/adsense-ready` skill inlines this so it stays portable; read the reference when you need the citation or the full rule.
 - `references/adsense-economics.md` — **how much you'll make.** The revenue identity (`sessions × pages/session × RPM ÷ 1000`), CPC-by-niche tiers, ad-block rates by audience, RPM bands, the post-AI-Overviews CTR curve. Read by `/scout-problem`. Benchmarks age fast — refresh yearly.
 - `references/mcp/` — local copies of doc-reference MCP knowledge (one `<tool-name>.md` per source). Read these instead of calling the live MCP. See MCP & doc-reference tooling below.
 - `connections.md` — registry of every system your AIOS can reach
 - `decisions/log.md` — append-only record of decisions and why
 - `archives/` — old stuff. Don't delete. Move here.
-- `.claude/skills/` & `.claude/agents/` — your skills, and the subagents they delegate to (e.g. `kit-researcher` for build-tooling research).
+- `.claude/skills/` & `.claude/agents/` — your skills, and the subagents they delegate to (`kit-researcher` for build tooling; `listing-researcher` for a client's vertical directory tier).
 
 See `EXPANSIONS.md` for what to add as you grow.
 

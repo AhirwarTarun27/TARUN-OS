@@ -4,30 +4,75 @@
     {
       "date": "2026-07-07",
       "day": "Tue",
-      "blocks": { "reading": false, "dsa": false, "machineCoding": false, "sysdesign": true, "workout": true, "project": true, "interviewQa": true },
-      "reasons": { "reading": "avoidance", "dsa": "avoidance", "machineCoding": "clarity" },
+      "blocks": {
+        "reading": false,
+        "dsa": false,
+        "machineCoding": false,
+        "sysdesign": true,
+        "workout": true,
+        "project": true,
+        "interviewQa": true
+      },
+      "reasons": {
+        "reading": "avoidance",
+        "dsa": "avoidance",
+        "machineCoding": "clarity"
+      },
       "energy": 2,
       "office": false,
       "mustShip": true,
       "notes": "Built the learning base for sysdesign+interview-qa (declared tomorrow's path). reading/dsa/machine-coding all missed — avoidance + clarity. /marketing queue ran.",
-      "shipped": ["/marketing queue ran (must-ship)"]
+      "shipped": [
+        "/marketing queue ran (must-ship)"
+      ]
     },
     {
       "date": "2026-07-08",
       "day": "Wed",
-      "blocks": { "reading": false, "dsa": false, "machineCoding": false, "sysdesign": false, "workout": true, "project": true, "interviewQa": false },
-      "reasons": { "reading": "avoidance", "dsa": "avoidance", "machineCoding": "avoidance", "sysdesign": "avoidance", "interviewQa": "energy" },
+      "blocks": {
+        "reading": false,
+        "dsa": false,
+        "machineCoding": false,
+        "sysdesign": false,
+        "workout": true,
+        "project": true,
+        "interviewQa": false
+      },
+      "reasons": {
+        "reading": "avoidance",
+        "dsa": "avoidance",
+        "machineCoding": "avoidance",
+        "sysdesign": "avoidance",
+        "interviewQa": "energy"
+      },
       "energy": 1,
       "office": false,
       "mustShip": false,
       "notes": "DSA avoidance 2nd day running — planned but didn't solve. sysdesign only skimmed ch.1. project=fixed AdSense low-value-content rejection + redeployed. Energy 1/5 — root cause behind most misses.",
-      "shipped": ["AdSense low-value-content fix + redeploy (JsonBeam)"]
+      "shipped": [
+        "AdSense low-value-content fix + redeploy (JsonBeam)"
+      ]
     },
     {
       "date": "2026-07-09",
       "day": "Thu",
-      "blocks": { "reading": false, "dsa": false, "machineCoding": false, "sysdesign": false, "workout": true, "project": false, "interviewQa": false },
-      "reasons": { "reading": "disruption", "dsa": "disruption", "machineCoding": "disruption", "sysdesign": "disruption", "project": "disruption", "interviewQa": "disruption" },
+      "blocks": {
+        "reading": false,
+        "dsa": false,
+        "machineCoding": false,
+        "sysdesign": false,
+        "workout": true,
+        "project": false,
+        "interviewQa": false
+      },
+      "reasons": {
+        "reading": "disruption",
+        "dsa": "disruption",
+        "machineCoding": "disruption",
+        "sysdesign": "disruption",
+        "project": "disruption",
+        "interviewQa": "disruption"
+      },
       "energy": 1,
       "office": true,
       "mustShip": false,
@@ -38,6 +83,12 @@
       "day": "Fri",
       "pending": true,
       "mustShip": "Reset DSA — solve one clean Arrays/Two-Pointers problem (D0), no more avoidance."
+    },
+    {
+      "date": "2026-07-14",
+      "day": "Tue",
+      "pending": true,
+      "mustShip": "DSA reset — Merge Sorted Arrays (D0) solved and logged"
     }
   ]
 }

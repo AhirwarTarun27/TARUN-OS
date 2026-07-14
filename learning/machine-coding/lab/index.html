@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Machine Coding Lab</title>
+  <link rel="stylesheet" href="lab.css" />
+</head>
+<body>
+
+<!-- ── SETUP ─────────────────────────────────────────────────────────────── -->
+<section id="setup" class="screen">
+  <div class="setup-card">
+    <h1>Machine Coding Lab</h1>
+    <p class="sub">Blank file. No autocomplete. No AI. Docs allowed. Clock running.</p>
+
+    <div id="resume-strip" class="resume-strip hidden">
+      <span>Unfinished session found: <b id="resume-label"></b></span>
+      <div>
+        <button id="resume-btn" class="btn primary">Resume</button>
+        <button id="discard-btn" class="btn ghost">Discard</button>
+      </div>
+    </div>
+
+    <label class="field">
+      <span>Problem</span>
+      <select id="problem-select"></select>
+    </label>
+
+    <label class="field">
+      <span>Warm-up drill <em>(5 min, one primitive, cold)</em></span>
+      <select id="warmup-select"></select>
+    </label>
+
+    <label class="field">
+      <span>This is a…</span>
+      <select id="rung-select">
+        <option value="R0">R0 — first build</option>
+        <option value="R3">R3 — cold rebuild (+3d)</option>
+        <option value="R7">R7 — cold rebuild (+7d)</option>
+        <option value="R10">R10 — cold rebuild, timed (+10d)</option>
+      </select>
+    </label>
+
+    <div class="laws">
+      <b>The three laws</b>
+      <ol>
+        <li>P0 working beats everything. Never start P1 before P0 works.</li>
+        <li>Nothing gets styled until P0 works.</li>
+        <li>Always have a demo-able thing before the buzzer.</li>
+      </ol>
+    </div>
+
+    <button id="start-btn" class="btn primary big">Start session</button>
+    <p class="fineprint">Turn off Copilot. Close the AI tab. That's the whole point.</p>
+  </div>
+</section>
+
+<!-- ── SESSION ───────────────────────────────────────────────────────────── -->
+<section id="session" class="screen hidden">
+
+  <header id="topbar">
+    <div class="phases">
+      <span class="pip" data-phase="warmup">WARM-UP</span>
+      <span class="pip" data-phase="clarify">CLARIFY</span>
+      <span class="pip" data-phase="design">DESIGN</span>
+      <span class="pip" data-phase="code">CODE</span>
+      <span class="pip" data-phase="buzzer">BUZZER</span>
+    </div>
+
+    <div class="clock">
+      <span id="clock-label">warm-up</span>
+      <b id="clock">5:00</b>
+      <span id="paused-badge" class="paused-badge hidden">PAUSED</span>
+    </div>
+
+    <div class="goals">
+      <label><input type="checkbox" id="p0-done" /> P0</label>
+      <label><input type="checkbox" id="p1-done" /> P1</label>
+      <label><input type="checkbox" id="p2-done" /> P2</label>
+      <button id="next-btn" class="btn small">Next phase →</button>
+      <button id="end-btn" class="btn small danger">End</button>
+    </div>
+  </header>
+
+  <main id="stage">
+
+    <!-- LEFT: the brief -->
+    <aside id="brief">
+      <h2 id="brief-title"></h2>
+      <div class="prompt" id="brief-prompt"></div>
+
+      <div id="brief-reqs" class="reqs hidden">
+        <b>What you asked for</b>
+        <ul id="reqs-list"></ul>
+      </div>
+
+      <div id="brief-goals" class="hidden">
+        <div class="goal-block"><b class="p0">P0 — must work</b><ul id="list-p0"></ul></div>
+        <div class="goal-block"><b class="p1">P1 — then</b><ul id="list-p1"></ul></div>
+        <div class="goal-block"><b class="p2">P2 — if time</b><ul id="list-p2"></ul></div>
+      </div>
+
+      <div id="warmup-brief" class="hidden">
+        <b>Warm-up</b>
+        <p id="warmup-spec"></p>
+      </div>
+    </aside>
+
+    <!-- CENTRE -->
+    <div id="centre">
+
+      <!-- CLARIFY -->
+      <div id="clarify-pane" class="pane hidden">
+        <h3>Ask before you code.</h3>
+        <p class="hint">
+          The prompt is vague on purpose. <b>Only the questions you ask get answered.</b>
+          Anything you never think to ask, you never find out — and at the buzzer you'll see exactly
+          what you missed.
+        </p>
+        <p class="hint dim">
+          Cheat code: <i>"What is the ONE thing that must work if I run out of time?"</i>
+        </p>
+        <form id="ask-form">
+          <input id="ask-input" type="text" placeholder="Type a question and hit Enter…"
+                 autocomplete="off" spellcheck="false" />
+          <button class="btn" type="submit">Ask</button>
+        </form>
+        <div id="ask-log"></div>
+      </div>
+
+      <!-- DESIGN -->
+      <div id="design-pane" class="pane hidden">
+        <h3>Design it before you type it.</h3>
+        <p class="hint">
+          Component tree and state shape. <b>The editor stays locked until you submit this.</b>
+          This is the muscle AI ate — rebuilding it happens here, not while you're typing.
+        </p>
+        <textarea id="design-input" spellcheck="false" autocomplete="off" placeholder="Components:
+  <App>
+    <Foo />        state: ?
+    <Bar />        props: ?
+
+State (the minimum that changes):
+  -
+
+Derived (computed, NOT stored):
+  -
+
+Events:
+  -"></textarea>
+        <div class="design-actions">
+          <button id="design-review-btn" class="btn ghost">Copy for /machine-coding design (pauses clock)</button>
+          <button id="design-submit-btn" class="btn primary">Submit design → unlock editor</button>
+        </div>
+      </div>
+
+      <!-- EDITOR (warm-up + code) -->
+      <div id="editor-pane" class="pane hidden">
+        <div class="tabs">
+          <button class="tab active" data-file="jsx">app.jsx</button>
+          <button class="tab" data-file="css">styles.css</button>
+          <span class="tabspacer"></span>
+          <span id="css-warning" class="css-warning hidden">P0 isn't green — law #2</span>
+          <button id="run-btn" class="btn small primary">Run ▶</button>
+        </div>
+        <div class="editor-wrap">
+          <div id="gutter"></div>
+          <textarea id="editor" spellcheck="false" autocomplete="off" autocorrect="off"
+                    autocapitalize="off" wrap="off"></textarea>
+        </div>
+        <div id="editor-lock" class="lock hidden">
+          <div>
+            <b>Editor locked.</b>
+            <p>Submit your design first. That's the gate.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUZZER -->
+      <div id="buzzer-pane" class="pane hidden">
+        <h3>Time.</h3>
+        <div id="missed-reqs" class="missed hidden">
+          <b>You never asked about these:</b>
+          <ul id="missed-list"></ul>
+          <p class="hint dim">Not a gotcha. This is the clarify muscle, and it's worth a full rubric point.</p>
+        </div>
+        <label class="field">
+          <span>What stuck you? (be specific — this feeds the profile)</span>
+          <textarea id="report-stuck" spellcheck="false"></textarea>
+        </label>
+        <label class="field">
+          <span>What did you look up?</span>
+          <textarea id="report-lookups" spellcheck="false"></textarea>
+        </label>
+        <label class="field">
+          <span>Cold-fluency, 1-5 (5 = zero lookups, under target)</span>
+          <select id="report-rating">
+            <option value="">—</option>
+            <option value="5">5 — blank file → working, zero lookups, under target</option>
+            <option value="4">4 — under target, 1-2 lookups</option>
+            <option value="3">3 — over target, or several lookups</option>
+            <option value="2">2 — froze, needed my notes</option>
+            <option value="1">1 — couldn't build it</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>How did you get there?</span>
+          <select id="report-tag">
+            <option value="solo">solo — unaided</option>
+            <option value="hinted">hinted — a nudge, but I wrote every line</option>
+            <option value="watched">watched — I needed to see a working implementation</option>
+          </select>
+        </label>
+        <div class="buzzer-actions">
+          <button id="export-btn" class="btn primary big">Export session</button>
+          <button id="copy-btn" class="btn ghost">Copy to clipboard instead</button>
+        </div>
+        <p class="fineprint">
+          Then run <code>node learning/machine-coding/lab/ingest.mjs</code> and
+          <code>/machine-coding review</code>.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: preview -->
+    <aside id="preview">
+      <div class="preview-head">
+        <span>Preview</span>
+        <span id="preview-status" class="dot idle"></span>
+      </div>
+      <div id="preview-host"></div>
+      <pre id="preview-error" class="hidden"></pre>
+    </aside>
+
+  </main>
+</section>
+
+<script src="../problems/bank.js"></script>
+<script src="vendor/react.js"></script>
+<script src="vendor/react-dom.js"></script>
+<script src="vendor/babel.js"></script>
+<script src="lab.js"></script>
+</body>
+</html>

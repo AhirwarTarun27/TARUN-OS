@@ -36,6 +36,7 @@
     --jade:     #34e2b0;
     --jade-dim: #1f8f74;
     --jade-deep:#123a30;
+    --cool:     #6aa9ff;
     --empty:    #1c2029;
     --rest:     #171a21;
 
@@ -46,7 +47,7 @@
       --ground:#f3f2ee; --surface:#ffffff; --surface-2:#f6f5f1; --raise:#eeece5;
       --border:#e3e0d8; --border-2:#d5d1c6; --text:#1a1d24; --muted:#5b6272; --faint:#8a91a0;
       --ember-1:#e8930a; --ember-2:#e8461f; --ember-3:#d61f6a; --ember-glow:rgba(232,70,31,.22);
-      --jade:#0e9c78; --jade-dim:#48c7a5; --jade-deep:#d7f0e7; --empty:#e7e5dd; --rest:#efede7;
+      --jade:#0e9c78; --jade-dim:#48c7a5; --jade-deep:#d7f0e7; --cool:#2563c9; --empty:#e7e5dd; --rest:#efede7;
       --shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 16px 36px -24px rgba(30,25,10,.4);
     }
   }
@@ -54,7 +55,7 @@
     --ground:#f3f2ee; --surface:#ffffff; --surface-2:#f6f5f1; --raise:#eeece5;
     --border:#e3e0d8; --border-2:#d5d1c6; --text:#1a1d24; --muted:#5b6272; --faint:#8a91a0;
     --ember-1:#e8930a; --ember-2:#e8461f; --ember-3:#d61f6a; --ember-glow:rgba(232,70,31,.22);
-    --jade:#0e9c78; --jade-dim:#48c7a5; --jade-deep:#d7f0e7; --empty:#e7e5dd; --rest:#efede7;
+    --jade:#0e9c78; --jade-dim:#48c7a5; --jade-deep:#d7f0e7; --cool:#2563c9; --empty:#e7e5dd; --rest:#efede7;
     --shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 16px 36px -24px rgba(30,25,10,.4);
   }
 
@@ -126,21 +127,33 @@
   }
   .nowbar.state-now   { border-left-color: var(--ember-2); background: radial-gradient(460px 130px at 0% 0%, color-mix(in srgb, var(--ember-2) 13%, transparent), transparent 70%), var(--surface); }
   .nowbar.state-office{ border-left-color: var(--jade-dim); }
+  .nowbar.state-break { border-left-color: var(--cool); }
   .nowbar.state-next  { border-left-color: var(--jade); }
   .nowbar.state-off   { border-left-color: var(--border-2); }
   .nb-left { display:flex; align-items:center; gap:13px; min-width:0; }
   .nb-dot { width:11px; height:11px; border-radius:50%; background: var(--faint); flex:0 0 auto; }
   .state-now .nb-dot { background: var(--ember-2); animation: pulse 2s ease-out infinite; }
   .state-office .nb-dot { background: var(--jade-dim); }
+  .state-break .nb-dot { background: var(--cool); }
   .state-next .nb-dot { background: var(--jade); }
   .nb-label { font-family: var(--mono); font-size: 10px; letter-spacing:.16em; text-transform:uppercase; color: var(--muted); }
   .state-now .nb-label { color: var(--ember-1); }
+  .state-break .nb-label { color: var(--cool); }
   .nb-block { font-size: 17px; font-weight: 800; letter-spacing:-.01em; }
   .nb-block .code { font-family: var(--mono); font-size: 11px; font-weight:500; color: var(--faint); margin-left:8px; letter-spacing:.04em; }
-  .nb-mid { margin-left:auto; text-align:right; display:flex; flex-direction:column; gap:2px; }
+  /* explicit start-end window of whatever is running right now */
+  .nb-window { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .nb-window b { color: var(--text); font-weight: 600; }
+  .nb-window .len { color: var(--faint); }
+  .state-now .nb-window b { color: var(--ember-1); }
+  .state-break .nb-window b { color: var(--cool); }
+  .nb-mid { margin-left:auto; text-align:right; display:flex; flex-direction:column; gap:3px; }
   .nb-count { font-family: var(--mono); font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
   .state-now .nb-count { color: var(--ember-1); }
+  .state-break .nb-count { color: var(--cool); }
   .nb-next { font-size: 12px; color: var(--muted); }
+  .nb-next b { color: var(--text); font-weight: 600; }
+  .nb-next .win { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   .nb-progress { position:absolute; left:0; bottom:0; height:3px; width:100%; }
   .nb-progress i { display:block; height:100%; width:0; background: linear-gradient(90deg, var(--ember-1), var(--ember-2)); transition: width .6s ease; }
   @keyframes pulse { 0%{ box-shadow:0 0 0 0 var(--ember-glow);} 70%{ box-shadow:0 0 0 9px transparent;} 100%{ box-shadow:0 0 0 0 transparent;} }
@@ -251,7 +264,10 @@
   .blocks li.pend .dot { background: transparent; border-color: color-mix(in srgb, var(--ember-1) 55%, var(--border-2)); border-style: dashed; }
   .blocks li .bname { font-size: 13.5px; font-weight:600; flex:1; }
   .blocks li.miss .bname { color: var(--muted); }
-  .blocks li .btime { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+  .blocks li .btime { font-family: var(--mono); font-size: 11px; color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .blocks li.live { border-color: color-mix(in srgb, var(--ember-2) 45%, var(--border)); background: color-mix(in srgb, var(--ember-2) 8%, var(--surface-2)); }
+  .blocks li.live .bname { color: var(--text); }
+  .blocks li.live .btime { color: var(--ember-1); }
   .blocks li .bcode { font-family: var(--mono); font-size: 10px; color: var(--faint); letter-spacing:.05em; }
 
   .floor-strip {
@@ -414,6 +430,7 @@
         <div>
           <div class="nb-label" id="nbLabel">Now</div>
           <div class="nb-block" id="nbBlock">—</div>
+          <div class="nb-window" id="nbWindow"></div>
         </div>
       </div>
       <div class="nb-mid">
@@ -607,7 +624,48 @@
   ];
   const TOTAL = BLOCK_DEFS.length; // 7
 
-  const DATA = /*__DATA_START__*/ {"month":"2026-07","today":"2026-07-10","weekOutcomes":"This week — keep the /marketing queue alive (AdSense review clock) · AccentWallPlanner into build.","entries":[{"date":"2026-07-07","day":"Tue","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":true,"workout":true,"project":true,"interviewQa":true},"reasons":{"reading":"avoidance","dsa":"avoidance","machineCoding":"clarity"},"energy":2,"office":false,"mustShip":true,"notes":"Built the learning base for sysdesign+interview-qa (declared tomorrow's path). reading/dsa/machine-coding all missed — avoidance + clarity. /marketing queue ran.","shipped":["/marketing queue ran (must-ship)"]},{"date":"2026-07-08","day":"Wed","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":true,"interviewQa":false},"reasons":{"reading":"avoidance","dsa":"avoidance","machineCoding":"avoidance","sysdesign":"avoidance","interviewQa":"energy"},"energy":1,"office":false,"mustShip":false,"notes":"DSA avoidance 2nd day running — planned but didn't solve. sysdesign only skimmed ch.1. project=fixed AdSense low-value-content rejection + redeployed. Energy 1/5 — root cause behind most misses.","shipped":["AdSense low-value-content fix + redeploy (JsonBeam)"]},{"date":"2026-07-09","day":"Thu","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":false,"interviewQa":false},"reasons":{"reading":"disruption","dsa":"disruption","machineCoding":"disruption","sysdesign":"disruption","project":"disruption","interviewQa":"disruption"},"energy":1,"office":true,"mustShip":false,"notes":"Personal/family matter derailed the whole day — only workout landed. DSA missed 3rd day running, queue still empty. Office adherence held despite it."},{"date":"2026-07-10","day":"Fri","pending":true,"mustShip":"Reset DSA — solve one clean Arrays/Two-Pointers problem (D0), no more avoidance."}]} /*__DATA_END__*/;
+  /* THE DAY'S CLOCK — mirrors daily/schedule.md. Minutes from midnight; the late blocks
+     run past 1440 because interview-qa + wrap spill over into the next calendar day.
+     Edit this and daily/schedule.md together, or the dashboard starts lying. */
+  const SCHED = [
+    { code:'plan',          name:'Today’s planning',      s:10*60+30, e:10*60+45, kind:'ritual' },
+    { code:'reading',       name:'Book reading',          s:11*60,    e:11*60+30, kind:'scored' },
+    { code:'dsa',           name:'DSA practice',          s:11*60+45, e:12*60+30, kind:'scored' },
+    { code:'machine-coding',name:'Machine coding',        s:12*60+45, e:13*60+30, kind:'scored' },
+    { code:'sysdesign',     name:'System design · Xu V1', s:14*60,    e:15*60+30, kind:'scored' },
+    { code:'office-am',     name:'Office work',           s:15*60+30, e:17*60+30, kind:'office' },
+    { code:'workout',       name:'Home workout',          s:18*60,    e:19*60,    kind:'scored' },
+    { code:'project',       name:'Project work',          s:20*60,    e:21*60,    kind:'scored' },
+    { code:'office-pm',     name:'Office work',           s:22*60,    e:23*60+30, kind:'office' },
+    { code:'interview-qa',  name:'Interview Q&A',         s:23*60+45, e:24*60+15, kind:'scored' },
+    { code:'wrap',          name:'Day wrap-up',           s:24*60+15, e:24*60+45, kind:'ritual' },
+  ];
+  const SCHED_BY_CODE = Object.fromEntries(SCHED.map(b => [b.code, b]));
+
+  // every gap between two blocks is a real, named break — so "what now" always has an answer
+  const SEGMENTS = SCHED.flatMap((b, i) => {
+    const nxt = SCHED[i+1];
+    return (nxt && nxt.s > b.e)
+      ? [b, { code:'break', name:'Break', s:b.e, e:nxt.s, kind:'break' }]
+      : [b];
+  });
+
+  // time formatters — fmtT for the bar ("11:45 AM"), fmtS compact for dense rows ("11:45a")
+  const fmtT = m => { m=((m%1440)+1440)%1440; const h=Math.floor(m/60), mm=m%60, ap=h<12?'AM':'PM'; return (h%12||12)+':'+String(mm).padStart(2,'0')+' '+ap; };
+  const fmtS = m => { m=((m%1440)+1440)%1440; const h=Math.floor(m/60), mm=m%60, ap=h<12?'a':'p'; return (h%12||12)+':'+String(mm).padStart(2,'0')+ap; };
+  const dur  = m => m<60 ? m+' min' : Math.floor(m/60)+'h'+(m%60?' '+(m%60)+'m':'');
+  const range  = b => fmtT(b.s)+' – '+fmtT(b.e);
+  const rangeS = b => fmtS(b.s)+'–'+fmtS(b.e);
+
+  // "now" in schedule-minutes + the weekday the schedule considers it. Before 3am the tail
+  // (interview-qa 11:45pm, wrap 12:15am) still belongs to the day that is ending, not the new one.
+  function schedNow(d = new Date()){
+    let m = d.getHours()*60 + d.getMinutes(), dow = d.getDay();
+    if (m < 180){ m += 1440; dow = (dow + 6) % 7; }
+    return { m, dow, weekend: dow === 0 || dow === 6 };
+  }
+
+  const DATA = /*__DATA_START__*/ {"month":"2026-07","today":"2026-07-14","weekOutcomes":"DSA back on the ladder (3+ D0s by Sun) · AdSense earning (carried) · Kesri Phase 3 moves (robots.txt fix + questionnaire sent)","entries":[{"date":"2026-07-07","day":"Tue","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":true,"workout":true,"project":true,"interviewQa":true},"reasons":{"reading":"avoidance","dsa":"avoidance","machineCoding":"clarity"},"energy":2,"office":false,"mustShip":true,"notes":"Built the learning base for sysdesign+interview-qa (declared tomorrow's path). reading/dsa/machine-coding all missed — avoidance + clarity. /marketing queue ran.","shipped":["/marketing queue ran (must-ship)"]},{"date":"2026-07-08","day":"Wed","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":true,"interviewQa":false},"reasons":{"reading":"avoidance","dsa":"avoidance","machineCoding":"avoidance","sysdesign":"avoidance","interviewQa":"energy"},"energy":1,"office":false,"mustShip":false,"notes":"DSA avoidance 2nd day running — planned but didn't solve. sysdesign only skimmed ch.1. project=fixed AdSense low-value-content rejection + redeployed. Energy 1/5 — root cause behind most misses.","shipped":["AdSense low-value-content fix + redeploy (JsonBeam)"]},{"date":"2026-07-09","day":"Thu","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":false,"interviewQa":false},"reasons":{"reading":"disruption","dsa":"disruption","machineCoding":"disruption","sysdesign":"disruption","project":"disruption","interviewQa":"disruption"},"energy":1,"office":true,"mustShip":false,"notes":"Personal/family matter derailed the whole day — only workout landed. DSA missed 3rd day running, queue still empty. Office adherence held despite it."},{"date":"2026-07-10","day":"Fri","pending":true,"mustShip":"Reset DSA — solve one clean Arrays/Two-Pointers problem (D0), no more avoidance."},{"date":"2026-07-14","day":"Tue","pending":true,"mustShip":"DSA reset — Merge Sorted Arrays (D0) solved and logged"}]} /*__DATA_END__*/;
 
   /* ------------------------- derive ------------------------- */
   const hits = e => BLOCK_DEFS.reduce((n,b)=> n + (e.blocks && e.blocks[b.key] ? 1 : 0), 0);
@@ -760,15 +818,19 @@
     }
 
     const ul = $('blockList');
+    const nw = schedNow();
     BLOCK_DEFS.forEach(b => {
       const done = t && t.blocks && t.blocks[b.key];
       const cls = (t && t.pending) ? 'pend' : (done ? 'hit' : 'miss');
-      const li = document.createElement('li'); li.className = cls;
+      const sb = SCHED_BY_CODE[b.code];
+      // highlight the block that is running right now (only meaningful on a live weekday)
+      const live = sb && !nw.weekend && t && t.pending && nw.m >= sb.s && nw.m < sb.e;
+      const li = document.createElement('li'); li.className = cls + (live ? ' live' : '');
       li.innerHTML =
         '<span class="dot">' + (cls==='hit' ? '✓' : '') + '</span>' +
         '<span class="bname">' + b.name + '</span>' +
         '<span class="bcode">' + b.code + '</span>' +
-        '<span class="btime">' + b.time + '</span>';
+        '<span class="btime">' + (sb ? rangeS(sb) : b.time) + '</span>';
       ul.appendChild(li);
     });
 
@@ -1046,50 +1108,65 @@
     }
   })();
 
-  /* ------------------------- now / next focus (live clock) ------------------------- */
+  /* ------------------------- now / break / next (live clock) -------------------------
+     Answers three questions at a glance: what am I in, until when, and what's after it
+     (with ITS start and end). Breaks are real segments, so a gap is never a blank state.
+     SCHED / SEGMENTS / schedNow are defined at the top of this script. */
   (function(){
-    // Mirrors daily/schedule.md. Times in minutes from midnight; late blocks run past 1440.
-    const SCHED = [
-      { code:'plan',          name:'Today’s planning', s:10*60+30, e:10*60+45, kind:'ritual' },
-      { code:'reading',       name:'Book reading',     s:11*60,    e:11*60+30, kind:'scored' },
-      { code:'dsa',           name:'DSA practice',     s:11*60+45, e:12*60+30, kind:'scored' },
-      { code:'machine-coding',name:'Machine coding',   s:12*60+45, e:13*60+30, kind:'scored' },
-      { code:'sysdesign',     name:'System design · Xu V1', s:14*60, e:15*60+30, kind:'scored' },
-      { code:'office-am',     name:'Office work',      s:15*60+30, e:17*60+30, kind:'office' },
-      { code:'workout',       name:'Home workout',     s:18*60,    e:19*60,    kind:'scored' },
-      { code:'project',       name:'Project work',     s:20*60,    e:21*60,    kind:'scored' },
-      { code:'office-pm',     name:'Office work',      s:22*60,    e:23*60+30, kind:'office' },
-      { code:'interview-qa',  name:'Interview Q&A',    s:23*60+45, e:24*60+15, kind:'scored' },
-      { code:'wrap',          name:'Day wrap-up',      s:24*60+15, e:24*60+45, kind:'ritual' },
-    ];
     const bar = $('nowbar');
-    const fmtT = m => { m=((m%1440)+1440)%1440; let h=Math.floor(m/60), mm=m%60, ap=h<12?'AM':'PM', hh=h%12||12; return hh+':'+String(mm).padStart(2,'0')+' '+ap; };
-    const dur  = m => m<60 ? m+' min' : Math.floor(m/60)+'h'+(m%60?' '+(m%60)+'m':'');
-    function set(state, label, name, code, count, next, prog){
+    const bump = b => '<b>' + range(b) + '</b> <span class="len">· ' + dur(b.e - b.s) + '</span>';
+    const line = (lbl, b, from) => b
+      ? lbl + ': <b>' + b.name + '</b> · <span class="win">' + range(b) + '</span>'
+        + (from != null ? ' · in ' + dur(b.s - from) : '')
+      : '';
+
+    function set(state, label, name, code, win, count, next, prog){
       bar.className = 'nowbar ' + state;
       $('nbLabel').textContent = label;
-      $('nbBlock').innerHTML = name + (code ? '<span class="code">'+code+'</span>' : '');
-      $('nbCount').textContent = count;
-      $('nbNext').textContent = next || '';
-      bar.querySelector('.nb-progress i').style.width = (prog!=null ? Math.round(prog*100) : 0) + '%';
+      $('nbBlock').innerHTML = name + (code ? '<span class="code">' + code + '</span>' : '');
+      $('nbWindow').innerHTML = win || '';
+      $('nbCount').textContent = count || '';
+      $('nbNext').innerHTML = next || '';
+      const p = bar.querySelector('.nb-progress i');
+      p.style.width = (prog != null ? Math.round(prog * 100) : 0) + '%';
+      p.style.background = state === 'state-break'
+        ? 'linear-gradient(90deg, var(--cool), var(--jade))'
+        : 'linear-gradient(90deg, var(--ember-1), var(--ember-2))';
     }
+
     function tick(){
-      const now = new Date(), dow = now.getDay();
-      if (dow===0 || dow===6){ set('state-off','Rest','Weekend — no schedule','','Recharge. Back Monday 10:30 AM.','',0); return; }
-      let nm = now.getHours()*60 + now.getMinutes();
-      if (nm < 180) nm += 1440;  // after-midnight tail belongs to the day just ending
-      const cur = SCHED.find(b => nm >= b.s && nm < b.e);
-      if (cur){
-        const nxt = SCHED.find(b => b.s >= cur.e), office = cur.kind==='office';
-        set(office?'state-office':'state-now', office?'Now · day-job floor':'Now — focus here',
-            cur.name, cur.code, 'ends in '+dur(cur.e-nm),
-            nxt ? ('Next: '+nxt.name+' · '+fmtT(nxt.s)) : 'Then: wrap the day',
-            (nm-cur.s)/(cur.e-cur.s));
+      const { m, weekend } = schedNow();
+      if (weekend){
+        set('state-off', 'Rest', 'Weekend — no schedule', '', '',
+            '', 'Back Monday · <span class="win">' + fmtT(SCHED[0].s) + '</span>', 0);
         return;
       }
-      const nxt = SCHED.find(b => b.s > nm);
-      if (nxt) set('state-next','Up next', nxt.name, nxt.code, 'in '+dur(nxt.s-nm)+' · '+fmtT(nxt.s), 'On a short break', null);
-      else     set('state-off','Done','Day complete — nice work','', 'Next: planning · tomorrow 10:30 AM', '', 0);
+      const cur  = SEGMENTS.find(b => m >= b.s && m < b.e);
+      // the next REAL block — a break is never "what's next", it's what you're in
+      const next = SEGMENTS.find(b => b.s >= (cur ? cur.e : m) && b.kind !== 'break');
+
+      if (cur){
+        const brk = cur.kind === 'break', office = cur.kind === 'office';
+        set(brk ? 'state-break' : office ? 'state-office' : 'state-now',
+            brk ? 'Break' : office ? 'Now · day-job floor' : 'Now — focus here',
+            cur.name, brk ? '' : cur.code,
+            bump(cur),
+            'ends in ' + dur(cur.e - m),
+            next ? line('Next', next, m) : 'Then: day complete',
+            (m - cur.s) / (cur.e - cur.s));
+        return;
+      }
+      // outside the day: before the 10:30 plan, or after the wrap
+      if (next){
+        const after = SEGMENTS.find(b => b.s >= next.e && b.kind !== 'break');
+        set('state-next', 'Up next', next.name, next.code,
+            bump(next),
+            'starts in ' + dur(next.s - m),
+            line('Then', after), null);
+      } else {
+        set('state-off', 'Done', 'Day complete — nice work', '', '',
+            '', 'Next: planning · tomorrow <span class="win">' + fmtT(SCHED[0].s) + '</span>', 0);
+      }
     }
     tick(); setInterval(tick, 30000);
   })();

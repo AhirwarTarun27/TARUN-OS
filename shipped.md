@@ -7,12 +7,24 @@
 ## Streak
 
 - **Weeks reviewed in a row:** 1
-- **Total things shipped:** 14
+- **Total things shipped:** 20
 
 ## Log (newest on top)
 
 <!-- Format: ## YYYY-MM-DD — one line on what you shipped -->
 <!-- Example: ## 2026-06-28 — Deployed dark-mode toggle to Jsonbeam -->
+
+## 2026-07-13 — Built the AdSense build-time compliance gate (/adsense-ready, contract+audit modes) + the full 6-skill client-delivery pipeline (/client-pipeline + scope/build/findable/handover/retainer) + listing-researcher subagent
+
+## 2026-07-13 — Rewrote /scout-problem's money gate into a revenue-floor model (three-scenario $ band via adsense-economics.md) — kills rankable-but-unpayable ideas before they're built
+
+## 2026-07-12 — Built /cloudflare-go-live (skill + idempotent dry-run script) — standardized the domain-to-live-site process learned the hard way on kesrienterprise.com
+
+## 2026-07-11 — GO: started the web-solutions side-business — Kesri Enterprise as client #1 + reusable template
+
+## 2026-07-10 — AccentWallPlanner (bet #3) build-planning complete — domain, stack, architecture, and build order all locked, build-ready
+
+## 2026-07-10 — Inverted the marketing engine from a daily queue to weekly-first + AIOS build-mode assets (the daily version had already stalled)
 
 ## 2026-07-08 — Fixed AdSense low-value-content rejection (site flagged in review) and redeployed
 

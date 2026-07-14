@@ -1,43 +1,34 @@
-# This Week — Tue Jun 30 → Sun Jul 5, 2026
+# This Week — Tue Jul 14 → Sun Jul 19, 2026
 
 > **Your single source of truth.** If it's not here, it's not happening this week.
 > Open this file FIRST, every session. Notion, Calendar, your head — all noise until it lands here.
-> Reset every Sunday by running `/weekly-review` (next: Sun Jul 5).
-> **Updated 2026-07-03** — GradeJar shipped live mid-week; outcomes below reflect where things actually stand, not the Jun 30 plan. Full reset still happens at Sunday's `/weekly-review`.
+> Reset every Sunday by running `/weekly-review` (next: Sun Jul 19).
+> **Updated 2026-07-14** — late reset via `/weekly-review`; the board had drifted since 2026-07-03 (two Sundays skipped). See `decisions/log.md` and `shipped.md` for what actually happened in the gap.
 
 ## North Star (why any of this matters)
 
 - **Floor:** Your day job (thinksys). Keep it stable as the floor **while you actively interview for the next role** (2-3 month target, declared 2026-07-07). Pays the bills and de-risks the switch. Employer boundary still holds — no thinksys email/comms in the AIOS.
-- **Engine:** A portfolio of front-end-heavy tools built for scale, money-led (AdSense). **JsonBeam = bet #1: live, Phase 0 visibility fixes closed 2026-07-03.** **GradeJar = bet #2: LIVE at gradejar.com, Phase 0 visibility fixes closed 2026-07-03.** Both now run on the shared daily `/marketing` queue. Future bets get *researched before built.* **AccentWallPlanner = bet #3: `/explore-project` COMPLETE 2026-07-10 — build-ready.** Handoff prompt sits at `handoff-prompts/accent-wall-trim-planner.md`; full brief at `research/accent-wall-trim-planner-prebuild.md`. Not started, no build weeks committed yet. **Gate before starting:** pull exact Semrush/Ahrefs volumes (never done — see the status file's open item).
+- **Engine:** A portfolio of front-end-heavy tools built for scale, money-led (AdSense), plus a paid local web-solutions side-business (started 2026-07-11). **JsonBeam = bet #1: live, Phase 0 closed 2026-07-03, resubmitted after a rejection 2026-07-08.** **GradeJar = bet #2: LIVE at gradejar.com, Phase 0 closed 2026-07-03.** Both run on the weekly-first `/marketing` engine (inverted from daily 2026-07-10). **AccentWallPlanner = bet #3: build-ready since 2026-07-10, not started** — gate before starting: pull real Semrush/Ahrefs volumes (still never done). **Kesri Enterprise = client #1** of the new web-solutions business: live at kesrienterprise.com, Phase 3 (Findable) barely started — `clients/kesri-enterprise/engagement.md` has the board.
 - **Edge:** Get better as a developer *through building*. Front-end system design now. Backend depth later.
-- **The rule:** Ship ugly. "Ranks #1 and loads fast" beats "best editor." Done beats perfect. Both products are live and plumbed — the only failure that matters now is **skipping the Sunday marketing session or letting sprint assets rot at BUILT** while AdSense review runs its multi-week clock. (Engine went weekly-first 2026-07-10 — daily queues are no longer the contract.)
+- **The rule:** Ship ugly. Done beats perfect. **DSA is the gate for Priority 1 (job hunt) and it went dark for 5 days (last rep 2026-07-09, queue still empty) — that's the actual failure this reset is naming, not a missed deploy.**
 
 ## This week's 3 outcomes (max 3 — done or NOT done)
 
-GradeJar deployed, bought the domain, and closed Phase 0 (GSC verified, AdSense listed, Cloudflare
-Web Analytics wired, AI-crawlers correctly allowed) on 2026-07-03. JsonBeam's Phase 0 also closed
-2026-07-03 (ads.txt confirmed serving, WAF 403 on bots resolved, robots.txt correct, Bing Webmaster
-connected for both sites). Both sites: AdSense status `GETTING_READY` (real review clock running,
-$0 expected until approved). Remaining open items are below, not blockers.
-
-- [x] **GradeJar live on gradejar.com.** Deployed, domain attached, DNS live. Verified 2026-07-03.
-- [ ] **AdSense earning.** Updated 2026-07-08: **JsonBeam** got a **low-value-content rejection** during review (not just the passive `GETTING_READY` wait) — flagged pages fixed and redeployed same day. Resubmission/re-review clock now running again. GradeJar unaffected — check separately. Real ads won't serve until Google flips approval. *Done = at least one site shows `READY` with ads filling.*
-- [x] **GradeJar M2 backlog — named roster + rankings, CSV import — DONE.** Verified 2026-07-07 against the canonical repo (`C:\Users\ahirwar.tarun\Documents\Learning\MyProjects\GradeJar\.claude\learning\TASKS.md`): roster+rankings (D18), CSV import (D21), GPA-per-band, weighting all shipped 2026-06-30. The whole M4 GPA/grade ecosystem (Waves 1-3) is shipped too. Only open GradeJar item = go-live/deploy (CF auto-deploy dashboard fix).
+- [ ] **DSA back on the ladder.** Minimum 3 D0 problems solved and logged in `learning/dsa/queue.md` by Sunday. Queue has been empty since setup — this is the real reset, not just a plan.
+- [ ] **AdSense earning.** *(Carried — externally gated, not avoidance.)* JsonBeam was rejected for low-value content 2026-07-08, fixed + redeployed same day; re-review clock running. GradeJar separate, still `GETTING_READY`. Done = at least one site shows `READY` with ads filling, or — if still pending Sunday — confirmed clean status on both with no new rejections sitting unanswered.
+- [ ] **Kesri Enterprise Phase 3 moves for real.** Two concrete pieces: (1) flip off Cloudflare's managed robots.txt on kesrienterprise.com — 5 min, currently blocking ClaudeBot + Gemini grounding; (2) actually send the client questionnaire (drafted for months at `<repo>/CLIENT-QUESTIONNAIRE.md`) — it's the longest lead time in the engagement and blocks the whole trust layer.
 
 ## Today — ONE must-ship
 
 > The single thing that, if you do nothing else today, makes the day count.
 
-- **Date:** Fri Jul 10
-- **Must-ship:** Reset DSA — land the `dsa` block with one clean Arrays/Two-Pointers problem solved (D0). 3 days running now with an empty queue (Jul 7 avoidance, Jul 8 avoidance, Jul 9 personal/family matter derailed the day). No hiding tomorrow.
-- **Today's plan:** `dsa` = Merge Sorted Arrays (D0, first entry in the queue) · rest of the day's blocks TBD at `/daily-log plan`.
+- **Date:** Tue Jul 14
+- **Must-ship:** First DSA rep of the reset — one D0 problem solved and logged in `learning/dsa/queue.md`.
+- **Today's plan:** TBD at `/daily-log plan` — run it next to lock the rest of today's blocks.
 
 ## Parking lot (capture, do NOT act)
 
 Brain-dump here so it leaves your head. Triage it during the weekly review. Nothing here is this week's problem.
 
-- AI/AIOS-run marketing system (Priority 2) — **built 2026-07-03**, generalized to both products; **inverted to weekly-first 2026-07-10** (Sunday sessions + AIOS build mode). In execution mode, not a scoping task anymore.
-- GradeJar M2 backlog (finish after go-live): named roster + rankings (in progress — additive, index-aligned, no migration) + CSV import. GPA-per-band and per-assignment weighting already shipped.
 - JsonBeam: on-page SEO pass (meta/FAQ/schema) needs a code-side decision — observe mode currently blocks it. Tarun's call, log in `decisions/log.md` if it changes.
-- Wire the Google Search Console API into `scripts/report.mjs` (needs one-time service-account auth grant) — would close the last blind spot in both action plans.
-- DSA practice (Priority 3) — light; gut-check whether interview prep is real this quarter or just the day-job Floor talking.
+- AccentWallPlanner: pull real Semrush/Ahrefs volumes before committing any build weeks — build-ready but ungated on demand confirmation.

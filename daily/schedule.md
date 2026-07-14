@@ -10,7 +10,7 @@
 | 10:30–10:45 am | Today's planning (with AIOS) | `plan` | **ritual** — `/daily-log plan` |
 | 11:00–11:30 am | Book reading | `reading` | you |
 | 11:45 am–12:30 pm | DSA practice | `dsa` | you |
-| 12:45–1:30 pm | Machine coding | `machine-coding` | you |
+| 12:45–1:30 pm | Machine coding | `machine-coding` | **→ `/machine-coding`** (lab + rubric + profile) |
 | 2:00–3:30 pm | System design — Xu Vol 1 (interview prep) | `sysdesign` | **→ `/teach`** (learning/system-design-interview) |
 | 3:30–5:30 pm | Office work (thinksys) | `office-am` | you — time-adherence only |
 | 6:00–7:00 pm | Home workout | `workout` | you |
@@ -31,6 +31,10 @@ but they never count toward the daily N/7. `plan` and `wrap` are the ritual itse
 - **`sysdesign` and `interview-qa` run through `/teach`.** `/daily-log` never teaches these —
   it schedules them, then at wrap-up logs one line on what `/teach` covered (pulled from
   `learning/<topic>/learning-records/`). Depth lives in the learning workspace, not here.
+- **`machine-coding` runs through `/machine-coding`.** The code gets written in the **lab**
+  (`learning/machine-coding/lab/index.html`), never in chat and never in the terminal. `/daily-log`
+  surfaces what's due at plan and confirms the session was ingested at wrap — it never grades and
+  never coaches. **No AI writes code during that block.** That is the entire point of it.
 - **Office blocks are opaque.** Track ✓/✗ adherence only. Never ask for or log thinksys work
   content — the employer boundary in `CLAUDE.md` holds inside the daily log too.
 - **Weekends:** no schedule, no log. If you work a weekend, log it manually — the ritual won't prompt.
