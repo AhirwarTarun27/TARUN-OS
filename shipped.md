@@ -7,12 +7,16 @@
 ## Streak
 
 - **Weeks reviewed in a row:** 1
-- **Total things shipped:** 20
+- **Total things shipped:** 22
 
 ## Log (newest on top)
 
 <!-- Format: ## YYYY-MM-DD — one line on what you shipped -->
 <!-- Example: ## 2026-06-28 — Deployed dark-mode toggle to Jsonbeam -->
+
+## 2026-07-14 — GradeJar D31 post-rejection recovery: de-doorwayed 5 routes that mounted the same widget, stripped ads off thin + trust pages, deployed. AdSense rejected gradejar.com for low-value content on 07-14 (it reviewed the pre-retrofit July 3 site). Held the resubmit — recrawl first.
+
+## 2026-07-14 — Built the /machine-coding round system (skill + no-autocomplete lab + rubric + 27 primitives + R0→R10 cold-rebuild ladder + compounding profile) and revised the DSA ladder so D0 = the day a problem is SOLVED, not first seen
 
 ## 2026-07-13 — Built the AdSense build-time compliance gate (/adsense-ready, contract+audit modes) + the full 6-skill client-delivery pipeline (/client-pipeline + scope/build/findable/handover/retainer) + listing-researcher subagent
 

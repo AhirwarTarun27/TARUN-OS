@@ -100,7 +100,8 @@ Ratings column logs each pass, e.g. `D2:2 D5:3`. Next due e.g. `2026-07-16 (D2)`
 
 | Problem | Pattern | D0 | D0 tag | Last rung | Ratings | Next due | Key idea |
 |---------|---------|----|--------|-----------|---------|----------|----------|
-| _(empty — first row lands at tonight's wrap)_ | | | | | | | |
+| Best Time to Buy & Sell Stock | Single-pass min tracking | 2026-07-14 | `watched` | D0 | — | 2026-07-16 (D2) | Track min-so-far, max profit against it. One pass. **D5 on 07-19 is mandatory.** |
+| Merge Sorted Arrays | Two pointers (fill from the back) | 2026-07-14 | `watched` | D0 | — | 2026-07-16 (D2) | Walk both from the end into the tail of nums1 — no shifting, no extra space. **D5 on 07-19 is mandatory.** |
 
 ## Graduated
 

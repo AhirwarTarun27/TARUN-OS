@@ -14,6 +14,13 @@ notes: <block=one-liner on what got done; learning blocks = what /teach covered>
 
 <!-- entries below -->
 
+<!-- 2026-07-10 Fri and 2026-07-13 Mon were never logged. Left un-logged by choice at the 07-14 wrap — an honest gap beats a reconstructed one. -->
+
+## 2026-07-14 Tue · 5/7 · energy 3/5 · office ✓
+✓ dsa machine-coding sysdesign workout project
+✗ reading — disruption · interview-qa — disruption
+notes: dsa=**2 D0s banked, both `watched`** (Best Time to Buy & Sell Stock, Merge Sorted Arrays) — queue is no longer empty, D2 both on 07-16, D5 mandatory 07-19 · machine-coding=block went into BUILDING the system (skill+lab+rubric+primitives+queue), **no rep, Phase 0 still not cleared** · sysdesign=Ch.1 design-out-loud drill, graded **6/10 — Ch.1 NOT banked**, re-drill cold before Ch.2 · project=**AdSense REJECTED gradejar.com for low-value content**; D31 recovery shipped (de-doorwayed 5 identical widget routes, stripped ads off thin/trust pages), deployed, **correctly NOT resubmitted** — recrawl needs 3-5 days · must-ship=✅ first DSA rep of the reset
+
 ## 2026-07-09 Thu · 1/7 · energy 1/5 · office ✓
 ✓ workout
 ✗ reading — personal/family matter · dsa — personal/family matter (3rd day running, must-ship missed) · machine-coding — personal/family matter · sysdesign — personal/family matter · project — personal/family matter · interview-qa — personal/family matter

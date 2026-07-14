@@ -1,6 +1,6 @@
 ---
 name: adsense-ready
-description: Make a site AdSense-approvable by construction, and prove it before applying. Two modes — `contract` writes the compliance contract for a project being scoped (trust pages, content-depth bar, interlinking map, ad placement plan, pre-application gate); `audit` walks an existing repo against every official Google policy and returns a ranked blocker list. Trigger on "/adsense-ready", "adsense compliance", "will this get approved", "audit for adsense", "low value content", "trust pages", "privacy policy for ads", "am I ready to apply". One run = one compliance contract, or one PASS/NOT-READY verdict with a ranked fix list.
+description: Make a site AdSense-approvable by construction, prove it BEFORE applying, and recover if it was rejected. Three modes — `contract` writes the compliance contract for a project being scoped (trust pages, content-depth bar, interlinking map, ad placement plan, pre-application gate); `audit` walks an existing repo against every official Google policy and returns a ranked blocker list; `recover` handles a rejection (dates the verdict against the repo, finds what would sink the re-review, and gives the deploy → reindex → wait-for-recrawl → resubmit sequence). Trigger on "/adsense-ready", "adsense compliance", "will this get approved", "audit for adsense", "low value content", "adsense rejected", "site isn't ready to show ads", "request review", "trust pages", "privacy policy for ads", "am I ready to apply". ALWAYS ask whether the site has already been submitted — an audit that runs after Apply is a post-mortem, not a gate.
 ---
 
 # AdSense Ready — approvable by construction, not by cleanup
@@ -9,9 +9,39 @@ Google will not serve ads on a screen that has no publisher content. **A bare to
 a screen.** Every rule below follows from that one sentence.
 
 This skill exists because the pipeline that produced JsonBeam and GradeJar treated AdSense as a
-launch-day task. JsonBeam was **rejected for low-value content on 2026-07-08**. GradeJar's trust
-pages got bolted on after the build. Both were avoidable at design time, for free. Approval is not
-a cleanup phase — it is a build requirement.
+launch-day task. JsonBeam was **rejected for low-value content on 2026-07-08**. GradeJar was
+**rejected for low-value content on 2026-07-14**. Approval is not a cleanup phase — it is a build
+requirement.
+
+## Read this before anything else: the audit is worthless if it runs after Apply
+
+**GradeJar's rejection was not a content failure. It was an ordering failure.**
+
+| When | What |
+|---|---|
+| **2026-07-03** | ads.txt + ad script deployed. **The application entered Google's queue here.** |
+| 2026-07-13 | The `audit` finally runs. It finds everything. +2,722 lines of fixes ship. |
+| **2026-07-14** | Rejection arrives — **for the site as it was on July 3.** |
+
+The audit was correct, thorough, and **ten days too late to be in the thing being judged.** Google
+reviewed a site that had already been fixed in the repo. Every hour spent writing prose after the
+Apply button is pressed buys nothing.
+
+So, before a single check below:
+
+> ### Question 0 — has anyone already applied?
+> **Ask the user outright: "Have you submitted this site to AdSense yet, or clicked *Request
+> review*?"** Do not infer it from the repo; the Apply button lives in a dashboard, not in git.
+>
+> - **Not yet** → good. Run `audit`. The gate in Group H is real and it holds.
+> - **Already applied, verdict pending** → **say so loudly and stop treating this as an audit.**
+>   Fixes landing now are *not* being reviewed. Tell the user plainly: the verdict will be about the
+>   site Google already crawled, and a rejection is likely if it was thin. Then fix anyway — but
+>   frame it as preparing for the *re-review*, and go to `recover` mode for the sequencing.
+> - **Already rejected** → this is **`recover` mode.** See it below. Do not just re-run the
+>   checklist and tell them to click Request review; that is how the loop repeats.
+
+**A checklist that cannot fire before the irreversible action is not a gate. It is a post-mortem.**
 
 **This file is self-contained on purpose.** It is copied verbatim into every product repo, where it
 has no access to the AIOS. It references nothing outside its own folder. Do not add relative paths
@@ -21,14 +51,16 @@ into it.
 > `references/adsense-policy.md` for the full policy corpus with citations, and
 > `references/adsense-economics.md` for the revenue math.
 
-## Two modes
+## Three modes
 
 | Mode | When | Output |
 |---|---|---|
-| **`contract`** | A project is being *scoped*. Called by `/explore-project` step 5. | The **AdSense Compliance Contract** — routes, content bar, interlinking map, ad plan, pre-application gate. Gets baked into the handoff prompt. |
-| **`audit`** | A repo *exists*. Run at every milestone, and before applying to AdSense. | **PASS** or **NOT READY — N blockers**, ranked, each with file path + the policy violated + the fix. |
+| **`contract`** | A project is being *scoped*. Called by `/explore-project` step 5. **The only mode that prevents the problem.** | The **AdSense Compliance Contract** — routes, the **route→component table**, the content bar *as numbers*, interlinking map, ad plan, pre-application gate. Gets baked into the handoff prompt. |
+| **`audit`** | A repo *exists* and **has not been submitted**. Run at every milestone, and before applying. | **PASS** or **NOT READY — N blockers**, ranked, each with file path + the policy violated + the fix. |
+| **`recover`** | The site was **rejected**. | A **root-cause split** (what Google actually saw vs. what the repo says today), the fix list, and the **resubmission sequence** — which is not "click Request review". |
 
 Default to `audit` if the user doesn't say. If the repo has no code yet, it's `contract`.
+**If the site has been rejected, it is `recover` — always, no matter what the user asks for.**
 
 ## Inputs
 
@@ -96,6 +128,14 @@ is what a human wrote around it.
       text"* and pages that are *"mostly images"* as rejection reasons.
 - [ ] **Ad-to-content ratio:** never more ads than publisher content on a screen.
 - [ ] No scraped, replicated, or lightly-rewritten content.
+- [ ] **AI-disclosure.** Google's How question: *"Is the use of automation, including AI-generation,
+      self-evident to visitors through disclosures?"* If the prose was AI-drafted at scale, a human
+      must own it — a named author who actually reviewed it, and copy that reflects real decisions
+      the tool makes. Scaled content abuse **explicitly covers AI-generated content**; "a model wrote
+      500 unique-looking words per route" is the thing the policy is aimed at, not a defence against it.
+
+- [ ] **Every bar in "The numbers" below is met.** Word floor, FAQ count, editorial-page count, ad
+      count, sibling overlap. Failing one is a finding, not a debate.
 - [ ] **The programmatic-SEO ruling — this is the trap.** Templated pages with variables swapped are
       **scaled content abuse** under Google's Search spam policies (*"many pages generated for the
       primary purpose of manipulating search rankings and not helping users"*). There are exactly two
@@ -108,11 +148,70 @@ is what a human wrote around it.
       **Never: templated + indexed + monetized.** A generator emitting ~100 near-identical pages with
       an ad slot in the layout is an automatic FAIL, regardless of how good the tool is.
 
+- [ ] **The one-widget-many-routes rule — the trap that a prose-only audit walks straight past.**
+      Templated *functionality* is a doorway just as templated *prose* is. **Count the distinct
+      components, not just the distinct words.**
+
+      GradeJar is the case study, and it is the reason this rule exists. After the content retrofit,
+      every route had 400–700 words of genuinely unique, hand-written prose — **zero** measurable
+      5-gram overlap. It passed every content check in this skill. And it was **still a keyword
+      doorway cluster**, because three Preact islands were backing eleven indexed, ad-carrying routes:
+
+      - `/ez-grader` and `/test-grade-calculator` → **byte-identical mounts.** Same component, no props.
+      - `/grade-calculator` and `/weighted-grade-calculator` → **byte-identical mounts.**
+      - `/semester-grade-calculator` → the same component **plus a heading string.**
+
+      Five routes, two widgets, five keywords. A thousand unique words underneath an identical
+      calculator is still one tool wearing five hats — and the shipped HTML had even confessed it
+      in prose: *"the semester grade calculator is **the same tool**, framed for your whole semester."*
+
+      **The test:** for every pair of ad-carrying routes that mount the same component, ask *"if I
+      deleted one of these, what could a user no longer do?"* If the answer is "nothing — they'd just
+      type the same numbers into the same boxes on the other page", **they are one page and one of
+      them is a doorway.** Differentiate by **function** (different default mode, different inputs,
+      different validation, a capability one genuinely cannot express) or merge them. Different words
+      about the same widget do not count, and neither does a different `heading` prop.
+
+      Grep for it: list every route's mounted component and its props. Any two routes with the same
+      component and equivalent props are a **FAIL**, and the finding must name both routes.
+
 Google's own reviewer lens — if a page can't pass these, it won't pass review:
 *"Does the content provide original information, reporting, research, or analysis?"* ·
 *"Does it provide insightful analysis beyond the obvious?"* ·
 *"Is this the sort of page you'd bookmark or share with a friend?"* ·
 *"Does it provide substantial value compared to other pages in search results?"*
+
+#### The numbers — so this stops being a vibe check
+
+Google publishes no word count, and neither did this skill, which meant the bar was re-invented every
+run **by the same model that wrote the content**. These are not Google's thresholds; they are the
+floor below which you are not allowed to argue. Failing one is a finding, not a debate:
+
+| Bar | Floor | Why |
+|---|---|---|
+| Hand-written prose per ad-carrying route | **≥ 500 words** (excl. nav, footer, widget labels, FAQ) | Below this the widget *is* the page |
+| FAQ per money page | **≥ 4 Q&A**, answering real queries | Fewer reads as SEO garnish |
+| Pages of pure editorial (exist with **no** widget at all) | **≥ 3**, and one must be `/how-it-works` | A site of nothing but tools has no publisher voice |
+| Ad units per screen | **≤ 3** in-content, and **fewer ads than content blocks** | Policy: never more ads than publisher content |
+| Sibling prose overlap (5-gram Jaccard) | **< 1%** between any two routes | See below — measure it, don't assert it |
+
+**Count the prose, not the file.** Word counts come from the **rendered page text** — strip nav,
+header, footer, widget labels, button text, and the FAQ block, then count what's left. Counting the
+source file (or the whole DOM) inflates every number and quietly passes a page that would fail.
+
+#### Measure uniqueness. Do not assert it.
+
+The old version of this skill said "each page carries genuinely distinct content" and left an LLM to
+grade its own homework. **Run the numbers instead.** Extract the hand-written prose block from each
+built page, shingle it into 5-grams, and compute pairwise Jaccard overlap across every pair of routes:
+
+- **< 1%** — genuinely bespoke. Pass.
+- **1–10%** — investigate. Shared *formula restatements* against a `/how-it-works` page are legitimate;
+  shared *sentences between two sibling tool pages* are not.
+- **> 10%** — templated. Fail. It does not matter how good it reads.
+
+Report the actual worst pair and its number. A finding with a measurement survives an argument; a
+finding with an adjective does not.
 
 ### D. Ad implementation & placement
 
@@ -126,6 +225,16 @@ Google's own reviewer lens — if a page can't pass these, it won't pass review:
 - [ ] **No ad is disguised as UI** — not styled as a button, a result card, or part of the tool.
 - [ ] **No ads on empty states** (the tool before the user has entered anything), error screens, 404s,
       or under-construction routes.
+- [ ] **Suppress the ad LIBRARY, not just the slots.** An ad-free page that still ships
+      `adsbygoogle.js` in its `<head>` is an ad library loading on a screen with no publisher content.
+      GradeJar's `noAds` prop killed the `<ins>` units on a 70-word `/404` and left the script tag
+      behind. **Gate the script on the same flag as the slots**, and prove it: build with ads forced
+      live, then assert **0 script tags and 0 `<ins>` elements** on every ad-free page, and >0 on a
+      money page. Grep the built HTML — do not take the component's word for it.
+- [ ] **Trust pages carry no ads at all.** `/about`, `/contact`, `/privacy`, `/terms`. A 153-word
+      contact page rendering two 160×600 skyscrapers is the cleanest possible example of "ads on a
+      screen without publisher content" — and it earns nothing anyway. Nobody clicks an ad on a ToS.
+      Zero revenue lost, entire finding-surface deleted.
 - [ ] No encouragement to click: no "support us", no arrows, no animation drawing the eye to ads.
 - [ ] No auto-refresh of the page or an ad slot without an explicit user action.
 - [ ] **Better Ads Standards** — mobile **ad density ≤30%** of page height (desktop ≤50%). No pop-ups,
@@ -148,8 +257,18 @@ Google's own reviewer lens — if a page can't pass these, it won't pass review:
 ### F. Technical prerequisites
 
 - [ ] Site is **live and publicly reachable** — no password protection.
-- [ ] **Valid SSL**, HTTP → HTTPS redirect.
-- [ ] **`robots.txt` does not block the AdSense crawler** (`Mediapartners-Google`).
+- [ ] **Valid SSL**, HTTP → HTTPS redirect. **Curl it.** `http://domain` must return a **301**, not a
+      200 — GradeJar served both schemes for weeks and nobody noticed until it was curl'd.
+- [ ] **The page has content with JavaScript disabled.** A client-rendered tool page can serve a
+      crawler an effectively empty DOM — the purest possible "screen without publisher content", and
+      no amount of prose in the component saves it. `curl` the URL and read what comes back. The
+      prose must be in the **HTML source**, not injected on hydration.
+- [ ] **`robots.txt` does not block the AdSense crawler** (`Mediapartners-Google`). Check the **live**
+      file, not the repo's — a CDN can inject its own managed block (Cloudflare prepends AI-crawler
+      rules). Then go further and **fetch the site as the crawler**:
+      `curl -A "Mediapartners-Google" https://domain/` must return **200 with the full page**. A bot-
+      management challenge in front of Googlebot means the reviewer sees a blank page and calls it
+      low-value content, and `robots.txt` will look perfectly innocent while it happens.
 - [ ] **Ad code in `<head>`**, or ownership verified via Search Console.
 - [ ] **`ads.txt` at the domain root**, serving, correct publisher ID:
       ```
@@ -170,27 +289,92 @@ Google's own reviewer lens — if a page can't pass these, it won't pass review:
 ### H. The pre-application gate
 
 **Do not submit to AdSense until A-G are green.** Review takes days to 2-4 weeks, and **a rejection
-restarts the clock.** Applying early is the most expensive mistake available — and it is the one
-already made once.
+restarts the clock.** Applying early is the most expensive mistake available — and it has now been
+made twice (JsonBeam 2026-07-08, GradeJar 2026-07-14).
 
 - [ ] A-G all pass.
-- [ ] **Site is verified in Search Console and at least partially indexed.** If Google hasn't indexed
-      it, the reviewer is looking at a site Google doesn't know.
+- [ ] **Site is verified in Search Console and at least partially indexed.** Pull the number — don't
+      eyeball it. If Google hasn't indexed it, the reviewer is looking at a site Google doesn't know.
 - [ ] Zero thin/templated pages indexed — or they are `noindex` **and** ad-free.
+- [ ] **Whatever is live right now is what gets reviewed.** Not what's in `main`, not what's in the
+      working tree. **Deploy, then curl the live URLs, then apply** — in that order.
+
+**The gate only counts if it fires before the button.** The Apply button is in a dashboard; this skill
+cannot press it and cannot un-press it. So the gate's real output is a sentence spoken to the human:
+
+> **"A-G are green and the live site matches. You may now apply."**
+
+Never imply that. **Say it, explicitly, or say the opposite.** If you have not said that sentence, the
+user has not been cleared — and if they applied without it, see `recover`.
 
 ## Output
 
 ### contract mode — the AdSense Compliance Contract
 
-Written to be pasted straight into a handoff prompt. Five parts:
+Written to be pasted straight into a handoff prompt. **This is the mode that PREVENTS the problem;
+`audit` only detects it, and `recover` only cleans up after it.** Everything below must be stated as a
+number or a ruling the builder can fail — never as an adjective they can argue with.
+
+**Six parts:**
 
 1. **Site skeleton** — the exact route list including `/about`, `/contact`, `/privacy`, `/terms`,
-   `/how-it-works`, and where each is linked from.
-2. **Content-depth bar per route type** — what "real publisher content" means for *this* product,
-   route by route, plus the explicit ruling on any programmatic routes.
-3. **Interlinking map** — header nav, footer nav, breadcrumbs, up-links and sibling-links, no orphans.
-4. **Ad placement plan** — which slots, reserved how, and what may never sit near the tool controls.
-5. **Pre-application gate** — the checklist that must be green before submitting.
+   `/how-it-works`, and where each is linked from. Name the **≥3 pure-editorial pages** (routes that
+   carry **no widget at all**) here, at scoping — a site made only of tools has no publisher voice,
+   and nobody ever goes back and adds them later.
+
+2. **The route→component table — the one-widget ruling.** *Decide this now. It is architectural and
+   brutal to retrofit.* For every ad-carrying route, write down **the component it mounts and the
+   props that make it a different tool**:
+
+   | Route | Component | What makes it its own tool | Ad-carrying? |
+   |---|---|---|---|
+   | `/example-a` | `<Widget variant="x">` | counts by X, prints, owns the stack flow | yes |
+   | `/example-b` | `<Widget variant="y">` | partial-credit mode `x` structurally cannot express | yes |
+
+   **The test, applied at scoping:** *"if I deleted this route, what could a user no longer do?"* If
+   the answer is "nothing — they'd type the same numbers into the same boxes on the sibling page",
+   **the route is a doorway. Do not create it.** Differentiate by **function** — different default
+   mode, different inputs, different validation, a capability the sibling genuinely cannot express.
+   **Not by prose, and not by a `heading` prop.**
+
+   > **GradeJar shipped five routes on two widgets, gave each 400–700 words of genuinely unique
+   > hand-written prose, and was rejected anyway.** Unique words under an identical calculator is one
+   > tool wearing five hats. Two routes mounting the same component are **one page and one doorway**,
+   > however differently they're written.
+
+3. **Content-depth bar per route type — as numbers.** What "real publisher content" means for *this*
+   product, route by route. Restate the floors from **"The numbers"** in Group C and make them the
+   builder's acceptance criteria, not a vibe:
+
+   - **≥ 500 words** of hand-written prose per ad-carrying route (rendered page text — excluding nav,
+     footer, widget labels, button text and the FAQ block).
+   - **≥ 4 real Q&A** in the FAQ, answering queries people actually type.
+   - **< 1% 5-gram overlap** between any two routes' prose. **Measured, not asserted.**
+   - Plus the explicit **programmatic-route ruling**: differentiated, or `noindex` **and** ad-free.
+     **Never templated + indexed + monetized.**
+
+4. **Interlinking map** — header nav, footer nav, breadcrumbs, up-links and sibling-links, no orphans,
+   ≤2 clicks from home.
+
+5. **Ad placement plan** — which slots, reserved at first paint, **≥150px from any interactive
+   control**, ≤3 in-content units per screen, mobile density ≤30%. Plus the two rulings that only
+   surface after launch:
+   - **No ads on trust pages at all** (`/about`, `/contact`, `/privacy`, `/terms`) — they earn nothing
+     and they are pure finding-surface.
+   - **The ad-free flag must gate the ad LIBRARY, not just the slots.** A page with zero `<ins>`
+     elements that still ships `adsbygoogle.js` in its `<head>` is an ad library loading on a screen
+     with no publisher content. Build with ads forced live and assert **0 script tags and 0 `<ins>`**
+     on every ad-free route.
+
+6. **Pre-application gate — written as an instruction to the HUMAN.** The Apply button lives in a
+   dashboard, not in git: **no skill can gate it, only the person can.** So the contract must say, in
+   words the builder will read:
+
+   > **Nobody clicks Apply until `/adsense-ready audit` has said, out loud: "you may now apply."**
+   > Applying early does not merely risk a rejection — it **wastes every fix that lands afterwards**,
+   > because Google reviews the site it already crawled. GradeJar applied on 2026-07-03, ran the audit
+   > on 2026-07-13, and was rejected on 2026-07-14 **for the July 3 site**. The fixes were real,
+   > correct, and ten days too late to be in the thing being judged.
 
 ### audit mode — the verdict
 
@@ -208,18 +392,68 @@ or
 
 > **READY TO APPLY.** All eight groups pass.
 
+### recover mode — after a rejection
+
+A rejection is a verdict on **a specific snapshot of the site**, and the single most important thing
+you can establish is *which* snapshot. Do this before proposing a single fix.
+
+**1. Date the verdict against the repo.** Get the application date (ask — it's not in git; the ads.txt
+/ ad-script commit is usually the best proxy) and `git log` the content commits. Then say plainly
+which of these is true:
+
+- **The rejection predates the fixes** → *the reviewed site no longer exists.* Do **not** rebuild in a
+  panic, and do not let the user conclude the content is hopeless. Say so directly: this was an
+  ordering failure. Then hunt only for what would sink the *next* review.
+- **The rejection postdates the fixes** → the fixes were genuinely insufficient. Different problem,
+  much more serious. Re-run A–H properly and be harsh.
+
+**2. Find what would sink review #2.** The bar is higher now — a re-review is looked at by someone who
+has already said no once. Hunt specifically for:
+- anything in a trust page that is **factually false** (a privacy policy claiming a CMP that isn't
+  installed is worse than one that says nothing — and reviewers *read* privacy policies);
+- the one-widget-many-routes cluster (Group C — it survives a prose-only fix);
+- ads on any screen that isn't real content.
+
+**3. The resubmission sequence — this is the part everyone gets wrong.**
+
+> **Clicking "Request review" does not make Google re-read your site.** It queues a review of what
+> Google has *already crawled*. Request it too early and you are resubmitting the exact site that was
+> just rejected, and you burn the cycle.
+
+1. **Deploy.** Confirm with `curl` that the live HTML actually changed.
+2. **Search Console → Request indexing** on every changed URL. Resubmit the sitemap.
+3. **Wait for the recrawl — 3–5 days.** Confirm a fresh crawl date in GSC. This step has no shortcut
+   and no substitute.
+4. **Only then** tick *"I confirm that I have fixed the issues"* and Request review.
+
+**4. Say the number.** Tell the user how long this takes and do not soften it. A re-review is days to
+weeks. The instinct after a rejection is to click the button immediately; that instinct is the trap,
+and naming it is part of the job.
+
 ## Rules
 
-1. **A bare widget is not a page.** If deleting the tool leaves nothing worth reading, the route is
+1. **Ask whether they've already applied — first, every time.** An audit that runs after the Apply
+   button is a post-mortem, not a gate. This is the failure that cost GradeJar its approval, and the
+   checklist below cannot detect it, because the button isn't in the repo.
+2. **A bare widget is not a page.** If deleting the tool leaves nothing worth reading, the route is
    a screen without publisher content. This is the rule that everything else serves.
-2. **Never templated + indexed + monetized.** Programmatic pages pick one: differentiated, or
+3. **Count the components, not just the words.** Two routes mounting the same widget are one page and
+   one doorway, however differently they're written. Templated *functionality* is templated content.
+4. **Never templated + indexed + monetized.** Programmatic pages pick one: differentiated, or
    `noindex` + ad-free.
-3. **Never approve your own homework.** Audit against the actual files and the live URLs, not against
-   what the plan says was built. Cite the file path for every finding.
-4. **Report before fixing.** Hand over the ranked blocker list and stop. The human decides what gets
+5. **Measure what you claim.** "Distinct content" is a number (5-gram overlap), not an adjective.
+   "Enough words" is a count. An LLM grading the prose it just wrote is not evidence. Report the
+   worst pair and its actual value.
+6. **Never approve your own homework.** Audit against the actual files **and the live URLs** — curl
+   them, fetch them as `Mediapartners-Google`, grep the built HTML. Not against what the plan says
+   was built. Cite the file path for every finding.
+7. **Report before fixing.** Hand over the ranked blocker list and stop. The human decides what gets
    fixed and in what order.
-5. **The gate is binary.** "Mostly compliant" is NOT READY. A rejection costs 2-4 weeks; one more
-   day of writing costs one day.
-6. **Compliance and revenue are the same lever.** Every fix in groups B and C also raises
-   pages-per-session, which is a direct multiplier on RPM. Never present this work as a tax — it is
-   the business model.
+8. **The gate is binary, and it must be spoken.** "Mostly compliant" is NOT READY. Clearance is the
+   explicit sentence *"you may now apply"* — if you didn't say it, they aren't cleared.
+9. **After a rejection, the recrawl is the whole game.** "Request review" reviews what Google has
+   already crawled. Deploy → request indexing → **wait 3–5 days** → then submit. Skipping the wait
+   resubmits the site that was just rejected.
+10. **Compliance and revenue are the same lever.** Every fix in groups B and C also raises
+    pages-per-session, which is a direct multiplier on RPM. Never present this work as a tax — it is
+    the business model.
