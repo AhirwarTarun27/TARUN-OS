@@ -1,6 +1,6 @@
 # Frontend Interview Q&A Resources
 
-The ebook (`references/232Questions.pdf`) is the *question set* — what gets asked. These are the
+The ebook (`reference/232Questions.pdf`) is the *question set* — what gets asked. These are the
 *answer sources* — high-trust references we ground explanations in, so we're never repeating the
 ebook's occasional shortcuts or typos.
 

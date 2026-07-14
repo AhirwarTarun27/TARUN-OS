@@ -14,7 +14,7 @@
 - Interleave: teach a concept, then immediately pull the ebook's OUTPUT-based Qs and PROBLEMS that use
   it as retrieval practice in the same/next lesson. This is what makes the dots connect.
 - Every lesson: knowledge (cited) → retrieval quiz → output-prediction/coding drill → primary source → next.
-- Source of truth for question mapping: `references/232Questions.txt` (extracted from the PDF).
+- Source of truth for question mapping: `reference/232Questions.txt` (extracted from the PDF).
 
 ## TODO / backlog
 - [ ] Build `reference/glossary.html` once term count justifies it (hoisting, TDZ, coercion, closure, etc.).

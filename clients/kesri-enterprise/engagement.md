@@ -4,10 +4,14 @@
 > `/client-pipeline kesri` reads this file first. Update it **before** advancing a phase, never after.
 
 **Status:** Phase 3 — Findable *(site is live; findability barely started)*
-**▶ NEXT ACTION:** Cloudflare dashboard → `kesrienterprise.com` → turn OFF the managed robots.txt. **5 min.** It currently blocks ClaudeBot entirely and opts the site out of Gemini grounding + AI training corpora. See `findability.md` §0.
+**▶ NEXT ACTION:** Cloudflare dashboard → `kesrienterprise.com` → turn OFF the managed robots.txt. **5 min.** **Re-verified over the wire 2026-07-14: still ON.** It blocks ClaudeBot entirely and opts the site out of Gemini grounding + AI training corpora. See `findability.md` §0.
 **Blocked on:** the client questionnaire — **drafted but never sent.** It is the longest lead time in the whole project and it blocks the trust bar, certifications, geo coordinates, and the WhatsApp button.
 
+> ⚠️ **This file drifts behind the repo.** `C:\Users\ahirwar.tarun\Documents\Learning\MyProjects\KesariEnterprise\.claude\learning\STATUS.md` is the real record of what shipped. **Read it first, then reconcile this file to it** — on 2026-07-14 the logo wall had been live for two days and this board still called it blocked.
+
 *Spelling: **Kesri**, not Kesari. The repo, the domain, and the brochure all agree. Only the local folder name (`MyProjects\KesariEnterprise`) is wrong — and NAP consistency starts with the name.*
+
+**Primary source:** `kesri-enterprise-brochure.pdf` (in this folder) — the client's own 4-page brochure. It is the *only* verified source for the client list, the divisions, and the service copy. **Never-invent-a-fact rule: if a claim about Kesri isn't in the brochure, the questionnaire, or the repo, it doesn't go on the site.**
 
 ---
 
@@ -59,6 +63,7 @@ Not traffic. **Credibility + regional findability.** They served Patanjali, Bung
 
 | Layer | State |
 |---|---|
+| **Client logo wall** | ✅ **LIVE since 2026-07-12** (repo D46). `logoWallEnabled = true`, all 20 logos in `public/images/clients/`, cropped from brochure page 4 via `scripts/extract-client-logos.mjs` — never the open web. Tarun confirmed all 20 clients cleared; **no written permission artefacts are on file.** Get them from Ashtdhuja and store them — the flag is meant to be backed by evidence, not recall. |
 | AI-search schema | **Partial.** `LocalBusiness` + `Product` JSON-LD ship. **No `sameAs`, no `geo`, no `priceRange`, no `FAQPage`, no `BreadcrumbList`.** |
 | Lead capture → WhatsApp | **Not built.** Form → email via Resend only. `company.whatsapp` is deliberately `null` — publishing the proprietor's personal mobile is his call (questionnaire item 9). |
 | Review link | **Not built** — needs GBP first. |
@@ -78,8 +83,8 @@ Its own STATUS.md calls it *"the longest lead time in the project."* **This is t
 - [ ] **Exact premises coordinates** → `LocalBusiness.geo` (geocoding the street line lands at the wrong end of Bharat Nagar)
 - [ ] Service radius: Kutch only / Gujarat / pan-India → `areaServed`
 - [ ] **Permission to publish a WhatsApp number**, and which one → the lead-capture layer
-- [ ] Which of the 20 named clients can be cited, and can their logos be used
-- [ ] Real photos of real installations
+- [x] ~~Which of the 20 named clients can be cited, and can their logos be used~~ — **resolved 2026-07-12 outside the questionnaire.** All 20 cleared, wall is live. Written artefacts still to be collected and filed.
+- [ ] Real photos of real installations — **now the top item.** The five product heroes are unbranded stock matched on scale; two of them are the same installation shot twice. Real Kesri photos supersede all of it (repo D49).
 
 **The hard rule:** never invent any of it. `trust.ts` ships with every field `null` and components render nothing rather than fake a number. A procurement manager who catches one invented ISO number is gone for good — and tells the two other plants he knows. In a district this size, that is the whole market.
 
