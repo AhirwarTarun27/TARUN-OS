@@ -16,6 +16,11 @@ notes: <block=one-liner on what got done; learning blocks = what /teach covered>
 
 <!-- 2026-07-10 Fri and 2026-07-13 Mon were never logged. Left un-logged by choice at the 07-14 wrap — an honest gap beats a reconstructed one. -->
 
+## 2026-07-15 Wed · 1/7 · energy 2/5 · office ✗ (am✗/pm✓)
+✓ workout
+✗ reading dsa machine-coding sysdesign project interview-qa
+notes: AM had an unavoidable disruption; after 1pm the manager signaled the current project is winding down right before the appraisal cycle → job-security anxiety derailed the afternoon blocks · dsa=no rep (2 revisions still due today 07-16, untouched) · machine-coding=Phase 0 not cleared · must-ship=❌ · driver = job insecurity, not avoidance — this is exactly what the active switch (Priority 1) is for
+
 ## 2026-07-14 Tue · 5/7 · energy 3/5 · office ✓
 ✓ dsa machine-coding sysdesign workout project
 ✗ reading — disruption · interview-qa — disruption

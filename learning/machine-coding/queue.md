@@ -5,7 +5,7 @@
 > `/daily-log` reads this at **plan** (what's due today) and updates it at **wrap** (advance the rung,
 > bank the rating, recompute the next due date). `lab/ingest.mjs` appends the R0 row automatically.
 
-## ⚙ Current phase: **0**
+## ⚙ Current phase: **1**
 
 *The skill reads this line and gates itself on it. Do not hand-edit it — `/machine-coding` advances it.*
 

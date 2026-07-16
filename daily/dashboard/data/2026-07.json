@@ -106,7 +106,33 @@
     {
       "date": "2026-07-15",
       "day": "Wed",
-      "pending": true
+      "blocks": {
+        "reading": false,
+        "dsa": false,
+        "machineCoding": false,
+        "sysdesign": false,
+        "workout": true,
+        "project": false,
+        "interviewQa": false
+      },
+      "reasons": {
+        "reading": "disruption",
+        "dsa": "disruption",
+        "machineCoding": "other",
+        "sysdesign": "other",
+        "project": "other",
+        "interviewQa": "other"
+      },
+      "energy": 2,
+      "office": false,
+      "mustShip": false,
+      "notes": "AM disruption ate the morning; after 1pm a manager message that the current project is winding down right before appraisal derailed the afternoon (job-security anxiety). Only workout landed. dsa untouched (2 revisions due 07-16). machine-coding Phase 0 not cleared. office am✗/pm✓."
+    },
+    {
+      "date": "2026-07-16",
+      "day": "Thu",
+      "pending": true,
+      "mustShip": "Both DSA D2 revisions cleared + logged (Best Time to Buy & Sell Stock, Merge Sorted Arrays)"
     }
   ]
 }

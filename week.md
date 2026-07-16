@@ -22,9 +22,9 @@
 
 > The single thing that, if you do nothing else today, makes the day count.
 
-- **Date:** Tue Jul 14
-- **Must-ship:** First DSA rep of the reset — one D0 problem solved and logged in `learning/dsa/queue.md`.
-- **Today's plan:** TBD at `/daily-log plan` — run it next to lock the rest of today's blocks.
+- **Date:** Thu Jul 16
+- **Must-ship:** Both DSA D2 revisions cleared and logged — Best Time to Buy & Sell Stock + Merge Sorted Arrays (both `watched`, D5 still mandatory 07-19).
+- **Today's plan:** Recovery day after yesterday's 1/7. `dsa` = the 2 D2 revisions (fill the block; 3rd new D0 slides to Fri). `machine-coding` = clear Phase 0 (Akshay video + process card). `sysdesign` = re-drill Ch.1 cold before Ch.2. `project` (8pm) = review the client-visibility offering, then AccentWallPlanner. Full board, no skips.
 
 ## Parking lot (capture, do NOT act)
 

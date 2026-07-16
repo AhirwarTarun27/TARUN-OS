@@ -84,28 +84,38 @@ That last one is a cheat code. It makes the interviewer hand you the P0 themselv
 > process. Fill this in *while watching*, then close YouTube.
 >
 > Video: https://www.youtube.com/watch?v=J-QIayOSDN8&list=PLU56c6oCwyh7rGUlJblJ8A8ujRNS7w0aM
-> Watched on: _______
+> Watched on: 2026-07-16 · Problem: Pagination
 
 **1. Before he typed a single line, what did he do?**
-> _(what did he ask? what did he assume out loud? what did he write down?)_
+> Discussed with the interviewer first. Spent the first ~5 minutes clarifying the
+> problem as much as possible before writing anything.
 
 **2. How did he decide what to build FIRST?**
-> _(what was his P0? did he say it explicitly, or just start?)_
+> Started from the data: where does it come from — an API, or local data in a JSON
+> file? Decided to fetch via API call and get the data rendered in the app first.
 
 **3. What was his file/component structure, and when did he decide it?**
-> _(up front, or did it emerge while coding?)_
+> Decided it *after* getting the data showing in the UI — then pulled out a Card
+> component to render each product. Structure emerged after the data was on screen,
+> not up front.
 
 **4. When did he write CSS?**
-> _(before or after the thing worked? be honest about what you observed)_
+> After the card existed — to fix the image size and lay the content out properly in
+> the box. CSS came after the thing rendered, not before.
 
 **5. What did he do when something broke?**
-> _(console.log? read the error? guess?)_
+> The break was around splitting components and passing data through props — he'd
+> missed a prop. He traced which prop was missing and added it.
 
 **6. What did he SKIP, and did he say why?**
-> _(the scoping instinct — this is the most valuable thing in the video)_
+> Skipped the CSS polish and any functionality beyond basic pagination — built just
+> the core pagination structure. Then at the END discussed optimizations/scope with
+> the interviewer: a custom hook for the API fetch, splitting into more components so
+> no single file bloats, etc.
 
 **7. The one habit I am stealing from this:**
-> _(pick exactly one. not five.)_
+> The discussion up front — clarifying with the interviewer before implementing
+> anything.
 
 ---
 
