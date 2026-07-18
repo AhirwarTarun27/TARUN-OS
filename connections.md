@@ -26,6 +26,17 @@ reference file instead of a live MCP server. Accounts already exist (Tarun's).
 | Google Analytics 4 | Traffic/behavior reporting | `references/google-analytics-api.md` | Service account (Viewer) | 2026-06-30 ✓ verified |
 | Microsoft Bing Webmaster Tools | Bing search traffic (clicks/impressions), URL submission/indexing quota, top search queries — jsonbeam.com + gradejar.com verified | `references/bing-webmaster-api.md` | API key (`?apikey=`, one per user) | 2026-07-03 (pending key — built dormant) |
 
+## MCP servers
+
+| Server | Mechanism | Scope | Used for | Last checked |
+|---|---|---|---|---|
+| **Playwright** (`@playwright/mcp@latest`) | `mcp` (stdio, via `npx`) | **project** — `.mcp.json` at repo root, pre-approved in `.claude/settings.local.json` | Live browser verification. The **standing exception** to the no-MCP rule in `CLAUDE.md`: browser verification can't be cached into a reference file. Added 2026-07-17 to test the machine-coding lab (`learning/machine-coding/lab/`), which is a `file://` page Playwright can drive directly — no server needed. | 2026-07-17 ✓ v0.0.78, chromium-1228 installed |
+| claude.ai Google Drive | `mcp` (hosted) | user | Lightly used — see Knowledge/files above | 2026-07-17 ✓ connected |
+
+> **Project-scoped MCP servers only load at Claude Code startup.** A newly added one reads
+> `⏸ Pending approval` until the next session. `enabledMcpjsonServers` in
+> `.claude/settings.local.json` pre-approves it so no prompt appears.
+
 Secrets live in `.env` (gitignored); GA4 key JSON in `secrets/` (gitignored). Re-test all
 four any time with: `node scripts/verify-connections.mjs` (read-only, prints no secrets).
 Bing stays "pending key" until `BING_WEBMASTER_API_KEY` is added — the check reports it as

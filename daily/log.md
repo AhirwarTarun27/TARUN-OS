@@ -16,6 +16,16 @@ notes: <block=one-liner on what got done; learning blocks = what /teach covered>
 
 <!-- 2026-07-10 Fri and 2026-07-13 Mon were never logged. Left un-logged by choice at the 07-14 wrap — an honest gap beats a reconstructed one. -->
 
+## 2026-07-17 Fri · 6/7 · energy 3/5 · office ✗
+✓ reading dsa machine-coding interview-qa workout project
+✗ sysdesign — avoidance (time was there, didn't open it); object-storage gap + Ch.1 bank both still carried from 07-16
+notes: dsa=Merge Sorted D2 cleared rated <3 (must-ship ✅; `watched` D0 → D5 07-19 mandatory regardless) · Move Zeroes NOT solved → Attempting day 1 (outcome 1 stuck at 2/3, both live D0s still `watched`) · machine-coding=Counter no working P0 → Building day 1, NOT ingested (no R0, no grade) · interview-qa=type coercion (JS core), first run of the new 11am slot ✓ · reading="no one's crazy" banked · project=**outcome 3 DONE — Kesri robots.txt flipped + questionnaire sent** · must-ship=✅
+
+## 2026-07-16 Thu · 5/7 · energy 3/5 · office ✓
+✓ reading dsa machine-coding sysdesign workout
+✗ project — negligence, own call (time was there, didn't open it) · interview-qa — energy gone by 11:45pm; 4th miss in 5 days, block placement is the cause not discipline → move it
+notes: dsa=Stock D2 cleared, rated 3 (`watched` → D5 still mandatory 07-19) · Merge Sorted Arrays D2 untouched, now **overdue** · machine-coding=**Phase 0 cleared** (Akshay video + process card), phase 0→1, no build rep yet · sysdesign=Ch.1 re-drill graded 6.5/10, **still NOT banked**; pushed back on the grade and won — 3 of 4 "gaps" were first-contact vocab never taught, so `lessons/0001b-backend-primitives.html` written + teaching-calibration rule banked in NOTES.md; only real miss = object-storage gap · must-ship=❌ (1 of 2 D2s) · recovery from Wed's 1/7 held
+
 ## 2026-07-15 Wed · 1/7 · energy 2/5 · office ✗ (am✗/pm✓)
 ✓ workout
 ✗ reading dsa machine-coding sysdesign project interview-qa

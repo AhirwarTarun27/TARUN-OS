@@ -613,23 +613,25 @@
    Scoring: WIN = >=4/7 hits OR minimum-viable-day (energy<=2 AND >=3 hits).
    Shields: 7 straight wins bank one (max 2); a shield absorbs a loss.
    ===================================================================== */
+  /* Order = schedule order (display only; every consumer is key-based).
+     Swapped 2026-07-17: interview-qa → 11:00am, reading → 11:45pm. See daily/schedule.md. */
   const BLOCK_DEFS = [
-    { key:'reading',      name:'Book reading',   code:'reading',       time:'11:00' },
+    { key:'interviewQa',  name:'Interview Q&A',  code:'interview-qa',  time:'11:00' },
     { key:'dsa',          name:'DSA practice',   code:'dsa',           time:'11:45' },
     { key:'machineCoding',name:'Machine coding', code:'machine-coding',time:'12:45' },
     { key:'sysdesign',    name:'System design',  code:'sysdesign',     time:'2:00pm' },
     { key:'workout',      name:'Home workout',   code:'workout',       time:'6:00pm' },
     { key:'project',      name:'Project work',   code:'project',       time:'8:00pm' },
-    { key:'interviewQa',  name:'Interview Q&A',  code:'interview-qa',  time:'11:45pm' },
+    { key:'reading',      name:'Book reading',   code:'reading',       time:'11:45pm' },
   ];
   const TOTAL = BLOCK_DEFS.length; // 7
 
   /* THE DAY'S CLOCK — mirrors daily/schedule.md. Minutes from midnight; the late blocks
-     run past 1440 because interview-qa + wrap spill over into the next calendar day.
+     run past 1440 because reading + wrap spill over into the next calendar day.
      Edit this and daily/schedule.md together, or the dashboard starts lying. */
   const SCHED = [
     { code:'plan',          name:'Today’s planning',      s:10*60+30, e:10*60+45, kind:'ritual' },
-    { code:'reading',       name:'Book reading',          s:11*60,    e:11*60+30, kind:'scored' },
+    { code:'interview-qa',  name:'Interview Q&A',         s:11*60,    e:11*60+30, kind:'scored' },
     { code:'dsa',           name:'DSA practice',          s:11*60+45, e:12*60+30, kind:'scored' },
     { code:'machine-coding',name:'Machine coding',        s:12*60+45, e:13*60+30, kind:'scored' },
     { code:'sysdesign',     name:'System design · Xu V1', s:14*60,    e:15*60+30, kind:'scored' },
@@ -637,7 +639,7 @@
     { code:'workout',       name:'Home workout',          s:18*60,    e:19*60,    kind:'scored' },
     { code:'project',       name:'Project work',          s:20*60,    e:21*60,    kind:'scored' },
     { code:'office-pm',     name:'Office work',           s:22*60,    e:23*60+30, kind:'office' },
-    { code:'interview-qa',  name:'Interview Q&A',         s:23*60+45, e:24*60+15, kind:'scored' },
+    { code:'reading',       name:'Book reading · intake', s:23*60+45, e:24*60+15, kind:'scored' },
     { code:'wrap',          name:'Day wrap-up',           s:24*60+15, e:24*60+45, kind:'ritual' },
   ];
   const SCHED_BY_CODE = Object.fromEntries(SCHED.map(b => [b.code, b]));
@@ -658,14 +660,14 @@
   const rangeS = b => fmtS(b.s)+'–'+fmtS(b.e);
 
   // "now" in schedule-minutes + the weekday the schedule considers it. Before 3am the tail
-  // (interview-qa 11:45pm, wrap 12:15am) still belongs to the day that is ending, not the new one.
+  // (reading 11:45pm, wrap 12:15am) still belongs to the day that is ending, not the new one.
   function schedNow(d = new Date()){
     let m = d.getHours()*60 + d.getMinutes(), dow = d.getDay();
     if (m < 180){ m += 1440; dow = (dow + 6) % 7; }
     return { m, dow, weekend: dow === 0 || dow === 6 };
   }
 
-  const DATA = /*__DATA_START__*/ {"month":"2026-07","today":"2026-07-16","weekOutcomes":"DSA back on the ladder (3+ D0s by Sun) · AdSense earning (carried) · Kesri Phase 3 moves (robots.txt fix + questionnaire sent)","entries":[{"date":"2026-07-07","day":"Tue","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":true,"workout":true,"project":true,"interviewQa":true},"reasons":{"reading":"avoidance","dsa":"avoidance","machineCoding":"clarity"},"energy":2,"office":false,"mustShip":true,"notes":"Built the learning base for sysdesign+interview-qa (declared tomorrow's path). reading/dsa/machine-coding all missed — avoidance + clarity. /marketing queue ran.","shipped":["/marketing queue ran (must-ship)"]},{"date":"2026-07-08","day":"Wed","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":true,"interviewQa":false},"reasons":{"reading":"avoidance","dsa":"avoidance","machineCoding":"avoidance","sysdesign":"avoidance","interviewQa":"energy"},"energy":1,"office":false,"mustShip":false,"notes":"DSA avoidance 2nd day running — planned but didn't solve. sysdesign only skimmed ch.1. project=fixed AdSense low-value-content rejection + redeployed. Energy 1/5 — root cause behind most misses.","shipped":["AdSense low-value-content fix + redeploy (JsonBeam)"]},{"date":"2026-07-09","day":"Thu","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":false,"interviewQa":false},"reasons":{"reading":"disruption","dsa":"disruption","machineCoding":"disruption","sysdesign":"disruption","project":"disruption","interviewQa":"disruption"},"energy":1,"office":true,"mustShip":false,"notes":"Personal/family matter derailed the whole day — only workout landed. DSA missed 3rd day running, queue still empty. Office adherence held despite it."},{"date":"2026-07-14","day":"Tue","blocks":{"reading":false,"dsa":true,"machineCoding":true,"sysdesign":true,"workout":true,"project":true,"interviewQa":false},"reasons":{"reading":"disruption","interviewQa":"disruption"},"energy":3,"office":true,"mustShip":true,"notes":"DSA queue is no longer empty: 2 D0s banked (Best Time to Buy & Sell Stock, Merge Sorted Arrays), both `watched` — D2 on 07-16, D5 mandatory 07-19. machine-coding block went into BUILDING the system, no rep, Phase 0 still uncleared. sysdesign Ch.1 design-out-loud graded 6/10 — NOT banked, re-drill cold. project: AdSense rejected gradejar.com for low-value content; D31 recovery shipped + deployed, resubmit correctly held for the recrawl.","shipped":["GradeJar D31 post-rejection recovery: de-doorwayed 5 same-widget routes, stripped ads off thin + trust pages, deployed","Built the /machine-coding round system (lab + rubric + primitives + R0-R10 ladder + profile) and revised the DSA ladder so D0 = the day it's SOLVED"]},{"date":"2026-07-15","day":"Wed","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":false,"interviewQa":false},"reasons":{"reading":"disruption","dsa":"disruption","machineCoding":"other","sysdesign":"other","project":"other","interviewQa":"other"},"energy":2,"office":false,"mustShip":false,"notes":"AM disruption ate the morning; after 1pm a manager message that the current project is winding down right before appraisal derailed the afternoon (job-security anxiety). Only workout landed. dsa untouched (2 revisions due 07-16). machine-coding Phase 0 not cleared. office am✗/pm✓."},{"date":"2026-07-16","day":"Thu","pending":true,"mustShip":"Both DSA D2 revisions cleared + logged (Best Time to Buy & Sell Stock, Merge Sorted Arrays)"}]} /*__DATA_END__*/;
+  const DATA = /*__DATA_START__*/ {"month":"2026-07","today":"2026-07-20","weekOutcomes":"DSA back on the ladder (3+ D0s by Sun) · AdSense earning (carried) · Kesri Phase 3 moves (robots.txt fix + questionnaire sent)","entries":[{"date":"2026-07-07","day":"Tue","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":true,"workout":true,"project":true,"interviewQa":true},"reasons":{"reading":"avoidance","dsa":"avoidance","machineCoding":"clarity"},"energy":2,"office":false,"mustShip":true,"notes":"Built the learning base for sysdesign+interview-qa (declared tomorrow's path). reading/dsa/machine-coding all missed — avoidance + clarity. /marketing queue ran.","shipped":["/marketing queue ran (must-ship)"]},{"date":"2026-07-08","day":"Wed","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":true,"interviewQa":false},"reasons":{"reading":"avoidance","dsa":"avoidance","machineCoding":"avoidance","sysdesign":"avoidance","interviewQa":"energy"},"energy":1,"office":false,"mustShip":false,"notes":"DSA avoidance 2nd day running — planned but didn't solve. sysdesign only skimmed ch.1. project=fixed AdSense low-value-content rejection + redeployed. Energy 1/5 — root cause behind most misses.","shipped":["AdSense low-value-content fix + redeploy (JsonBeam)"]},{"date":"2026-07-09","day":"Thu","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":false,"interviewQa":false},"reasons":{"reading":"disruption","dsa":"disruption","machineCoding":"disruption","sysdesign":"disruption","project":"disruption","interviewQa":"disruption"},"energy":1,"office":true,"mustShip":false,"notes":"Personal/family matter derailed the whole day — only workout landed. DSA missed 3rd day running, queue still empty. Office adherence held despite it."},{"date":"2026-07-14","day":"Tue","blocks":{"reading":false,"dsa":true,"machineCoding":true,"sysdesign":true,"workout":true,"project":true,"interviewQa":false},"reasons":{"reading":"disruption","interviewQa":"disruption"},"energy":3,"office":true,"mustShip":true,"notes":"DSA queue is no longer empty: 2 D0s banked (Best Time to Buy & Sell Stock, Merge Sorted Arrays), both `watched` — D2 on 07-16, D5 mandatory 07-19. machine-coding block went into BUILDING the system, no rep, Phase 0 still uncleared. sysdesign Ch.1 design-out-loud graded 6/10 — NOT banked, re-drill cold. project: AdSense rejected gradejar.com for low-value content; D31 recovery shipped + deployed, resubmit correctly held for the recrawl.","shipped":["GradeJar D31 post-rejection recovery: de-doorwayed 5 same-widget routes, stripped ads off thin + trust pages, deployed","Built the /machine-coding round system (lab + rubric + primitives + R0-R10 ladder + profile) and revised the DSA ladder so D0 = the day it's SOLVED"]},{"date":"2026-07-15","day":"Wed","blocks":{"reading":false,"dsa":false,"machineCoding":false,"sysdesign":false,"workout":true,"project":false,"interviewQa":false},"reasons":{"reading":"disruption","dsa":"disruption","machineCoding":"other","sysdesign":"other","project":"other","interviewQa":"other"},"energy":2,"office":false,"mustShip":false,"notes":"AM disruption ate the morning; after 1pm a manager message that the current project is winding down right before appraisal derailed the afternoon (job-security anxiety). Only workout landed. dsa untouched (2 revisions due 07-16). machine-coding Phase 0 not cleared. office am✗/pm✓."},{"date":"2026-07-16","day":"Thu","blocks":{"reading":true,"dsa":true,"machineCoding":true,"sysdesign":true,"workout":true,"project":false,"interviewQa":false},"reasons":{"project":"avoidance","interviewQa":"energy"},"energy":3,"office":true,"mustShip":false,"notes":"Recovery from Wed's 1/7 held. dsa=Stock D2 cleared (rated 3, watched so D5 still mandatory 07-19); Merge Sorted Arrays D2 untouched, now overdue. machine-coding=Phase 0 cleared, marker 0->1, no build rep yet. sysdesign=Ch.1 re-drill 6.5/10, still NOT banked; pushed back on the grade and won. must-ship=miss (1 of 2 D2s). interview-qa missed 4 of last 5 - block placement, not discipline.","shipped":["Fixed a real bug in the /teach loop: it graded first-contact vocab as unfixed gaps. Banked a teaching-calibration rule in NOTES.md + wrote lessons/0001b-backend-primitives.html."]},{"date":"2026-07-17","day":"Fri","blocks":{"reading":true,"dsa":true,"machineCoding":true,"sysdesign":false,"workout":true,"project":true,"interviewQa":true},"reasons":{"sysdesign":"avoidance"},"energy":3,"office":false,"mustShip":true,"notes":"6/7 — only sysdesign missed (avoidance; object-storage gap + Ch.1 bank still carried). dsa=Merge Sorted D2 cleared rated <3 (must-ship, D5 07-19 mandatory); Move Zeroes NOT solved -> Attempting day 1 (outcome 1 stuck at 2/3, both live D0s watched). machine-coding=Counter no working P0 -> Building day 1, not ingested. interview-qa=type coercion, first run of new 11am slot. reading='no one's crazy' banked. project=outcome 3 DONE (Kesri robots.txt flipped + questionnaire sent).","shipped":["Kesri Phase 3: flipped off managed robots.txt + sent client questionnaire — both pieces of outcome 3"]},{"date":"2026-07-20","day":"Mon","pending":true}]} /*__DATA_END__*/;
 
   /* ------------------------- derive ------------------------- */
   const hits = e => BLOCK_DEFS.reduce((n,b)=> n + (e.blocks && e.blocks[b.key] ? 1 : 0), 0);
@@ -1022,8 +1024,8 @@
       mod('Energy → wins', '<div class="rfall">Needs at least one win and one loss to compare.</div>');
     }
 
-    // 4. office-day drag on evening blocks
-    const evening = ['workout','project','interviewQa'];
+    // 4. office-day drag on evening blocks (post-2026-07-17 swap: reading is the late block, not interview-qa)
+    const evening = ['workout','project','reading'];
     const rate = ds => {
       let hit = 0, tot = 0;
       ds.forEach(e => evening.forEach(k => { tot++; if (e.blocks && e.blocks[k]) hit++; }));

@@ -13,6 +13,13 @@
   --amber: #e2b53d;
   --red: #ef5f5f;
   --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+
+  /* Editor metrics. #editor and #highlight MUST agree on every one of these or the caret
+     drifts away from the glyphs it is supposed to sit on. */
+  --code-size: 13px;
+  --code-line: 20px;
+  --code-pad-y: 12px;
+  --code-pad-x: 16px;
 }
 
 * { box-sizing: border-box; }
@@ -22,6 +29,12 @@ html, body {
   background: var(--bg); color: var(--text);
   font: 14px/1.55 -apple-system, "Segoe UI", system-ui, sans-serif;
 }
+
+/* Everything outside the editor (design box, brief, console) used the browser default, which on a
+   dark page is a bright blue slab. #editor overrides this with a translucent variant — see the note
+   there for why that one cannot be opaque. */
+::selection { background: #2c5488; color: #fff; }
+::-moz-selection { background: #2c5488; color: #fff; }
 
 .hidden { display: none !important; }
 .screen { height: 100%; }
@@ -108,16 +121,44 @@ select:focus, input:focus, textarea:focus { outline: none; border-color: var(--a
 .goals label { font-size: 12px; color: var(--dim); cursor: pointer; user-select: none; }
 .goals input { accent-color: var(--green); margin-right: 3px; vertical-align: -1px; }
 
-/* ── Stage ────────────────────────────────────────────────────────── */
+/* A refused checkbox has to explain itself or it reads as a bug. */
+.law-flash {
+  font-size: 11px; font-weight: 600; color: var(--amber);
+  border: 1px solid #4a3a12; background: #1c1708;
+  padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+}
+
+/* ── Stage + splitters ────────────────────────────────────────────── */
+/* Widths are custom properties so the splitters can drive them. The centre is 1fr, so dragging
+   either handle grows or shrinks the editor. lab.js seeds these from localStorage. */
 #stage {
-  flex: 1; display: grid; grid-template-columns: 270px 1fr 340px;
+  flex: 1; display: grid;
+  grid-template-columns: var(--brief-w, 270px) 6px 1fr 6px var(--preview-w, 340px);
   min-height: 0;
 }
-@media (max-width: 1200px) { #stage { grid-template-columns: 230px 1fr 280px; } }
+
+.splitter {
+  background: var(--line); cursor: col-resize; position: relative;
+  transition: background .12s;
+}
+/* Widen the grab target past the 6px the eye sees. */
+.splitter::after { content: ''; position: absolute; inset: 0 -4px; }
+.splitter:hover, .splitter.dragging { background: var(--accent); }
+
+/* The preview/console divider runs the other way. */
+.splitter.horizontal { cursor: row-resize; height: 6px; flex-shrink: 0; }
+.splitter.horizontal::after { inset: -4px 0; }
+
+body.dragging { user-select: none; }
+body.dragging-x { cursor: col-resize; }
+body.dragging-y { cursor: row-resize; }
+/* The iframe swallows pointer events mid-drag, which strands the splitter the moment the cursor
+   crosses the preview. Disable it for the duration. */
+body.dragging iframe, body.dragging #preview-frame { pointer-events: none; }
 
 #brief {
-  border-right: 1px solid var(--line); background: var(--panel);
-  padding: 16px; overflow-y: auto;
+  background: var(--panel);
+  padding: 16px; overflow-y: auto; min-width: 0;
 }
 #brief h2 { margin: 0 0 10px; font-size: 15px; }
 .prompt {
@@ -145,7 +186,11 @@ b.p2 { color: var(--dimmer) !important; }
 
 /* ── Centre ───────────────────────────────────────────────────────── */
 #centre { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-.pane { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+/* `position` is load-bearing, not decoration: #editor-lock is `absolute; inset:0` and a CHILD of
+   #editor-pane. Without a positioned ancestor it resolves against the initial containing block and
+   blankets the whole VIEWPORT — including Next and End — so a DESIGN phase that times out on an
+   empty box locks the entire lab until a reload. */
+.pane { flex: 1; display: flex; flex-direction: column; min-height: 0; position: relative; }
 .pane h3 { margin: 0 0 6px; font-size: 15px; }
 
 #clarify-pane, #design-pane, #buzzer-pane { padding: 18px 20px; overflow-y: auto; }
@@ -190,20 +235,95 @@ b.p2 { color: var(--dimmer) !important; }
   border: 1px solid #3a2a2a; border-radius: 4px; padding: 3px 8px; margin-right: 8px;
 }
 
-.editor-wrap { flex: 1; display: flex; position: relative; min-height: 0; background: var(--bg); }
-#gutter {
-  padding: 12px 8px 12px 12px; text-align: right;
-  font-family: var(--mono); font-size: 13px; line-height: 20px;
-  color: var(--dimmer); background: var(--bg);
-  user-select: none; overflow: hidden; flex-shrink: 0; min-width: 44px;
+.scope-strip {
+  flex-shrink: 0; padding: 5px 12px; background: var(--panel-2);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px; color: var(--dimmer); line-height: 1.7;
 }
+.scope-strip b {
+  color: var(--dim); text-transform: uppercase; letter-spacing: .06em;
+  font-size: 10px; margin-right: 6px;
+}
+.scope-strip code { color: #9cdcfe; font-family: var(--mono); font-size: 11px; }
+.scope-strip .scope-note { display: block; color: var(--dimmer); }
+.scope-strip .scope-note code { color: var(--dim); }
+
+.editor-wrap { flex: 1; display: flex; position: relative; min-height: 0; background: var(--bg); }
+
+#gutter {
+  padding: var(--code-pad-y) 8px var(--code-pad-y) 12px;
+  text-align: right;
+  font-family: var(--mono); font-size: var(--code-size); line-height: var(--code-line);
+  color: var(--dimmer); background: var(--bg);
+  user-select: none; overflow: hidden; flex-shrink: 0; min-width: 48px;
+  white-space: pre;
+}
+/* One entry per LOGICAL line. lab.js sets an explicit height on each so a soft-wrapped line
+   keeps a single number, aligned to the first visual row. */
+#gutter .ln { line-height: var(--code-line); }
+
+.code-area { flex: 1; position: relative; min-width: 0; }
+
+/* The overlay. #highlight paints the colours; #editor sits on top with transparent glyphs and a
+   visible caret. Every metric below must match between the two. */
+#highlight, #editor {
+  margin: 0;
+  padding: var(--code-pad-y) var(--code-pad-x);
+  font-family: var(--mono);
+  font-size: var(--code-size);
+  line-height: var(--code-line);
+  letter-spacing: normal;
+  tab-size: 2;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: normal;
+  border: 0;
+  border-radius: 0;
+}
+
+#highlight {
+  position: absolute; inset: 0;
+  overflow: hidden; pointer-events: none;
+  background: var(--bg); color: #d4d4d4;
+}
+#highlight code { font: inherit; display: block; white-space: inherit; }
+
 #editor {
-  flex: 1; border: none; border-radius: 0; resize: none;
-  padding: 12px 16px 12px 4px;
-  font-family: var(--mono); font-size: 13px; line-height: 20px;
-  background: var(--bg); white-space: pre; overflow: auto;
+  position: absolute; inset: 0; z-index: 1;
+  resize: none; overflow-y: auto; overflow-x: hidden;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--text);
 }
 #editor:focus { outline: none; border: none; }
+
+/* MUST stay translucent. #editor's own glyphs are `color: transparent` and it sits at z-index 1
+   ON TOP of #highlight, so the selection rectangle paints OVER the coloured text rather than behind
+   it. An opaque background (this was #264f78) turns every selection into a solid slab and the code
+   you selected vanishes completely. The alpha is the only thing letting the syntax colours through. */
+#editor::selection { background: rgba(58, 110, 168, .4); }
+#editor::-moz-selection { background: rgba(58, 110, 168, .4); }
+
+/* The textarea's scrollbar would shrink its content box and desync the wrap points from
+   #highlight. Hide it — wheel and keyboard scrolling still work. */
+#editor { scrollbar-width: none; }
+#editor::-webkit-scrollbar { width: 0; height: 0; }
+
+/* styles.css only, and only once P0 is green — the gate lives in acEnabled() in lab.js. */
+#css-ac {
+  position: absolute; z-index: 10;
+  min-width: 190px; max-width: 260px; max-height: 176px; overflow-y: auto;
+  background: var(--panel-2); border: 1px solid #3a4552; border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+  font-family: var(--mono); font-size: 12px;
+  padding: 3px;
+}
+#css-ac .ac-row {
+  padding: 4px 9px; border-radius: 4px; color: var(--text);
+  cursor: pointer; white-space: nowrap;
+}
+#css-ac .ac-row:hover { background: #263039; }
+#css-ac .ac-row.active { background: var(--accent); color: #06101d; font-weight: 600; }
 
 .lock {
   position: absolute; inset: 0; display: grid; place-items: center;
@@ -213,10 +333,65 @@ b.p2 { color: var(--dimmer) !important; }
 .lock b { display: block; margin-bottom: 4px; }
 .lock p { margin: 0; color: var(--dim); font-size: 13px; }
 
-/* ── Preview ──────────────────────────────────────────────────────── */
+/* ── Syntax — VS Code Dark+ ───────────────────────────────────────── */
+#highlight .token.comment,
+#highlight .token.prolog,
+#highlight .token.doctype,
+#highlight .token.cdata { color: #6a9955; }
+
+#highlight .token.punctuation { color: #d4d4d4; }
+#highlight .token.operator { color: #d4d4d4; }
+
+#highlight .token.string,
+#highlight .token.char,
+#highlight .token.attr-value,
+#highlight .token.template-string { color: #ce9178; }
+
+#highlight .token.number,
+#highlight .token.boolean { color: #b5cea8; }
+
+#highlight .token.keyword { color: #569cd6; }
+/* Prism ships one `keyword` token; lab.js tags the control-flow half so it can go purple,
+   which is what Dark+ actually does. */
+#highlight .token.keyword.control-flow { color: #c586c0; }
+
+#highlight .token.function,
+#highlight .token.method { color: #dcdcaa; }
+#highlight .token.class-name,
+#highlight .token.builtin { color: #4ec9b0; }
+
+#highlight .token.tag { color: #569cd6; }
+#highlight .token.tag .token.punctuation { color: #808080; }
+#highlight .token.attr-name { color: #9cdcfe; }
+
+#highlight .token.property,
+#highlight .token.parameter,
+#highlight .token.variable { color: #9cdcfe; }
+#highlight .token.constant { color: #4fc1ff; }
+#highlight .token.regex { color: #d16969; }
+#highlight .token.important { color: #569cd6; }
+#highlight .token.deleted { color: var(--red); }
+#highlight .token.inserted { color: var(--green); }
+
+/* CSS file gets its own reading of the same palette. */
+#highlight-code.language-css .token.selector { color: #d7ba7d; }
+#highlight-code.language-css .token.property { color: #9cdcfe; }
+#highlight-code.language-css .token.function { color: #dcdcaa; }
+#highlight-code.language-css .token.atrule { color: #c586c0; }
+#highlight-code.language-css .token.rule { color: #c586c0; }
+
+/* ── Preview + console ────────────────────────────────────────────── */
+/* --console-h is driven by the horizontal splitter; lab.js seeds it from localStorage. */
 #preview {
-  border-left: 1px solid var(--line); background: var(--panel);
-  display: flex; flex-direction: column; min-height: 0;
+  background: var(--panel);
+  display: flex; flex-direction: column; min-height: 0; min-width: 0;
+}
+
+/* A real document. White on purpose — an unstyled component should look unstyled, exactly like it
+   would in a real round. The lab's dark theme stops here, at the iframe boundary. */
+#preview-frame {
+  flex: 1; min-height: 0; width: 100%;
+  border: 0; display: block; background: #fff;
 }
 .preview-head {
   display: flex; align-items: center; justify-content: space-between;
@@ -228,13 +403,59 @@ b.p2 { color: var(--dimmer) !important; }
 .dot.ok { background: var(--green); }
 .dot.err { background: var(--red); }
 
-#preview-host { flex: 1; overflow: auto; padding: 14px; color: var(--text); }
-
+/* The headline only — one line, never a wall. The full error, the lesson and the raw compiler text
+   all go to the console, which scrolls and keeps history. This used to eat 30% of the preview. */
 #preview-error {
-  margin: 0; padding: 12px 14px; max-height: 40%; overflow: auto;
+  margin: 0; padding: 9px 14px; flex-shrink: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   background: #1e1414; border-top: 1px solid #3a2a2a; color: #ff9d9d;
-  font-family: var(--mono); font-size: 12px; white-space: pre-wrap;
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
 }
+#preview-error::after {
+  content: " — see console ↓"; color: #a86a6a; font-weight: 400;
+}
+
+/* Five warm-up drills (debounce, throttle, event-emitter, event-delegation, localStorage)
+   produce console output as their ONLY result. Without this panel they are unrunnable. */
+#console-panel {
+  flex-shrink: 0; display: flex; flex-direction: column;
+  height: var(--console-h, 220px); min-height: 90px;
+  background: var(--bg);
+}
+.console-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 8px 5px 14px; border-bottom: 1px solid var(--line);
+  font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--dim);
+  flex-shrink: 0;
+}
+#console-log {
+  flex: 1; overflow: auto; padding: 6px 0;
+  font-family: var(--mono); font-size: 12px; line-height: 1.6;
+}
+#console-log:empty::after {
+  content: "console.log output lands here";
+  display: block; padding: 4px 14px; color: var(--dimmer); font-style: italic;
+}
+.c-row {
+  padding: 2px 14px; white-space: pre-wrap; overflow-wrap: break-word;
+  border-bottom: 1px solid #1a1f27; color: var(--text);
+}
+.c-row.c-warn { color: var(--amber); background: #1c1708; }
+.c-row.c-error { color: #ff9d9d; background: #1e1414; font-weight: 600; border-bottom: 0; }
+.c-row.c-info { color: var(--accent); }
+
+/* The translation. This is the row that is supposed to teach — it gets the room to. */
+.c-row.c-lesson {
+  background: #1e1414; color: #ffc9c9; border-bottom: 0;
+  padding: 0 14px 8px 14px; font-family: inherit; font-size: 12px; line-height: 1.6;
+}
+/* The compiler's own words, kept quiet but kept. If the translation above is wrong, this is the
+   thing that lets him catch it. */
+.c-row.c-raw {
+  background: #1e1414; color: #8a6a6a; font-size: 11px;
+  padding: 0 14px 8px 14px; border-bottom: 1px solid #3a2a2a;
+}
+.c-row.c-dropped { color: var(--dimmer); font-style: italic; background: var(--panel-2); }
 
 /* ── Buzzer ───────────────────────────────────────────────────────── */
 .missed {
@@ -246,3 +467,22 @@ b.p2 { color: var(--dimmer) !important; }
 .buzzer-actions { display: flex; gap: 10px; align-items: center; }
 .buzzer-actions .btn.big { width: auto; flex: 1; }
 code { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+
+/* Design vs built. Side by side, no cleverness — the eye does the diffing. */
+.design-diff {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 8px; padding: 12px 14px; margin-bottom: 18px;
+}
+.design-diff > b { font-size: 13px; color: var(--accent); }
+.diff-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+.diff-h {
+  display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--dim); margin-bottom: 4px;
+}
+.diff-cols pre {
+  margin: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+  padding: 8px 10px; max-height: 260px; overflow: auto;
+  font-family: var(--mono); font-size: 11px; line-height: 1.5;
+  color: var(--text); white-space: pre-wrap; overflow-wrap: break-word;
+}
+@media (max-width: 900px) { .diff-cols { grid-template-columns: 1fr; } }

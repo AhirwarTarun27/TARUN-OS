@@ -131,8 +131,54 @@
     {
       "date": "2026-07-16",
       "day": "Thu",
-      "pending": true,
-      "mustShip": "Both DSA D2 revisions cleared + logged (Best Time to Buy & Sell Stock, Merge Sorted Arrays)"
+      "blocks": {
+        "reading": true,
+        "dsa": true,
+        "machineCoding": true,
+        "sysdesign": true,
+        "workout": true,
+        "project": false,
+        "interviewQa": false
+      },
+      "reasons": {
+        "project": "avoidance",
+        "interviewQa": "energy"
+      },
+      "energy": 3,
+      "office": true,
+      "mustShip": false,
+      "notes": "Recovery from Wed's 1/7 held. dsa=Stock D2 cleared (rated 3, watched so D5 still mandatory 07-19); Merge Sorted Arrays D2 untouched, now overdue. machine-coding=Phase 0 cleared, marker 0->1, no build rep yet. sysdesign=Ch.1 re-drill 6.5/10, still NOT banked; pushed back on the grade and won. must-ship=miss (1 of 2 D2s). interview-qa missed 4 of last 5 - block placement, not discipline.",
+      "shipped": [
+        "Fixed a real bug in the /teach loop: it graded first-contact vocab as unfixed gaps. Banked a teaching-calibration rule in NOTES.md + wrote lessons/0001b-backend-primitives.html."
+      ]
+    },
+    {
+      "date": "2026-07-17",
+      "day": "Fri",
+      "blocks": {
+        "reading": true,
+        "dsa": true,
+        "machineCoding": true,
+        "sysdesign": false,
+        "workout": true,
+        "project": true,
+        "interviewQa": true
+      },
+      "reasons": {
+        "sysdesign": "avoidance"
+      },
+      "energy": 3,
+      "office": false,
+      "mustShip": true,
+      "notes": "6/7 — only sysdesign missed (avoidance; object-storage gap + Ch.1 bank still carried). dsa=Merge Sorted D2 cleared rated <3 (must-ship, D5 07-19 mandatory); Move Zeroes NOT solved -> Attempting day 1 (outcome 1 stuck at 2/3, both live D0s watched). machine-coding=Counter no working P0 -> Building day 1, not ingested. interview-qa=type coercion, first run of new 11am slot. reading='no one's crazy' banked. project=outcome 3 DONE (Kesri robots.txt flipped + questionnaire sent).",
+      "shipped": [
+        "Kesri Phase 3: flipped off managed robots.txt + sent client questionnaire — both pieces of outcome 3"
+      ]
+    },
+    {
+      "date": "2026-07-20",
+      "day": "Mon",
+      "pending": true
     }
   ]
 }

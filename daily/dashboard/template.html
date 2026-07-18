@@ -613,23 +613,25 @@
    Scoring: WIN = >=4/7 hits OR minimum-viable-day (energy<=2 AND >=3 hits).
    Shields: 7 straight wins bank one (max 2); a shield absorbs a loss.
    ===================================================================== */
+  /* Order = schedule order (display only; every consumer is key-based).
+     Swapped 2026-07-17: interview-qa → 11:00am, reading → 11:45pm. See daily/schedule.md. */
   const BLOCK_DEFS = [
-    { key:'reading',      name:'Book reading',   code:'reading',       time:'11:00' },
+    { key:'interviewQa',  name:'Interview Q&A',  code:'interview-qa',  time:'11:00' },
     { key:'dsa',          name:'DSA practice',   code:'dsa',           time:'11:45' },
     { key:'machineCoding',name:'Machine coding', code:'machine-coding',time:'12:45' },
     { key:'sysdesign',    name:'System design',  code:'sysdesign',     time:'2:00pm' },
     { key:'workout',      name:'Home workout',   code:'workout',       time:'6:00pm' },
     { key:'project',      name:'Project work',   code:'project',       time:'8:00pm' },
-    { key:'interviewQa',  name:'Interview Q&A',  code:'interview-qa',  time:'11:45pm' },
+    { key:'reading',      name:'Book reading',   code:'reading',       time:'11:45pm' },
   ];
   const TOTAL = BLOCK_DEFS.length; // 7
 
   /* THE DAY'S CLOCK — mirrors daily/schedule.md. Minutes from midnight; the late blocks
-     run past 1440 because interview-qa + wrap spill over into the next calendar day.
+     run past 1440 because reading + wrap spill over into the next calendar day.
      Edit this and daily/schedule.md together, or the dashboard starts lying. */
   const SCHED = [
     { code:'plan',          name:'Today’s planning',      s:10*60+30, e:10*60+45, kind:'ritual' },
-    { code:'reading',       name:'Book reading',          s:11*60,    e:11*60+30, kind:'scored' },
+    { code:'interview-qa',  name:'Interview Q&A',         s:11*60,    e:11*60+30, kind:'scored' },
     { code:'dsa',           name:'DSA practice',          s:11*60+45, e:12*60+30, kind:'scored' },
     { code:'machine-coding',name:'Machine coding',        s:12*60+45, e:13*60+30, kind:'scored' },
     { code:'sysdesign',     name:'System design · Xu V1', s:14*60,    e:15*60+30, kind:'scored' },
@@ -637,7 +639,7 @@
     { code:'workout',       name:'Home workout',          s:18*60,    e:19*60,    kind:'scored' },
     { code:'project',       name:'Project work',          s:20*60,    e:21*60,    kind:'scored' },
     { code:'office-pm',     name:'Office work',           s:22*60,    e:23*60+30, kind:'office' },
-    { code:'interview-qa',  name:'Interview Q&A',         s:23*60+45, e:24*60+15, kind:'scored' },
+    { code:'reading',       name:'Book reading · intake', s:23*60+45, e:24*60+15, kind:'scored' },
     { code:'wrap',          name:'Day wrap-up',           s:24*60+15, e:24*60+45, kind:'ritual' },
   ];
   const SCHED_BY_CODE = Object.fromEntries(SCHED.map(b => [b.code, b]));
@@ -658,7 +660,7 @@
   const rangeS = b => fmtS(b.s)+'–'+fmtS(b.e);
 
   // "now" in schedule-minutes + the weekday the schedule considers it. Before 3am the tail
-  // (interview-qa 11:45pm, wrap 12:15am) still belongs to the day that is ending, not the new one.
+  // (reading 11:45pm, wrap 12:15am) still belongs to the day that is ending, not the new one.
   function schedNow(d = new Date()){
     let m = d.getHours()*60 + d.getMinutes(), dow = d.getDay();
     if (m < 180){ m += 1440; dow = (dow + 6) % 7; }
@@ -1022,8 +1024,8 @@
       mod('Energy → wins', '<div class="rfall">Needs at least one win and one loss to compare.</div>');
     }
 
-    // 4. office-day drag on evening blocks
-    const evening = ['workout','project','interviewQa'];
+    // 4. office-day drag on evening blocks (post-2026-07-17 swap: reading is the late block, not interview-qa)
+    const evening = ['workout','project','reading'];
     const rate = ds => {
       let hit = 0, tot = 0;
       ds.forEach(e => evening.forEach(k => { tot++; if (e.blocks && e.blocks[k]) hit++; }));

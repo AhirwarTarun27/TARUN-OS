@@ -106,7 +106,7 @@ Not on the ladder. Carried daily. Force-banks as `watched` at the end of attempt
 
 | Problem | Primitives | Started | Attempt-days | Where you got stuck |
 |---------|-----------|---------|--------------|---------------------|
-| _(empty)_ | | | | |
+| Counter | state + event handlers + render-from-state | 2026-07-17 | 1 | No working P0 in the block. Cap = 2 attempt-days, then reference-rebuild + bank R0 `watched`. |
 
 ## Active — on the ladder
 

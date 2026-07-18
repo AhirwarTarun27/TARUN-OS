@@ -22,9 +22,11 @@
 
 > The single thing that, if you do nothing else today, makes the day count.
 
-- **Date:** Thu Jul 16
-- **Must-ship:** Both DSA D2 revisions cleared and logged — Best Time to Buy & Sell Stock + Merge Sorted Arrays (both `watched`, D5 still mandatory 07-19).
-- **Today's plan:** Recovery day after yesterday's 1/7. `dsa` = the 2 D2 revisions (fill the block; 3rd new D0 slides to Fri). `machine-coding` = clear Phase 0 (Akshay video + process card). `sysdesign` = re-drill Ch.1 cold before Ch.2. `project` (8pm) = review the client-visibility offering, then AccentWallPlanner. Full board, no skips.
+- **Date:** Fri Jul 17
+- **Must-ship:** Merge Sorted Arrays D2 cleared and logged (overdue from 07-16).
+- **Today's plan:** First day of the swapped schedule — `interview-qa` at 11:00am, `reading` at 11:45pm. `dsa` = Merge Sorted D2 first (overdue, ~15 min), then **Move Zeroes as D0 #3 — must land `solo`/`hinted`** (both banked D0s are `watched`; a third watched D0 closes outcome 1 on paper and proves nothing). `machine-coding` = **Counter** (Phase 1 order 1, 15-min target) — first real rep, block has produced zero in 3 days. `sysdesign` = close the object-storage gap, then bank Ch.1. `project` (8pm) = Kesri robots.txt flip + send the questionnaire — that's all of outcome 3, ~30 min.
+- **⚠ Sunday 07-19 collision:** both `watched` D0s force a **mandatory D5** on 07-19 — a weekend, on top of `/weekly-review`. Do them manually Sunday or they're overdue Monday.
+- **⚠ Must-ship risk (flagged at plan):** the must-ship is not a D0, and today is the last tracked weekday before the review. If the day collapses, it scores ✅ while outcome 1 dies at 2/3. Move Zeroes is the week-critical item.
 
 ## Parking lot (capture, do NOT act)
 

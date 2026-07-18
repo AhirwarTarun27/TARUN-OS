@@ -10,6 +10,12 @@
   explain "what is a server." Teach at the altitude of framing, vocabulary, and tradeoff articulation.
 - **Medium lessons, ~20 min.** Working memory is small — one tangible win per lesson. Ch 1's win: narrate the ladder.
 - **Voice:** casual but professional, short sentences, no em dashes, bullets over paragraphs.
+- **Grade what was taught, not what a senior would know.** (Banked 2026-07-16 after Tarun pushed back on record
+  0003.) A term that appeared only as a one-line "interview gold" callout has been *introduced*, not *taught* —
+  do not score its absence as a failure. The list of missing precision items is the **next syllabus**, not a
+  scorecard. First exposure ≠ mastery. When a rep exposes an un-taught concept, the response is a teach doc
+  (see `lessons/0001b-backend-primitives.html`), then re-drill. Conceptual gaps in already-taught material
+  (e.g. object storage in Ch 1) are fair to grade; brand-new vocabulary is not.
 
 ## Cadence
 - This runs in the 2:00-3:30pm `sysdesign` block, scheduled by `/daily-log`. At wrap, `/daily-log` logs one line

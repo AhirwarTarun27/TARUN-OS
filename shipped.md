@@ -7,12 +7,16 @@
 ## Streak
 
 - **Weeks reviewed in a row:** 1
-- **Total things shipped:** 22
+- **Total things shipped:** 24
 
 ## Log (newest on top)
 
 <!-- Format: ## YYYY-MM-DD — one line on what you shipped -->
 <!-- Example: ## 2026-06-28 — Deployed dark-mode toggle to Jsonbeam -->
+
+## 2026-07-17 — Kesri Enterprise Phase 3: flipped off Cloudflare's managed robots.txt (unblocks ClaudeBot + Gemini grounding) and sent the client questionnaire (longest-lead-time item in the engagement) — both concrete pieces of this week's outcome 3, done
+
+## 2026-07-16 — Fixed a real bug in the /teach loop: it was grading first-contact vocabulary (TTL/LRU/SPOF/resharding) as "unfixed gaps" against terms it had only name-dropped, never taught. Banked a teaching-calibration rule in NOTES.md + wrote lessons/0001b-backend-primitives.html to actually teach the three clusters. Caught by pushing back on my own grader.
 
 ## 2026-07-14 — GradeJar D31 post-rejection recovery: de-doorwayed 5 routes that mounted the same widget, stripped ads off thin + trust pages, deployed. AdSense rejected gradejar.com for low-value content on 07-14 (it reviewed the pre-retrofit July 3 site). Held the resubmit — recrawl first.
 

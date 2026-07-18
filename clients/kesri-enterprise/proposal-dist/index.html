@@ -1,0 +1,614 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta property="og:title" content="Kesri Enterprise — Your Business, Findable"><meta property="og:description" content="A growth plan from Tarun Web Solutions."></head><body><title>Kesri Enterprise — Your Business, Findable</title>
+<style>
+  :root {
+    --ground: #eef3f2;
+    --surface: #ffffff;
+    --surface-2: #f6faf9;
+    --ink: #0d2226;
+    --ink-soft: #2b4247;
+    --muted: #556865;
+    --line: #d7e3e1;
+    --accent: #0e857f;
+    --accent-deep: #0a6560;
+    --accent-soft: #e3f0ee;
+    --gold: #9c6a1f;
+    --gold-soft: #f3ebdc;
+    --shadow: 0 1px 2px rgba(13,34,38,.05), 0 10px 34px rgba(13,34,38,.08);
+    --shadow-lg: 0 4px 12px rgba(13,34,38,.10), 0 30px 60px rgba(13,34,38,.16);
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --maxw: 66rem;
+
+    /* device screen tokens — screens stay light, like a real phone shot */
+    --ui-bg: #ffffff;
+    --ui-soft: #f1f3f4;
+    --ui-ink: #202124;
+    --ui-muted: #5f6368;
+    --ui-line: #e6e9eb;
+    --ui-blue: #1a73e8;
+    --ui-green: #1e8e3e;
+    --star: #f5a623;
+    --phone-shell: #10262a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #081a1d; --surface: #0e2529; --surface-2: #113034;
+      --ink: #eaf3f1; --ink-soft: #cbdcd9; --muted: #90a7a4; --line: #1d383c;
+      --accent: #3bb6ac; --accent-deep: #58c6bc; --accent-soft: #0f302e;
+      --gold: #d8a24e; --gold-soft: #21201a;
+      --shadow: 0 1px 2px rgba(0,0,0,.24), 0 12px 36px rgba(0,0,0,.4);
+      --shadow-lg: 0 4px 14px rgba(0,0,0,.35), 0 34px 66px rgba(0,0,0,.5);
+      --phone-shell: #05141600;
+      --phone-shell: #061417;
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #eef3f2; --surface: #ffffff; --surface-2: #f6faf9;
+    --ink: #0d2226; --ink-soft: #2b4247; --muted: #556865; --line: #d7e3e1;
+    --accent: #0e857f; --accent-deep: #0a6560; --accent-soft: #e3f0ee;
+    --gold: #9c6a1f; --gold-soft: #f3ebdc; --phone-shell: #10262a;
+    --shadow: 0 1px 2px rgba(13,34,38,.05), 0 10px 34px rgba(13,34,38,.08);
+    --shadow-lg: 0 4px 12px rgba(13,34,38,.10), 0 30px 60px rgba(13,34,38,.16);
+  }
+  :root[data-theme="dark"] {
+    --ground: #081a1d; --surface: #0e2529; --surface-2: #113034;
+    --ink: #eaf3f1; --ink-soft: #cbdcd9; --muted: #90a7a4; --line: #1d383c;
+    --accent: #3bb6ac; --accent-deep: #58c6bc; --accent-soft: #0f302e;
+    --gold: #d8a24e; --gold-soft: #21201a; --phone-shell: #061417;
+    --shadow: 0 1px 2px rgba(0,0,0,.24), 0 12px 36px rgba(0,0,0,.4);
+    --shadow-lg: 0 4px 14px rgba(0,0,0,.35), 0 34px 66px rgba(0,0,0,.5);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 1.05rem; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 1.5rem; }
+  section { padding: clamp(3.2rem, 7vw, 5.5rem) 0; }
+  h1, h2, h3 { text-wrap: balance; line-height: 1.12; margin: 0; }
+  .serif { font-family: var(--serif); font-weight: 400; }
+
+  .eyebrow { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; color: var(--accent); margin: 0 0 .9rem; }
+  .eyebrow.gold { color: var(--gold); }
+  .headline { font-family: var(--serif); font-size: clamp(1.7rem, 3.8vw, 2.6rem); letter-spacing: -.01em; max-width: 17em; }
+  .oneline { font-size: 1.1rem; color: var(--ink-soft); max-width: 30em; margin: 1rem 0 0; }
+  .sec-head { text-align: center; margin: 0 auto clamp(2.2rem, 5vw, 3rem); }
+  .sec-head .headline, .sec-head .oneline { margin-left: auto; margin-right: auto; }
+
+  /* ---------- logo ---------- */
+  .logo { display: inline-flex; align-items: center; gap: .7rem; text-decoration: none; }
+  .logo svg { flex: none; display: block; }
+  .logo .word { display: flex; flex-direction: column; line-height: 1; }
+  .logo .word .name { font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
+  .logo .word .tag { text-transform: uppercase; font-weight: 700; color: var(--accent); }
+  .logo.lg .word .name { font-size: 1.32rem; }
+  .logo.lg .word .tag { font-size: .63rem; letter-spacing: .3em; margin-top: .4rem; }
+  .logo.sm .word .name { font-size: 1rem; }
+  .logo.sm .word .tag { font-size: .55rem; letter-spacing: .26em; margin-top: .32rem; }
+
+  .brandbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 1.5rem; margin-bottom: clamp(2rem, 5vw, 3rem); border-bottom: 1px solid var(--line); }
+  .brandbar .role { font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); font-weight: 700; text-align: right; }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; overflow: hidden; padding: clamp(3rem, 7vw, 5rem) 0 clamp(3rem, 7vw, 5rem);
+    background: radial-gradient(120% 90% at 88% -10%, var(--accent-soft) 0%, transparent 55%), linear-gradient(180deg, var(--surface-2), var(--ground)); border-bottom: 1px solid var(--line); }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(2rem, 4vw, 3.5rem); align-items: center; }
+  .hero .kicker { display: inline-flex; align-items: center; gap: .55rem; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 1.4rem; }
+  .hero .kicker b { color: var(--ink); }
+  .hero .drop { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .hero h1 { font-family: var(--serif); font-size: clamp(2.2rem, 5.4vw, 3.7rem); letter-spacing: -.015em; margin-bottom: 1.1rem; }
+  .hero h1 em { font-style: italic; color: var(--accent-deep); }
+  .hero .sub { font-size: 1.12rem; color: var(--ink-soft); max-width: 26em; }
+  .hero .meta { margin-top: 1.8rem; display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; font-size: .88rem; color: var(--muted); }
+  .hero .meta b { color: var(--ink); font-weight: 600; }
+  .hero-visual { display: grid; place-items: center; }
+
+  /* ---------- phone ---------- */
+  .phone { width: 262px; max-width: 78vw; border-radius: 34px; background: var(--phone-shell); padding: 11px; box-shadow: var(--shadow-lg); position: relative; }
+  .phone::before { content: ""; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 92px; height: 6px; border-radius: 4px; background: rgba(255,255,255,.22); z-index: 3; }
+  .phone .screen { border-radius: 25px; background: var(--ui-bg); overflow: hidden; color: var(--ui-ink); font-size: .82rem; line-height: 1.4; }
+  .phone .statusbar { display: flex; justify-content: space-between; align-items: center; padding: .8rem 1rem .4rem; font-size: .68rem; font-weight: 700; color: var(--ui-muted); }
+  .phone .statusbar .dots { letter-spacing: -1px; }
+  .searchpill { display: flex; align-items: center; gap: .5rem; margin: .3rem .7rem .6rem; padding: .5rem .7rem; background: var(--ui-soft); border-radius: 999px; font-size: .74rem; color: var(--ui-ink); }
+  .searchpill svg { flex: none; width: 15px; height: 15px; stroke: var(--ui-muted); }
+  .mapband { height: 78px; background:
+      linear-gradient(115deg, #cfe6d6, #dbe7ef 60%, #e7eef5);
+    position: relative; }
+  .mapband .road { position: absolute; height: 3px; background: #fff; opacity: .9; }
+  .mapband .r1 { top: 26px; left: -10px; right: 40%; transform: rotate(-8deg); }
+  .mapband .r2 { top: 52px; left: 30%; right: -10px; transform: rotate(6deg); }
+  .mapband .pin { position: absolute; top: 24px; left: 50%; transform: translateX(-50%); width: 22px; height: 22px; }
+  .maplist { padding: .3rem .55rem .7rem; }
+  .result { display: block; padding: .6rem .65rem; border-radius: 12px; }
+  .result.win { background: #fff; border: 1.5px solid var(--ui-blue); box-shadow: 0 4px 14px rgba(26,115,232,.14); }
+  .result + .result { margin-top: .35rem; }
+  .result .rname { font-weight: 700; font-size: .86rem; color: var(--ui-ink); }
+  .result .rname.dim { color: var(--ui-muted); font-weight: 600; }
+  .result .rmeta { font-size: .68rem; color: var(--ui-muted); margin-top: .12rem; }
+  .stars { color: var(--star); letter-spacing: .5px; font-size: .74rem; }
+  .stars .n { color: var(--ui-muted); font-size: .66rem; margin-left: .25rem; }
+  .rbtns { display: flex; gap: .35rem; margin-top: .5rem; }
+  .rbtn { flex: 1; text-align: center; font-size: .66rem; font-weight: 700; padding: .34rem 0; border-radius: 999px; }
+  .rbtn.solid { background: var(--ui-blue); color: #fff; }
+  .rbtn.ghost { background: var(--ui-soft); color: var(--ui-ink); }
+  .skeleton { height: 8px; border-radius: 4px; background: var(--ui-line); }
+  .absent { display: flex; align-items: center; gap: .5rem; margin: .5rem .65rem 0; padding: .55rem .65rem; border-radius: 10px; background: #fdecec; color: #b3261e; font-size: .72rem; font-weight: 600; }
+  .absent svg { width: 15px; height: 15px; flex: none; }
+
+  /* illustration tag */
+  .mock-wrap { position: relative; display: inline-block; }
+  .tag-ill { position: absolute; top: -.6rem; right: -.4rem; z-index: 5; font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 800; color: #fff; background: var(--gold); padding: .28rem .55rem; border-radius: 999px; box-shadow: var(--shadow); }
+
+  /* ---------- before/after ---------- */
+  .twin { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+  .twin .col { display: grid; justify-items: center; gap: 1rem; }
+  .twin .label { font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; }
+  .twin .label.bad { color: #b3261e; }
+  .twin .label.good { color: var(--accent-deep); }
+  .twin .cap { font-size: .95rem; color: var(--muted); text-align: center; max-width: 15em; }
+
+  /* ---------- AI chat ---------- */
+  .chat { max-width: 34rem; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 1.3rem; }
+  .chat .head { display: flex; align-items: center; gap: .6rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--line); font-size: .8rem; font-weight: 700; color: var(--muted); }
+  .chat .head .ai { width: 26px; height: 26px; border-radius: 8px; background: var(--accent-soft); display: grid; place-items: center; }
+  .chat .head .ai svg { width: 15px; height: 15px; stroke: var(--accent-deep); }
+  .bubble { padding: .8rem 1rem; border-radius: 14px; font-size: .98rem; margin-bottom: .8rem; max-width: 88%; }
+  .bubble.user { background: var(--accent); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+  .bubble.bot { background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-soft); border-bottom-left-radius: 4px; }
+  .bubble.bot b { color: var(--ink); background: linear-gradient(transparent 62%, var(--gold-soft) 0); padding: 0 .1em; }
+
+  /* ---------- plan cards ---------- */
+  .plan { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .pcard { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 1.4rem 1.2rem; box-shadow: var(--shadow); text-align: center; }
+  .pcard .ic { width: 3rem; height: 3rem; margin: 0 auto 1rem; border-radius: 14px; background: var(--accent-soft); display: grid; place-items: center; }
+  .pcard .ic svg { width: 1.6rem; height: 1.6rem; stroke: var(--accent-deep); }
+  .pcard h3 { font-size: 1.02rem; margin-bottom: .4rem; }
+  .pcard p { font-size: .88rem; color: var(--muted); margin: 0; }
+
+  /* ---------- GBP card ---------- */
+  .gbp { max-width: 26rem; margin: 0 auto; background: var(--ui-bg); color: var(--ui-ink); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-lg); border: 1px solid var(--ui-line); }
+  .gbp .cover { height: 120px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2px; }
+  .gbp .cover span { display: block; }
+  .gbp .ph1 { background: linear-gradient(135deg, #17627d, #2a9dab); }
+  .gbp .ph2 { background: linear-gradient(135deg, #3a7d6b, #57b394); }
+  .gbp .ph3 { background: linear-gradient(135deg, #6b7d3a, #a8b957); }
+  .gbp .body { padding: 1rem 1.1rem 1.2rem; }
+  .gbp .biz { font-size: 1.18rem; font-weight: 700; }
+  .gbp .cat { font-size: .82rem; color: var(--ui-muted); margin: .15rem 0 .5rem; }
+  .gbp .rating { display: flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--ui-muted); }
+  .gbp .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .9rem 0; }
+  .gbp .chip { font-size: .74rem; font-weight: 700; color: var(--ui-blue); background: #e8f0fe; border-radius: 999px; padding: .4rem .8rem; display: inline-flex; gap: .3rem; align-items: center; }
+  .gbp .chip svg { width: 13px; height: 13px; }
+  .gbp .row { display: flex; gap: .6rem; align-items: center; font-size: .82rem; color: var(--ui-ink); padding: .45rem 0; border-top: 1px solid var(--ui-line); }
+  .gbp .row svg { width: 15px; height: 15px; flex: none; stroke: var(--ui-muted); }
+  .gbp .row .open { color: var(--ui-green); font-weight: 700; }
+
+  /* ---------- trust wall ---------- */
+  .wall { display: grid; grid-template-columns: repeat(5, 1fr); gap: .7rem; }
+  .chip-logo { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; min-height: 4.6rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem; padding: .8rem .5rem; text-align: center; box-shadow: var(--shadow); }
+  .chip-logo .mono { width: 2rem; height: 2rem; border-radius: 8px; display: grid; place-items: center; font-size: .8rem; font-weight: 800; color: #fff; background: var(--accent); letter-spacing: -.02em; }
+  .chip-logo.star .mono { background: var(--gold); }
+  .chip-logo .cn { font-size: .74rem; font-weight: 600; color: var(--ink-soft); line-height: 1.2; }
+  .wall-note { text-align: center; margin: 1.6rem auto 0; font-size: .92rem; color: var(--muted); max-width: 34em; }
+
+  /* ---------- reviews ---------- */
+  .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .review { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.2rem; box-shadow: var(--shadow); }
+  .review .top { display: flex; align-items: center; gap: .6rem; margin-bottom: .7rem; }
+  .review .av { width: 2.1rem; height: 2.1rem; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .82rem; color: #fff; }
+  .review .who { font-size: .82rem; font-weight: 700; color: var(--ink); }
+  .review .who span { display: block; font-weight: 500; color: var(--muted); font-size: .72rem; }
+  .review p { font-size: .92rem; color: var(--ink-soft); margin: 0; }
+
+  /* ---------- journey ---------- */
+  .journey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; counter-reset: j; }
+  .jstep { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 1.3rem 1.1rem; box-shadow: var(--shadow); position: relative; }
+  .jstep .num { width: 2rem; height: 2rem; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: .9rem; margin-bottom: .9rem; }
+  .jstep .when { font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 800; color: var(--gold); margin-bottom: .3rem; }
+  .jstep h3 { font-size: 1rem; margin-bottom: .3rem; }
+  .jstep p { font-size: .84rem; color: var(--muted); margin: 0; }
+
+  /* ---------- report ---------- */
+  .report { max-width: 34rem; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 1.5rem; }
+  .report .rhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+  .report .rhead h3 { font-size: 1.02rem; }
+  .report .rhead .mo { font-size: .74rem; font-weight: 700; color: var(--muted); }
+  .bar-row { margin-bottom: 1rem; }
+  .bar-row .q { display: flex; justify-content: space-between; font-size: .86rem; font-weight: 600; color: var(--ink); margin-bottom: .35rem; }
+  .bar-row .q .v { color: var(--accent-deep); font-variant-numeric: tabular-nums; }
+  .track { height: 9px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-deep)); }
+
+  /* ---------- promises strip ---------- */
+  .promises { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+  .promise-b { display: flex; align-items: center; gap: .7rem; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: .9rem 1.2rem; max-width: 24rem; }
+  .promise-b svg { width: 1.5rem; height: 1.5rem; flex: none; stroke: var(--accent-deep); }
+  .promise-b b { display: block; font-size: .95rem; color: var(--ink); }
+  .promise-b span { font-size: .82rem; color: var(--muted); }
+
+  /* ---------- close ---------- */
+  .close { text-align: center; background: var(--surface-2); border-top: 1px solid var(--line); }
+  .close .big { font-family: var(--serif); font-size: clamp(1.9rem, 4.6vw, 3rem); max-width: 16em; margin: 0 auto 1.2rem; }
+  .close .big em { font-style: italic; color: var(--accent-deep); }
+  .close .who { margin-top: 2.6rem; padding-top: 1.8rem; border-top: 1px solid var(--line); font-size: .92rem; color: var(--muted); }
+  .close .site { color: var(--accent-deep); font-weight: 600; }
+
+  .js .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+  .js .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .js .reveal { opacity: 1; transform: none; transition: none; } }
+
+  @media (max-width: 860px) {
+    .plan, .journey { grid-template-columns: repeat(2, 1fr); }
+    .wall { grid-template-columns: repeat(3, 1fr); }
+    .reviews { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 680px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-visual { order: -1; }
+    .twin { grid-template-columns: 1fr; }
+    .wall { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media print { body { background: #fff; } .reveal { opacity: 1; transform: none; } section { padding: 2rem 0; } }
+</style>
+<script>document.documentElement.classList.add("js");</script>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brandbar reveal in">
+      <span class="logo sm">
+        <svg width="34" height="34" viewBox="0 0 48 48" role="img" aria-label="Tarun Web Solutions logo">
+          <defs>
+            <linearGradient id="twsA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15988f"/><stop offset="1" stop-color="#0a4a46"/></linearGradient>
+            <radialGradient id="twsAs" cx="30%" cy="16%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".24"/><stop offset="62%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <rect x="2" y="2" width="44" height="44" rx="13" fill="url(#twsA)"/>
+          <rect x="2" y="2" width="44" height="44" rx="13" fill="url(#twsAs)"/>
+          <rect x="2.6" y="2.6" width="42.8" height="42.8" rx="12.4" fill="none" stroke="#fff" stroke-opacity=".14"/>
+          <rect x="13" y="13.6" width="22" height="4.8" rx="2.4" fill="#fff"/>
+          <rect x="21.6" y="13.6" width="4.8" height="17" rx="2.4" fill="#fff"/>
+          <rect x="17.5" y="31.4" width="13" height="2.8" rx="1.4" fill="#d8a24e"/>
+        </svg>
+        <span class="word"><span class="name">Tarun</span><span class="tag">Web Solutions</span></span>
+      </span>
+      <span class="role">Website &amp; findability partner</span>
+    </div>
+
+    <div class="hero-grid reveal in">
+      <div>
+        <div class="kicker"><span class="drop" aria-hidden="true"></span> A growth plan for <b>Kesri Enterprise</b></div>
+        <h1 class="serif">Be the <em>first name</em> a buyer finds.</h1>
+        <p class="sub">You built a business plants like Patanjali and Bunge trust. Now let's put it in front of every buyer still searching for it.</p>
+        <div class="meta">
+          <span>Prepared for <b>Ashtdhuja Diwedi</b></span>
+          <span>Gandhidham &amp; Mundra, Kutch</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="mock-wrap">
+          <span class="tag-ill">Illustration</span>
+          <div class="phone" aria-label="Phone showing Kesri first in Google Maps">
+            <div class="screen">
+              <div class="statusbar"><span>9:41</span><span class="dots">5G  100%</span></div>
+              <div class="searchpill">
+                <svg viewBox="0 0 20 20" fill="none" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>
+                water treatment supplier gandhidham
+              </div>
+              <div class="mapband">
+                <span class="road r1"></span><span class="road r2"></span>
+                <svg class="pin" viewBox="0 0 24 24" fill="#1a73e8"><path d="M12 2a7 7 0 00-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 00-7-7z"/><circle cx="12" cy="9" r="2.6" fill="#fff"/></svg>
+              </div>
+              <div class="maplist">
+                <div class="result win">
+                  <div class="rname">Kesri Enterprise</div>
+                  <div class="stars">★★★★★ <span class="n">Water treatment supplier</span></div>
+                  <div class="rmeta">Gandhidham · Open now</div>
+                  <div class="rbtns">
+                    <span class="rbtn solid">Call</span>
+                    <span class="rbtn ghost">Directions</span>
+                    <span class="rbtn ghost">Website</span>
+                  </div>
+                </div>
+                <div class="result">
+                  <div class="rname dim">A local competitor</div>
+                  <div class="rmeta">Water treatment plant</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <p class="eyebrow">The difference</p>
+      <h2 class="headline serif">Today they can't see you. Soon, they can't miss you.</h2>
+    </div>
+    <div class="twin">
+      <div class="col">
+        <span class="label bad">Now</span>
+        <div class="mock-wrap">
+          <div class="phone">
+            <div class="screen">
+              <div class="statusbar"><span>9:41</span><span class="dots">5G  100%</span></div>
+              <div class="searchpill">
+                <svg viewBox="0 0 20 20" fill="none" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>
+                etp plant supplier near kandla
+              </div>
+              <div class="maplist" style="padding-top:.6rem;">
+                <div class="result"><div class="rname dim">A local competitor</div><div class="skeleton" style="width:70%; margin-top:.5rem;"></div></div>
+                <div class="result"><div class="rname dim">Another supplier</div><div class="skeleton" style="width:55%; margin-top:.5rem;"></div></div>
+                <div class="result"><div class="rname dim">Someone else</div><div class="skeleton" style="width:62%; margin-top:.5rem;"></div></div>
+                <div class="absent">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5l10 10M15 5L5 15"/></svg>
+                  Kesri isn't on this screen
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cap">Even when you're the better supplier, the buyer never sees your name.</p>
+      </div>
+      <div class="col">
+        <span class="label good">After</span>
+        <div class="mock-wrap">
+          <span class="tag-ill">Illustration</span>
+          <div class="phone">
+            <div class="screen">
+              <div class="statusbar"><span>9:41</span><span class="dots">5G  100%</span></div>
+              <div class="searchpill">
+                <svg viewBox="0 0 20 20" fill="none" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>
+                etp plant supplier near kandla
+              </div>
+              <div class="maplist" style="padding-top:.6rem;">
+                <div class="result win">
+                  <div class="rname">Kesri Enterprise</div>
+                  <div class="stars">★★★★★ <span class="n">Sewage &amp; effluent treatment</span></div>
+                  <div class="rmeta">Serves Kandla · Mundra · Kutch</div>
+                  <div class="rbtns"><span class="rbtn solid">Call</span><span class="rbtn ghost">Directions</span><span class="rbtn ghost">Website</span></div>
+                </div>
+                <div class="result"><div class="rname dim">A local competitor</div><div class="rmeta">Water treatment plant</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cap">The first result, with one tap to call you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <p class="eyebrow">The new way buyers ask</p>
+      <h2 class="headline serif">When a buyer asks AI for a supplier, your name should be in the answer.</h2>
+    </div>
+    <div class="mock-wrap" style="display:block;">
+      <span class="tag-ill" style="top:.4rem; right:.6rem;">The goal we work toward</span>
+      <div class="chat">
+        <div class="head">
+          <span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/></svg></span>
+          AI assistant
+        </div>
+        <div class="bubble user">Which companies supply and maintain ETP and RO plants near the Kandla–Mundra belt?</div>
+        <div class="bubble bot">Several established suppliers operate in the Kutch region. <b>Kesri Enterprise</b>, based in Gandhidham, supplies and maintains industrial RO systems, DM plants, and sewage &amp; effluent treatment plants (STP/ETP) across Kandla, Mundra and Anjar — and has worked with plants including Patanjali Foods and Bunge.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <p class="eyebrow">The plan</p>
+      <h2 class="headline serif">Everywhere your buyer looks.</h2>
+    </div>
+    <div class="plan">
+      <div class="pcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 21s-7-6.5-7-11a7 7 0 1114 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <h3>Google &amp; Maps</h3>
+        <p>Show up first when a nearby plant searches.</p>
+      </div>
+      <div class="pcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg></div>
+        <h3>Buyer directories</h3>
+        <p>Your catalogue on IndiaMART &amp; TradeIndia.</p>
+      </div>
+      <div class="pcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/></svg></div>
+        <h3>AI assistants</h3>
+        <p>Named when buyers ask ChatGPT.</p>
+      </div>
+      <div class="pcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.2l1-5.8L3.5 9.2l5.9-.9z"/></svg></div>
+        <h3>Real reviews</h3>
+        <p>Trust that pushes you higher.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <p class="eyebrow">Your storefront on Google</p>
+      <h2 class="headline serif">One profile. One tap to call you.</h2>
+    </div>
+    <div class="mock-wrap" style="display:block; text-align:center;">
+      <span class="tag-ill" style="top:.2rem; right:calc(50% - 12.5rem);">Illustration</span>
+      <div class="gbp">
+        <div class="cover"><span class="ph1"></span><span class="ph2"></span><span class="ph3"></span></div>
+        <div class="body" style="text-align:left;">
+          <div class="biz">Kesri Enterprise</div>
+          <div class="cat">Water treatment supplier · Gandhidham, Kutch</div>
+          <div class="rating"><span class="stars">★★★★★</span> Reviews from your completed jobs</div>
+          <div class="chips">
+            <span class="chip"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h3l2 5-2 1a10 10 0 005 5l1-2 5 2v3a2 2 0 01-2 2A15 15 0 013 6a2 2 0 011-2z"/></svg>Call</span>
+            <span class="chip"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 2l8 4-8 12L2 6z"/></svg>Directions</span>
+            <span class="chip"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="8"/><path d="M2 10h16M10 2a13 13 0 000 16"/></svg>Website</span>
+          </div>
+          <div class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7.5"/><path d="M10 6v4l3 2"/></svg><span class="open">Open now</span> · Mon–Sat</div>
+          <div class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 18s6-5.5 6-10a6 6 0 10-12 0c0 4.5 6 10 6 10z"/><circle cx="10" cy="8" r="2"/></svg>Bharat Nagar, Gandhidham, Kutch</div>
+          <div class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6l7 5 7-5"/><rect x="3" y="5" width="14" height="11" rx="1.5"/></svg>Industrial RO · STP · ETP · DM plants · AMC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wall-sec">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <p class="eyebrow gold">Your unfair advantage</p>
+      <h2 class="headline serif">Twenty names your competitors can't show.</h2>
+      <p class="oneline">Your closest rivals display no client logos at all. You supplied these.</p>
+    </div>
+    <div class="wall">
+      <div class="chip-logo star"><span class="mono">PF</span><span class="cn">Patanjali Foods</span></div>
+      <div class="chip-logo star"><span class="mono">B</span><span class="cn">Bunge</span></div>
+      <div class="chip-logo star"><span class="mono">EA</span><span class="cn">Emami Agrotech</span></div>
+      <div class="chip-logo star"><span class="mono">C</span><span class="cn">COFCO</span></div>
+      <div class="chip-logo star"><span class="mono">IL</span><span class="cn">IPCA Laboratories</span></div>
+      <div class="chip-logo star"><span class="mono">R</span><span class="cn">Radisson Kandla</span></div>
+      <div class="chip-logo"><span class="mono">RP</span><span class="cn">Rusan Pharma</span></div>
+      <div class="chip-logo"><span class="mono">GP</span><span class="cn">Galentic Pharma</span></div>
+      <div class="chip-logo"><span class="mono">SP</span><span class="cn">Suhavi Pharma</span></div>
+      <div class="chip-logo"><span class="mono">UP</span><span class="cn">Unicor Pharmatech</span></div>
+      <div class="chip-logo"><span class="mono">KE</span><span class="cn">Karamtara Engineering</span></div>
+      <div class="chip-logo"><span class="mono">KS</span><span class="cn">Kush Synthetics</span></div>
+      <div class="chip-logo"><span class="mono">GA</span><span class="cn">Gokul Agri</span></div>
+      <div class="chip-logo"><span class="mono">SO</span><span class="cn">Sheel Oil &amp; Fats</span></div>
+      <div class="chip-logo"><span class="mono">VK</span><span class="cn">Vee Kay Oils</span></div>
+      <div class="chip-logo"><span class="mono">BF</span><span class="cn">Bharat Foods</span></div>
+      <div class="chip-logo"><span class="mono">SD</span><span class="cn">Shri Dutt</span></div>
+      <div class="chip-logo"><span class="mono">iT</span><span class="cn">iTreat Grocers</span></div>
+      <div class="chip-logo"><span class="mono">M</span><span class="cn">Meso</span></div>
+      <div class="chip-logo"><span class="mono">SB</span><span class="cn">Serena Beach Resort</span></div>
+    </div>
+    <p class="wall-note">Already featured on your website. We'll also collect a short written confirmation from each — so the wall stands on solid ground.</p>
+  </div>
+</section>
+
+<section style="background:var(--surface-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <p class="eyebrow">What builds trust</p>
+      <h2 class="headline serif">Real reviews, from real jobs.</h2>
+    </div>
+    <div class="mock-wrap" style="display:block;">
+      <span class="tag-ill" style="top:-.3rem; right:.4rem;">Example</span>
+      <div class="reviews">
+        <div class="review">
+          <div class="top"><span class="av" style="background:#1a73e8;">R</span><span class="who">Plant procurement<span>Edible oil refinery</span></span></div>
+          <div class="stars" style="margin-bottom:.5rem;">★★★★★</div>
+          <p>Supplied and commissioned our ETP on time. Service after installation has been reliable.</p>
+        </div>
+        <div class="review">
+          <div class="top"><span class="av" style="background:#1e8e3e;">M</span><span class="who">Maintenance head<span>Pharma unit</span></span></div>
+          <div class="stars" style="margin-bottom:.5rem;">★★★★★</div>
+          <p>Their AMC keeps our RO plant running without surprises. Quick to respond on site.</p>
+        </div>
+        <div class="review">
+          <div class="top"><span class="av" style="background:#9c6a1f;">H</span><span class="who">Facilities manager<span>Resort, Kandla</span></span></div>
+          <div class="stars" style="margin-bottom:.5rem;">★★★★★</div>
+          <p>Clean install of our water softening system. Would recommend to others in the belt.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <p class="eyebrow">What to expect</p>
+      <h2 class="headline serif">How your business comes online.</h2>
+    </div>
+    <div class="journey">
+      <div class="jstep"><div class="num">1</div><div class="when">Now</div><h3>Foundation</h3><p>Make sure Google &amp; AI can fully read your live site.</p></div>
+      <div class="jstep"><div class="num">2</div><div class="when">First weeks</div><h3>On the map</h3><p>Google profile live; catalogue on buyer directories.</p></div>
+      <div class="jstep"><div class="num">3</div><div class="when">Next months</div><h3>Building proof</h3><p>Real reviews come in; first AI mentions appear.</p></div>
+      <div class="jstep"><div class="num">4</div><div class="when">Ongoing</div><h3>Staying ahead</h3><p>Kept visible as competitors and search change.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap reveal">
+    <div class="sec-head">
+      <p class="eyebrow gold">Every month</p>
+      <h2 class="headline serif">You'll see exactly what's working.</h2>
+      <p class="oneline">One clear page — the real words buyers typed to find you.</p>
+    </div>
+    <div class="mock-wrap" style="display:block; text-align:center;">
+      <span class="tag-ill" style="top:.2rem; right:calc(50% - 17rem);">Example report</span>
+      <div class="report" style="text-align:left;">
+        <div class="rhead"><h3>What people searched to find you</h3><span class="mo">This month</span></div>
+        <div class="bar-row"><div class="q"><span>ro plant supplier gandhidham</span></div><div class="track"><div class="fill" style="width:86%;"></div></div></div>
+        <div class="bar-row"><div class="q"><span>etp plant near kandla</span></div><div class="track"><div class="fill" style="width:64%;"></div></div></div>
+        <div class="bar-row"><div class="q"><span>water treatment amc kutch</span></div><div class="track"><div class="fill" style="width:48%;"></div></div></div>
+        <div class="bar-row"><div class="q"><span>stp for factory gujarat</span></div><div class="track"><div class="fill" style="width:33%;"></div></div></div>
+        <div class="bar-row" style="margin-bottom:0;"><div class="q"><span>dm plant supplier mundra</span></div><div class="track"><div class="fill" style="width:22%;"></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap reveal">
+    <div class="promises">
+      <div class="promise-b">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span><b>Nothing gets invented</b><span>Every claim comes from you. Never guessed.</span></span>
+      </div>
+      <div class="promise-b">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><circle cx="12" cy="10" r="2"/><path d="M9 16c.5-2 1.5-3 3-3s2.5 1 3 3"/></svg>
+        <span><b>Every account in your name</b><span>You own it all. I only manage it for you.</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="close">
+  <div class="wrap reveal">
+    <p class="eyebrow">The next step</p>
+    <p class="big serif">Let's make Kesri the name that <em>comes up first</em>.</p>
+    <div class="who">
+      <span class="logo lg" style="justify-content:center;">
+        <svg width="44" height="44" viewBox="0 0 48 48" role="img" aria-label="Tarun Web Solutions logo">
+          <defs>
+            <linearGradient id="twsB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15988f"/><stop offset="1" stop-color="#0a4a46"/></linearGradient>
+            <radialGradient id="twsBs" cx="30%" cy="16%" r="72%"><stop offset="0" stop-color="#fff" stop-opacity=".24"/><stop offset="62%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <rect x="2" y="2" width="44" height="44" rx="13" fill="url(#twsB)"/>
+          <rect x="2" y="2" width="44" height="44" rx="13" fill="url(#twsBs)"/>
+          <rect x="2.6" y="2.6" width="42.8" height="42.8" rx="12.4" fill="none" stroke="#fff" stroke-opacity=".14"/>
+          <rect x="13" y="13.6" width="22" height="4.8" rx="2.4" fill="#fff"/>
+          <rect x="21.6" y="13.6" width="4.8" height="17" rx="2.4" fill="#fff"/>
+          <rect x="17.5" y="31.4" width="13" height="2.8" rx="1.4" fill="#d8a24e"/>
+        </svg>
+        <span class="word"><span class="name">Tarun</span><span class="tag">Web Solutions</span></span>
+      </span>
+      <p style="margin:1.3rem auto 0; max-width:30em;">Your website &amp; findability partner &nbsp;·&nbsp; <span class="site">kesrienterprise.com</span></p>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var els = document.querySelectorAll(".reveal");
+    if (reduce || !("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, { threshold: 0.1, rootMargin: "0px 0px -6% 0px" });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+</script>
+</body></html>

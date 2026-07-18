@@ -13,6 +13,7 @@ Default day: **Sunday.** 30 minutes. Same time each week.
 
 - `week.md` — the operating board (read, then reset)
 - `shipped.md` — the done-log + streak (append only)
+- `learning/reading/rules.md` — the tested-rules artifact (read for due verdicts; rewrite, never append)
 - `decisions/log.md` — log any real decision made during review (append, optional)
 
 ## Execution — run in order, conversationally
@@ -66,14 +67,33 @@ Rewrite `week.md` for the new week:
 - Empty parking lot.
 - Leave the North Star block unchanged unless the user explicitly changed strategy.
 
-### 8. Chain: marketing week
+### 8. Reading — verdicts due, and is anything worth drilling? (~3 min)
+
+Two questions, both fast. Read `learning/reading/rules.md`.
+
+**(a) Verdicts due.** For every rule past its verdict date, ask the only question that matters:
+*"Did you run it, and what happened?"* Four states, **no auto-carry** (rule 3 applies here too):
+**Kept** · **Killed** (log the epitaph — **this is a win**, say so) · **Rewritten** (new rule, new
++14 date) · **Never ran it** (14 days and it never got run → the rule wasn't real; kill it or shrink
+it). Then rewrite `rules.md` — never append.
+
+**(b) Anything worth drilling?** Glance at this week's captures in the current book file. The bar:
+*did something change his mind or threaten a belief he holds?* If yes → he runs `/reading` on his own
+time this week (15 min, not now — this ritual is already 75+ min). If no → **"nothing bit me this
+week" is a legitimate answer.** Do not push. A drill with no fuel manufactures a fake rule, and fake
+rules crowd out real ones.
+
+**If (b) comes back empty four weeks running, say so out loud** — the track is dying quietly and
+needs either a real slot or an honest kill.
+
+### 9. Chain: marketing week
 
 Same sitting, immediately — run `/marketing` weekly mode (30-45 min budget). The weekly
 marketing session is habit-stacked here so it can't lapse the way the daily queue did.
 If genuinely out of time, schedule it within 24h and write the debt into `week.md`'s
 parking lot — never silently skip.
 
-### 9. Cadence handoff
+### 10. Cadence handoff
 
 Once a month, or whenever structure feels messy, suggest: *"Run `/audit` to check the AIOS structure, and `/level-up` to find one automation to ship."* Three different jobs: weekly-review = did I execute; /audit = is the OS built right; /level-up = what to automate next.
 
@@ -83,8 +103,9 @@ Every run produces:
 1. An honest score for the week just ended (X of 3, with the real reason for each miss).
 2. Updated `shipped.md` — new log entries + bumped streak.
 3. A reset `week.md` for the week ahead with theme + 3 outcomes.
-4. The weekly `/marketing` session run in the same sitting (or explicitly scheduled within 24h).
-5. A one-line close: streak count + next week's theme + "don't break the chain."
+4. Every due reading rule given a verdict (kept/killed/rewritten/never-ran) and `rules.md` rewritten.
+5. The weekly `/marketing` session run in the same sitting (or explicitly scheduled within 24h).
+6. A one-line close: streak count + next week's theme + "don't break the chain."
 
 ## Rules
 

@@ -12,7 +12,10 @@
 <section id="setup" class="screen">
   <div class="setup-card">
     <h1>Machine Coding Lab</h1>
-    <p class="sub">Blank file. No autocomplete. No AI. Docs allowed. Clock running.</p>
+    <!-- This line has to stay TRUE. It said "No autocomplete" while styles.css had a dropdown, which
+         would make the landing page the first thing in here that lies to him. -->
+    <p class="sub">Blank file. No AI. Docs allowed. Clock running.<br />
+      <em>No autocomplete in <code>app.jsx</code> — ever. CSS unlocks when P0 goes green.</em></p>
 
     <div id="resume-strip" class="resume-strip hidden">
       <span>Unfinished session found: <b id="resume-label"></b></span>
@@ -68,13 +71,14 @@
       <span class="pip" data-phase="buzzer">BUZZER</span>
     </div>
 
-    <div class="clock">
+    <div class="clock" id="clock-wrap">
       <span id="clock-label">warm-up</span>
       <b id="clock">5:00</b>
       <span id="paused-badge" class="paused-badge hidden">PAUSED</span>
     </div>
 
     <div class="goals">
+      <span id="law-flash" class="law-flash hidden"></span>
       <label><input type="checkbox" id="p0-done" /> P0</label>
       <label><input type="checkbox" id="p1-done" /> P1</label>
       <label><input type="checkbox" id="p2-done" /> P2</label>
@@ -95,6 +99,8 @@
         <ul id="reqs-list"></ul>
       </div>
 
+      <!-- Revealed at the BUZZER only. Showing this during CODE hands over every hidden
+           requirement and makes the CLARIFY phase decoration. -->
       <div id="brief-goals" class="hidden">
         <div class="goal-block"><b class="p0">P0 — must work</b><ul id="list-p0"></ul></div>
         <div class="goal-block"><b class="p1">P1 — then</b><ul id="list-p1"></ul></div>
@@ -106,6 +112,8 @@
         <p id="warmup-spec"></p>
       </div>
     </aside>
+
+    <div class="splitter" data-split="brief" title="Drag to resize · double-click to reset"></div>
 
     <!-- CENTRE -->
     <div id="centre">
@@ -164,10 +172,23 @@ Events:
           <span id="css-warning" class="css-warning hidden">P0 isn't green — law #2</span>
           <button id="run-btn" class="btn small primary">Run ▶</button>
         </div>
+
+        <!-- What's in scope. Without this the runner's injected globals are a guessing game. -->
+        <div id="scope-strip" class="scope-strip">
+          <b>In scope</b>
+          <code>React ReactDOM useState useEffect useLayoutEffect useRef useMemo useCallback useReducer useContext createPortal Fragment memo root document window</code>
+          <span class="scope-note">No imports needed (they're stripped). Preview renders <code>function App()</code>. Warm-up drills can just run and <code>console.log</code>. <code>document</code>/<code>window</code>/<code>root</code> point at the preview page.</span>
+        </div>
+
         <div class="editor-wrap">
           <div id="gutter"></div>
-          <textarea id="editor" spellcheck="false" autocomplete="off" autocorrect="off"
-                    autocapitalize="off" wrap="off"></textarea>
+          <div class="code-area">
+            <pre id="highlight" aria-hidden="true"><code id="highlight-code" class="language-jsx"></code></pre>
+            <textarea id="editor" spellcheck="false" autocomplete="off" autocorrect="off"
+                      autocapitalize="off"></textarea>
+            <!-- styles.css only, and only once P0 is green. Never app.jsx — that's the muscle. -->
+            <div id="css-ac" class="hidden"></div>
+          </div>
         </div>
         <div id="editor-lock" class="lock hidden">
           <div>
@@ -184,6 +205,18 @@ Events:
           <b>You never asked about these:</b>
           <ul id="missed-list"></ul>
           <p class="hint dim">Not a gotcha. This is the clarify muscle, and it's worth a full rubric point.</p>
+        </div>
+
+        <!-- The design gate only pays off if he ever sees what he did with the plan he committed to.
+             Both halves are already in session.json; this just puts them side by side. -->
+        <div id="design-diff" class="design-diff hidden">
+          <b>What you planned → what you built</b>
+          <p class="hint dim">Structural drift is the point of this panel. Did the plan survive contact
+            with the clock, or did you improvise from line 1?</p>
+          <div class="diff-cols">
+            <div><span class="diff-h">Your design</span><pre id="diff-design"></pre></div>
+            <div><span class="diff-h">Your code</span><pre id="diff-built"></pre></div>
+          </div>
         </div>
         <label class="field">
           <span>What stuck you? (be specific — this feeds the profile)</span>
@@ -224,14 +257,28 @@ Events:
 
     </div>
 
-    <!-- RIGHT: preview -->
+    <div class="splitter" data-split="preview" title="Drag to resize · double-click to reset"></div>
+
+    <!-- RIGHT: preview + console -->
     <aside id="preview">
       <div class="preview-head">
         <span>Preview</span>
         <span id="preview-status" class="dot idle"></span>
       </div>
-      <div id="preview-host"></div>
+      <!-- A real document, not a shadow root: `body {}`, `:root {--var}` and media queries all behave
+           like they would in a real round, and an unstyled component renders black-on-white the way
+           it actually would. A shadow root silently donated the lab's own font and colour. -->
+      <iframe id="preview-frame" title="Preview"></iframe>
       <pre id="preview-error" class="hidden"></pre>
+      <div class="splitter horizontal" data-split="console"
+           title="Drag to resize · double-click to reset"></div>
+      <div id="console-panel">
+        <div class="console-head">
+          <span>Console</span>
+          <button id="console-clear" class="btn small ghost">Clear</button>
+        </div>
+        <div id="console-log"></div>
+      </div>
     </aside>
 
   </main>
@@ -241,6 +288,9 @@ Events:
 <script src="vendor/react.js"></script>
 <script src="vendor/react-dom.js"></script>
 <script src="vendor/babel.js"></script>
+<!-- Prism must not auto-highlight on load; the lab drives it per keystroke. -->
+<script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
+<script src="vendor/prism.js"></script>
 <script src="lab.js"></script>
 </body>
 </html>

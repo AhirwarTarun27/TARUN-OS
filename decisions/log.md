@@ -391,3 +391,51 @@ Two decisions were his and both improved the design:
 **Alternatives considered:** *Route it through `/teach`* (rejected — `/teach` makes HTML lessons and cheat sheets; this is a *performance* skill needing a clock, a rubric, withheld requirements, and a coach that refuses to help). *Copy the DSA ladder verbatim* (rejected — re-solving the same app memorizes that app; the primitive is what transfers). *Code in VS Code with Copilot off* (rejected for drills — pure honor system, no timer, no protocol; **kept for Phase 3 full rounds**, where multi-file structure is itself graded). *Just use Namaste dev's editor* (rejected — no timer, no P0/P1/P2 discipline, and the code never lands in the repo, so cold rebuilds can't be diffed against the original). *Screenshots in the replay* (rejected — ~1,500 vision tokens each × 30/session, and they tell me less than the code does; **capture the final rendered DOM as text instead**, ~1 KB).
 
 **Owner:** Tarun.
+
+---
+
+## 2026-07-17 — Swapped `reading` ↔ `interview-qa` in the weekday schedule
+
+**Decision:** `interview-qa` moves to 11:00–11:30am. `reading` takes the 11:45pm–12:15am slot. Block codes and the 7-scored-block count are unchanged.
+
+**Why:** `interview-qa` hit **1 of the last 5 weekdays**. At the 07-16 wrap Tarun named the cause himself: *"The energy is not there... I need to change the schedule of this one."* It was the only learning block stranded after two office blocks — everything else is front-loaded into 11:00am–3:30pm. That is **placement, not discipline**: a high-effort block in a low-energy slot fails no matter how much willpower is thrown at it, and `interview-qa` feeds Priority 1 (the active job switch), so it can't be allowed to keep dying. `reading` took the late slot because it's the one block cheap enough to survive it — **provided it stays intake-only** (see the next entry; the two decisions are load-bearing on each other).
+
+**Cost accepted:** the late slot is now **narrative books only**. Dense technical books are excluded by design — a textbook at 11:45pm after two office blocks is a page re-read four times. If a dense book ever matters, it needs a morning block or it doesn't get read.
+
+**What would change my mind:** if `interview-qa` still misses at 11:00am, the problem was never the slot — it's the block itself, and it needs a different fix (or a kill).
+
+**Alternatives considered:** *Leave it and try harder* (rejected — five weekdays of data say the slot is the cause). *Cut `interview-qa` entirely* (rejected — it's job-hunt-adjacent and this quarter's Priority 1). *Full reading drill at 11:45pm* (rejected — see next entry; it would rebuild the exact failure being fixed).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-17 — Reading is tracked + interrogated; the drill is on-demand, not daily
+
+**Decision:** Built `/reading` + `learning/reading/`. The 11:45pm block is **intake only** — read, and if something bites, write one line (`/daily-log wrap` banks it). The drill (compress → test → own, landing ONE rule with a **+14-day verdict date**) runs **on demand**, prompted at `/weekly-review`, never in the block. The artifact is `learning/reading/rules.md` — cross-book, bounded at 20 live, rewritten not appended.
+
+**Why:** Tarun asked for a reading companion (AIM / COMPRESS / TEST / OWN) in the same message that approved moving `reading` to 11:45pm. **Those two requests contradict each other**: the swap works *because reading is cheap to do tired*, and the companion makes reading the most cognitively expensive block on the board. Both can't be true. Splitting **intake** (nightly, cheap, no AI) from **the drill** (occasional, expensive, on demand) is what keeps the swap honest — without it, `reading` becomes the new `interview-qa` inside a month, for the identical reason.
+
+**Why on-demand rather than a fixed weekly slot:** a fixed drill slot with no fuel **manufactures fake rules**, and fake rules crowd out real ones and turn the file into homework. `/weekly-review` asks *"anything worth drilling?"* — **"nothing bit me this week" is a legitimate answer.** Mirrors the `/marketing` daily→weekly inversion of 2026-07-10, which worked.
+
+**Why a +14-day verdict at all:** a takeaway written down and never revisited **steered nothing**. DSA has D0→D2→D5→D10; machine-coding has R0→R3→R10. Reading was the only track asking for *life change* with no ladder under it. But the rep here is deliberately **not recall** (trivial for a good idea) — it's **did reality confirm or kill it**. A killed rule is a success; a track where nothing dies is lying.
+
+**What would change my mind:** if the Sunday prompt returns "nothing to drill" **four weeks running**, the track is dying quietly and needs either a real slot or an honest kill. If `rules.md` fills with rules that are never run (the "never ran it" verdict dominating), the rules are being written too big — shrink the bar, don't add discipline.
+
+**Alternatives considered:** *Full drill nightly in the block* (rejected — rebuilds the failure being fixed). *`/teach` owns it* (rejected — `/teach` authors lessons from high-trust sources; here the source is the book, and Tarun doesn't need to be taught the book, he needs his reading of it interrogated. Same boundary drawn for `/machine-coding`). *Four separate modes for AIM/COMPRESS/TEST/OWN* (rejected — they're three beats of one 15-min conversation; separate invocations are ceremony he'd skip). *Per-book folders* (rejected — one file per book; fewer files survive a tired 11:45pm).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-17 — Scout: next project = full-stack open-core SaaS — GO on SaaS-analytics + client-portal (build analytics first)
+
+**Decision:** Ran a *non-AdSense* scout for Tarun's next project (full-stack React+Node, open-source-first, subscription/open-core upside, high-ceiling aspiration). Reframed the scoring axes from `demand × RPM × winnability` to **`demand × willingness-to-pay × winnability × ceiling`** under a hard constraint (**cheap to serve — self-hostable or BYO-key**, so Tarun never funds strangers' usage). Intake Q&A locked: any buyer, AI-or-not (data decides), cheap/BYO-key infra. Pre-screened ~22 categories, presented a top-5, deep-teardown'd the two Tarun picked. **GO on both:** (A) **SaaS revenue analytics** (open-core Baremetrics/ChartMogul alt) and (B) **client portal + proposals** for agencies/freelancers. **Recommended build order: SaaS analytics first.** Briefs: `research/saas-revenue-analytics.md`, `research/client-portal.md`.
+
+**Why:** The winnable open-core play is "the open-source alternative to a *specific expensive closed SaaS*, in a category both the AI-hype wave and the OSS wave skipped." Every hyped 2026 category is a funded / big-platform fortress, unwinnable solo (MCP gateways = Docker/MS/IBM/AWS; LLM obs = Braintrust $80M @ $800M; AI agents = n8n/Activepieces/Flowise; sync engines = Zero/ElectricSQL). AI belongs as a **BYO-key feature, not the product**. SaaS-analytics is the **cleanest gap found** — the only OSS "rivals" are a 42★ all-"Coming soon"-placeholder repo (Cowlytics) and a 1★ dead stub (growth-metrics-dashboard), and Stripe's own Sigma needs SQL + gives no shareable dashboards — against steep proven WTP ($75-129/mo→$10-15k/yr) and a perfect BYO-Stripe-key fit; Tarun is the user. Client-portal has a bigger, proven paid market (Copilot 294 G2 reviews @4.8★, HoneyBook/Dubsado) and **high synergy with the Kesri web-solutions business** (dogfood + sell), but the gap is more contested (Atrium: 41★, active, but **ELv2 source-available** — so a true-OSS licence is the wedge) and the scope is bigger. Build analytics first because, next to an active job hunt (Priority 1), the dominant risk is *not finishing* — tightest scope + cleanest gap wins, and it doubles as a full-stack portfolio piece. **Would change my mind:** if real search volumes (pull at `/explore-project`) come back materially thin, re-run the demand gate.
+
+**Alternatives considered / killed this run:** Referral/affiliate (biggest ceiling + WTP, but Dub Partners — funded OSS, Framer/Perplexity/Superhuman — just entrenched the modern-OSS slot); onboarding/tours (very high WTP but Usertour holds the OSS slot); AI personal CRM (cleanest AI-native gap but weak consumer WTP — a category graveyard). NO-GOs: MCP gateways/OpenAPI→MCP generators, AI agent builders, LLM observability, local-first sync engines, bookmark managers (Karakeep), meeting notes (Meetily), screen recording (Cap), email marketing (Listmonk/Mautic), AI support (Chatwoot/Zammad), AI chat-with-DB (Vanna/Wren), document extraction (Unstract + commoditizing VLMs), Gumroad-alts (PHP incumbents + merchant-of-record tax moat) — all fortressed, commoditized, or dead-on-WTP.
+
+**Pipeline note:** the downstream pipeline (`/explore-project`, `/pick-stack`, `/design-architecture`, `/adsense-ready`) is AdSense/static-shaped. A full-stack subscription SaaS needs it adapted — backend/DB/auth/billing, **cost-to-serve as a first-class gate**, no AdSense gate, and dev-audience distribution (GitHub + Show HN + IndieHackers + SEO, not the AdSense `/marketing` engine). Adapt at scope time, don't force-fit.
+
+**Owner:** Tarun.

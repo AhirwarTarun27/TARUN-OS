@@ -27,6 +27,7 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
 - `archives/daily/YYYY-MM.md` — raw month archived at month-end (never deleted)
 - `week.md` — read at plan-time to tie the day to this week's 3 outcomes
 - `learning/*/learning-records/` — read at wrap to pull what `/teach` covered for `sysdesign` / `interview-qa`
+- `learning/reading/books/<slug>.md` — the current book (wrap only: bank ONE capture line. Never drill here — that's `/reading`, on demand)
 - `learning/dsa/queue.md` — the DSA spaced-rep tracker (read at plan for what's due; advance the rung + recompute due dates at wrap)
 - `learning/machine-coding/queue.md` — the machine-coding cold-rebuild ladder (read at plan for what's due; **`lab/ingest.mjs` writes the row itself** — at wrap just confirm it landed). **Never read `learning/machine-coding/builds/`** — that's `/machine-coding`'s job, under its read budget.
 - `shipped.md` — if the day shipped something real, also bank a one-liner there (don't double-track routine)
@@ -71,6 +72,11 @@ If invoked with no argument: before ~5pm → `plan`; after → `wrap`. Ask if ge
      (e.g. `machine-coding=star-rating R0 solo, P0 ✓`). If he coded but never exported, say so: an
      un-ingested session is a rep with no record and no grade. **Never grade it here** — that's
      `/machine-coding review`, and it has a read budget this ritual must not blow.
+   - **`reading` block:** if it hit, ask **"what bit you?"** — one line, and bank it to `## Captures`
+     in `learning/reading/books/<slug>.md`. **"Nothing" is a valid answer and writes nothing** — most
+     nights are blank by design. Never drill it here, never summarize the chapter, never suggest
+     `/reading` at this hour: the block is **intake only** and that's the whole reason it survives the
+     11:45pm slot. The drill is on-demand, prompted at `/weekly-review`.
    - **Energy** for the day, 1–5.
    - Did the **must-ship** land? ✅ / ❌.
 3. **Write ONE compact entry** to the top of `daily/log.md` (newest on top), ~4 lines:

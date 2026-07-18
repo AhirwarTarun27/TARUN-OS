@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1b · Backend primitives from scratch — System Design (Xu Vol 1)</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 1b · Companion to Chapter 1</p>
+    <h1>Backend primitives, from scratch</h1>
+    <p class="subtitle">SQL vs NoSQL, caching internals, and sharding — the three things Lesson 1 named in
+    one-liners but never actually explained. You build zero-backend on the edge, so this is exactly the tier
+    you haven't had to touch yet. First principles, no assumed knowledge.</p>
+  </header>
+
+  <div class="note">
+    <span class="callout-label">Read this before the next re-drill</span>
+    Lesson 1 mentioned TTL, LRU, SPOF, write consistency, and resharding as compressed "interview gold"
+    callouts. That's fine as a checklist <em>after</em> you understand them — useless before. This lesson is the
+    "before." Nobody's born knowing these. You read them for the first time yesterday. That's not a gap in you,
+    it's just the next thing to learn.
+  </div>
+
+  <!-- ============================================================ PART 1 -->
+  <h2>Part 1 · SQL vs NoSQL — the real differentiation</h2>
+
+  <p>First, kill the framing. <strong>"NoSQL" is not one database.</strong> SQL is one clear thing (the
+  relational model). "NoSQL" is an umbrella over <em>four different data models</em> that each reject the
+  relational table for a different reason. Comparing "SQL vs NoSQL" is like comparing "cars vs not-cars." So
+  step one is to un-blur the not-cars.</p>
+
+  <h3>What SQL (relational) actually is</h3>
+  <p>Data lives in <strong>tables</strong> — rows and columns, a <strong>fixed schema</strong> you define up
+  front (this column is an integer, that one is text, this one can't be null). Tables link by
+  <strong>relationships</strong> (a <code>photos</code> row points at a <code>users</code> row via
+  <code>user_id</code>), and you recombine them at read time with a <strong>JOIN</strong>. Postgres, MySQL.</p>
+
+  <h3>What "NoSQL" actually is — four families</h3>
+  <ul>
+    <li><strong>Key-value</strong> — a giant dictionary. You hand it a key, it hands back a blob. Blindingly
+    fast, no querying <em>inside</em> the value. <em>Redis, DynamoDB, Memcached.</em> (A cache is basically
+    this.)</li>
+    <li><strong>Document</strong> — stores JSON-ish documents; each row can have different fields (flexible
+    schema). Good when your data is naturally a nested object. <em>MongoDB, Couchbase.</em></li>
+    <li><strong>Wide-column</strong> — rows keyed for massive horizontal scale and heavy writes; think "a
+    table sliced across a thousand machines by design." <em>Cassandra, HBase, Bigtable.</em></li>
+    <li><strong>Graph</strong> — nodes and edges, for data that is mostly <em>relationships</em> (social
+    graphs, recommendations). <em>Neo4j.</em></li>
+  </ul>
+  <p>When an interviewer says "would you use NoSQL here," the senior move is to answer <em>which kind and
+  why</em> — "a key-value store for the session cache," "a wide-column store for the photo-metadata feed at
+  write scale" — not the word "NoSQL."</p>
+
+  <h3>The axes that actually differ</h3>
+  <div class="tradeoff">
+    <div>
+      <h4>Relational (SQL)</h4>
+      <ul>
+        <li class="pro"><strong>Schema:</strong> fixed, enforced up front</li>
+        <li class="pro"><strong>Relationships:</strong> JOINs across tables</li>
+        <li class="pro"><strong>Transactions:</strong> ACID, strong consistency</li>
+        <li class="con"><strong>Scaling:</strong> up + read-replicas; writes/size past one box needs sharding (manual, painful)</li>
+        <li class="pro"><strong>Best when:</strong> structured data, money, anything where "half-done" is a bug</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Non-relational (NoSQL)</h4>
+      <ul>
+        <li class="pro"><strong>Schema:</strong> flexible, per-record</li>
+        <li class="con"><strong>Relationships:</strong> weak/no JOINs — you denormalize</li>
+        <li class="con"><strong>Transactions:</strong> often BASE, eventual consistency</li>
+        <li class="pro"><strong>Scaling:</strong> horizontal by design — sharding is built in</li>
+        <li class="pro"><strong>Best when:</strong> huge scale, simple access pattern, flexible/unknown shape, low latency</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">ACID vs BASE — the two consistency philosophies, one line each</span>
+    <strong>ACID</strong> (SQL default): a transaction is all-or-nothing and the data is always consistent the
+    instant a write returns. Safe, harder to scale. <strong>BASE</strong> (many NoSQL): the system stays
+    available and fast, and replicas become consistent <em>eventually</em> (a few ms/s later). You trade
+    "always correct right now" for "always up and fast." This word <strong>consistency</strong> is the same
+    idea that comes back in caching and replication — hold onto it.
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "I'd default to a relational DB — the data is structured and I want transactions. I'd reach for NoSQL only
+    where a specific tier needs it: a key-value store for sessions and cache, and if photo-metadata reads
+    outgrow one relational cluster, a wide-column store that shards natively. I pick the model per tier, not one
+    database for everything."
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">The photo-app mapping (ties back to your fatal gap)</span>
+    Users, follows, photo <em>metadata</em> (id, owner, caption, timestamp) → relational to start; strong
+    relationships, small rows. The photo <strong>bytes themselves never go in <em>any</em> database</strong> —
+    they're large binaries, so they go to <strong>object storage (S3 / R2)</strong>, and the DB stores only the
+    object's key/URL. "SQL vs NoSQL" was never the right question for the pixels — the answer is "neither, it's
+    a blob store."
+  </div>
+
+  <!-- ============================================================ PART 2 -->
+  <h2>Part 2 · Caching, and the four scary words</h2>
+
+  <p>Start with what a cache <em>is</em>, because the four terms only make sense once this is concrete. A
+  <strong>cache</strong> is a small, very fast, in-memory copy of data that's slow or expensive to get from the
+  real source (the database). You keep the frequently-read stuff there so repeated reads skip the slow path.
+  The database stays the <strong>source of truth</strong>; the cache is a disposable copy you can rebuild any
+  time.</p>
+
+  <h3>The read-through pattern (walk it slowly)</h3>
+  <div class="arch">
+    <span class="node">Request</span>
+    <span class="arrow">→</span>
+    <span class="node hi">Cache?</span>
+    <span class="arrow">HIT →</span>
+    <span class="node">return (fast)</span>
+    <span class="arrow">| MISS →</span>
+    <span class="node">read DB</span>
+    <span class="arrow">→</span>
+    <span class="node">write to cache</span>
+    <span class="arrow">→</span>
+    <span class="node">return</span>
+  </div>
+  <p>That's it. "Read-through" just means: <em>always ask the cache first; on a miss, fill it from the DB so
+  next time is a hit.</em> Note what this is <strong>not</strong> — it's not "put data in Redis instead of the
+  database." The DB is still the truth. The cache just remembers the answer to save a trip. Everything below is
+  a consequence of running that copy.</p>
+
+  <h3>The four words, from zero</h3>
+
+  <p><strong>1. TTL — Time To Live.</strong> Every entry you put in the cache gets an expiry timer, say 60
+  seconds. After that it's considered stale and thrown out, so the next read refetches fresh data from the DB.
+  <em>Why it exists:</em> the DB changes, but the cache copy doesn't know that — without an expiry the cache
+  would serve an old answer forever. <em>The tradeoff:</em> short TTL = fresher data but more DB hits (less
+  benefit); long TTL = fewer DB hits but staler data. Picking the TTL <em>is</em> picking your staleness
+  budget.</p>
+
+  <p><strong>2. LRU — Least Recently Used (eviction).</strong> Cache memory is small and finite. When it fills
+  up, to add a new entry you must throw one out. <em>Which one?</em> LRU throws out the entry that hasn't been
+  touched for the longest time, betting "not used in a while = least likely to be needed next." That decision
+  is the <strong>eviction policy</strong>; LRU is the common default (others: LFU = least frequently used,
+  FIFO = oldest in). If someone asks "what happens when the cache is full," the word they want is
+  <em>eviction</em>, and the default answer is <em>LRU</em>.</p>
+
+  <p><strong>3. Write consistency (cache vs DB drift).</strong> Here's the catch with keeping a copy: what
+  happens on a <em>write</em>? A user edits their caption. The DB now has the new value, but the cache still
+  holds the old one. The copy has <strong>drifted</strong> from the truth, and every reader gets the stale
+  caption until the entry expires. Two fixes: <em>write-through</em> (on a write, update the DB <strong>and</strong>
+  the cache together) or <em>cache invalidation</em> (on a write, just delete that key — the next read misses
+  and repopulates fresh). This is the same "consistency" idea from ACID/BASE, now between a cache and its DB.</p>
+
+  <p><strong>4. SPOF — Single Point Of Failure.</strong> If every request funnels through one cache box and
+  that box dies, one of two bad things happens: the app goes down, or <em>every</em> request suddenly stampedes
+  the database all at once (the "thundering herd") and the DB falls over too. A single component whose death
+  takes down the system is a <strong>single point of failure</strong>. The fix is the same as everywhere else:
+  don't have one — run a <strong>cluster</strong> of cache nodes with replication, so losing one isn't fatal.
+  (SPOF isn't a cache-only word. The single master DB is a SPOF. One web server is a SPOF. It's the general
+  name for "if this one thing dies, we're dead.")</p>
+
+  <div class="tip">
+    <span class="callout-label">Say this in the interview (all four, senior-sounding)</span>
+    "I'd put a read-through cache in front of the DB. Four things I'd manage: a <strong>TTL</strong> so entries
+    don't go stale forever, <strong>LRU eviction</strong> for when it fills up, <strong>write consistency</strong>
+    — invalidate or write-through on updates so the cache doesn't drift from the DB — and I'd
+    <strong>cluster</strong> it so the cache isn't a single point of failure."
+  </div>
+
+  <!-- ============================================================ PART 3 -->
+  <h2>Part 3 · Sharding and resharding</h2>
+
+  <p>Start from the problem, or sharding sounds arbitrary. <strong>Replication scales reads only.</strong> Add
+  more read-replicas and reads spread out — great. But two things replication does <em>not</em> fix:</p>
+  <ul>
+    <li>Every <strong>write</strong> still goes to the <em>one</em> master. Writes don't scale.</li>
+    <li>Every node still stores the <strong>whole</strong> dataset. If the data won't fit on one machine,
+    adding replicas doesn't help — they each need to hold all of it too.</li>
+  </ul>
+
+  <p>So when writes or sheer data <em>size</em> outgrow a single box, you <strong>shard</strong>: horizontal
+  partitioning. Split the data across N independent databases, each holding a <em>slice</em>. Nobody holds
+  everything.</p>
+
+  <div class="arch">
+    <span class="node">All users</span>
+    <span class="arrow">split by shard key →</span>
+    <span class="node hi">Shard 0 (users A-F)</span>
+    <span class="node hi">Shard 1 (G-M)</span>
+    <span class="node hi">Shard 2 (N-S)</span>
+    <span class="node hi">Shard 3 (T-Z)</span>
+  </div>
+
+  <p><strong>Shard key</strong> = the field you split on (e.g. <code>user_id</code>). To find a user's row, you
+  run the key through a rule — the classic being <code>user_id % 4</code> gives you the shard number. A
+  <em>good</em> key spreads data evenly and lets most queries hit a single shard. A <em>bad</em> key piles
+  everyone onto one shard.</p>
+
+  <h3>Resharding — the word you weren't sure about</h3>
+  <p>You start with 4 shards. Traffic grows, 4 isn't enough, you add a 5th. <strong>Resharding</strong> is that
+  event: changing the number of shards, which changes the rule that maps data to a shard, which means existing
+  data now lives on the <em>wrong</em> shard and has to physically <strong>move</strong> to its new home.</p>
+  <p>Why it's painful: with naive modulo, going from <code>% 4</code> to <code>% 5</code> changes the answer
+  for <em>almost every user</em> — nearly the entire dataset has to relocate while the system stays live. The
+  fix is <strong>consistent hashing</strong> (that's Chapter 5): a smarter mapping where adding a shard moves
+  only a <em>small slice</em> of the data instead of almost all of it. For now you just need the sentence:
+  "resharding is expensive because it moves data; consistent hashing minimizes how much moves."</p>
+
+  <div class="note">
+    <span class="callout-label">The other two sharding challenges (name them, don't solve them)</span>
+    <strong>Hotspot / celebrity problem:</strong> if one shard holds a hugely popular user, that shard gets
+    hammered while others idle — uneven load. <strong>Cross-shard queries:</strong> a query that spans shards
+    (a global feed, "top photos across everyone") can't do a simple JOIN anymore — the data is on different
+    machines. You either fan out to every shard and merge the results, or you <em>denormalize</em> (pre-store
+    the combined data). Naming these three — resharding, hotspots, cross-shard — is the whole difference between
+    "I'd shard it" and a real answer.
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "Replication scaled my reads, but writes still hit one master and every node holds all the data. So I'd
+    shard by <code>user_id</code>. Three things I'd flag: resharding is expensive because adding a shard moves
+    data — I'd use consistent hashing to limit that; hotspots from a celebrity user on one shard; and
+    cross-shard queries lose JOINs, so I denormalize or fan-out."
+  </div>
+
+  <!-- ============================================================ CHECK -->
+  <h2>Retrieval check</h2>
+  <p>No scrolling up. Pick, then read why.</p>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">Why does a cache entry need a TTL?</p>
+    <ul class="quiz-opts">
+      <li><button>To make the cache use less memory overall</button></li>
+      <li><button>The DB changes, so a copy goes stale without expiry</button></li>
+      <li><button>To decide which entry to evict when it is full</button></li>
+      <li><button>To route the read to the nearest cache node</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Data goes stale.</strong> The cache is a copy; the DB moves on without
+    telling it. A TTL forces a refetch so the copy can't lie forever. "Which entry to evict when full" is a
+    different word — that's eviction / LRU.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">What makes resharding expensive?</p>
+    <ul class="quiz-opts">
+      <li><button>You must rewrite every application query by hand</button></li>
+      <li><button>Replicas stop taking reads during the change</button></li>
+      <li><button>Changing shard count relocates existing data</button></li>
+      <li><button>The cache must be cleared on all nodes first</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Data has to move.</strong> More shards = a new key-to-shard mapping, so
+    rows are on the wrong shard and must physically relocate. Consistent hashing exists to shrink how much
+    moves.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">Which is the strongest reason to reach for NoSQL over SQL?</p>
+    <ul class="quiz-opts">
+      <li><button>Massive horizontal scale with a simple access pattern</button></li>
+      <li><button>You need multi-table JOINs and transactions</button></li>
+      <li><button>The data is highly structured and relational</button></li>
+      <li><button>You want strong consistency on every write</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Scale + simple access.</strong> NoSQL shines when you need to scale out
+    horizontally and your reads are simple key lookups. The other three (JOINs, structure, strong consistency)
+    are exactly what relational is <em>better</em> at.</div>
+  </div>
+
+  <details class="reveal">
+    <summary>Tie-it-together: a user updates their caption but still sees the old one. Two possible causes — name both.</summary>
+    <p><strong>(1) Cache drift</strong> — the write updated the DB but the cache still holds the old caption; it
+    needed invalidation or write-through. <strong>(2) Replication lag</strong> — the write hit the master but
+    the read went to a replica that hasn't caught up. Both are the same theme: a <em>copy</em> of the truth
+    (cache, or replica) that hasn't caught up to the source. That theme — consistency of copies — is half of
+    backend system design.</p>
+  </details>
+
+  <div class="drill">
+    <span class="callout-label">Now the re-drill is fair</span>
+    <p>You've now actually been taught the three. The constrained rep from your grade still stands — out loud,
+    no ladder, produce only: trace one photo end to end, where the bytes live, the read-through cache + its four
+    words, the shard key + one challenge, the replication-lag story. Do that and Chapter 1 is banked for real.</p>
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Still fuzzy on any of these?</strong> I'm your teacher — point at the exact sentence that didn't
+    land and I'll go deeper or draw it. Good next questions: "what's write-through vs write-back," "show me
+    consistent hashing," "when would metadata itself go NoSQL." Ask.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0001-scale-zero-to-millions.html">← Lesson 1: the scaling ladder</a>
+    <a href="../reference/scaling-ladder.html">Cheat sheet →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

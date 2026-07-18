@@ -92,7 +92,7 @@ Not on the ladder. Carried daily. Force-banks as `watched` at the end of attempt
 
 | Problem | Pattern | Started | Attempt-days | Where you got stuck |
 |---------|---------|---------|--------------|---------------------|
-| _(empty)_ | | | | |
+| Move Zeroes | Two pointers / write-index | 2026-07-17 | 1 | No working solution in the attempt — carried. Cap = 2, so 07-18 (weekend, manual) or next weekday, else force-bank as `watched`. |
 
 ## Active queue — on the ladder
 
@@ -100,8 +100,8 @@ Ratings column logs each pass, e.g. `D2:2 D5:3`. Next due e.g. `2026-07-16 (D2)`
 
 | Problem | Pattern | D0 | D0 tag | Last rung | Ratings | Next due | Key idea |
 |---------|---------|----|--------|-----------|---------|----------|----------|
-| Best Time to Buy & Sell Stock | Single-pass min tracking | 2026-07-14 | `watched` | D0 | — | 2026-07-16 (D2) | Track min-so-far, max profit against it. One pass. **D5 on 07-19 is mandatory.** |
-| Merge Sorted Arrays | Two pointers (fill from the back) | 2026-07-14 | `watched` | D0 | — | 2026-07-16 (D2) | Walk both from the end into the tail of nums1 — no shifting, no extra space. **D5 on 07-19 is mandatory.** |
+| Best Time to Buy & Sell Stock | Single-pass min tracking | 2026-07-14 | `watched` | D2 | `D2:3` | 2026-07-19 (D5) | Track min-so-far, max profit against it. One pass. **D5 mandatory — D0 was `watched`, so the D2:3 does not buy a skip.** |
+| Merge Sorted Arrays | Two pointers (fill from the back) | 2026-07-14 | `watched` | D2 | `D2:2` | 2026-07-19 (D5) | Walk both from the end into the tail of nums1 — no shifting, no extra space. **D5 07-19 mandatory** — both the `watched` D0 and the D2<3 force it. |
 
 ## Graduated
 

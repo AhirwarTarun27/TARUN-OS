@@ -6,10 +6,10 @@
 **Progress:** 3/17 · **▶ NEXT:** §0.1 — Cloudflare managed robots.txt (5 min, P0)
 **Buyer:** procurement managers at industrial plants, Kandla–Mundra belt → **B2B tier. No JustDial, no Sulekha.**
 
-> **Re-verified live 2026-07-14 (`curl`):** §0.1 is **still open** — the Cloudflare managed block is
-> active and `ClaudeBot`, `GPTBot`, `Google-Extended`, `CCBot`, `Amazonbot`, `Applebot-Extended`,
-> `Bytespider` and `meta-externalagent` all carry `Disallow: /`. Classic search is unaffected:
-> `Allow: /` for everyone else, sitemap correct on the real domain, nothing de-indexed.
+> **Re-verified live 2026-07-17 (`curl`):** §0.1 is **still open** — the Cloudflare managed block is
+> active and `ClaudeBot`, `GPTBot`, `Google-Extended`, `CCBot` and `meta-externalagent` all carry
+> `Disallow: /`. Classic search is unaffected: `Allow: /` for everyone else, sitemap correct on the
+> real domain (20+ URLs), no `noindex` in the live `<head>`. Nothing de-indexed. Board is accurate as written.
 > **The repo is the source of truth for what shipped** — read
 > `KesariEnterprise/.claude/learning/STATUS.md` before trusting this board.
 
