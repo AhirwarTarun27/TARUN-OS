@@ -1,36 +1,58 @@
-# This Week — Tue Jul 14 → Sun Jul 19, 2026
+# This Week — Mon Jul 20 → Sun Jul 26, 2026
 
 > **Your single source of truth.** If it's not here, it's not happening this week.
 > Open this file FIRST, every session. Notion, Calendar, your head — all noise until it lands here.
-> Reset every Sunday by running `/weekly-review` (next: Sun Jul 19).
-> **Updated 2026-07-14** — late reset via `/weekly-review`; the board had drifted since 2026-07-03 (two Sundays skipped). See `decisions/log.md` and `shipped.md` for what actually happened in the gap.
+> Reset every Sunday by running `/weekly-review` (next: Sun Jul 26).
+> **Updated 2026-07-19** — on-time reset via `/weekly-review`. Scored 1 of 3. Streak: 2 weeks.
+
+## Theme
+
+**Derive it yourself, then verify it over the wire.** Both live D0s are `watched` — nothing on the
+ladder was reasoned out solo. A Kesri task was logged as shipped and wasn't. Same failure, two tracks:
+**something looked done without being done.**
 
 ## North Star (why any of this matters)
 
 - **Floor:** Your day job (thinksys). Keep it stable as the floor **while you actively interview for the next role** (2-3 month target, declared 2026-07-07). Pays the bills and de-risks the switch. Employer boundary still holds — no thinksys email/comms in the AIOS.
-- **Engine:** A portfolio of front-end-heavy tools built for scale, money-led (AdSense), plus a paid local web-solutions side-business (started 2026-07-11). **JsonBeam = bet #1: live, Phase 0 closed 2026-07-03, resubmitted after a rejection 2026-07-08.** **GradeJar = bet #2: LIVE at gradejar.com, Phase 0 closed 2026-07-03.** Both run on the weekly-first `/marketing` engine (inverted from daily 2026-07-10). **AccentWallPlanner = bet #3: build-ready since 2026-07-10, not started** — gate before starting: pull real Semrush/Ahrefs volumes (still never done). **Kesri Enterprise = client #1** of the new web-solutions business: live at kesrienterprise.com, Phase 3 (Findable) barely started — `clients/kesri-enterprise/engagement.md` has the board.
+- **Engine:** A portfolio of front-end-heavy tools built for scale, money-led (AdSense), plus a paid local web-solutions side-business (started 2026-07-11). **JsonBeam = bet #1: live, `GETTING_READY`, resubmitted after a rejection 2026-07-08.** **GradeJar = bet #2: LIVE at gradejar.com, `GETTING_READY`.** **AccentWallPlanner = bet #3: LIVE at accentwallplanner.com since 2026-07-19**, GSC-verified + sitemap submitted, on a deliberate AdSense hold. All three run on the weekly-first `/marketing` engine. **Kesri Enterprise = client #1** of the web-solutions business: live at kesrienterprise.com, Phase 3 (Findable) stalled — `clients/kesri-enterprise/engagement.md` has the board.
 - **Edge:** Get better as a developer *through building*. Front-end system design now. Backend depth later.
-- **The rule:** Ship ugly. Done beats perfect. **DSA is the gate for Priority 1 (job hunt) and it went dark for 5 days (last rep 2026-07-09, queue still empty) — that's the actual failure this reset is naming, not a missed deploy.**
+- **The rule:** Ship ugly. Done beats perfect. **DSA is the gate for Priority 1 (job hunt).** The ladder is alive again (2 problems) but **every D0 on it is `watched`** — a pattern you watched is not a pattern you own. This week fixes the *quality* of the reps, not just the count.
 
 ## This week's 3 outcomes (max 3 — done or NOT done)
 
-- [ ] **DSA back on the ladder.** Minimum 3 D0 problems solved and logged in `learning/dsa/queue.md` by Sunday. Queue has been empty since setup — this is the real reset, not just a plan.
-- [ ] **AdSense earning.** *(Carried — externally gated, not avoidance.)* JsonBeam was rejected for low-value content 2026-07-08, fixed + redeployed same day; re-review clock running. GradeJar separate, still `GETTING_READY`. Done = at least one site shows `READY` with ads filling, or — if still pending Sunday — confirmed clean status on both with no new rejections sitting unanswered.
-- [ ] **Kesri Enterprise Phase 3 moves for real.** Two concrete pieces: (1) flip off Cloudflare's managed robots.txt on kesrienterprise.com — 5 min, currently blocking ClaudeBot + Gemini grounding; (2) actually send the client questionnaire (drafted for months at `<repo>/CLIENT-QUESTIONNAIRE.md`) — it's the longest lead time in the engagement and blocks the whole trust layer.
+- [ ] **DSA quality gate.** *(Carried — the one carry. Last week died at 2 of 3 on lost capacity, not avoidance.)* 3 new D0s banked, **minimum 2 tagged `solo` or `hinted`**, AND every due revision cleared on time. A third `watched` D0 does not count toward this — the tag is the outcome, not the number.
+- [ ] **Machine-coding produces its first real rep.** Counter (Phase 1, order 1) reaches P0 green, session ingested, graded against the rubric, `profile.md` written. The system was built 07-14 and has produced **zero reps in 5 days** — either it starts producing or it's theater.
+- [ ] **Kesri Phase 3, verified over the wire.** Not "logged as done" — *checked in production.* (1) Flip off Cloudflare's managed robots.txt and confirm with `curl -s https://kesrienterprise.com/robots.txt` showing no `BEGIN Cloudflare Managed content` block; (2) Google Business Profile created/claimed; (3) the directory board from `/client-findable` started. Each piece proven live before it's ticked.
 
 ## Today — ONE must-ship
 
 > The single thing that, if you do nothing else today, makes the day count.
 
-- **Date:** Fri Jul 17
-- **Must-ship:** Merge Sorted Arrays D2 cleared and logged (overdue from 07-16).
-- **Today's plan:** First day of the swapped schedule — `interview-qa` at 11:00am, `reading` at 11:45pm. `dsa` = Merge Sorted D2 first (overdue, ~15 min), then **Move Zeroes as D0 #3 — must land `solo`/`hinted`** (both banked D0s are `watched`; a third watched D0 closes outcome 1 on paper and proves nothing). `machine-coding` = **Counter** (Phase 1 order 1, 15-min target) — first real rep, block has produced zero in 3 days. `sysdesign` = close the object-storage gap, then bank Ch.1. `project` (8pm) = Kesri robots.txt flip + send the questionnaire — that's all of outcome 3, ~30 min.
-- **⚠ Sunday 07-19 collision:** both `watched` D0s force a **mandatory D5** on 07-19 — a weekend, on top of `/weekly-review`. Do them manually Sunday or they're overdue Monday.
-- **⚠ Must-ship risk (flagged at plan):** the must-ship is not a D0, and today is the last tracked weekday before the review. If the day collapses, it scores ✅ while outcome 1 dies at 2/3. Move Zeroes is the week-critical item.
+- **Date:** Sun Jul 19
+- **Must-ship:** **Both mandatory D5 revisions** — Best Time to Buy & Sell Stock + Merge Sorted Arrays. Both due today, both forced by `watched` D0s. It's the weekend and `/daily-log` doesn't run — do them manually or they're overdue Monday.
+- **Also today (5 min, not optional):** the Kesri robots.txt flip, then verify with curl. It's been "done" once already without being done.
 
 ## Parking lot (capture, do NOT act)
 
 Brain-dump here so it leaves your head. Triage it during the weekly review. Nothing here is this week's problem.
 
-- JsonBeam: on-page SEO pass (meta/FAQ/schema) needs a code-side decision — observe mode currently blocks it. Tarun's call, log in `decisions/log.md` if it changes.
-- AccentWallPlanner: pull real Semrush/Ahrefs volumes before committing any build weeks — build-ready but ungated on demand confirmation.
+- **AI crawlers are `Disallow: /` on all three older zones, not just Kesri.** ClaudeBot, GPTBot,
+  Google-Extended, CCBot, meta-externalagent blocked on **jsonbeam.com, gradejar.com AND
+  kesrienterprise.com**, all via the Cloudflare managed robots block. Same toggle as Kesri §0.1,
+  three zones instead of one. AccentWallPlanner is clean.
+  **Scope it honestly: P1, not P0.** Googlebot/Bingbot/`*` are `Allow: /` everywhere. Nothing is
+  de-indexed and no ranking is at risk. What's forfeited is AI-search citation, the moat in
+  `references/ai-search-visibility.md`.
+  Also note: `shipped.md` 2026-07-03 claims "robots.txt allows AI crawlers" under "Phase 0 visibility
+  CLOSED". That claim is false in production and the entry needs a correction stamp.
+  Found by `/verify-live` on its first run, 2026-07-19. Re-check any fix with
+  `node scripts/verify-live.mjs`, never by eye.
+
+<!-- Cleared 2026-07-19:
+     · JsonBeam on-page SEO pass → handed to /marketing (it's the only property with real search
+       traction: avg position 8.6, 33% CTR). Still needs Tarun's code-side decision on observe mode.
+     · AccentWallPlanner Semrush/Ahrefs volume gate → CONVERTED. The site shipped without the gate
+       ever firing. Paid-tool gate killed; replaced with a free live-GSC demand check (~2026-08-09,
+       2-3 weeks after indexing) before any further content investment. Logged in decisions/log.md.
+     · AdSense "confirmed clean status" outcome → KILLED as a board item. Externally gated with no
+       action available; it belongs in /site-report, not in the 3 outcomes. -->

@@ -499,3 +499,83 @@ Two decisions were his and both improved the design:
 **Should feed:** `/adsense-ready` — the post-rejection remediation path should state this outright, since the skill currently has no guidance for "fixes ready, review already in flight."
 
 **Owner:** Tarun.
+
+## 2026-07-19 — Converted the AccentWallPlanner demand gate from a paid-tool check to a live-GSC check
+
+**Decision:** Killed the "pull real Semrush/Ahrefs volumes before committing build weeks" gate on
+AccentWallPlanner. Replaced it with a free, dated check against live Search Console impression data
+(~2026-08-09, 2-3 weeks after indexing) to be run **before any further content investment** in the site.
+
+**Why:** The gate was written 2026-07-10 and never fired. AWP went live 2026-07-19 — the build weeks
+were spent without the demand numbers ever being confirmed. A gate that gets bypassed without a
+decision is worse than no gate, because you'll trust it to stop you next time and it won't. Now that
+`/gsc-onboard` has AWP verified and reporting, real impression data is both free and more truthful
+than a Semrush estimate. The gate moves from pre-build (already moot) to pre-content-investment
+(still live and still consequential).
+
+**What would change my mind:** if GSC shows near-zero impressions at the 08-09 check, the honest read
+is that the niche was never there — and that's a kill signal for further investment, not a prompt to
+buy a Semrush seat to confirm what GSC already said.
+
+**Alternatives considered:** (a) kill the gate outright and just log the bypass — rejected, more spend
+is still ahead of this site; (b) keep it and pull the volumes anyway — rejected, it's paid, slower,
+and less truthful than the live data now flowing.
+
+**Owner:** Tarun.
+
+## 2026-07-19 — Removed "AdSense status" from the weekly outcome board
+
+**Decision:** AdSense approval status no longer occupies one of the 3 weekly outcomes. It moves to
+`/site-report` as a tracked metric.
+
+**Why:** It scored ✅ this week on the clause "confirmed clean status with no new rejections sitting
+unanswered" — an outcome that cannot be failed as long as nothing bad happens to you. That's a status
+check wearing an outcome's costume, and it consumed a third of the board while requiring no action.
+Both sites sit at `GETTING_READY` and the only real lever (content depth, de-doorwaying) is already
+handled inside product work.
+
+**What would change my mind:** an actual rejection landing. A rejection *is* actionable and would earn
+a board slot immediately via `/adsense-ready recover`.
+
+**Owner:** Tarun.
+
+## 2026-07-19 — Built /verify-live: production, not a status file, is the source of truth
+
+**Decision:** Scoped and shipped the wire-truth checker via `/level-up`. `scripts/verify-live.mjs` +
+`.claude/skills/verify-live/SKILL.md`. It asserts 8 house invariants against production for all four
+live domains and prints only the disagreements. **It reports; it never fixes.**
+
+**Method spec (3Ms):**
+- **Constraint:** trust bottleneck. Weekly-review scoring, client phase advancement and AdSense timing
+  all read from files that can be wrong. At 1 client I catch it; at 5 I won't — and CLAUDE.md rule #1
+  for clients is *never invent a fact about a client*.
+- **EAD:** not eliminable (not-checking is what broke); ~95% deterministic, so Automate with **zero AI step**.
+- **Process:** trigger = manual command · sources = production HTTP only · transform = fetch→normalize→assert
+  · decisions = per-assertion pass/fail, exit 1 on any P0 · destination = stdout.
+- **Autonomy: L1.** Deliberately not L3/L4. An auto-fixer recreates the exact disease — a fourth thing
+  that looks done. The machine owns finding drift; I own fixing it.
+- **KPI:** bucket = less cost. Metric = status-vs-production disagreements surviving to a weekly review
+  or a client. Baseline 5 in ~8 days. Target 0.
+
+**Why now:** five documented incidents in eight days. Three Kesri robots.txt claims that disagreed with
+production (one required a correction stamp in `shipped.md`), plus two stale `connections.md` rows found
+in the 07-19 audit. My stated fix was *more manual discipline* — which is what had already failed three times.
+
+**What it found on its first run:** `shipped.md` 2026-07-03 records "robots.txt allows AI crawlers" as
+part of "Phase 0 visibility CLOSED" for both products. **That claim is false in production.** ClaudeBot,
+GPTBot, Google-Extended, CCBot and meta-externalagent all carry `Disallow: /` on jsonbeam.com,
+gradejar.com AND kesrienterprise.com — not just Kesri, which is the only site the boards ever flagged.
+Source is the Cloudflare managed robots block on all three. AccentWallPlanner, built later, is clean —
+which is why it passed its 07-19 verification. Classic search is unaffected everywhere; nothing is
+de-indexed. This is the AI-search moat being off across the whole older portfolio, not a ranking emergency.
+
+**Discipline note:** the checker's first version produced 6 P0 "failures", of which **all 6 were checker
+bugs** — it hardcoded `/sitemap.xml` (Astro emits `sitemap-index.xml`) and scored the mere presence of
+the Cloudflare managed block as P0 (its default content is `Allow: /`). Caught by `curl`-ing production
+before trusting the tool. Banked as a rule in the SKILL.md: verify the checker before trusting it, or it
+becomes another confident file that's wrong.
+
+**What would change my mind:** if the invariant list starts growing speculatively rather than from real
+incidents, it becomes a maintenance tax and I'll prune it back to the ones that have actually fired.
+
+**Owner:** Tarun.

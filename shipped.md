@@ -6,15 +6,22 @@
 
 ## Streak
 
-- **Weeks reviewed in a row:** 1
-- **Total things shipped:** 24
+- **Weeks reviewed in a row:** 2
+- **Total things shipped:** 27
 
 ## Log (newest on top)
 
 <!-- Format: ## YYYY-MM-DD — one line on what you shipped -->
 <!-- Example: ## 2026-06-28 — Deployed dark-mode toggle to Jsonbeam -->
 
-## 2026-07-17 — Kesri Enterprise Phase 3: flipped off Cloudflare's managed robots.txt (unblocks ClaudeBot + Gemini grounding) and sent the client questionnaire (longest-lead-time item in the engagement) — both concrete pieces of this week's outcome 3, done
+## 2026-07-19 — AccentWallPlanner (bet #3) LIVE at accentwallplanner.com + fully onboarded to search — GSC domain-verified via DNS TXT, sitemap submitted, Bing + IndexNow registered, added to .env so /site-report tracks it. Verified over the wire at the 07-19 review: HTTP 200, clean robots.txt (Mediapartners-Google explicitly allowed), GSC + Bing both reporting.
+
+## 2026-07-19 — Built /gsc-onboard (skill + idempotent dry-run script + reference) — automates live-domain → indexed-domain: DNS-TXT verification through the Cloudflare API, property registration, sitemap submission, junk-sitemap cleanup, Bing SubmitUrlbatch, IndexNow. Deliberately refuses to automate Request Indexing (no public API; the Indexing API is JobPosting-only and off-policy on an account under review).
+
+## 2026-07-17 — Built the /reading track (skill + rules.md artifact + book file + late-slot intake ritual) — turns the 11:45pm reading block into ONE tested rule with a 14-day verdict date, instead of takeaways that steer nothing.
+
+## 2026-07-17 — Kesri Enterprise Phase 3: sent the client questionnaire (the longest-lead-time item in the engagement, drafted for months)
+> ⚠️ **Corrected 2026-07-19 at weekly review.** This entry originally also claimed Cloudflare's managed robots.txt had been flipped off. It had not. Verified over the wire on 07-19: the managed block is still injecting `Disallow: /` for ClaudeBot, GPTBot, Google-Extended, CCBot and meta-externalagent on kesrienterprise.com. The toggle either didn't save or the wrong control was changed. Outcome 3 scored NOT done. **Third time a Kesri status file disagreed with production — verify over the wire, always.**
 
 ## 2026-07-16 — Fixed a real bug in the /teach loop: it was grading first-contact vocabulary (TTL/LRU/SPOF/resharding) as "unfixed gaps" against terms it had only name-dropped, never taught. Banked a teaching-calibration rule in NOTES.md + wrote lessons/0001b-backend-primitives.html to actually teach the three clusters. Caught by pushing back on my own grader.
 
