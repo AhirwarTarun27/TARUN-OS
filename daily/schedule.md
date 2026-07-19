@@ -52,4 +52,10 @@ but they never count toward the daily N/7. `plan` and `wrap` are the ritual itse
   dense book matters, it needs a morning block or it doesn't get read. See `learning/reading/README.md`.
 - **Office blocks are opaque.** Track ✓/✗ adherence only. Never ask for or log thinksys work
   content — the employer boundary in `CLAUDE.md` holds inside the daily log too.
+- **The .NET track runs inside the office blocks** (added 2026-07-18). Management assigned .NET
+  Framework backend work, so the learning for it is paid for with **employer hours**, not with
+  job-hunt hours. Workspace: `learning/dotnet-backend/` (`/teach`). At wrap, log only *that* a
+  session ran and which lesson number — never work content. **It must never take `dsa`,
+  `machine-coding`, `sysdesign`, or `interview-qa`.** Those are the job-hunt engine and outrank it.
+  If .NET starts eating them, flag it at `/weekly-review` as a failure, not as progress.
 - **Weekends:** no schedule, no log. If you work a weekend, log it manually — the ritual won't prompt.

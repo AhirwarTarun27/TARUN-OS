@@ -439,3 +439,63 @@ Two decisions were his and both improved the design:
 **Pipeline note:** the downstream pipeline (`/explore-project`, `/pick-stack`, `/design-architecture`, `/adsense-ready`) is AdSense/static-shaped. A full-stack subscription SaaS needs it adapted — backend/DB/auth/billing, **cost-to-serve as a first-class gate**, no AdSense gate, and dev-audience distribution (GitHub + Show HN + IndieHackers + SEO, not the AdSense `/marketing` engine). Adapt at scope time, don't force-fit.
 
 **Owner:** Tarun.
+
+---
+
+## 2026-07-18 — .NET Framework track runs on employer time only, never a job-hunt block
+
+**Decision:** Management assigned Tarun to **.NET Framework 4.x (legacy)** backend work. Built a `/teach` workspace at `learning/dotnet-backend/` — a **translation course** (Node → .NET), not a backend course — with a spine project he builds alongside every lesson (**HelpDesk API**: Web API 2 + EF6 + LocalDB, at `MyProjects/HelpDeskApi/`). 10 sessions, Read → Write → Ship, ~2 working weeks. **The track runs in the `office-am` (3:30-5:30pm) and `office-pm` (10:00-11:30pm) blocks only.** Recorded in `daily/schedule.md`.
+
+**Why:** This collides head-on with Priority 1. Tarun is in an **active job switch** (frontend-heavy full-stack, 2-3 month target, declared 2026-07-07) and .NET Framework 4.x is legacy — it is **not** the stack he is interviewing for, and it is close to the least transferable thing he could be spending hours on right now. His day is already 100% allocated, so the track could only come from somewhere. Management ordered it, so it is **work**, so it is paid for with **employer hours** — not with the four daily hours he is spending to leave. The day job is the floor that de-risks the switch; keeping it stable is the point, and being useful in the new stack is how it stays stable.
+
+**Scope discipline:** the goal is **time-to-productive, not mastery**. "Learn .NET" is a 6-month project. "Be dangerous in an existing .NET codebase" is ~2 weeks, because the backend *concepts* already transfer from Node — the gap is C# vocabulary and .NET conventions. Everything that maps cleanly gets one row on `reference/node-to-dotnet.html` and zero lesson time. The sessions are spent almost entirely on the four places the Node instinct is actively **wrong**: (1) the threading model — Node's single thread was silently protecting every shared variable he has ever written; (2) `.Result`/`.Wait()` **deadlocking** on ASP.NET Framework, a bug that does not exist in .NET Core so modern advice will never warn him; (3) DI service lifetimes; (4) deferred execution / `IQueryable`.
+
+**Hard constraint discovered:** .NET Framework 4.8 caps at **C# 7.3** (no records, top-level statements, `init`, switch expressions, file-scoped namespaces). Effectively all C# written online since 2020 targets .NET 5+ and will not compile for him. Every snippet shown must be dialect-checked. Environment verified the same day — VS 2022 + VS 2019, 4.8 targeting pack, SQL Server LocalDB, SSMS 22 all present, so there is **no setup gate**.
+
+**The failure mode being guarded against:** .NET quietly expanding into `dsa` / `machine-coding` / `sysdesign` / `interview-qa` **because it has a boss attached to it and the job hunt does not**. Urgency beating importance. The realistic four-week bad outcome is a polished HelpDesk API next to a DSA queue that went dark again — on a 2-3 month clock that has already had one 5-day blackout (see 2026-07-14). **If that starts happening it gets named at `/weekly-review` as a failure, not accepted as progress.**
+
+**What would change my mind:** if work moves to **.NET Core / .NET 8-9**, the calculus flips — modern .NET is a genuinely marketable full-stack backend and could earn real prep time rather than only employer time. Revise `MISSION.md` if that happens. Conversely, if the track ever starts costing job-hunt blocks, cut it back to the bare minimum that keeps work unblocked.
+
+**Pedagogical call:** build-alongside, always — Tarun's own words: *"just the theory is the thing which I will forget after some time. But when I learn by doing is the stuff then it's great thing."* Every lesson ends in a build step. Note the deliberate difference from `/machine-coding`, where the AI writes **no** code at all: here the AI shows syntax and patterns (he cannot type C# he has never seen), but **Tarun types every line that goes into HelpDesk API**. Never hand him a finished class to paste.
+
+**Alternatives considered:** *Take the `interview-qa` block* (rejected — that block feeds Priority 1 and was only just rescued from dying on 2026-07-17; spending it on legacy .NET would undo that fix within a week). *Add a new early block* (rejected — adds real hours to an already-full day, and the employer should pay for employer-assigned learning). *Split with weekend catch-up* (rejected for now — weekends are the only untracked recovery time, and Sunday already carries `/weekly-review`; revisit only if office blocks prove too fragmented). *A full comprehensive .NET course* (rejected — optimizes for the wrong variable; mastery of a stack he is leaving is the most expensive possible use of these hours).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-18 — GradeJar plus/minus GPA moves to thirds (3.67), and data-shape calls get made before adoption
+
+**Decision:** Changed `PLUS_MINUS` in `grade-core` from tenths to thirds — `A- 3.67 · B+ 3.33 · B- 2.67 · C+ 2.33 · C- 1.67 · D+ 1.33 · D- 0.67`. Whole letters, `A+` and `F` unchanged. Logged in the product repo as **D32**.
+
+**Why:** Two conventions exist and we shipped the one US registrars don't print. That made Gradejar disagree with the transcript it exists to match, which is the worst possible thing for a calculator's credibility. Search Console made the cost concrete rather than theoretical: `/gpa-scale` ranked for `0.67 gpa` at **position 47** while the page printed `0.7`. We were ranking for a number we did not contain.
+
+**Why now, and not later:** `store.ts:resolveScale()` resolves a saved class's built-in scale **id** against the live `BUILTIN_SCALES` object at read time. It does not freeze grade points at save time. So changing these values silently recomputes every saved plus-minus class. At today's ~zero adoption that is free. After real adoption it is a schema migration with a data-loss surface, against a product whose one guardrail is *"if a change risks losing a teacher's saved data, stop and rethink."* **Carry forward: any decision about the shape of persisted data is nearly free before adoption and expensive after. Make those calls at build time, on purpose, not when a user complains.** This is the same class of rule as `/adsense-ready` — design the constraint in early, don't retrofit it.
+
+**Explicitly not changed:** thresholds in prose (Latin honours bands, admissions cutoffs, "3.7+ is excellent"). Those are **cutoffs, not letter grade points**. Rewriting them to 3.67 would invent precision the sources don't have. Changing values is not the same as changing every number that looks like one.
+
+**What it surfaced:** two verify scripts that had been passing for the wrong reason — an assertion matching `3.3` as a **substring** of `3.33` (green, and meaningless), and the de-doorway regression guard fetching trailing-slash URLs that `trailingSlash: 'never'` turns into a local 404, so **it had not actually been running**. Plus 22 latent `astro check` errors, invisible because `astro build` does not typecheck. **Carry forward: a gate nobody has watched fail is not known to work.** Add `astro check` to the definition of done in every Astro product.
+
+**Alternatives considered:** *Keep tenths and change only the prose* (rejected — the engine would still be wrong, and every saved class with it). *Support both conventions as a user toggle* (rejected for now — real optionality, but it multiplies the persisted-data surface for a preference almost no teacher knows they have; revisit only if users ask). *Defer until after the AdSense verdict* (rejected — the migration cost only goes up, and the correction helps the page that is currently ranking for the wrong number).
+
+**Owner:** Tarun.
+
+---
+
+## 2026-07-18 — Deploying **during** an AdSense review is the safe direction, not the risky one
+
+**Decision:** When fixes are ready and an AdSense review is in flight, **deploy immediately**. Do not hold changes back waiting for the verdict. Applies to every product in the pipeline.
+
+**Why:** Google reviews the **live site**, crawled whenever the application reaches the queue. There is no snapshot taken at apply time and no penalty for changing the site mid-review. So holding fixes back does not protect anything — it guarantees the reviewer judges the version that already failed. The intuition that "don't touch it while they're looking" is safe is exactly backwards, and it is an expensive instinct: each rejection burns a review cycle measured in weeks.
+
+**What triggered it:** on 2026-07-18, with review #2 already submitted, production was verified over the wire to be serving the new `/ez-grader` content but **not** the `/gpa-scale` + `/gpa-conversion` fixes — the two pages most exposed to a "low value content" verdict were sitting in the queue in their pre-fix state.
+
+**The real risk, correctly named:** not *changing* the site during review, but a **broken** site during the crawl. "Site unavailable" is an actual rejection reason. So the gate is the full verify suite plus a build, then deploy, then confirm the live URLs serve. Not delay.
+
+**Carry forward, three rules:** (1) **Verify production over the wire, never from a status file** — the split state above was invisible to every board in the repo. (2) **A client-side absence does not prove a dashboard setting is off** — Funding Choices was wrongly flagged as an urgent blocker from a probe that found no `__tcfapi`, when Google simply does not serve the CMP until a site is approved. (3) **Do not re-apply just because you deployed** — the existing review picks up the new content on its own.
+
+**Alternatives considered:** *Hold everything until the verdict lands* (rejected — the reasoning above; it optimises for a penalty that does not exist while accepting a real cost). *Deploy only the content fixes and hold engine changes* (rejected — splitting a green working tree into partial deploys adds risk for no benefit once the whole tree passes the gate).
+
+**Should feed:** `/adsense-ready` — the post-rejection remediation path should state this outright, since the skill currently has no guidance for "fixes ready, review already in flight."
+
+**Owner:** Tarun.

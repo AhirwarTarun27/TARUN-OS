@@ -177,7 +177,46 @@ Then submit the contact form once, by hand, solving the real Turnstile. **This c
 
 5. **The redirect ruleset phase is `http_request_dynamic_redirect`, kind `zone`.** Not `http_request_redirect`, which is account-level Bulk Redirects and a different product. Getting this wrong produces a rule that never fires. Even the docs summaries conflate them.
 
-6. **A DNS record can be correct and still NXDOMAIN on one resolver.** Negative caching from before the record existed. Check `1.1.1.1` and `8.8.8.8` before concluding anything is broken. We chased a phantom `www` failure that was already working fine.
+6. **A brand-new domain NXDOMAINs on your own resolvers for hours after go-live, while the site
+   is perfectly live for everyone else. Check the domain's AGE before debugging anything.**
+
+   accentwallplanner.com (2026-07-19): the site was serving 200s worldwide within 20 minutes of
+   delegation, but Chrome showed `DNS_PROBE_FINISHED_NXDOMAIN` on the office network **and** on
+   mobile data. Nothing was misconfigured. The domain was 26 minutes old. Fast public resolvers
+   (1.1.1.1, 8.8.8.8) pick up a new delegation in minutes; ISP, corporate and mobile-carrier
+   resolvers lag anywhere from an hour to a day, and many had cached "does not exist" from the
+   window before the nameservers were repointed — which was genuinely true at the time.
+
+   **Get the domain's age from RDAP first. It answers the question in one call:**
+   ```bash
+   curl -s https://rdap.verisign.com/com/v1/domain/EXAMPLE.COM | tr ',' '\n' \
+     | grep -iE '"status"|eventAction|eventDate'
+   ```
+   That also confirms there is no `clientHold` / `serverHold`. A registrar suspension is the one
+   thing that really does kill a domain globally, and from the browser it looks identical to
+   propagation lag. `client transfer prohibited` alone is normal.
+
+   **Then prove the site is up from outside, and stop touching DNS:**
+   ```bash
+   nslookup example.com 1.1.1.1                        # and 8.8.8.8, 9.9.9.9
+   nslookup example.com <ns>.ns.cloudflare.com         # the authoritative answer
+   curl -s --resolve example.com:443:<cf-ip> https://example.com -o /dev/null -w '%{http_code}\n'
+   ```
+   `--resolve` bypasses DNS entirely and proves what the server actually serves. Two more that
+   run from **outside** the network, for when every local path is poisoned: WebFetch
+   `https://dns.google/resolve?name=example.com&type=A` (`"Status":0` means NOERROR) and WebFetch
+   `https://r.jina.ai/https://example.com`, which fetches the page server-side.
+
+   **Do not "fix" correct records during this window.** Editing them changes nothing about the
+   wait and risks breaking a working config. `ipconfig /flushdns` does nothing either — it clears
+   the Windows stub cache, never the upstream resolver's. Mid-propagation a resolver can return
+   AAAA-only or otherwise partial answers for a few minutes; that is the record arriving, not a
+   fault. The honest answer is "wait", usually 1-4 hours.
+
+   **Do not narrate a theory as the cause.** On this incident the guess was corporate
+   newly-registered-domain filtering, which fit the office network and was then contradicted by
+   mobile data failing the same way. Age plus an outside-the-network fetch settles it with
+   evidence; a plausible story just sends the next hour in the wrong direction.
 
 7. **Cloudflare returns HTTP 200 with `success: false`** on logical errors. Always check the envelope, never the status code.
 
@@ -188,6 +227,16 @@ Then submit the contact form once, by hand, solving the real Turnstile. **This c
 10. **DKIM/SPF/MX records must be `proxied: false`.** They are not HTTP. Orange-clouding them silently breaks mail.
 
 11. **`wrangler pages deploy` is wrong for this stack.** Cloudflare Pages is not supported by `@astrojs/cloudflare`. It is Workers with Static Assets, and the command is `wrangler deploy`. Any guide saying otherwise is out of date.
+
+12. **The placeholder DNS records are supposed to look wrong.** A finished zone dumps as:
+    ```
+    AAAA   example.com       -> 100::        proxied=true
+    A      www.example.com   -> 192.0.2.1    proxied=true
+    ```
+    `100::` is the IPv6 discard prefix, `192.0.2.1` is a documentation address, and nothing ever
+    connects to either. Because both records are **proxied**, Cloudflare's edge answers with real
+    anycast IPs — A *and* AAAA — no matter what the record holds. The apex having only an AAAA
+    record is normal for a Worker custom domain. Do not replace these with "real" IPs.
 
 ## Check your work
 
@@ -202,6 +251,8 @@ Then submit the contact form once, by hand, solving the real Turnstile. **This c
 | Resend domain verification | `resend.com/domains` |
 | Build + deploy history | → the Worker → Deployments |
 | Live checks (200 / 301 / robots) | `node scripts/cloudflare-go-live.mjs --step=verify --domain=...` |
+| Domain age + registrar hold | `curl -s https://rdap.verisign.com/com/v1/domain/<DOMAIN>` |
+| Is it live from outside your network | WebFetch `https://r.jina.ai/https://<domain>` |
 
 ## If a backend gets added later
 
@@ -213,6 +264,16 @@ The domain steps do not change at all. What changes is inside the Worker, and th
 - Turn on observability (`observability.enabled: true` in `wrangler.jsonc`) or you are debugging blind.
 - Free data stores if needed: D1 5GB, R2 10GB with zero egress, KV 1GB but only **1,000 writes/day** (that one is tight).
 - Backend on its own subdomain needs `--subdomain=api`. Same-origin `/api/*` on the same Worker needs nothing.
+
+## The site is live. Now go get it indexed.
+
+**Chain straight into `/gsc-onboard`.** A live domain that Google has never heard of earns nothing, and the indexing clock does not start until the sitemap is submitted — so every day between go-live and onboarding is a day of zero traffic that you cannot get back.
+
+```bash
+node scripts/gsc-onboard.mjs --domain=example.com --project-dir=../ExampleProject --apply
+```
+
+It verifies the domain by writing a DNS TXT through this same Cloudflare token, registers the Search Console property, submits the sitemap, sets up Bing and IndexNow, and registers the domain in `.env` so `/site-report` picks it up. Same contract as this script: dry run by default, idempotent, names every manual step.
 
 ## Rules
 

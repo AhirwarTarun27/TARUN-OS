@@ -17,11 +17,40 @@ weeks and indexing takes weeks** — the seasonal pages must go live NOW, not in
 
 **Sprint priorities, in order:**
 
-- [ ] **P1 — BUILD: need-on-final + gradebook-setup pSEO set** (pulled forward from Days
-  31-60 — hardest deadline in the portfolio: live + indexed by mid-Sept for both the
-  teacher window and Dec finals). AIOS builds the pages end-to-end in the GradeJar repo;
-  Tarun reviews + deploys. Target: drafts complete ~Jul 19 → `[ ] BUILT` · deployed +
-  indexing requested ~Jul 26 → `[ ] SHIPPED`.
+- [x] **P1a — BUILT 2026-07-18: static "N wrong out of M" reference matrix on `/ez-grader`.**
+  Replaces the `/ez-grader/N-questions` pSEO batch, which is **CANCELLED — see the doorway
+  ruling below.** Root cause found by reading the live HTML: `/ez-grader` ranks for
+  `10 wrong out of 50 questions` (pos 70) and `1 wrong out of 10` (pos 47) while the served
+  page contained the phrase "10 wrong" **zero times** — the full grade chart is rendered by
+  `<GraderIsland>`, a `client:load` Preact island, so the numbers exist only after hydration
+  where a crawler does not reliably see them. New `WrongOutOfTable.astro` computes the whole
+  matrix at build time from `grade-core` (never hardcoded) and emits it as static HTML.
+  Verified: build green 23 pages · 165/165 unit tests · the three target phrasings now
+  present in `dist/ez-grader.html` · page grew 90,277 → 95,086 bytes of crawlable content.
+  **Deploy still gated on the AdSense verdict.**
+
+- **⛔ CANCELLED — `/ez-grader/N-questions` pSEO batch (ruled 2026-07-18).** Fifteen routes
+  each mounting the same widget with a pre-filled total is **precisely the keyword-doorway
+  shape that D31 spent 2,722 lines removing** (`STATUS.md`: "unique prose over an identical
+  tool is still a keyword doorway"), and `ArticleBody.astro`'s own contract says templated
+  body copy with the keyword swapped is scaled-content abuse. Shipping it into an active
+  low-value-content re-review risks the site's second chance to earn anything. One deep
+  reference table serves every one of those long-tails without adding a route. The 07-18
+  queue's plan-edit proposal (swap ez-grader/N ahead of need-on-final) is therefore moot —
+  neither ordering was right, because the page set itself was the wrong artifact.
+
+- [ ] **P1b — BUILD: need-on-final + gradebook-setup set** (still the hardest deadline in
+  the portfolio: live + indexed by mid-Sept for the teacher window and Dec finals). **Must
+  clear the doorway test before a line is written:** each page needs a genuinely different
+  computation or input shape, not the same island behind different prose. Target: drafts
+  ~Jul 24 → `[ ] BUILT` · deploy gated on the AdSense verdict → `[ ] SHIPPED`.
+  **⚠ DEPLOY HOLD, added 2026-07-18:** build now, but **do not deploy until the AdSense
+  re-review verdict lands**. Two reasons: (1) pushing a batch of new calculator-variant
+  pages into the crawl during a pending low-value-content re-review is the exact pattern
+  that caused the rejection; (2) a ranked page on an unapproved site earns $0, so approval
+  is upstream of every dollar this set could make. Building is AIOS effort, so the
+  mid-September deadline does not slip — the pages sit ready to ship on approval day.
+  Not started as of 07-18 (second consecutive week at zero days of work).
 - [ ] **P2 — Directory one-time batch** (AIOS pre-fills 20 submissions; one Sunday sitting).
 - [ ] **P3 — July pitch follow-ups, dated:** `[ ]` Larry Ferlazzo (due ~Jul 10) ·
   `[ ]` Free Tech for Teachers (due ~Jul 14). One follow-up each, then stop (outreach SOP).
@@ -41,7 +70,12 @@ The 2026-07-03 audit found the site is invisible to every acquisition system. No
 matters until these five are done. All are Tarun tasks (auth required); AIOS preps each step.
 
 - [x] **Google Search Console, VERIFIED 2026-07-03:** property live (DNS TXT `google-site-verification=pSYsZ-QBCk3Sb0t1U-NplmKatcxv_krAfoBGwmyE4NU`). All 6 money pages (/, /ez-grader, /grade-calculator, /final-grade-calculator, /gradebook, /test-grade-calculator) indexed via URL Inspection — confirmed done. NOTE: pages were indexed through URL Inspection (the top search-bar tool), which does NOT populate the "Submitted sitemaps" list. Optional follow-up (won't speed already-indexed pages, only helps future discovery + coverage reporting): Sitemaps -> Add a new sitemap -> `sitemap-index.xml`.
-- [x] **AdSense:** gradejar.com is now listed in the account, status `GETTING_READY` (confirmed via `scripts/report.mjs` 2026-07-03). Review clock is running. Nothing else to do but wait.
+- [ ] **AdSense — REJECTED 2026-07-14, RESUBMISSION PENDING.** ⚠ This item was marked done on 2026-07-03 with "nothing else to do but wait." That was wrong by 07-14 and the marketing engine ran on the stale status for four days. Corrected 2026-07-18.
+  - **Verdict:** rejected for **low value content** on 2026-07-14 — same shape as JsonBeam on 07-08. API state is now `NEEDS_ATTENTION` (was `GETTING_READY`). Google reviewed the **pre-retrofit** site: it entered the queue 07-03, and the `/adsense-ready` audit did not run until 07-13. Process-ordering failure, not a skill failure — see the GradeJar repo `.claude/learning/STATUS.md`.
+  - **Fix status: BUILT + DEPLOYED + VERIFIED LIVE 2026-07-18.** `/how-it-works/` 200 · `/about/` names a real human · `http://` 301s to HTTPS (blocker F-1 done — STATUS.md is stale on this) · **0 `<ins>` units render** (correct review posture) · `ads.txt` 200 with the right pub ID.
+  - **Nothing open. Both gates cleared 2026-07-18.** (1) **Funding Choices was never actually open** — the GDPR message has read `Published` for gradejar.com since **3 Jul 2026** (jsonbeam.com since 22 Jun), confirmed in the AdSense dashboard. An earlier entry called this a live misstatement based on a client-side probe finding no `fundingchoices` script; that inference was wrong, because Google only serves the CMP once a site is approved and running ads. Retracted in `marketing/log.md`. (2) Recrawl confirmed and **Request review clicked 07-18** — API flipped `NEEDS_ATTENTION` → `GETTING_READY`. Verdict clock running; re-read from `scripts/report.mjs` every session.
+  - **Not before approval:** do not flip `PUBLIC_ADSENSE_LIVE=true`; do not swap in real ad-unit IDs (45 placeholders `1000000003`… would not fill anyway).
+  - **Standing rule this cost us:** AdSense status is re-read from `scripts/report.mjs` at every weekly session and never assumed from the last file that mentioned it.
 - [x] **Analytics:** wired 2026-07-03. Cloudflare zone-level Web Analytics (`httpRequests1dGroups`/`httpRequestsAdaptiveGroups`, edge-log traffic incl. bots) added to `scripts/report.mjs` — GradeJar now shows page views, daily uniques, top pages, top countries alongside JsonBeam's GA4 block. Details: `references/cloudflare-api.md` §5. GA4 property is still an option later (Option B) but not needed now.
 - [x] **Unblock AI-search crawlers:** confirmed via robots.txt fetch 2026-07-03 — `OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`, `Claude-SearchBot`/`Claude-User` are NOT blocked (fall through to wildcard `Allow: /`). Only pure-training bots (`GPTBot`, `ClaudeBot`, `CCBot`, `Bytespider`, `Google-Extended`, `Amazonbot`, `Applebot-Extended`, `meta-externalagent`) stay blocked, which is the desired state.
 - [x] **GSC wiring gap — DONE.** Confirmed live 2026-07-14: `scripts/report.mjs` returns real GradeJar Search Console data (934 impressions/wk, avg position 66.7).

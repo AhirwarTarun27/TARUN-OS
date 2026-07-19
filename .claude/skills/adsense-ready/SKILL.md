@@ -276,6 +276,38 @@ finding with an adjective does not.
       ```
 - [ ] Site added to the Sites list in the AdSense account.
 
+**URL canonicalization — one URL per page, and everything must agree on which one.**
+
+Four layers independently decide what a page's URL is: the **canonical tag**, the **sitemap**, the
+**internal links**, and the **host** (which one actually returns 200). A static-site generator and a
+CDN pick their defaults separately, so they disagree *silently* — the site looks perfect in a browser
+and every page is quietly behind a redirect. Verify the triangle with curl, per page type:
+
+```bash
+curl -s -o /dev/null -w "%{http_code} %{redirect_url}\n" https://domain/page   # want 200
+curl -sL https://domain/page | grep -o '<link rel="canonical"[^>]*>'           # want /page
+curl -s https://domain/sitemap-0.xml | grep -o '<loc>[^<]*</loc>' | head       # want /page
+```
+
+- [ ] **The canonical tag, the sitemap entry, and the URL that returns 200 are byte-identical.**
+      Trailing slash included. If the canonical names a URL that 3xx-redirects, it is wrong, even
+      though every page still renders fine for humans.
+- [ ] **No internal link redirects.** Every `href` in the nav/footer must already be the canonical
+      form. A site-wide off-by-one-slash makes Googlebot pay two requests for every link it follows,
+      which halves an already-tiny crawl budget on a new domain.
+- [ ] **Zero pages in "Discovered — currently not indexed" or "URL is unknown to Google."** A page
+      Google has never fetched cannot count toward the content depth the reviewer is judging. Pull
+      `lastCrawlTime` per URL from the API below — `NEVER` on a live, nav-linked page is a blocker,
+      not a curiosity.
+
+> **Gradejar, 2026-07-18.** Astro's default `build.format: 'directory'` emitted `/page/index.html`;
+> Cloudflare's default `auto-trailing-slash` therefore served `/page/` at 200 and 307'd `/page`. But
+> the canonicals and all ~120 internal links were slash-less, and `@astrojs/sitemap` followed the
+> build format. Result: 11 sitemap URLs filed by GSC as *"Alternative page with proper canonical
+> tag"*, every internal link a redirect, and **6 live nav-linked pages Google had never crawled at
+> all** — while the site scored perfectly on every existing check in this skill. Two framework
+> defaults, neither one wrong on its own.
+
 ### G. Content policy screen
 
 - [ ] Nothing illegal, infringing, scraped, counterfeit, dangerous, derogatory, or misrepresenting.
@@ -295,9 +327,33 @@ made twice (JsonBeam 2026-07-08, GradeJar 2026-07-14).
 - [ ] A-G all pass.
 - [ ] **Site is verified in Search Console and at least partially indexed.** Pull the number — don't
       eyeball it. If Google hasn't indexed it, the reviewer is looking at a site Google doesn't know.
+- [ ] **The index reflects the CURRENT deploy.** "Indexed" is not the bar — *indexed with the fixed
+      content* is. For every important URL, `lastCrawlTime` must be **later than the commit that fixed
+      it**. Deploying a fix and applying the same week means the reviewer is judging the version you
+      already know was rejected. This is the single most expensive ordering mistake in the file, and
+      it is invisible in both the repo and the AdSense dashboard.
 - [ ] Zero thin/templated pages indexed — or they are `noindex` **and** ad-free.
 - [ ] **Whatever is live right now is what gets reviewed.** Not what's in `main`, not what's in the
       working tree. **Deploy, then curl the live URLs, then apply** — in that order.
+
+**Pull the real index state — never the GSC UI's summary tiles.** The URL Inspection API returns the
+per-URL truth, including the two fields that expose a canonicalization split. Auth is the same service
+account used for Search Console reporting (see `scripts/report.mjs`, `googleSAToken`), scope
+`https://www.googleapis.com/auth/webmasters`:
+
+```
+POST https://searchconsole.googleapis.com/v1/urlInspection/index:inspect
+{ "inspectionUrl": "https://domain/page", "siteUrl": "sc-domain:domain" }
+```
+
+Read these four fields on every URL that matters:
+
+| Field | What it tells you |
+|---|---|
+| `coverageState` | `Submitted and indexed` = good. `Discovered - currently not indexed` = crawl budget. `Alternate page with proper canonical tag` = a canonicalization split, go back to F. |
+| `userCanonical` vs `googleCanonical` | Disagreement means Google overrode your canonical. Agreement on a URL you did **not** submit in the sitemap is the silent trailing-slash bug. |
+| `lastCrawlTime` | Compare against the fix commit date. Earlier = the fix is invisible to the reviewer. `NEVER` = the page does not exist to Google. |
+| `robotsTxtState` | Catches a CDN-injected managed block the repo's `robots.txt` won't show. |
 
 **The gate only counts if it fires before the button.** The Apply button is in a dashboard; this skill
 cannot press it and cannot un-press it. So the gate's real output is a sentence spoken to the human:
@@ -366,7 +422,29 @@ number or a ruling the builder can fail — never as an adjective they can argue
      with no publisher content. Build with ads forced live and assert **0 script tags and 0 `<ins>`**
      on every ad-free route.
 
-6. **Pre-application gate — written as an instruction to the HUMAN.** The Apply button lives in a
+6. **The URL contract — decide the trailing slash at scoping, in writing.** One URL per page, and
+   **four layers must be made to agree on it**: the canonical tag, the sitemap, every internal link,
+   and the URL the host actually serves at 200. The SSG and the CDN each default this independently,
+   so "just leave the defaults" is how they end up disagreeing. Write the ruling into the contract:
+
+   > **Canonical URL form: `<slash-less | trailing-slash>`.** Set it explicitly in the framework
+   > config (Astro: `trailingSlash` + `build.format`; Next: `trailingSlash`), confirm the host's
+   > behaviour matches (Cloudflare Workers Static Assets defaults to `auto-trailing-slash`, which
+   > follows the emitted file layout), and write every internal `href` in that form.
+
+   **The acceptance test, run against the live site before launch — three commands that must return
+   the same string:**
+
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}\n" https://domain/page      # 200, not 3xx
+   curl -sL https://domain/page | grep -o '<link rel="canonical"[^>]*>'
+   curl -s https://domain/sitemap-0.xml | grep -o '<loc>[^<]*</loc>' | head
+   ```
+
+   Cheap to set at scoping. Expensive later: fixing it after launch means re-canonicalizing every
+   indexed URL, and it will not show up in any content audit, word count, or Lighthouse score.
+
+7. **Pre-application gate — written as an instruction to the HUMAN.** The Apply button lives in a
    dashboard, not in git: **no skill can gate it, only the person can.** So the contract must say, in
    words the builder will read:
 
@@ -420,11 +498,27 @@ has already said no once. Hunt specifically for:
 > Google has *already crawled*. Request it too early and you are resubmitting the exact site that was
 > just rejected, and you burn the cycle.
 
-1. **Deploy.** Confirm with `curl` that the live HTML actually changed.
+1. **Deploy.** Confirm with `curl` that the live HTML actually changed. Diff the live page against the
+   local build (`md5sum`) rather than trusting the deploy log — a Git-integration build that silently
+   never fired looks identical to a successful one from inside the repo.
 2. **Search Console → Request indexing** on every changed URL. Resubmit the sitemap.
-3. **Wait for the recrawl — 3–5 days.** Confirm a fresh crawl date in GSC. This step has no shortcut
-   and no substitute.
+3. **Wait for the recrawl — 3–5 days.** Confirm it with the **URL Inspection API** (Group H), not by
+   eyeballing GSC: `lastCrawlTime` must be **later than the fix commit** on every URL that matters.
+   This step has no shortcut and no substitute.
 4. **Only then** tick *"I confirm that I have fixed the issues"* and Request review.
+
+**If they already clicked Request review before step 3 — which is the common case, because the button
+is right there in the rejection email — do not panic and do not withdraw.**
+
+- Check the live state first: AdSense Management API, `GET /v2/{account}/sites`. `GETTING_READY` means
+  the review is **in flight**, not failed. Nothing is decided yet.
+- **Let it run.** There is no "cancel and resubmit properly" that comes out ahead; a withdrawal still
+  burns the cycle, and re-applying restarts the same queue.
+- **Ship the fixes anyway, during the review.** Anything that doesn't change an already-indexed URL is
+  safe to deploy mid-review and can only improve what a re-crawl finds.
+- **Pull `lastCrawlTime` per URL now and write the dates down.** If review #2 comes back rejected,
+  that table is the evidence that it was judged on stale content — which is a far stronger position
+  for review #3 than starting over on a guess. Gather it *before* the verdict, not after.
 
 **4. Say the number.** Tell the user how long this takes and do not soften it. A re-review is days to
 weeks. The instinct after a rejection is to click the button immediately; that instinct is the trap,
@@ -453,7 +547,14 @@ and naming it is part of the job.
    explicit sentence *"you may now apply"* — if you didn't say it, they aren't cleared.
 9. **After a rejection, the recrawl is the whole game.** "Request review" reviews what Google has
    already crawled. Deploy → request indexing → **wait 3–5 days** → then submit. Skipping the wait
-   resubmits the site that was just rejected.
-10. **Compliance and revenue are the same lever.** Every fix in groups B and C also raises
+   resubmits the site that was just rejected. **"Indexed" is not the bar — indexed with the *fixed*
+   content is.** The pass condition is a number: `lastCrawlTime` later than the fix commit, per URL.
+10. **One URL per page, and four layers must agree on it.** Canonical tag, sitemap entry, internal
+    links, and the URL that actually returns 200. Framework and CDN defaults decide this
+    independently and disagree silently — the site renders perfectly in a browser while every page
+    sits behind a redirect and Googlebot burns half its budget on 307s. This is invisible to prose
+    audits, content-depth counts, and Lighthouse. **Only curl catches it.** Check it at build time,
+    not after GSC emails about it.
+11. **Compliance and revenue are the same lever.** Every fix in groups B and C also raises
     pages-per-session, which is a direct multiplier on RPM. Never present this work as a tax — it is
     the business model.

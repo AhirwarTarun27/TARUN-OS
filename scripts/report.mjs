@@ -473,15 +473,26 @@ async function adsenseReport(token) {
 console.log(`\n${c.bold}${c.cyan}═══ AIOS Dashboard ═══${c.reset}  ${c.dim}${new Date().toLocaleString()}${c.reset}`);
 if (REALTIME) console.log(`${c.dim}Realtime mode on${c.reset}`);
 
+// Every site is discovered from .env rather than hard-coded, so a domain that
+// /gsc-onboard adds shows up here on the next run with no code change. The label
+// is derived from the var suffix: GSC_SITE_URL_ACCENTWALLPLANNER → Accentwallplanner.
+function sitesFrom(prefix) {
+  return Object.keys(env)
+    .filter(k => k.startsWith(prefix) && env[k])
+    .map(k => {
+      const slug = k.slice(prefix.length);
+      return { label: slug.charAt(0) + slug.slice(1).toLowerCase(), value: env[k] };
+    })
+    .sort((a, b) => a.label.localeCompare(b.label));
+}
+
 try {
   const [gaToken, asToken, gscTok] = await Promise.all([ga4Token(), adsenseToken(), gscToken()]);
   await ga4Report(gaToken);
-  await cfReport('GradeJar', env.CLOUDFLARE_ZONE_ID_GRADEJAR);
+  for (const s of sitesFrom('CLOUDFLARE_ZONE_ID_')) await cfReport(s.label, s.value);
   await adsenseReport(asToken);
-  await gscReport('JsonBeam', env.GSC_SITE_URL_JSONBEAM, gscTok);
-  await gscReport('GradeJar', env.GSC_SITE_URL_GRADEJAR, gscTok);
-  await bingReport('JsonBeam', env.BING_SITE_URL_JSONBEAM);
-  await bingReport('GradeJar', env.BING_SITE_URL_GRADEJAR);
+  for (const s of sitesFrom('GSC_SITE_URL_'))  await gscReport(s.label, s.value, gscTok);
+  for (const s of sitesFrom('BING_SITE_URL_')) await bingReport(s.label, s.value);
 } catch (e) {
   console.error(`\n${c.red}Fatal: ${e.message}${c.reset}`);
   process.exit(1);

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1 — The Shape of a .NET App</title>
+<link rel="stylesheet" href="../assets/course.css">
+<script src="../assets/quiz.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Lesson 01 · Phase 1 — Read</p>
+  <h1>The shape of a .NET app</h1>
+  <p class="subtitle">What the files are, where the app starts, and the one language constraint that will waste your afternoon if nobody tells you about it. Ends with a running endpoint.</p>
+</header>
+
+<div class="why">
+  <span class="callout-label">The win</span>
+  By the end of this session you can open an unfamiliar .NET Framework repo and answer three questions
+  without asking anyone: <strong>where does it start</strong>, <strong>what are all these files</strong>,
+  and <strong>where do dependencies come from</strong>. Plus you will have HelpDesk API returning JSON.
+</div>
+
+<h2>Start from what you own</h2>
+
+<p>You already know backend. HTTP, routing, middleware, ORMs, async, dependency graphs — all of that
+transfers. What you are missing is C# vocabulary and .NET's conventions. So this course never teaches
+you what a route <em>is</em>. It tells you what .NET calls it, then spends the real time on the places
+where your Node instinct is actively wrong.</p>
+
+<p>Three of those places are in this lesson.</p>
+
+<h2>1 · The layer above package.json</h2>
+
+<p>In Node, the top of your project is <code>package.json</code>. There is nothing above it. One package,
+one dependency tree, one thing.</p>
+
+<p>.NET has two layers above your files, and this is the first thing that makes a repo feel unfamiliar:</p>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head"><div>Node</div><div class="xlate-arrow"></div><div>.NET Framework</div></div>
+  <div class="xlate-row">
+    <div class="xlate-node">package.json</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">HelpDesk.Api.csproj — the project</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">(nothing above it)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">HelpDesk.sln — the solution</div>
+    <div class="catch">A solution groups several projects. Each project compiles to its own <strong>assembly</strong> — a <code>.dll</code>. Project A cannot use project B's code unless someone added an explicit reference. There is no <code>require('../other')</code> reaching across.</div>
+  </div>
+</div>
+
+<p>So when you open an enterprise .NET repo and see eight folders that each contain a <code>.csproj</code>,
+that is eight separately-compiled assemblies with a deliberate dependency graph between them. It is
+closer to a monorepo of eight npm packages than to one Express app with eight folders.</p>
+
+<div class="note">
+  <span class="callout-label">Why it matters on day one</span>
+  Your first instinct in a new repo will be to find "the main folder". There usually isn't one. Open the
+  <code>.sln</code>, look at the project list, and find the one whose name ends in <code>.Api</code> or
+  <code>.Web</code>. That is the entry point. Everything else is a library it consumes.
+</div>
+
+<h2>2 · You do not own main()</h2>
+
+<p>This is the big one, and it is genuinely disorienting coming from Node.</p>
+
+<p>In Node you write <code>node server.js</code>. Your code starts, you call <code>app.listen(3000)</code>,
+you own the process. You can see the whole lifecycle.</p>
+
+<p>In ASP.NET Framework, <strong>you never start a process.</strong> You compile a library. <strong>IIS</strong>
+— the Windows web server — loads your DLL into a worker process it controls, called an <em>app pool</em>.
+It decides when to start you, and it can recycle you at any time.</p>
+
+<div class="sbs">
+  <figure>
+    <figcaption>Express — you own it</figcaption>
+<pre><code>const app = express();
+
+app.get('/tickets', (req, res) =&gt; {
+  res.json(tickets);
+});
+
+app.listen(3000);
+<span class="tok-com">// you called listen.
+// you own the process.</span></code></pre>
+  </figure>
+  <figure>
+    <figcaption>Web API 2 — IIS owns it</figcaption>
+<pre><code>public class TicketsController
+    : ApiController
+{
+    public IHttpActionResult Get()
+    {
+        return Ok(tickets);
+    }
+}
+<span class="tok-com">// no listen(). no port.
+// IIS finds this and calls it.</span></code></pre>
+  </figure>
+</div>
+
+<p>Nothing in your code says "serve this on port 3000". The framework discovers your controller by
+convention and wires it up. That convention-over-configuration habit runs through all of .NET, and it
+is why the entry point is not obvious.</p>
+
+<p>Here is where it actually is:</p>
+
+<div class="arch">
+  <span class="node">IIS</span><span class="arrow">→</span>
+  <span class="node hi">Global.asax.cs</span><span class="arrow">→</span>
+  <span class="node">WebApiConfig.cs</span><span class="arrow">→</span>
+  <span class="node">routes</span><span class="arrow">→</span>
+  <span class="node">YourController</span>
+</div>
+
+<ul>
+  <li><strong><code>Global.asax.cs</code></strong> — <code>Application_Start()</code> runs once when the app boots. This is the closest thing to the top of your <code>server.js</code>.</li>
+  <li><strong><code>App_Start/WebApiConfig.cs</code></strong> — route setup and framework config. Called from <code>Application_Start</code>.</li>
+  <li><strong><code>Controllers/</code></strong> — your handlers. Discovered by naming convention, not registration.</li>
+</ul>
+
+<div class="tip">
+  <span class="callout-label">Habit worth building today</span>
+  In any unfamiliar .NET Framework repo, open <code>Global.asax.cs</code> first, then
+  <code>App_Start/</code>. Ten minutes there tells you more about how the app is assembled than an hour
+  of reading controllers.
+</div>
+
+<h2>3 · The C# 7.3 ceiling</h2>
+
+<p>This one is not conceptual. It is a practical constraint that will cost you an afternoon if you learn
+it the hard way.</p>
+
+<div class="trap">
+  <span class="callout-label">Read this before you google any C#</span>
+  <strong>.NET Framework 4.8 caps at C# 7.3.</strong> It is frozen — no new language features since
+  4.8.1 in August 2022. Meanwhile the language is at C# 13+, and effectively <em>all</em> C# written
+  online since 2020 assumes .NET 5 or later.
+  <br><br>
+  So you will google a problem, find a clean modern answer, paste it, and get a compiler error that
+  does not mention versions in any helpful way. The answer was not wrong. It was for a different .NET.
+</div>
+
+<p>The features you will hit most often, and their 7.3 equivalents:</p>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head"><div>Modern C# — will NOT compile</div><div class="xlate-arrow"></div><div>C# 7.3 — what you write</div></div>
+  <div class="xlate-row">
+    <div class="xlate-node">record Ticket(int Id);</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">class Ticket { public int Id { get; set; } }</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">namespace App;</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">namespace App { ... }</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">public int Id { get; init; }</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">public int Id { get; set; }</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">x switch { 1 =&gt; "a", _ =&gt; "b" }</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">switch (x) { case 1: ... }</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">string? name;</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">string name;   // nullable by default</div>
+    <div class="catch">Nullable <em>reference</em> types are C# 8. On 7.3 every reference type is already nullable and the compiler will not warn you. Note that <code>int?</code> is different and <strong>does</strong> work — nullable <em>value</em> types have been in the language since C# 2.</div>
+  </div>
+</div>
+
+<p>Practical filter: when you search, add <code>asp.net-web-api2</code> or "C# 7.3" to the query, and on
+Stack Overflow prefer answers tagged for the 4.x tree. Confirmed against
+<a href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-versioning">Microsoft's language versioning docs</a>.</p>
+
+<h2>4 · The compiler is your new feedback loop</h2>
+
+<p>In Node, you find out something is wrong by running it. Save, restart, hit the endpoint, read the
+stack trace. Your feedback loop is the runtime.</p>
+
+<p>In C#, most of that class of mistake is caught at <strong>compile</strong> time. Typo a property name,
+pass the wrong type, forget to handle a case — the build fails before anything runs. This feels slow at
+first because you cannot just save and refresh. It is not slow. It moved your bug reports from 3am
+production logs to your screen ten seconds after you typed it.</p>
+
+<p>The practical difference: <strong>build often.</strong> <code>Ctrl+Shift+B</code>. Treat a red squiggle
+the way you would treat a failing test, not the way you would treat a linter warning.</p>
+
+<h2>Check yourself</h2>
+
+<div class="quiz" data-correct="2">
+  <p class="quiz-q">You open an unfamiliar .NET Framework repo. Where do you look first to understand how the app boots?</p>
+  <ul class="quiz-opts">
+    <li><button>The Controllers folder, top file</button></li>
+    <li><button>The Web.config settings file</button></li>
+    <li><button>Global.asax.cs and App_Start</button></li>
+    <li><button>The largest .csproj in the sln</button></li>
+  </ul>
+  <div class="quiz-explain"><strong>Right.</strong> <code>Application_Start()</code> in <code>Global.asax.cs</code> is the closest thing to the top of your <code>server.js</code>, and it calls into <code>App_Start/</code> for route and framework setup. Controllers are discovered by convention afterwards, so they tell you what the app does but not how it is assembled.</div>
+</div>
+
+<div class="quiz" data-correct="1">
+  <p class="quiz-q">You paste a Stack Overflow answer using a <code>record</code> and the build fails. What happened?</p>
+  <ul class="quiz-opts">
+    <li><button>A NuGet package is missing here</button></li>
+    <li><button>Records need C# 9; you have 7.3</button></li>
+    <li><button>The namespace was not imported</button></li>
+    <li><button>Records only work inside classes</button></li>
+  </ul>
+  <div class="quiz-explain"><strong>Right.</strong> Records arrived in C# 9 with .NET 5. Framework 4.8 is capped at C# 7.3, so no NuGet package or import will make it work. Write a plain class with <code>{ get; set; }</code> properties instead.</div>
+</div>
+
+<div class="quiz" data-correct="3">
+  <p class="quiz-q">In a solution with eight projects, how does one project use another project's code?</p>
+  <ul class="quiz-opts">
+    <li><button>Relative path imports, as in Node</button></li>
+    <li><button>Anything in the sln is available</button></li>
+    <li><button>By matching namespace names only</button></li>
+    <li><button>An explicit reference must be added</button></li>
+  </ul>
+  <div class="quiz-explain"><strong>Right.</strong> Each project compiles to its own assembly and the dependency graph is explicit. A <code>using</code> statement is only shorthand for a namespace — it fails to compile unless the project reference already exists. This is why .NET repos have a deliberate layering that Node projects often do not.</div>
+</div>
+
+<div class="build">
+  <span class="callout-label">Build it — HelpDesk API, session 1</span>
+  <p style="font-family:var(--sans);font-size:0.93rem;margin-top:0">Type every line yourself. Do not paste. The
+  point of this block is that your fingers learn where the ceremony goes.</p>
+  <ol>
+    <li>Open <strong>Visual Studio 2022</strong>. Not VS Code — <code>dotnet new</code> cannot scaffold Framework web projects.</li>
+    <li><em>Create a new project</em> → <strong>ASP.NET Web Application (.NET Framework)</strong>. Careful: the list also contains "ASP.NET Core Web Application", which is the wrong .NET.</li>
+    <li>Name it <code>HelpDesk.Api</code>, solution name <code>HelpDesk</code>, location <code>Documents/Learning/MyProjects/HelpDeskApi</code>. Framework: <strong>.NET Framework 4.8</strong>.</li>
+    <li>Pick the <strong>Web API</strong> template.</li>
+    <li>Before writing anything: open <code>Global.asax.cs</code>, then <code>App_Start/WebApiConfig.cs</code>. Read them. Find the default route template. You are looking for <code>api/{controller}/{id}</code>.</li>
+    <li>Add <code>Models/Ticket.cs</code> — a plain class with <code>Id</code> (int), <code>Title</code> (string), <code>IsOpen</code> (bool). Properties with <code>{ get; set; }</code>, not fields, and not a record.</li>
+    <li>Add <code>Controllers/TicketsController.cs</code>, inheriting <code>ApiController</code>. One <code>Get()</code> method returning <code>Ok(...)</code> with a hardcoded list of two tickets.</li>
+    <li>Press <strong>F5</strong>. Navigate to <code>/api/tickets</code>.</li>
+    <li>Now break it on purpose: rename the class to <code>TicketController</code> (singular) and reload. Watch the route 404. Rename it back. That is convention-over-configuration biting, and it is worth feeling once.</li>
+  </ol>
+  <p class="ship">You see JSON at <code>/api/tickets</code>, and you can explain why that URL works without any route being written for it.</p>
+</div>
+
+<div class="note">
+  <span class="callout-label">Primary source for this session</span>
+  <a href="https://learn.microsoft.com/en-us/aspnet/web-api/overview/getting-started-with-aspnet-web-api/tutorial-your-first-web-api">Get Started with ASP.NET Web API 2 (C#) — Microsoft Learn</a>.
+  First-party, and correctly on the 4.x doc tree. If a tutorial you find opens with
+  <code>WebApplication.CreateBuilder(args)</code>, close it — that is .NET Core.
+</div>
+
+<h2>What is next</h2>
+
+<p>Lesson 2 goes into C# itself: reading a file top to bottom, properties vs fields, value vs reference
+types, and why enterprise .NET has an interface for everything. You will build the real Ticket, User,
+and Comment models.</p>
+
+<p>Before then, keep <a href="../reference/node-to-dotnet.html">the translation sheet</a> open. Sections 1
+through 3 are everything this lesson covered, compressed to a page.</p>
+
+<div class="ask-teacher">
+  <strong>Ask me anything from this lesson.</strong> Especially if the build step fought you — Visual Studio's
+  project templates change between versions, and "the option is not there" is a normal thing to hit, not a
+  sign you did it wrong.
+</div>
+
+<nav class="lesson-nav">
+  <a href="../reference/course-map.html">← Course map</a>
+  <a href="../reference/node-to-dotnet.html">Translation reference →</a>
+</nav>
+
+</div>
+</body>
+</html>

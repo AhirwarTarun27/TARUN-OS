@@ -20,6 +20,9 @@ not panic-actionable: don't spend budget chasing it before organic assets exist.
 
 - [ ] **M1 — Directory "Starter 5" batch** (drafts ready in `marketing/queue/2026-07-08.md`:
   AlternativeTo, SaaSHub, StackShare, Slant, Toolify). One sitting; one-time backlinks.
+  **DROPPED from the weekly queue 2026-07-18** per the carry rule — drafted 07-08, carried
+  once into 07-14, never confirmed submitted. Stays here as an open item available on
+  demand; it is no longer auto-queued. Copy is unchanged and still accurate.
 - [ ] **M2 — BUILD: privacy-audit flagship article** ("I checked what 10 online JSON
   formatters do with your data", network-tab receipts). AIOS writes it complete in the
   JsonBeam repo → `[ ] BUILT` · published on-site, canonical → `[ ] SHIPPED`.

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Node → .NET Framework — Translation Reference</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap wide">
+
+<header class="masthead">
+  <p class="eyebrow">Reference · .NET Framework Backend</p>
+  <h1>Node → .NET Framework 4.8</h1>
+  <p class="subtitle">The translation sheet. Keep this open while you read code at work. Green is what you already know. Blue is what it is called in .NET. The amber line is where the mapping <em>breaks</em> — that is the part worth your attention.</p>
+</header>
+
+<div class="note">
+  <span class="callout-label">Scope</span>
+  This sheet is for <strong>.NET Framework 4.8</strong> (Web API 2 / MVC 5 / System.Web), not .NET Core or .NET 8-9.
+  Where modern .NET differs in a way that will confuse you while googling, it is marked
+  <em>[Core differs]</em>. See <a href="course-map.html">the course map</a> for the session each row is taught in.
+</div>
+
+<h2>1 · Project and dependencies</h2>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head"><div>Node</div><div class="xlate-arrow"></div><div>.NET Framework</div></div>
+  <div class="xlate-row">
+    <div class="xlate-node">package.json</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">HelpDesk.Api.csproj</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">(no equivalent)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">HelpDesk.sln — the solution</div>
+    <div class="catch">Node has no concept above the package. A <code>.sln</code> groups several <code>.csproj</code> projects that compile into separate <strong>assemblies</strong> (.dll files) and reference each other at <em>compile</em> time. A project cannot use another project's code unless a reference is added explicitly. There is no <code>require('../other')</code> across projects.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">node_modules/</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">packages/ + bin/</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">npm install express</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">Install-Package Microsoft.AspNet.WebApi</div>
+    <div class="catch">Run from <strong>Package Manager Console</strong> in Visual Studio, not a terminal. NuGet also edits your <code>.csproj</code> and sometimes <code>Web.config</code> — it is not the inert dependency drop that npm is. <em>[Core differs: uses <code>dotnet add package</code> and a clean SDK-style csproj]</em></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">.env</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">Web.config</div>
+    <div class="catch"><code>Web.config</code> is XML, is <strong>committed to source control</strong>, and configures the web server as well as your app. Secrets do not belong in it. Changing it <em>restarts your application</em> — there is no equivalent of quietly editing <code>.env</code> and restarting nodemon.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">node server.js</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">IIS / IIS Express hosts your DLL</div>
+    <div class="catch">You do not own <code>main()</code>. There is no process you start that listens on a port. You compile a <strong>library</strong>, and IIS loads it into a worker process (an <em>app pool</em>) that it controls, and can recycle out from under you. This is the biggest mental shift in the whole list.</div>
+  </div>
+</div>
+
+<h2>2 · The language</h2>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head"><div>JavaScript</div><div class="xlate-arrow"></div><div>C# 7.3</div></div>
+  <div class="xlate-row">
+    <div class="xlate-node">const x = 5</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">var x = 5;   // still statically typed</div>
+    <div class="catch"><code>var</code> in C# is <strong>not</strong> <code>var</code> in JS. It means "infer the type at compile time and lock it in", not "any type". <code>var x = 5; x = "hi";</code> does not compile.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">module.exports = {}</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">public class / namespace</div>
+    <div class="catch">There are no free-floating functions. <strong>Every</strong> piece of code lives inside a class. A file's folder path and its <code>namespace</code> are conventionally kept in sync, but nothing enforces it.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">require('./x')</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">using HelpDesk.Core;</div>
+    <div class="catch"><code>using</code> imports a <em>namespace</em>, not a file, and it is only shorthand — the reference must already exist in the <code>.csproj</code>. Also: <code>using</code> has a completely unrelated second meaning as a statement (<code>using (var db = ...)</code>) that means "dispose this when the block ends".</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">{ id: 1, title: "x" }</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">new Ticket { Id = 1, Title = "x" }</div>
+    <div class="catch">No anonymous object literals flying around as your data model. You define a <code>class</code> first, always. This feels heavy for a week and then becomes the reason the compiler catches your typos.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">arr.map(x =&gt; x.name)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">list.Select(x =&gt; x.Name)</div>
+    <div class="catch">Nothing executes until the result is enumerated (<code>.ToList()</code>, <code>foreach</code>). This is <strong>deferred execution</strong> and it is the #1 LINQ surprise. See section 5.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">arr.filter / .reduce / .find</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">.Where / .Aggregate / .FirstOrDefault</div>
+    <div class="catch"><code>.First()</code> <em>throws</em> when nothing matches. <code>.FirstOrDefault()</code> returns <code>null</code> for classes, but <strong><code>0</code> for <code>int</code></strong> and <code>false</code> for <code>bool</code>. A "not found" can silently become a real-looking zero.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">null / undefined</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">null (and int? for nullable value types)</div>
+    <div class="catch">No <code>undefined</code>. And <code>int</code>, <code>bool</code>, <code>DateTime</code> <strong>cannot be null</strong> unless declared <code>int?</code>. An unset <code>int</code> is <code>0</code>, and an unset <code>DateTime</code> is <code>1/1/0001</code>, not null.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">`Hello ${name}`</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">$"Hello {name}"</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">try/catch/finally</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">try/catch/finally — same</div>
+    <div class="catch">One real difference: errors are <strong>thrown</strong>, never returned. There is no error-first callback and no <code>[err, result]</code> tuple convention. If a method can fail, it throws, and an uncaught throw is a 500.</div>
+  </div>
+</div>
+
+<div class="trap">
+  <span class="callout-label">The C# 7.3 ceiling</span>
+  .NET Framework 4.8 caps at <strong>C# 7.3</strong>. Records, top-level statements, <code>init</code> setters,
+  switch expressions, file-scoped namespaces, and nullable reference types are all <strong>C# 8, 9, or later
+  and will not compile for you</strong>. Most C# written on the internet since 2020 assumes .NET 5+.
+  When you google C# and the answer looks unusually clean, that is the tell. Verified via
+  <a href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-versioning">Microsoft's language versioning docs</a>.
+</div>
+
+<h2>3 · The request pipeline</h2>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head"><div>Express</div><div class="xlate-arrow"></div><div>Web API 2</div></div>
+  <div class="xlate-row">
+    <div class="xlate-node">app.js / server.js</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">Global.asax + App_Start/WebApiConfig.cs</div>
+    <div class="catch">Startup is split across files by convention, and <code>Global.asax.cs</code> is where the app lifecycle events live (<code>Application_Start</code>). Nothing points at it — you are expected to know it is the entry point. <em>[Core differs: one <code>Program.cs</code>]</em></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">app.get('/tickets', handler)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">[HttpGet, Route("tickets")] public ... </div>
+    <div class="catch">Routes are <strong>attributes on methods</strong> or a central convention template, not registration calls. Order of registration mostly does not matter the way it does in Express, but attribute and convention routing can conflict in ways that are genuinely hard to debug.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">router / controller module</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">public class TicketsController : ApiController</div>
+    <div class="catch">The class name is load-bearing. <code>TicketsController</code> serves <code>/api/tickets</code> because the framework <em>strips the word "Controller"</em>. Rename the class, break the route.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">(req, res, next) =&gt; {}</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">DelegatingHandler</div>
+    <div class="catch">The closest true middleware analogue: it wraps the whole request and calls the next handler. But .NET splits the job Express does with one signature into <strong>four</strong> different extension points, each at a different depth — see the trap below.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">route-specific middleware</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">ActionFilterAttribute</div>
+    <div class="catch">Applied by decorating a controller or method (<code>[Authorize]</code>, <code>[ValidateModel]</code>), or registered globally. Declarative rather than positional.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">error-handling middleware</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">ExceptionFilterAttribute / IExceptionHandler</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">req.body (after body-parser)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">a typed method parameter</div>
+    <div class="catch"><strong>Model binding</strong> deserializes the JSON body straight into your class before your code runs. You never touch the raw body. If a field will not bind, your parameter is silently <code>null</code> — it does not throw. Check <code>ModelState.IsValid</code>.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">res.json(data)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">return Ok(data);</div>
+    <div class="catch">You <code>return</code> a result, you do not write to a response object. Serialization to JSON happens after you return, via content negotiation — which means a serialization crash happens <em>outside</em> your try/catch.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">res.status(404).send()</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">return NotFound();</div>
+  </div>
+</div>
+
+<div class="trap">
+  <span class="callout-label">Express's one hook is .NET's four</span>
+  In Express, everything is <code>(req, res, next)</code> and position in the chain decides when it runs.
+  Web API 2 splits that into <strong>message handlers</strong> (whole request, earliest),
+  <strong>authorization filters</strong>, <strong>action filters</strong> (around your method), and
+  <strong>exception filters</strong>. Picking the wrong one is the most common structural mistake a Node dev
+  makes in .NET — the code works, but runs at the wrong depth and misses cases. When you need
+  cross-cutting behaviour, the first question is <em>which layer</em>, not <em>what code</em>.
+</div>
+
+<h2>4 · Concurrency — the section that will actually bite you</h2>
+
+<div class="trap">
+  <span class="callout-label">Read this one twice</span>
+  Node runs your JS on <strong>one thread</strong>. Two requests never execute your handler code
+  simultaneously. That single fact quietly protects every module-level variable you have ever written.
+  <br><br>
+  .NET uses a <strong>thread pool</strong>. Requests run <strong>genuinely in parallel</strong> on different
+  threads, inside one process, sharing memory. Every habit built on Node's single thread is now a
+  potential production bug — and it will be the kind that only shows up under load, on the server,
+  intermittently.
+</div>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head"><div>Node</div><div class="xlate-arrow"></div><div>.NET Framework</div></div>
+  <div class="xlate-row">
+    <div class="xlate-node">event loop, single-threaded</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">thread pool, multi-threaded</div>
+    <div class="catch">A <code>static</code> field, a cached singleton, or a shared <code>Dictionary</code> is now touched by many threads at once. <code>Dictionary&lt;K,V&gt;</code> and <code>List&lt;T&gt;</code> are <strong>not thread-safe</strong> — concurrent writes can corrupt them or hang the process. Use <code>ConcurrentDictionary</code> or a lock.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">Promise</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">Task / Task&lt;T&gt;</div>
+    <div class="catch">A <code>Promise</code> is always asynchronous. A <code>Task</code> may already be complete when you receive it, and <code>await</code> on a completed Task runs <strong>synchronously</strong> on the same thread. Same keyword, different machine underneath.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">async/await</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">async/await — identical syntax</div>
+    <div class="catch">Identical <em>syntax</em> is exactly what makes this dangerous. There is no event loop, no microtask queue, and after an <code>await</code> your code may resume on a <strong>different thread</strong> than it started on. Thread-local assumptions break across an await.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">await somePromise</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">await someTask   ✅</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">(no equivalent — cannot block)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">task.Result / task.Wait()   ☠</div>
+    <div class="catch"><strong>This deadlocks your request on ASP.NET Framework.</strong> Not slow — hung, forever. The request context allows one thread in at a time; you block it waiting for a task that needs that same context to finish. JS physically cannot do this, so you have no instinct against it. <a href="https://blog.stephencleary.com/2012/07/dont-block-on-async-code.html">Stephen Cleary explains the mechanism</a>. <em>[Core differs: no SynchronizationContext, so it does not deadlock there — which is why most modern advice will never warn you]</em></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">Promise.all([a, b])</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">await Task.WhenAll(a, b)</div>
+    <div class="catch">Note <code>WhenAll</code> (awaitable), not <code>WaitAll</code> (blocking — same deadlock trap as above).</div>
+  </div>
+</div>
+
+<h2>5 · Data access</h2>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head"><div>Node</div><div class="xlate-arrow"></div><div>.NET Framework</div></div>
+  <div class="xlate-row">
+    <div class="xlate-node">Sequelize / Prisma / Mongoose</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">Entity Framework 6 (EF6)</div>
+    <div class="catch">EF6 is the Framework-era version. <strong>EF Core is a different product</strong>, not an upgrade — the APIs diverge and its docs will mislead you. Confirm any EF answer is tagged EF6.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">the db client/connection</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">DbContext</div>
+    <div class="catch"><code>DbContext</code> is <strong>not thread-safe</strong> and is meant to live for <em>one request</em>. Making it a singleton — the instinct from a Node connection pool you create once at boot — is a classic and severe .NET bug. It ties directly to section 4.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">Model.findAll({ where })</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">db.Tickets.Where(t =&gt; t.IsOpen)</div>
+    <div class="catch">This returns <code>IQueryable</code>, and your lambda is <strong>translated into SQL</strong>, not run in C#. So you cannot call an arbitrary C# method inside it — EF will not know how to translate it and throws at runtime, not compile time.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">(query runs immediately)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">deferred until .ToList() / foreach</div>
+    <div class="catch">Building a query costs nothing and hits no database. Enumerating it twice hits the database <strong>twice</strong>. And an <code>IQueryable</code> returned from a method whose <code>DbContext</code> has been disposed throws when someone finally enumerates it — far from the actual mistake.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">include / populate</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">.Include(t =&gt; t.Comments)</div>
+    <div class="catch">Without <code>.Include</code>, EF6 <strong>lazy loads</strong> by default: touching <code>ticket.Comments</code> in a loop silently fires one query per row. The N+1 is invisible in the C# — it reads like plain property access.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">await model.save()</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">await db.SaveChangesAsync();</div>
+    <div class="catch">You do not save an object — you mutate tracked objects and then commit the <em>whole context</em> at once. EF works out the SQL by diffing what it tracked. Change tracking has no Node equivalent and is the core mental model of EF.</div>
+  </div>
+</div>
+
+<h2>6 · Wiring things together</h2>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head"><div>Node</div><div class="xlate-arrow"></div><div>.NET Framework</div></div>
+  <div class="xlate-row">
+    <div class="xlate-node">require() a module, use it</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">constructor injection + a DI container</div>
+    <div class="catch">Classes declare what they need as constructor parameters and a container supplies them. This is why enterprise .NET has an <code>interface</code> for nearly everything — it is not ceremony, it is what makes the code swappable and testable. <em>[Framework has NO built-in container — a codebase picks Unity, Autofac, or Ninject. Core has one built in.]</em></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">module cache (accidental singleton)</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">explicit lifetime registration</div>
+    <div class="catch">Three choices with no Node equivalent: <strong>Singleton</strong> (one for the whole app, shared across threads — must be thread-safe), <strong>Scoped</strong> (one per request — what <code>DbContext</code> needs), <strong>Transient</strong> (new every time). Registering a <code>DbContext</code> as Singleton is the bug that connects sections 4, 5, and 6 into one incident.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">console.log</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">log4net / NLog / Serilog</div>
+    <div class="catch">No built-in logger in Framework. Whatever the codebase already uses <em>is</em> the answer — do not introduce a fourth one.</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">jest / mocha</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">xUnit / NUnit / MSTest + Moq</div>
+    <div class="catch">Tests live in a <strong>separate project</strong> in the solution, not a <code>__tests__</code> folder. Moq fills the role <code>jest.mock()</code> plays, and it only works against interfaces or virtual methods — another reason for all those interfaces.</div>
+  </div>
+</div>
+
+<h2>The five things worth actually memorizing</h2>
+
+<ol class="ladder">
+  <li><span class="rung-t">Requests run in parallel.</span> <span class="rung-why">Shared mutable state is a bug now. Node's single thread was protecting you and it is gone.</span></li>
+  <li><span class="rung-t">Never <code>.Result</code> or <code>.Wait()</code>.</span> <span class="rung-why">It deadlocks the request on Framework. Async all the way down.</span></li>
+  <li><span class="rung-t"><code>DbContext</code> is per-request.</span> <span class="rung-why">Not a connection pool you make once. Scoped, never Singleton.</span></li>
+  <li><span class="rung-t">LINQ does not run when you write it.</span> <span class="rung-why">Deferred. And <code>IQueryable</code> is secretly SQL.</span></li>
+  <li><span class="rung-t">You are on C# 7.3.</span> <span class="rung-why">Half the C# on the internet will not compile for you. Check before you copy.</span></li>
+</ol>
+
+<div class="ask-teacher">
+  <strong>Stuck on something here?</strong> Ask. This sheet is deliberately compressed — every row expands into
+  a real explanation, and several of them are entire sessions. Point at a row and ask "why".
+</div>
+
+<nav class="lesson-nav">
+  <a href="course-map.html">← Course map</a>
+  <a href="../lessons/0001-the-shape-of-a-dotnet-app.html">Lesson 1: The shape of a .NET app →</a>
+</nav>
+
+</div>
+</body>
+</html>

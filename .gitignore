@@ -12,3 +12,7 @@ node_modules/
 .claude/settings.local.json
 audits/
 daily/dashboard/today.json
+# Playwright MCP session artifacts — accessibility-tree snapshots and console
+# logs, written on every browser verification. Regenerated each run, tied to one
+# session, and useless to anyone else. They were never meant to be committed.
+.playwright-mcp/

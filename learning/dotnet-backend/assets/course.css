@@ -1,0 +1,268 @@
+/* course.css — shared stylesheet for the .NET Framework backend course.
+   Dark theme (light hurts the reader's eyes). Tufte-ish: quiet chrome, loud content.
+   Palette matches the sibling system-design-interview and interview-qa courses so
+   all three read as one bookshelf. Every lesson and reference doc links this. */
+
+:root {
+  --bg:        #12141a;
+  --bg-raise:  #1a1d26;
+  --bg-sink:   #0d0f14;
+  --ink:       #e6e8ee;
+  --ink-soft:  #a9afbe;
+  --ink-faint: #6b7280;
+  --rule:      #2a2e3a;
+  --accent:    #7cc4ff;   /* links, focus, the "current" state */
+  --accent-2:  #f0b866;   /* concept / "why" / interview one-liners */
+  --good:      #5bd6a0;
+  --bad:       #ff8a8a;
+  --code-bg:   #0d0f14;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --mono: "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, "Courier New", monospace;
+  --measure: 42rem;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.62;
+  padding: 3.2rem 1.4rem 6rem;
+}
+
+.wrap { max-width: var(--measure); margin: 0 auto; }
+.wrap.wide { max-width: 62rem; }
+
+/* --- Masthead --- */
+.masthead { margin-bottom: 2.4rem; border-bottom: 1px solid var(--rule); padding-bottom: 1.2rem; }
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-faint); margin: 0 0 0.5rem;
+}
+h1 { font-size: 2.05rem; line-height: 1.15; margin: 0 0 0.3rem; font-weight: 600; letter-spacing: -0.01em; }
+.subtitle { font-family: var(--sans); color: var(--ink-soft); font-size: 0.98rem; margin: 0.3rem 0 0; }
+
+/* --- Headings --- */
+h2 {
+  font-family: var(--sans); font-weight: 600; font-size: 1.28rem;
+  margin: 2.6rem 0 0.8rem; padding-top: 0.4rem; letter-spacing: -0.01em;
+}
+h3 { font-family: var(--sans); font-weight: 600; font-size: 1.02rem; margin: 1.8rem 0 0.5rem; color: var(--ink); }
+p { margin: 0 0 1rem; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+a:hover { border-bottom-color: var(--accent); }
+strong { color: #fff; font-weight: 600; }
+em { color: var(--accent-2); font-style: italic; }
+ul, ol { padding-left: 1.3rem; margin: 0 0 1rem; }
+li { margin: 0.3rem 0; }
+
+/* --- Callouts --- */
+.why, .note, .tip {
+  font-family: var(--sans); font-size: 0.94rem; line-height: 1.55;
+  border-left: 3px solid var(--accent-2);
+  background: var(--bg-raise);
+  padding: 0.85rem 1.1rem; margin: 1.4rem 0; border-radius: 0 6px 6px 0;
+}
+.note { border-left-color: var(--accent); }
+.tip  { border-left-color: var(--good); }
+.callout-label {
+  display: block; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint); margin-bottom: 0.3rem;
+}
+
+/* --- Code --- */
+code {
+  font-family: var(--mono); font-size: 0.86em;
+  background: var(--code-bg); border: 1px solid var(--rule);
+  padding: 0.08em 0.38em; border-radius: 4px; color: #d7dae3;
+}
+pre {
+  font-family: var(--mono); font-size: 0.82rem; line-height: 1.5;
+  background: var(--code-bg); border: 1px solid var(--rule);
+  padding: 1rem 1.1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+.tok-com { color: var(--ink-faint); font-style: italic; }
+.tok-out { color: var(--good); }
+
+/* --- The scaling ladder (Ch 1 spine; reusable for any staged evolution) --- */
+.ladder { list-style: none; padding: 0; margin: 1.6rem 0; counter-reset: rung; }
+.ladder > li {
+  position: relative; margin: 0 0 0.7rem; padding: 0.85rem 1.1rem 0.85rem 3.2rem;
+  background: var(--bg-raise); border: 1px solid var(--rule); border-radius: 10px;
+  font-family: var(--sans); font-size: 0.93rem; line-height: 1.5;
+}
+.ladder > li::before {
+  counter-increment: rung; content: counter(rung);
+  position: absolute; left: 0.85rem; top: 0.8rem;
+  width: 1.6rem; height: 1.6rem; border-radius: 50%;
+  background: var(--bg-sink); border: 1px solid var(--accent);
+  color: var(--accent); font-family: var(--mono); font-size: 0.82rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.ladder .rung-t { color: #fff; font-weight: 600; }
+.ladder .rung-why { color: var(--ink-soft); }
+
+/* --- Architecture request-flow row (boxes -> boxes) --- */
+.arch {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+  font-family: var(--mono); font-size: 0.8rem;
+  background: var(--bg-sink); border: 1px solid var(--rule); border-radius: 10px;
+  padding: 1rem 1.1rem; margin: 1.3rem 0; overflow-x: auto;
+}
+.arch .node {
+  background: var(--bg-raise); border: 1px solid var(--rule); color: var(--ink);
+  padding: 0.4rem 0.7rem; border-radius: 7px; white-space: nowrap;
+}
+.arch .node.hi { border-color: var(--accent); color: #fff; }
+.arch .arrow { color: var(--ink-faint); font-family: var(--sans); }
+
+/* --- Napkin math (back-of-envelope estimation) --- */
+.napkin {
+  font-family: var(--mono); font-size: 0.82rem; line-height: 1.6;
+  background: var(--bg-sink); border: 1px dashed var(--accent-2); border-radius: 8px;
+  padding: 0.9rem 1.1rem; margin: 1.2rem 0; color: var(--ink-soft);
+}
+.napkin b { color: var(--accent-2); }
+
+/* --- Tradeoff two-column compare --- */
+.tradeoff { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 1.3rem 0; }
+.tradeoff > div {
+  background: var(--bg-raise); border: 1px solid var(--rule); border-radius: 10px; padding: 0.9rem 1.05rem;
+  font-family: var(--sans); font-size: 0.9rem;
+}
+.tradeoff h4 { margin: 0 0 0.5rem; font-family: var(--sans); font-size: 0.95rem; color: #fff; }
+.tradeoff ul { margin: 0; padding-left: 1.1rem; color: var(--ink-soft); }
+.tradeoff .pro { color: var(--good); }
+.tradeoff .con { color: var(--bad); }
+
+/* --- Q&A blocks --- */
+.qa { border: 1px solid var(--rule); background: var(--bg-raise); border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.3rem 0; }
+.qa .q { font-family: var(--sans); font-weight: 600; font-size: 1rem; margin: 0 0 0.6rem; color: #fff; }
+.qa .q::before { content: "Q"; display: inline-block; margin-right: 0.55rem; color: var(--accent); font-weight: 700; }
+
+/* --- Interactive quiz widget (see assets/quiz.js) --- */
+.quiz { border: 1px solid var(--rule); background: var(--bg-sink); border-radius: 10px; padding: 1.2rem 1.3rem; margin: 1.6rem 0; }
+.quiz-q { font-family: var(--sans); font-weight: 600; font-size: 1rem; margin: 0 0 0.8rem; }
+.quiz-opts { list-style: none; padding: 0; margin: 0; }
+.quiz-opts li { margin: 0.5rem 0; }
+.quiz-opts button {
+  width: 100%; text-align: left; font-family: var(--mono); font-size: 0.85rem;
+  background: var(--bg-raise); color: var(--ink); border: 1px solid var(--rule);
+  padding: 0.6rem 0.8rem; border-radius: 7px; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.quiz-opts button:hover { border-color: var(--accent); }
+.quiz-opts button.correct { border-color: var(--good); background: color-mix(in srgb, var(--good) 14%, var(--bg-raise)); color: #fff; }
+.quiz-opts button.wrong   { border-color: var(--bad);  background: color-mix(in srgb, var(--bad) 12%, var(--bg-raise)); }
+.quiz-explain {
+  font-family: var(--sans); font-size: 0.88rem; line-height: 1.55; color: var(--ink-soft);
+  margin-top: 0.9rem; padding-top: 0.8rem; border-top: 1px dashed var(--rule); display: none;
+}
+.quiz-explain.show { display: block; }
+.quiz-explain strong { color: var(--good); }
+
+/* --- Reveal (self-test: predict, then reveal) --- */
+details.reveal { border: 1px solid var(--rule); background: var(--bg-sink); border-radius: 8px; padding: 0.4rem 1rem; margin: 1rem 0; }
+details.reveal summary { font-family: var(--sans); font-weight: 600; cursor: pointer; padding: 0.5rem 0; color: var(--accent); }
+details.reveal[open] summary { margin-bottom: 0.5rem; border-bottom: 1px dashed var(--rule); }
+
+/* --- Talk-it-out drill (design-out-loud) --- */
+.drill {
+  border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--bg-sink));
+  border-radius: 12px; padding: 1.2rem 1.4rem; margin: 2rem 0;
+}
+.drill .callout-label { color: var(--accent); }
+.drill ol { font-family: var(--sans); font-size: 0.93rem; }
+
+/* --- Footer nav --- */
+.lesson-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); font-family: var(--sans); font-size: 0.9rem; }
+.lesson-nav a { display: inline-block; }
+.ask-teacher { font-family: var(--sans); font-size: 0.92rem; background: var(--bg-raise); border: 1px dashed var(--rule); border-radius: 8px; padding: 0.9rem 1.1rem; margin-top: 2rem; color: var(--ink-soft); }
+.ask-teacher strong { color: var(--accent-2); }
+
+/* --- Progress pips (course map) --- */
+.pip { display: inline-block; width: 0.62rem; height: 0.62rem; border-radius: 50%; background: var(--rule); margin-right: 0.15rem; }
+.pip.done { background: var(--good); }
+.pip.now  { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+
+/* --- Course map module cards --- */
+.module { border: 1px solid var(--rule); border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1rem 0; background: var(--bg-raise); }
+.module h3 { margin-top: 0; display: flex; align-items: baseline; gap: 0.6rem; }
+.module .modnum { font-family: var(--mono); color: var(--accent); font-size: 0.85rem; }
+.module .status { font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 20px; margin-left: auto; }
+.status.done { color: var(--good); border: 1px solid var(--good); }
+.status.now  { color: var(--accent); border: 1px solid var(--accent); }
+.status.next { color: var(--ink-faint); border: 1px solid var(--rule); }
+.module ul { font-family: var(--sans); font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 0; }
+.part-label { font-family: var(--sans); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-2); margin: 2.6rem 0 0.4rem; }
+
+/* ===================================================================
+   .NET-course components. Everything below is specific to this course.
+   =================================================================== */
+
+/* --- .xlate: the translation table. The signature component.
+       Node/JS on the left, C#/.NET on the right, the catch underneath.
+       This is how nearly every concept in this course gets introduced. --- */
+.xlate { margin: 1.5rem 0; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.xlate-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; border-bottom: 1px solid var(--rule); }
+.xlate-row:last-child { border-bottom: none; }
+.xlate-row > div { padding: 0.75rem 0.95rem; font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; }
+.xlate-node { background: color-mix(in srgb, var(--good) 7%, var(--bg-sink)); color: var(--ink-soft); }
+.xlate-net  { background: color-mix(in srgb, var(--accent) 7%, var(--bg-raise)); color: var(--ink); }
+.xlate-arrow { display: flex; align-items: center; padding: 0 0.6rem; color: var(--ink-faint); background: var(--bg-sink); font-family: var(--sans); }
+.xlate-head { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-faint); background: var(--bg-sink); }
+.xlate-head > div { padding: 0.5rem 0.95rem; font-family: var(--sans); }
+.xlate .catch {
+  grid-column: 1 / -1; background: var(--bg-sink); border-top: 1px dashed var(--rule);
+  font-family: var(--sans); font-size: 0.84rem; color: var(--accent-2); line-height: 1.5;
+}
+.xlate .catch::before { content: "⚠ where it breaks: "; color: var(--bad); font-weight: 600; }
+
+/* --- .trap: a full-width warning for the mappings that will actually bite.
+       Reserved for real production-bug material, not general notes. --- */
+.trap {
+  border: 1px solid var(--bad); background: color-mix(in srgb, var(--bad) 8%, var(--bg-sink));
+  border-radius: 12px; padding: 1.1rem 1.3rem; margin: 1.8rem 0;
+  font-family: var(--sans); font-size: 0.93rem; line-height: 1.55;
+}
+.trap .callout-label { color: var(--bad); }
+.trap strong { color: #fff; }
+
+/* --- .build: the hands-on step. Every lesson ends in one of these.
+       This is the "you type it, not the AI" block. --- */
+.build {
+  border: 1px solid var(--good); background: color-mix(in srgb, var(--good) 7%, var(--bg-sink));
+  border-radius: 12px; padding: 1.2rem 1.4rem; margin: 2rem 0;
+}
+.build .callout-label { color: var(--good); }
+.build ol { font-family: var(--sans); font-size: 0.92rem; }
+.build ol li { margin: 0.45rem 0; }
+.build .ship { font-family: var(--sans); font-size: 0.9rem; color: var(--good); margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px dashed var(--rule); }
+.build .ship::before { content: "✓ done when: "; text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.1em; color: var(--ink-faint); }
+
+/* --- Side-by-side code (Express vs Web API) --- */
+.sbs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 1.3rem 0; }
+.sbs > figure { margin: 0; min-width: 0; }
+.sbs figcaption { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.35rem; }
+.sbs pre { margin: 0; height: 100%; }
+
+@media (max-width: 600px) {
+  body { font-size: 17px; padding: 2rem 1rem 4rem; }
+  h1 { font-size: 1.7rem; }
+  .tradeoff { grid-template-columns: 1fr; }
+  .sbs { grid-template-columns: 1fr; }
+  .xlate-row { grid-template-columns: 1fr; }
+  .xlate-arrow { display: none; }
+}
+
+@media print {
+  :root { --bg:#fff; --bg-raise:#fff; --bg-sink:#fff; --ink:#111; --ink-soft:#333; --rule:#ccc; --code-bg:#f5f5f5; }
+  body { color:#111; }
+  .quiz-explain { display:block; }
+}
