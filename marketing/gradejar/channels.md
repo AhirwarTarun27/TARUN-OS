@@ -31,7 +31,14 @@ All traffic/conversion numbers are estimates to set expectations, not promises.
 
 - **Why:** The proven calculator-site model (Omni: 3,700 pages, ~7M organic visits/mo; InchCalculator: ~12k backlinks). A repeatable keyword pattern + a template + real per-page differences = hundreds of long-tail rankings small competitors can't be bothered to build.
 - **Patterns for GradeJar:**
-  - `/ez-grader/N-questions` for N = 5..100: "ez grader 25 questions" etc. Each page = full chart for that test size. Teachers search exactly this.
+  - ~~`/ez-grader/N-questions` for N = 5..100~~ — **⛔ CANCELLED 2026-07-18, do not queue this.**
+    Fifteen routes each mounting the same widget with a pre-filled total is precisely the
+    keyword-doorway shape the repo spent 2,722 lines removing: "unique prose over an identical tool
+    is still a keyword doorway." Shipping it into an active low-value-content re-review would risk
+    the site's second chance. **It was replaced and the replacement already shipped:**
+    `WrongOutOfTable.astro` computes the whole matrix at build time from `grade-core` and emits it as
+    static HTML on `/ez-grader`, which serves every one of those long-tails without adding a route.
+    (Corrected 2026-07-20 — this file recommended the cancelled batch for two days after the ruling.)
   - "What do I need on my final" variants: current-grade x target-grade explainer pages feeding the final-grade calculator.
   - Grading scales: per-state and per-system pages (10-point scale, 7-point scale, E/S/N elementary scales, IB, AP).
   - GPA conversions: 4.0 vs 4.33, percentage-to-GPA by country/system (SGPA-to-CGPA page already exists and targets India: good test case).

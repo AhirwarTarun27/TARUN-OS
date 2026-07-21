@@ -19,7 +19,7 @@
 //                  e.g. --subdomain=api  → api.<domain> also hits this Worker.
 //                  Only needed if a future backend lives on its own subdomain;
 //                  same-origin /api/* routes need nothing here.
-//   --step=        run one step only: zone|worker|www|turnstile|email|resend|verify
+//   --step=        run one step only: zone|worker|www|https|turnstile|email|resend|verify
 //   --apply        actually make changes (default: dry run)
 //
 // Everything this script touches is on a FREE Cloudflare plan. It refuses to
@@ -125,6 +125,10 @@ async function cfMaybe(path) {
 const SURFACES = [
   { name: 'Zones',           probe: () => `/zones?name=${DOMAIN}`,                          group: 'Zone → Zone → Read' },
   { name: 'DNS',             probe: (z) => z && `/zones/${z}/dns_records?per_page=1`,        group: 'Zone → DNS → Edit' },
+  // Needed only for "Always Use HTTPS" (step 4). Cloudflare answers a token that
+  // lacks it with the same flat `10000: Authentication error` as everything else,
+  // so it has to be probed by name or the go-live dies with no clue which scope.
+  { name: 'Zone settings',   probe: (z) => z && `/zones/${z}/settings/always_use_https`,     group: 'Zone → Zone Settings → Edit' },
   { name: 'Worker domains',  probe: () => `/accounts/${CF_ACCOUNT}/workers/domains`,         group: 'Account → Workers Scripts → Edit' },
   // The dashboard calls this group "Single Redirect". The API still calls the phase
   // "http_request_dynamic_redirect". Same thing, renamed in the UI only.
@@ -404,11 +408,56 @@ async function stepWww(zone) {
   CHECK_URLS.push([`https://www.${DOMAIN}`, 'should 301 to the apex']);
 }
 
-// ── 4. Turnstile ─────────────────────────────────────────────────────────────
+// ── 4. Always Use HTTPS ──────────────────────────────────────────────────────
+// A Worker Custom Domain answers on port 80 as well as 443, and it answers 200 —
+// it does NOT redirect. So without this zone setting the site serves a complete,
+// crawlable plaintext copy of itself, and Google will index the http:// URL as a
+// perfectly valid URL. That is exactly what happened to accentwallplanner.com:
+// on 2026-07-19 it ranked in Google displayed as `http://accentwallplanner.com`
+// while the other three domains 301'd correctly, because this one zone had the
+// setting off. The canonical tag does not save you — it consolidates eventually,
+// but the wrong URL is what users see until Google recrawls.
+//
+// Step 3 does NOT cover this. That rule matches on `http.host eq "www.<domain>"`,
+// so a request to http://<apex> never touches it.
+async function stepHttps(zone) {
+  hdr(`4. Always Use HTTPS — http://${DOMAIN} → https://${DOMAIN}`);
+
+  const setting = await cfMaybe(`/zones/${zone.id}/settings/always_use_https`);
+
+  // Preflight already proved the token can read this, so null here means something
+  // unexpected. Degrade to a named manual step rather than killing the go-live.
+  if (!setting) {
+    warn('could not read the always_use_https setting');
+    todo('Turn ON "Always Use HTTPS" — without it the site serves over plain http://',
+         `dash.cloudflare.com → ${DOMAIN} → SSL/TLS → Edge Certificates → Always Use HTTPS`);
+    return;
+  }
+
+  if (setting.value === 'on') {
+    ok('Always Use HTTPS already on');
+    CHECK_URLS.push([`http://${DOMAIN}`, 'should 301 to https']);
+    return;
+  }
+
+  if (!APPLY) {
+    plan(`Always Use HTTPS = on ${c.dim}(currently "${setting.value}" — http:// is serving 200 right now)${c.reset}`);
+    return;
+  }
+
+  await cf(`/zones/${zone.id}/settings/always_use_https`, {
+    method: 'PATCH',
+    body: { value: 'on' },
+  });
+  did('Always Use HTTPS = on');
+  CHECK_URLS.push([`http://${DOMAIN}`, 'should 301 to https']);
+}
+
+// ── 5. Turnstile ─────────────────────────────────────────────────────────────
 // Free plan ceiling: 20 widgets per ACCOUNT, 15 hostnames per widget. One
 // Cloudflare account across all clients means widget #21 is a hard wall.
 async function stepTurnstile() {
-  hdr('4. Turnstile widget');
+  hdr('5. Turnstile widget');
 
   const hostnames = [DOMAIN, `www.${DOMAIN}`];
   const widgets = await cf(`/accounts/${CF_ACCOUNT}/challenges/widgets`);
@@ -491,11 +540,11 @@ function writeSecrets(pairs) {
   info(`load it into the Worker:  wrangler secret put ${Object.keys(pairs)[0]}`);
 }
 
-// ── 5. Email Routing (receive) ───────────────────────────────────────────────
+// ── 6. Email Routing (receive) ───────────────────────────────────────────────
 // Free and unlimited. This is what makes info@<domain> land in a normal Gmail
 // inbox without paying for a mailbox.
 async function stepEmail(zone) {
-  hdr(`5. Email Routing — info@${DOMAIN} → ${EMAIL_TO}`);
+  hdr(`6. Email Routing — info@${DOMAIN} → ${EMAIL_TO}`);
 
   if (!EMAIL_TO) { info('skipped (pass --email-to=you@gmail.com to enable)'); return; }
 
@@ -554,11 +603,11 @@ async function stepEmail(zone) {
   did(`routing rule ${addr} → ${EMAIL_TO}`);
 }
 
-// ── 6. Resend sending domain ─────────────────────────────────────────────────
+// ── 7. Resend sending domain ─────────────────────────────────────────────────
 // Sends from send.<domain>, a SUBDOMAIN — deliberately not the apex, so its MX
 // does not collide with Email Routing's apex MX. Both can then coexist.
 async function stepResend(zone) {
-  hdr(`6. Resend sending domain — send.${DOMAIN}`);
+  hdr(`7. Resend sending domain — send.${DOMAIN}`);
 
   if (!DO_RESEND) { info('skipped (pass --resend to set up the sending domain)'); return; }
 
@@ -610,12 +659,16 @@ async function stepResend(zone) {
   warn('still pending. DNS can take a few minutes; re-run this script to re-check.');
 }
 
-// ── 7. verify live ───────────────────────────────────────────────────────────
+// ── 8. verify live ───────────────────────────────────────────────────────────
 async function stepVerify() {
-  hdr('7. Verify live');
+  hdr('8. Verify live');
 
   const checks = [
     [`https://${DOMAIN}`, 200, 'homepage'],
+    // Plain http:// must bounce. A Worker Custom Domain answers on port 80 and
+    // returns 200 unless step 4 turned Always Use HTTPS on — a second crawlable
+    // origin, and the one Google may index. See the note on stepHttps.
+    [`http://${DOMAIN}`, 301, 'http redirects to https'],
     [`https://www.${DOMAIN}`, 301, 'www redirects to apex'],
     [`https://${DOMAIN}/robots.txt`, 200, 'robots.txt'],
   ];
@@ -680,6 +733,7 @@ const only = (name) => !STEP || STEP === name;
   if (live) {
     if (only('worker'))    await stepWorkerDomain(zone);
     if (only('www'))       await stepWww(zone);
+    if (only('https'))     await stepHttps(zone);
     if (only('turnstile')) await stepTurnstile();
     if (only('email'))     await stepEmail(zone);
     if (only('resend'))    await stepResend(zone);

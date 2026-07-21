@@ -38,6 +38,8 @@ One Cloudflare account holds every client. Turnstile's 20-widget cap is the firs
   - `Zone → Single Redirect → Edit` ← **the dashboard calls it "Single Redirect".** The API
     still calls the phase `http_request_dynamic_redirect`. Searching the dropdown for
     "dynamic" finds nothing. Same feature, renamed in the UI only.
+  - `Zone → Zone Settings → Edit` ← turns on **Always Use HTTPS**. Easy to miss, because
+    without it the site still "works" — it just also serves itself over plain `http://`.
   - `Account → Turnstile → Edit`
   - `Account → Email Routing Addresses → Edit` ← destination addresses
   - `Zone → Email Routing Rules → Edit` ← the forwarding rules. **Two different groups.**
@@ -76,14 +78,15 @@ Steps marked **HANDS** have no API. They are manual, forever. The script names t
 | 4 | Wait for the zone to flip to Active | script (polls) |
 | 5 | Attach the apex as a Worker Custom Domain | script |
 | 6 | `www` → apex 301 redirect | script |
-| 7 | Turnstile widget for the real hostnames | script |
-| 8 | Email Routing: enable, MX/SPF, `info@` rule | script |
-| 9 | Click the Email Routing verification link | **HANDS** |
-| 10 | Resend: add `send.<domain>`, write DKIM into Cloudflare DNS, verify | script |
-| 11 | `"workers_dev": false` + `"preview_urls": false` in `wrangler.jsonc` | **HANDS** (one-line edit) |
-| 12 | Connect GitHub → Worker (Settings → Build) | **HANDS** |
-| 13 | Build variable `PUBLIC_SITE_URL` | **HANDS** |
-| 14 | Deploy, then submit the contact form once for real | **HANDS** |
+| 7 | **Always Use HTTPS** — `http://` → `https://` 301 | script |
+| 8 | Turnstile widget for the real hostnames | script |
+| 9 | Email Routing: enable, MX/SPF, `info@` rule | script |
+| 10 | Click the Email Routing verification link | **HANDS** |
+| 11 | Resend: add `send.<domain>`, write DKIM into Cloudflare DNS, verify | script |
+| 12 | `"workers_dev": false` + `"preview_urls": false` in `wrangler.jsonc` | **HANDS** (one-line edit) |
+| 13 | Connect GitHub → Worker (Settings → Build) | **HANDS** |
+| 14 | Build variable `PUBLIC_SITE_URL` | **HANDS** |
+| 15 | Deploy, then submit the contact form once for real | **HANDS** |
 
 ### 3. Repointing nameservers at BigRock
 
@@ -91,7 +94,21 @@ BigRock → My Orders → the domain → **Nameservers** → *Use Custom Nameser
 
 There is no BigRock API. This is always manual. Propagation is usually minutes but the TTL can stretch it to hours. Nothing after step 4 can work until the zone is Active, and the script hard-gates on that rather than failing weirdly downstream.
 
-### 12–13. GitHub and the two different variable screens
+### 7. Always Use HTTPS — the step that hides
+
+A Worker Custom Domain answers on **port 80 as well as 443**, and it answers `200`. It does not
+redirect. So a domain can look completely healthy — right content, valid cert, `www` bouncing
+correctly — while serving a full, crawlable plaintext copy of itself at `http://`.
+
+Step 6 does **not** cover this. That rule matches `http.host eq "www.<domain>"`, so a request to
+`http://<apex>` never touches it.
+
+This is not theoretical. accentwallplanner.com went live on 2026-07-19 with the setting off, and
+Google indexed it as `http://accentwallplanner.com` — that is the URL real users saw in the SERP.
+The `<link rel="canonical">` does not save you; it consolidates eventually, but "eventually" is
+after the wrong URL has been ranking. `/verify-live` invariant 6 now asserts this on every site.
+
+### 13–14. GitHub and the two different variable screens
 
 Connecting the repo is a dashboard OAuth flow. No API. Worker → **Settings → Build** → Connect.
 
@@ -108,7 +125,7 @@ Put one in the other's place and it silently is not there when the code looks fo
 
 If the Worker only serves static assets, the dashboard will refuse runtime variables outright: *"Variables cannot be added to a Worker that only has static assets."* That message is a useful signal. It means your `/api/*` route did not ship.
 
-### 14. The last mile
+### 15. The last mile
 
 Deploy with `PUBLIC_SITE_URL` set, or the canonical URL is wrong on every page:
 

@@ -25,6 +25,7 @@ A go-live needs:
 | DNS records | `Zone → DNS → Edit` |
 | Worker custom domains | `Account → Workers Scripts → Edit` |
 | www redirect rule | `Zone → Single Redirect → Edit` (see naming trap below) |
+| Always Use HTTPS | `Zone → Zone Settings → Edit` |
 | Turnstile widget | `Account → Turnstile → Edit` |
 | Email Routing — destinations | `Account → Email Routing Addresses → Edit` |
 | Email Routing — forwarding rules | `Zone → Email Routing Rules → Edit` |

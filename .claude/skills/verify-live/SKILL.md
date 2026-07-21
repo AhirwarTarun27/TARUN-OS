@@ -15,8 +15,9 @@ Between 2026-07-13 and 2026-07-19, four claims in this repo disagreed with produ
 1. Kesri's robots.txt flip was logged in `shipped.md` as done. It wasn't. (×3 across separate sessions)
 2. `connections.md` carried two stale rows (Bing "pending key", CF token "scope pending") that reality had already moved past.
 3. `shipped.md` 2026-07-03 claims "robots.txt allows AI crawlers" for both products. **Production says otherwise** — found by this script's first run.
+4. accentwallplanner.com went live 2026-07-19 with `Always Use HTTPS` off, so `http://` served the whole site at 200. Nobody claimed otherwise — **nobody checked at all**, and Google noticed first: the site ranked with its URL displayed as `http://`. Invariant 6 exists so the next domain cannot ship that way quietly.
 
-The failure is always the same shape: **something looked done without being done**, and it was caught late, by hand, usually at the Sunday review. The fix is not more discipline. It's making production — not a file — the thing that gets read.
+The failure is usually the same shape: **something looked done without being done**, and it was caught late, by hand, usually at the Sunday review. Incident 4 is the variant worth naming — nothing lied, the check simply did not exist. The fix is not more discipline. It's making production — not a file — the thing that gets read.
 
 ## The law
 
@@ -54,18 +55,21 @@ Each one traces to a real incident in this repo. Don't add invariants speculativ
 | 3 | P0 | classic crawlers (`*`, Googlebot, Bingbot) not `Disallow: /` | de-indexing risk |
 | 4 | P1 | AI crawlers (ClaudeBot, GPTBot, Google-Extended, CCBot, meta-externalagent, PerplexityBot) not `Disallow: /` | `references/ai-search-visibility.md` — the moat |
 | 5 | P0 | sitemap is 200 + real XML, resolved from the `Sitemap:` directive | the `/gsc-onboard` "sitemap is HTML" bug |
-| 6 | P0 | no `noindex` in `<head>` or `X-Robots-Tag` | baseline |
-| 7 | P0 | monetized sites: `ads.txt` 200 + matches `ADSENSE_ACCOUNT_ID` | AdSense serving |
-| 8 | P1 | client sites: `LocalBusiness`/`Organization` JSON-LD present | the AI-search layer |
+| 6 | P0 | `http://` does not serve the site (301s to `https://`, or refuses) | accentwallplanner.com indexed as `http://`, 2026-07-19 |
+| 7 | P0 | no `noindex` in `<head>` or `X-Robots-Tag` | baseline |
+| 8 | P0 | monetized sites: `ads.txt` 200 + matches `ADSENSE_ACCOUNT_ID` | AdSense serving |
+| 9 | P1 | client sites: `LocalBusiness`/`Organization` JSON-LD present | the AI-search layer |
 
 **P0 = a search engine cannot see the site.** **P1 = the site is visible but forfeits something (AI citation, entity identity).**
 
-### Two things the script deliberately does NOT check
+### Three things the script deliberately does NOT check
 
 - **The presence of the Cloudflare managed robots block is not a failure.** Its default content is `User-agent: * / Allow: /`. What matters is which agents are disallowed — invariants 3 and 4 cover that, and the managed block is reported only as a *pointer to where the fix lives* (CF dashboard vs. the app route). An earlier version scored its mere presence as P0 and produced three false alarms on its first run.
 - **The sitemap path is not hardcoded.** Astro's `@astrojs/sitemap` emits `sitemap-index.xml`; hand-rolled sites emit `sitemap.xml`. The script reads the `Sitemap:` directive from robots.txt and only probes as a fallback. Hardcoding `/sitemap.xml` produced three more false alarms.
 
-Both were caught by checking the checker against `curl` before trusting its output. **Do the same before adding an invariant** — a checker that cries wolf is worse than no checker, because you'll learn to skim it.
+- **An unreachable port 80 is not scored as a failure.** Invariant 6 asks whether a plaintext copy of the site is *reachable and serving*. A refused connection, a timeout, or a 4xx/5xx over `http://` all mean there is nothing for Google to index, so they pass. Only a 2xx over plain `http://` is red. Scoring "port 80 closed" as a failure would flag a *correctly* hardened host.
+
+All three were caught by checking the checker against `curl` before trusting its output. **Do the same before adding an invariant** — a checker that cries wolf is worse than no checker, because you'll learn to skim it.
 
 ## Adding a site
 

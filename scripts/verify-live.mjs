@@ -63,13 +63,15 @@ const hdr = (s) => `\n${c.bold}${c.cyan}${s}${c.reset}`;
 const sub = (s) => `  ${c.dim}${s}${c.reset}`;
 
 // ── fetch with timeout ───────────────────────────────────────────────────────
-async function grab(url) {
+// `redirect: 'manual'` is needed by the http:// check — that one is asking WHETHER
+// a redirect happens, so following it would erase the answer.
+async function grab(url, { redirect = 'follow' } = {}) {
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), 15000);
   try {
     const res = await fetch(url, {
       signal: ctl.signal,
-      redirect: 'follow',
+      redirect,
       headers: { 'User-Agent': 'TarunAIOS-verify-live/1.0 (+wire-truth checker)' },
     });
     const body = await res.text();
@@ -141,10 +143,11 @@ async function checkSite(site) {
   const out = [];
   const add = (level, name, ok, detail) => out.push({ level, name, ok, detail });
 
-  const [home, robots, adstxt] = await Promise.all([
+  const [home, robots, adstxt, insecure] = await Promise.all([
     grab(`${base}/`),
     grab(`${base}/robots.txt`),
     site.monetized ? grab(`${base}/ads.txt`) : Promise.resolve(null),
+    grab(`http://${site.domain}/`, { redirect: 'manual' }),
   ]);
 
   // The sitemap path is NOT a constant. Astro's @astrojs/sitemap emits
@@ -219,6 +222,27 @@ async function checkSite(site) {
     smDetail = `${sitemapUrl} — ${(sitemap.body.match(/<loc>/g) || []).length} URLs`;
   }
   add('P0', 'sitemap is 200 + real XML', !!smIsXml, smDetail);
+
+  // 6 — plain http:// must not serve the site.
+  // A Worker Custom Domain answers on port 80 too, and answers 200 unless the
+  // zone's "Always Use HTTPS" is on. That is a second crawlable origin of the
+  // whole site, and Google will happily index it: on 2026-07-19 accentwallplanner.com
+  // ranked with its URL displayed as `http://`, while the other three domains
+  // 301'd correctly. The canonical tag consolidates eventually; the wrong URL is
+  // what users see until then. P0 — not because the site is invisible, but because
+  // it is indexed under the wrong origin.
+  const loc = insecure.headers.get('location') ?? '';
+  const bounces = insecure.ok && insecure.status >= 300 && insecure.status < 400;
+  const toHttps = bounces && /^https:\/\//i.test(loc);
+  // Port 80 refused, or answering 4xx/5xx, is NOT a failure: there is no plaintext
+  // copy to index either way. Scoring that red would be crying wolf — the exact
+  // thing that made the first version of this script untrustworthy.
+  const noPlaintext = !insecure.ok || insecure.status >= 400;
+  add('P0', 'http:// does not serve the site', toHttps || noPlaintext,
+    toHttps      ? `${insecure.status} → ${loc}`
+    : noPlaintext ? `no plaintext origin (${insecure.error || insecure.status}) — nothing to index`
+    : bounces    ? `${insecure.status} → ${loc || 'no Location header'} — redirects, but not to https`
+    : `${insecure.status} over plain http — turn ON Cloudflare SSL/TLS → Edge Certificates → Always Use HTTPS`);
 
   // 7 — nothing is telling search engines to go away
   if (home.ok && home.status === 200) {

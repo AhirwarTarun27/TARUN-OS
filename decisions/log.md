@@ -579,3 +579,197 @@ becomes another confident file that's wrong.
 incidents, it becomes a maintenance tax and I'll prune it back to the ones that have actually fired.
 
 **Owner:** Tarun.
+
+---
+
+## 2026-07-20 — NO-GO ×30. The "beat a weak incumbent in 3-4 weeks" thesis is structurally dead
+
+**Decision:** Ran `/scout-problem` with no starting idea. Pre-screened **30 candidates** across **6 structural
+shapes** and ~12 verticals with live SERP checks. **Every single one failed Gate 2 (beatable top-10).** Zero
+survivors reached a deep teardown. No brief written. This is a NO-GO on the *shape*, not just on 30 ideas.
+
+**The shapes tested, and how each died:**
+
+| Shape | Tested | What killed it |
+|---|---|---|
+| Formula calculators | 12 | AI calc-farms. `completecalculators` / `engineercalc` / `best-calculators` / `calcbee` / `thecalcs` recur across *unrelated* verticals. Towing returned **9 of 10** as farms. |
+| Visual layout planners | 6 | Manufacturer tools + Planner5D + AI photo visualizers. Orbit's free sprinkler designer traces your yard on Google Maps. |
+| Curated databases | 4 | Already built. `towratings.net` = every US vehicle 1991-2026 from OEM docs; `towcapacity411` = 14,008 trims; VIN decode via NHTSA. |
+| B2B / high-CPC tools | 3 | Owned by the SaaS vendors who *are* the advertisers. Every PTO calculator on page 1 is an HR platform's lead magnet. |
+| Practice tests / question banks | 3 | Funded exam-prep fortresses. `driving-tests.org` holds 6 of 10 CDL slots via programmatic state pages. |
+| Engineering-moat tools | 3 | **The decisive one.** See below. |
+
+**The load-bearing finding — the moat I assumed existed does not:** the last hypothesis standing was
+*"pick something genuinely hard to build, where cloning costs weeks."* I tested it with **cut-list
+optimization** (2D bin-packing, a real algorithm). Page 1 returned **nine free browser-based optimizers with
+kerf handling, grain direction and PDF export, most with no login.** Deck design returned Simpson Strong-Tie
+giving away permit-submittal drawings plus a full bill of materials, free. **Algorithmic difficulty is no
+longer a barrier, because the thing that makes it cheap for Tarun to build makes it cheap for everyone.**
+
+**The gate conflict, stated plainly:** Gate 2 (beatable top-10) and the ~3-4 week MVP constraint are now
+**mutually exclusive**.
+- Buildable solo in 3-4 weeks → an AI farm has already built ten of them → Gate 2 fails.
+- Genuinely hard to clone → does not fit in 3-4 weeks → the MVP constraint fails.
+
+The overlap between those two is the window this entire pipeline was designed around, and **it has closed.**
+GradeJar (06-27) and AccentWallPlanner (07-06) were scouted while it was still open. They were not wrong then.
+
+**How fast this moved:** the 07-06 lawn-care NO-GO banked a "saturation wave" lesson from **two** niches
+(pool chemicals, aquarium stocking). Two weeks later it is **all thirty**, across every shape. Maturity
+signal: niches now have listicles *ranking the free tools* (closet layout has **four**, each cataloguing
+8-21 tools; kitchen remodel has "Top 6 Ranked by Experts"). A market with review articles about its free
+tools is not a gap.
+
+**Carry forward — what a moat is now.** Not features, not algorithms, not a dataset that can be scraped or
+is public (FCC broadband data is public, which is why 10 sites sell the same lookup). Only four things left:
+(1) **distribution** that does not route through a SERP; (2) **authority compounded over years on one
+domain**; (3) **data you generate that did not exist before**; (4) **a relationship** (the client business).
+Note that (2) argues for deepening the three live sites rather than launching a fourth, and (4) is the
+side-business already started on 07-11.
+
+**Shapes deliberately NOT tested, and why:** community/UGC (needs a backend and has a cold-start problem,
+breaks the MVP gate), games (floor-tier CPC, hit-driven), pure content/media (that is the E-E-A-T play,
+which is an argument for GradeJar/AWP depth, not a new property). Naming them so the sweep is not overclaimed.
+
+**What would change my mind:** a niche where the *user's own accumulated data* is the product AND no free
+mobile app owns the job (the 07-06 app-store check still applies), or a distribution channel that makes the
+SERP irrelevant. Neither showed up in 30 tries. Also honest: this was a Step-0 pre-screen, not 30 full
+teardowns. A single candidate could survive a deep look. Nothing in the pre-screen earned one.
+
+**Alternatives considered:** *Present a padded shortlist of the least-bad 6* (rejected outright. The skill's
+own Step 0 forbids presenting candidates whose demand and winnability were not verified, and every one I
+verified failed. Padding would be the exact process failure logged on 07-06). *Force a GO on the tent-layout
+planner*, the only near-gap found, where page 1 is regional party-rental lead-capture with no neutral
+national tool (rejected. Thin volume, and the rental companies own the transaction the searcher is heading
+toward). *Re-scout the same lanes with narrower long-tail terms* (rejected. The tail of a saturated head is
+thinner, not softer).
+
+**Owner:** Tarun.
+
+### Round 2 — Tarun relaxed audience size + freshness. 16 more candidates, also 0 survivors.
+
+On his call, re-ran with new gates: **narrow professional/trade audience** (2-8k/mo, below farm economics)
++ **decaying data** (answer changes annually / per state / per reg cycle) + **no incumbent maintainer**.
+Tested: HVAC A2L transition · NEC adoption by state · contractor licensing reciprocity · state paid sick
+leave · pesticide RUP lookup · notary RON rules · STR/Airbnb rules by city · IRC/IBC adoption · teacher cert
+reciprocity · cottage food laws · IFTA quarterly rates · drone laws by state · NFHS sports rule changes ·
+beekeeping/apiary rules · septic permit rules. **Running total: 46 candidates, 0 GO.**
+
+**It failed for a completely different reason than round 1, and that reason is the real finding:**
+
+> **In any professional niche with money, the SaaS vendors serving that profession already own the content.**
+
+HR/payroll SaaS owns leave law (Paylocity, Rippling, Paycor, Patriot). STR software owns Airbnb regs
+(Lodgify, Awning, Hostex). Field-service SaaS owns the HVAC A2L transition (XOi, BellaFSM). Construction SaaS
+owns building codes (Procore, UpCodes, Projul). **ServiceTitan owns septic *licensing*.** Ed lead-gen owns
+teacher certification. They are funded, they never stop publishing, and they are structurally incapable of
+being outlasted by a solo operator.
+
+**The synthesis — one rule explains all 46 results:**
+
+> **For a solo builder, CPC and winnability are inversely correlated.**
+
+High CPC means the end customer is valuable → the companies serving that customer are well funded → they can
+afford a content team → they are already in the SERP. Low CPC means nobody is funded, the SERP is open, and
+the revenue floor fails instead. **The AdSense arbitrage was always the gap between advertiser value and
+content investment. AI closed that gap at the low end (calc-farms); vendor content marketing closed it at the
+high end.** Round 1 and round 2 are the same wall approached from opposite sides.
+
+**Corollary, and it matters for the portfolio:** **AccentWallPlanner is the last idea of its type that will
+be found.** It survives only because it sits in the remaining sliver: consumer DIY, ~$2.40 CPC with real
+buyer intent, and vendors (Home Depot, Lowe's) unsophisticated enough not to have built the visual tool. That
+is a survivor, not a repeatable pipeline output. **Do not expect the pipeline to produce another one.**
+
+**What this does NOT invalidate:** the 2026-07-17 open-core SaaS scout (`research/saas-revenue-analytics.md`,
+`research/client-portal.md`). Those were scored on `demand × WTP × winnability × ceiling`, monetize by
+subscription not ad impressions, and distribute via GitHub / HN / dev communities rather than a SERP. **None
+of the three walls above apply to them.** They remain GO and un-started.
+
+**What would change my mind:** a distribution channel that makes the SERP irrelevant, or genuine domain
+expertise in a niche (which substitutes for authority). Tarun has neither for a *new* niche. He has both for
+the three domains he already owns and for the Kutch client market.
+
+**Honest limits of this run:** 46 Step-0 pre-screens, not 46 teardowns. A single candidate could survive a
+deep look. None earned one. Also untested: community/UGC, games, pure content/media (each breaks a different
+gate, named so the sweep is not overclaimed).
+
+---
+
+## 2026-07-20 — No bet #4. Pinterest becomes the marketing engine, judged 2026-10-20
+
+**Decision.** Tarun stops looking for a fourth AdSense product and puts the daily budget (15-20 min) into
+marketing the three that exist. The full-stack SaaS continues on its own track and is unaffected — it was
+never an AdSense bet. **Pinterest is the primary channel, AccentWallPlanner is the primary product, and the
+verdict lands 2026-10-20.**
+
+**The number that decided it.** Live over the wire, 2026-07-20:
+
+| Site | Google clicks (7d) | Avg position | AdSense |
+|---|---|---|---|
+| JsonBeam | 4 | 6.5 | `GETTING_READY` |
+| GradeJar | **0** (on 1,135 impressions) | **67.8** | `GETTING_READY` |
+| AccentWallPlanner | 1 day old | — | **not added at all** |
+
+Earnings $0.00. GA4 shows **7 real humans in 7 days** on JsonBeam. The Cloudflare figures (870 / 857 / 355
+pageviews) are mostly bots — AWP's top pages after `/` were `/setup/`, `/console/`, `/api/user/`, which are
+scanner probes, and JsonBeam's #1 country is the Netherlands, which is a datacenter.
+
+**A correction I owe the record.** I first argued this as "$0 across six months" and used it as evidence the
+shape had failed. **That was wrong and Tarun caught it.** All three sites plus Kesri were built in ~30-35
+days. GradeJar is 18 days old; position 67.8 at 18 days is a starting line, not a verdict. Two AdSense
+rejections in twelve days is not a six-month failure rate. I had accused him of reading an experiment before
+it ran, then did exactly that with worse data. **The argument that survived the correction is narrower and
+timeline-independent:** one AdSense account means the bets are correlated, not independent, and four
+instances of the same shape is one bet placed four times.
+
+**And his counter-argument was better than the one I answered.** SEO has a 3-6 month latency; sites 1-3 are
+sitting inside that window doing nothing he can accelerate; his build capacity is idle. Building during the
+wait is pipelining, not impatience. **The synthesis: build, but vary a variable — channel, shape, or
+monetization — rather than shipping a fourth Google-ranked calculator on the same account.**
+
+**Why Pinterest specifically, and not "more marketing".** The engine was never the problem. It has a
+44-row playbook, five real queue files, twenty log entries and a documented failure-and-rebuild cycle. And
+across its entire history it had produced **zero posts on any platform** — 2 pitch emails, 2 follow-ups, one
+Reddit account. Daily cadence died in a week (07-03 → 07-10). Weekly-first replaced it and also produced
+nothing in the ten days after. **Cadence was never the variable. Both designs required a decision before an
+action, and the decision is what never happened.**
+
+Pinterest is the one free channel where the decision can be removed entirely, because
+**AccentWallPlanner can generate its own marketing content.** A fresh pin requires an image file never
+uploaded before, and winning accounts publish 3+ a day. That volume is what kills the channel for everyone
+else. This site owns a renderer that draws walls to scale, so `scripts/generate-pins.mjs` produces pins from
+`solve` + `renderSvg` — the same reasoning as the existing `/diagrams/` endpoints: an image generated by the
+engine cannot drift from what the tool actually does. 25 drawn and verified on day one.
+
+Supporting facts, verified not assumed: one Pinterest business account can claim **multiple domains** (since
+2021), so the one-account rule holds; claiming is DNS TXT, and all three zones are on Cloudflare with the API
+already wired; the native scheduler is free but caps near 10 queued, so daily upload beats batching.
+
+**Alternatives considered and rejected.**
+- *Rotate evenly across three products daily.* Closest to what the last two engines did. Pinterest needs
+  volume to work at all, so a third of the budget produces sub-threshold pinning that never reaches escape
+  velocity.
+- *Reddit.* Killed by Tarun. The 90/10 ratio costs weeks of genuine commenting before one link is allowed,
+  drafts cannot be pre-written without risking the account, and the skill already forbids automating
+  community posting. The account keeps aging at zero cost.
+- *TikTok.* Genuinely right for this audience — the best promo line in the repo is a DIY creator's TikTok
+  quote. Parked because video cannot be generated from the renderer and would eat the whole budget.
+- *Affiliate on AccentWallPlanner.* Home improvement is a strong affiliate vertical and it has no approval
+  gate, unlike AdSense. Held back this quarter: mixing an affiliate layer into a property whose sibling
+  account has a live review is not worth it before a first approval lands.
+
+**The honest risk.** This leans hard on one channel. If Pinterest fails, the rotation produces little,
+because Reddit is out and JsonBeam's queue is finite. That is a deliberate trade: spreading thin across five
+channels at 15 minutes a day is precisely what produced zero posts twice.
+
+**Two blockers that must close before the channel can be judged at all:**
+1. **AccentWallPlanner has no GA4 property.** Only JsonBeam does. Cloudflare edge logs include bots, so
+   without GA4 there is no way to tell whether a human arrived from Pinterest.
+2. **The keyword retarget written 2026-07-18 has still never been applied.** Site titles target a ~253/mo
+   cluster while ~5,300/mo sits untargeted; `wainscoting` alone is 2,900/mo and flat. Copy already exists at
+   `research/accent-wall-retarget-copy.md`.
+
+**Verdict date: 2026-10-20.** Judge on Pinterest impressions plus GA4 referral sessions. Expected shape:
+impressions in ~2 weeks, first referral traffic 60-90 days, compounding months 3-4. **It will look dead
+through August. That is the channel's normal shape, not a failure**, and this date exists so it does not get
+killed on feel in week three. Write the outcome here either way.

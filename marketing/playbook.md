@@ -6,9 +6,10 @@ is the scoring: each product gets its own priority column in the master table an
 research folder at `marketing/<product>/` (channels, competitors, content strategy,
 action plan, outreach targets).
 
-Products through it so far: **GradeJar** (teachers, US-first) and **JsonBeam** (developers,
-global with US priority). To onboard the next product: add a priority column, rescore the
-table for that audience, generate `marketing/<product>/`.
+Products through it so far: **GradeJar** (teachers, US-first), **JsonBeam** (developers, global
+with US priority), and **AccentWallPlanner** (US DIY homeowners, added 2026-07-20). To onboard the
+next product: add a priority column, rescore the table for that audience, generate
+`marketing/<product>/`.
 
 Built: 2026-07-03. Generalized to multi-product: 2026-07-03. Inverted to weekly-first:
 2026-07-10 (the daily engine stalled in week one; see `decisions/log.md`). Budget
@@ -50,48 +51,62 @@ Priority key: **H** = in the action plan now. **M** = activate after H channels 
 or at a trigger event. **L** = not worth it for this product. **X** = excluded by boundary
 or budget.
 
-| Channel | ROI (best fit) | Difficulty | Cost | Time to results | Automation | Long-term value | GradeJar | JsonBeam |
-|---|---|---|---|---|---|---|---|---|
-| Google SEO (core pages) | Very high | Medium | $0 | 2-6 mo | High (AIOS drafts) | Very high | **H** | **H** |
-| Programmatic SEO | Very high | Medium | $0 | 2-6 mo | Very high | Very high | **H** | **H** (error-message + converter patterns) |
-| AI Search Optimization (GEO) | High | Low | $0 | 2-3 mo | High | Very high | **H** | **H** |
-| Backlinks / digital PR | Very high | Medium | $0 | 1-3 mo | High (drafts + target lists) | Very high | **H** | **H** |
-| Niche blogs/newsletters outreach | High | Medium | $0 | 1-3 mo | High (AIOS drafts pitches) | High | **M** (teacher blogs, inside PR) | **H** (dev newsletters are THE dev channel) |
-| Pinterest | High | Low-med | $0 | 1-3 mo | Very high (drafts + free scheduler) | High | **H** | **L** (devs don't plan on Pinterest) |
-| Reddit | High | Medium | $0 | Days-weeks | Medium (drafts; human posts) | High (feeds AI citations) | **H** | **H** (r/webdev, r/javascript) |
-| Email newsletter (own list) | High | Low | $0 (free tier) | 3-6 mo | Very high | Very high | **H** | **L** (nobody subscribes to a formatter) |
-| HARO-style (SOS, Qwoted, Featured) | High | Low | $0 | 1-2 mo | High (AIOS drafts pitches) | High | **H** (inside PR) | **M** (fewer dev-relevant queries) |
-| Hacker News (Show HN) | High (spike) | Low | $0 | 1 day | Medium | Medium (links + folklore) | **L** (wrong audience; one privacy-story shot) | **H** (one launch; this IS the audience) |
-| GitHub (awesome lists, OSS) | High | Low-med | $0 | Weeks-months | High | High | **L** | **H** (awesome-list PRs now, OSS later) |
-| Facebook Groups | Medium-high | Medium | $0 | Days-weeks | Medium (drafts; human posts) | Medium | **M** | **L** |
-| YouTube (how-to screencasts) | High | High | $0 | 3-6 mo | Medium (scripts yes, recording no) | Very high (most AI-cited platform) | **M** | **M** (trigger: error pages take off) |
-| YouTube Shorts | Medium | Medium | $0 | 1-3 mo | Medium | Medium | **M** | **L** |
-| Bluesky | Medium | Low | $0 | Weeks | High | Medium | **M** (#EduSky) | **M** (dev presence growing) |
-| X (Twitter) | Medium | Low | $0 | Weeks | High | Low-med (links throttled) | **M** | **M** (build-in-public + visual shares) |
-| Product Hunt | Medium | Medium | $0 | 1 day spike | Medium | Medium (backlink + proof) | **M** (once, at full feature) | **M** (once, after Show HN) |
-| Quora | Medium | Low | $0 | 1-2 mo | High | Medium (AI training source) | **M** | **L** (devs use Stack Overflow, not Quora) |
-| Startup/tool directories | Medium | Low | $0 | 1-2 mo | High (one-time batch) | Medium (backlinks) | **M** (one-time) | **M** (one-time) |
-| Niche review sites / indexes | Medium | Low | $0 | 1-3 mo | High (one-time) | Medium | **M** (EdTech Index etc, one-time) | **L** (directories cover it) |
-| Referral mechanics (in-product share) | High | Medium | $0 | 1-3 mo | Product work, then zero | High | **M** (product task) | **M** (shareable links; product task) |
-| Niche influencer partnerships | Medium-high | High | $0 (goodwill) | 2-6 mo | Medium (AIOS finds + drafts) | High | **M** (after traction) | **L** (newsletters cover it) |
-| Dev.to / Hashnode | Medium | Low | $0 | 1-2 mo | Very high | Medium (syndication + GEO consensus) | **L** (wrong audience) | **M** (syndicate site content, canonical) |
-| Indie Hackers | Medium | Low | $0 | Days | High | Low-med | **L** (builders, not teachers) | **M** (builders ARE users here) |
-| Medium | Low | Low | $0 | 1-2 mo | Very high | Low (traffic gutted by AI) | **L** (syndication only) | **L** (Dev.to covers syndication) |
-| Instagram | Low-med | High | $0 | 3-6 mo | Medium | Low (link-hostile) | **L** | **L** |
-| TikTok | Low-med | High | $0 | Variable | Low | Low (volatile) | **L** | **L** |
-| Threads | Low | Low | $0 | Weeks | High | Low | **L** | **L** |
-| Discord communities | Low | Medium | $0 | Weeks | Low (human-only) | Low | **L** | **L** |
-| Slack communities | Low | Medium | $0 | Weeks | Low | Low | **L** | **L** |
-| Stack Overflow | Low | High | $0 | Weeks | Low (mods remove tool links) | Medium (AI-cited) | **L** | **L** (ban risk > payoff) |
-| Podcasts (guesting) | Medium | High | $0 | 3-6 mo | Low | Medium | **L** (revisit after traction) | **L** |
-| Guest posting | Medium | High | $0 | 2-4 mo | Medium | Medium | **L** (PR outreach covers it) | **L** |
-| Cold email | Low | Medium | $0 | Weeks | High | Low (to users = spam; to editors = that's PR) | **L** | **L** |
-| Affiliate marketing | Low | Medium | Rev share | Months | Medium | Low (no margin: AdSense pays us, not users) | **L** | **L** |
-| Local communities | Low | Medium | $0 | Months | Low | Low (products are not local) | **L** | **L** |
-| AI tool directories | Low | Low | $0 | Weeks | High | Low | **L** (not an AI tool) | **L** (not an AI tool) |
-| Paid ads: Google/Meta/Reddit/Pinterest/X | Negative at $0 | Medium | $$$ | Days | High | Low for AdSense model | **X** (budget) | **X** (budget) |
-| Influencer (paid) | Unknown | Medium | $$$ | Weeks | Medium | Medium | **X** (budget) | **X** (budget) |
-| LinkedIn | n/a | n/a | n/a | n/a | n/a | n/a | **X** (hard boundary: job-growth only) | **X** (hard boundary: job-growth only) |
+| Channel | ROI (best fit) | Difficulty | Cost | Automation | GradeJar | JsonBeam | AccentWallPlanner |
+|---|---|---|---|---|---|---|---|
+| Google SEO (core pages) | Very high | Medium | $0 | High (AIOS drafts) | **H** | **H** | **H** (but retargeted — see below) |
+| Programmatic SEO | Very high | Medium | $0 | Very high | **H** | **H** (error-message + converter patterns) | **M** (planned, unbuilt; must clear the doorway test) |
+| AI Search Optimization (GEO) | High | Low | $0 | High | **H** | **H** | **H** (only zone with AI crawlers unblocked) |
+| Backlinks / digital PR | Very high | Medium | $0 | High (drafts + target lists) | **H** | **H** | **M** |
+| Niche blogs/newsletters outreach | High | Medium | $0 | High (AIOS drafts pitches) | **M** (teacher blogs, inside PR) | **H** (dev newsletters are THE dev channel) | **M** (DIY blogs want room photos we don't have) |
+| Pinterest | High | Low-med | $0 | Very high | **H** | **L** (devs don't plan on Pinterest) | **H — THE ENGINE** (pins generated by the renderer) |
+| Reddit | High | Medium | $0 | Medium (drafts; human posts) | **H** | **H** (r/webdev, r/javascript) | **M** (parked 07-20 — 90/10 costs weeks) |
+| Email newsletter (own list) | High | Low | $0 (free tier) | Very high | **H** | **L** (nobody subscribes to a formatter) | **L** (a wall is a once-ever project) |
+| HARO-style (SOS, Qwoted, Featured) | High | Low | $0 | High (AIOS drafts pitches) | **H** (inside PR) | **M** | **L** (both platforms still parked) |
+| Hacker News (Show HN) | High (spike) | Low | $0 | Medium | **L** | **H** (one launch; this IS the audience) | **L** (wrong planet) |
+| GitHub (awesome lists, OSS) | High | Low-med | $0 | High | **L** | **H** (awesome-list PRs now, OSS later) | **L** |
+| Facebook Groups | Medium-high | Medium | $0 | Medium (drafts; human posts) | **M** | **L** | **M** (home-reno groups are real; human-only) |
+| YouTube (how-to screencasts) | High | High | $0 | Medium (scripts yes, recording no) | **M** | **M** (trigger: error pages take off) | **M** (parked — video can't be generated) |
+| YouTube Shorts | Medium | Medium | $0 | Medium | **M** | **L** | **M** (parked, same reason) |
+| Bluesky | Medium | Low | $0 | High | **M** (#EduSky) | **M** | **L** |
+| X (Twitter) | Medium | Low | $0 | High | **M** | **M** (build-in-public) | **L** |
+| Product Hunt | Medium | Medium | $0 | Medium | **M** (once, at full feature) | **M** (once, after Show HN) | **L** (PH is makers, not homeowners) |
+| Quora | Medium | Low | $0 | High | **M** | **L** | **L** (Pinterest is the same effort, 50x return) |
+| Startup/tool directories | Medium | Low | $0 | High (one-time batch) | **M** (one-time) | **M** (one-time) | **L** (not a SaaS/startup tool) |
+| Niche review sites / indexes | Medium | Low | $0 | High (one-time) | **M** (EdTech Index etc) | **L** (directories cover it) | **M** (Houzz-type, one-time) |
+| Referral mechanics (in-product share) | High | Medium | $0 | Product work, then zero | **M** (product task) | **M** (product task) | **H — already shipped** (watermarked PNG export) |
+| Niche influencer partnerships | Medium-high | High | $0 (goodwill) | Medium | **M** (after traction) | **L** | **M** (DIY micro-creators, after traction) |
+| Dev.to / Hashnode | Medium | Low | $0 | Very high | **L** | **M** (syndicate, canonical) | **L** |
+| Indie Hackers | Medium | Low | $0 | High | **L** | **M** (builders ARE users here) | **L** |
+| Medium | Low | Low | $0 | Very high | **L** | **L** | **L** |
+| Instagram | Low-med | High | $0 | Medium | **L** | **L** | **M** (parked — right audience, link-hostile) |
+| TikTok | Low-med | High | $0 | Low | **L** | **L** | **M** (parked — genuinely matters here) |
+| Threads | Low | Low | $0 | High | **L** | **L** | **L** |
+| Discord communities | Low | Medium | $0 | Low (human-only) | **L** | **L** | **L** |
+| Slack communities | Low | Medium | $0 | Low | **L** | **L** | **L** |
+| Stack Overflow | Low | High | $0 | Low (mods remove tool links) | **L** | **L** (ban risk > payoff) | **L** |
+| Podcasts (guesting) | Medium | High | $0 | Low | **L** | **L** | **L** |
+| Guest posting | Medium | High | $0 | Medium | **L** | **L** | **L** |
+| Cold email | Low | Medium | $0 | High | **L** | **L** | **L** |
+| Affiliate marketing | Low | Medium | Rev share | Medium | **L** | **L** | **L** (see note) |
+| Local communities | Low | Medium | $0 | Low | **L** | **L** | **L** |
+| AI tool directories | Low | Low | $0 | High | **L** (not an AI tool) | **L** (not an AI tool) | **L** (not an AI tool) |
+| Paid ads: Google/Meta/Reddit/Pinterest/X | Negative at $0 | Medium | $$$ | High | **X** (budget) | **X** (budget) | **X** (budget) |
+| Influencer (paid) | Unknown | Medium | $$$ | Medium | **X** (budget) | **X** (budget) | **X** (budget) |
+| LinkedIn | n/a | n/a | n/a | n/a | **X** (hard boundary: job-growth only) | **X** (hard boundary) | **X** (hard boundary) |
+
+> Two qualitative columns ("Time to results", "Long-term value") were folded into the prose above
+> when the third product column was added — at three products the table stopped fitting, and those
+> two were the least load-bearing. The per-product verdicts are what this table is for.
+>
+> **The AccentWallPlanner reasoning lives in `marketing/accentwallplanner/channels.md`**, including
+> the search-cluster problem (the site is titled for a ~253/mo cluster while a ~5,300/mo cluster
+> sits untargeted) and why Pinterest flips from `L` to the engine.
+>
+> **Affiliate is `L` for AWP despite looking tempting.** Home improvement is a genuinely strong
+> affiliate vertical and someone planning an accent wall does then buy paint, trim and tools. It
+> stays `L` because the site is being built for AdSense approval and mixing an unapproved affiliate
+> layer into a property with a pending-review sibling account is not worth the risk this quarter.
+> Revisit after a first approval lands.
 
 Why paid is X even beyond budget: AdSense RPM on tool sites runs roughly $5-25 per 1,000 views (estimate, before ad blockers). Almost any CPC is higher than what a visit earns back. Paid only makes sense to seed a compounding loop (e.g. Pinterest pin engagement), never for direct traffic.
 
@@ -117,8 +132,9 @@ Why paid is X even beyond budget: AdSense RPM on tool sites runs roughly $5-25 p
 |---|---|---|
 | Drafting, research, scheduling logic | The AIOS (this repo) | The whole point: no paid SaaS |
 | Analytics | GA4 + Cloudflare + `scripts/report.mjs` | Already wired |
-| Search performance | Google Search Console | **Not wired yet — needs Tarun auth** |
-| Pin scheduling (GradeJar) | Pinterest native scheduler | Free, 30 days ahead |
+| Search performance | Google Search Console | **Wired.** `scripts/report.mjs` returns live GSC data for all three sites (corrected 2026-07-20 — this row said "not wired yet" for two weeks after it was) |
+| Pin images | `AccentWallPlanner/scripts/generate-pins.mjs` | Renders pins from the product's own `solve` + `renderSvg`. No design tool, no stock imagery, no new dependency |
+| Pin scheduling (portfolio) | Pinterest native scheduler | Free, 30 days ahead, but caps at ~10 queued — so daily upload is the default, not batching |
 | Email list (GradeJar) | MailerLite or Buttondown free tier | Free to 500-1,000 subs |
 | PR requests | Source of Sources (free), Qwoted free tier, Featured | HARO successors |
 | Rank spot-checks | Manual search + GSC | No paid rank trackers |
