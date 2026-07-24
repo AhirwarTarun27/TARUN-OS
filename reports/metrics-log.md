@@ -17,6 +17,14 @@ Bing clk/impr = Bing Webmaster clicks/impressions over the window (— = not yet
 | 2026-07-06 | gradejar.com | ~910/day (CF edge-log, not GA4) | n/a | 1521 | n/a (CF WA doesn't split channel) | n/a | ~43% (top-5 country share, 24h sample) | $0.00 | GETTING_READY | 0 | 0 |
 | 2026-07-14 | jsonbeam.com | 11 | 18 | 75 | 17% | 38.9% | 45% | $0.00 | GETTING_READY | 0 | 0 |
 | 2026-07-14 | gradejar.com | ~920/day (CF edge-log, not GA4) | n/a | 956 | n/a (CF WA doesn't split channel) | n/a | ~45% (top-5 country share, 24h sample) | $0.00 | GETTING_READY | 0 | 0 |
+| 2026-07-22 | jsonbeam.com | 9 | 17 | 33 | 53% | 47.1% | 22% | $0.00 | GETTING_READY | 0 | 8 |
+| 2026-07-22 | gradejar.com | ~824/day (CF edge-log, not GA4) | n/a | 698 | n/a (CF WA doesn't split channel) | n/a | ~35% (top-5 country share, 24h sample) | $0.00 | GETTING_READY | 0 | 0 |
+| 2026-07-22 | accentwallplanner.com | ~538/day (CF edge-log, not GA4) | n/a | 967 | n/a (CF WA doesn't split channel) | n/a | ~US-led (top-5, 24h sample) | n/a (deliberate AdSense hold) | not applied | 0 | 0 |
+
+Notes 2026-07-22: GA4 only tracks JsonBeam. GradeJar/AWP read via Cloudflare edge-log (includes bots).
+GSC 7d — JsonBeam 4 clk / 13 impr, pos 6.2; GradeJar 1 clk / **941 impr**, pos 67.1; AWP 3 clk / 6 impr, pos 2.0.
+JsonBeam GA4 users flat-low (11 → 9) but GSC clicks up (1 → 4) and impressions 13, pos 6.2 — real rankings, tiny volume.
+GradeJar still 941 impr / pos 67 — indexed at scale but stuck on page 7, near-zero CTR. AWP pos 2.0 on 6 impr = ranking with no demand yet (volume gate never fired).
 
 Notes 2026-07-14: GSC 7d — JsonBeam 1 clk / 3 impr, pos 6.0; GradeJar 1 clk / **934 impr**, pos 66.7.
 GradeJar's 30d impressions = 944, so ~99% of them landed in the last 7 days — Google just started surfacing the pSEO pages at scale.

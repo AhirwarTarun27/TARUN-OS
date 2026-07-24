@@ -1,0 +1,337 @@
+\documentclass[10pt, letterpaper]{article}
+
+% ====== PREAMBLE =====
+\usepackage[
+    ignoreheadfoot,
+    top=1.2 cm,
+    bottom=1.2 cm,
+    left=1.2 cm,
+    right=1.2 cm,
+    footskip=0.5 cm,
+]{geometry}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage[dvipsnames]{xcolor}
+\definecolor{primaryColor}{RGB}{0, 0, 0}
+\usepackage{enumitem}
+\usepackage{fontawesome5}
+\usepackage{amsmath}
+\usepackage[
+    pdftitle={Tarun Ahirwar's CV},
+    pdfauthor={Tarun Ahirwar},
+    pdfcreator={LaTeX with RenderCV},
+    colorlinks=true,
+    urlcolor=primaryColor
+]{hyperref}
+\usepackage[pscoord]{eso-pic}
+\usepackage{calc}
+\usepackage{bookmark}
+\usepackage{lastpage}
+\usepackage{changepage}
+\usepackage{paracol}
+\usepackage{ifthen}
+\usepackage{needspace}
+\usepackage{iftex}
+
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{lmodern}
+\fi
+
+\usepackage{charter}
+\raggedright
+\AtBeginEnvironment{adjustwidth}{\partopsep0pt}
+\pagestyle{empty}
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt}
+\setlength{\topskip}{0pt}
+\setlength{\columnsep}{0.15cm}
+\pagenumbering{gobble}
+
+\titleformat{\section}{\needspace{4\baselineskip}\bfseries\large}{}{0pt}{}[\vspace{1pt}\titlerule]
+\titlespacing{\section}{
+    -1pt
+}{
+    0.2 cm
+}{
+    0.20 cm
+}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}
+\newenvironment{highlights}{
+    \begin{itemize}[
+        topsep=0.08 cm,
+        leftsep=0.20cm,
+        parsep=0.08 cm,
+        partopsep=0pt,
+        parindent=4pt,
+        itemsep=2pt,
+        leftmargin=0 cm + 20pt
+    ]
+}{
+    \end{itemize}
+}
+\newenvironment{highlightsforbulletentries}{
+    \begin{itemize}[
+        topsep=0.08 cm,
+        parsep=0.08 cm,
+        partopsep=0pt,
+        itemsep=2pt,
+        leftmargin=10pt
+    ]
+}{
+    \end{itemize}
+}
+\newenvironment{onecolentry}{
+    \begin{adjustwidth}{
+        0 cm + 0.00001 cm
+    }{
+        0 cm + 0.00001 cm
+    }
+}{
+    \end{adjustwidth}
+}
+\newenvironment{twocolentry}[2][]{
+    \onecolentry
+    \def\secondColumn{#2}
+    \setcolumnwidth{\fill, 4.5 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endonecolentry
+}
+\newenvironment{threecolentry}[3][]{
+    \onecolentry
+    \def\thirdColumn{#3}
+    \setcolumnwidth{, \fill, 4.5 cm}
+    \begin{paracol}{3}
+    {\raggedright #2} \switchcolumn
+}{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
+    \endonecolentry
+}
+\newenvironment{header}{
+    \setlength{\topsep}{0pt}\par\kern\topsep\centering\linespread{1.5}
+}{
+    \par\kern\topsep
+}
+\let\hrefWithoutArrow\href
+
+% ========== BEGIN DOCUMENT ==============
+\begin{document}
+    \newcommand{\AND}{\unskip
+        \cleaders\copy\ANDbox\hskip\wd\ANDbox
+        \ignorespaces
+    }
+    \newsavebox\ANDbox
+    \sbox\ANDbox{$|$}
+
+    % ================= HEADER =======================
+    \begin{header}
+        \fontsize{25 pt}{25 pt}\selectfont Tarun Ahirwar
+
+        \vspace{5 pt}
+
+        \normalsize
+        \mbox{Noida, India}%
+        \kern 5.0 pt%
+        \AND%
+        \kern 5.0 pt%
+        \mbox{\hrefWithoutArrow{mailto:ahirwartarun095@gmail.com}{ahirwartarun095@gmail.com}}%
+        \kern 5.0 pt%
+        \AND%
+        \kern 5.0 pt%
+        \mbox{\hrefWithoutArrow{tel:+91-9106177149}{+91-9106177149}}%
+
+        \vspace{3 pt}
+
+        \mbox{\hrefWithoutArrow{https://linkedin.com/in/ahirwartarun}{linkedin.com/in/ahirwartarun}}%
+        \kern 5.0 pt%
+        \AND%
+        \kern 5.0 pt%
+        \mbox{\hrefWithoutArrow{https://github.com/AhirwarTarun27}{github.com/AhirwarTarun27}}%
+        \kern 5.0 pt%
+        \AND%
+        \kern 5.0 pt%
+        \mbox{\hrefWithoutArrow{https://tarunahirwar.com}{tarunahirwar.com}}%
+    \end{header}
+
+    \vspace{5 pt - 0.2 cm}
+
+    % ================= SUMMARY =======================
+    \section{Summary}
+\begin{onecolentry}
+    Senior Full-Stack Developer with \textbf{4+ years} in the JavaScript ecosystem (React, Next.js, Vue, TypeScript, Node.js), building data-heavy enterprise SaaS end to end, from PostgreSQL and Node APIs to fast, typed React interfaces. Experienced with AI-powered products, Large Language Model (LLM) integration, and AI-assisted development.
+\end{onecolentry}
+
+    % ================= SKILLS =======================
+    \section{Skills}
+    \begin{onecolentry}
+        \textbf{Frontend Development:} React.js, Next.js, Vue.js, TypeScript, JavaScript (ES6+), Redux, Redux Toolkit, Zustand, Context API, TanStack Query, Axios, Astro, HTML5, CSS3\\[2pt]
+        \textbf{Backend Development:} Node.js, PostgreSQL, REST APIs, Real-time (SignalR, WebSockets)\\[2pt]
+        \textbf{AI \& GenAI:} Large Language Model (LLM) Integration, OpenAI API, AI Agents \& Agentic Workflows, Model Context Protocol (MCP), Prompt Engineering, AI-Assisted Development (Claude Code, GitHub Copilot)\\[2pt]
+        \textbf{Cloud \& Deployment:} AWS (Lambda, S3, EFS, EC2), Cloudflare Workers, Docker\\[2pt]
+        \textbf{UI / Styling:} Material-UI (MUI), Tailwind CSS, SASS/SCSS, Responsive Design\\[2pt]
+        \textbf{Build \& Tooling:} Webpack, Vite, Git\\[2pt]
+        \textbf{Quality \& Performance:} React Testing Library, Vitest, Core Web Vitals, Performance Optimization, Bundle Optimization, SEO\\[2pt]
+        \textbf{Accessibility \& Security:} WCAG Standards, ARIA Implementation, XSS/CSRF Prevention\\[2pt]
+        \textbf{Soft Skills:} Agile Methodologies, Team Collaboration, Problem Solving, Communication, Continuous Learning
+    \end{onecolentry}
+
+    % ================= EXPERIENCE =======================
+    \section{Experience}
+
+    \begin{twocolentry}{Apr 2022 -- Present}
+        \textbf{Senior Software Developer}, ThinkSys Inc, Noida
+    \end{twocolentry}
+    \vspace{0.10 cm}
+
+    \begin{onecolentry}
+        \textbf{Dwellworks (Corporate Relocation \& Destination Services Platform)} | \textit{Team Size:} \textbf{\textit{12}}
+    \end{onecolentry}
+    \vspace{0.08 cm}
+    \begin{onecolentry}
+        \textit{An enterprise corporate-relocation platform (internally, Odin) that manages an employee's entire international move, from home and school finding through lease, visa, tenancy, and departure.}
+        \begin{highlights}
+            \item Owned Odin's front end, the flagship relocation app, delivering 20+ feature modules in React and Vue.js.
+            \item Managed application state (Redux, React Hooks) and the Axios data layer powering every screen.
+            \item Built a server-to-client hydration layer and migrated legacy server-rendered pages into componentized React.
+            \item Delivered real-time notifications and in-app messaging with SignalR for consultants and relocating families.
+            \item Optimized a large legacy front end with Webpack code-splitting and cross-browser support down to Internet Explorer 11 (IE11).
+        \end{highlights}
+        \vspace{0.08 cm}
+        \textbf{Tech Stack: React, Redux, Vue.js, TypeScript, JavaScript (ES6+), Webpack, SignalR, REST APIs}
+    \end{onecolentry}
+
+    \vspace{0.25 cm}
+
+    \begin{onecolentry}
+        \textbf{CloudForestX (Cloud Cost Optimization Platform)} | \textit{Team Size:} \textbf{\textit{6}}
+    \end{onecolentry}
+    \vspace{0.08 cm}
+    \begin{onecolentry}
+        \textit{A multi-tenant cloud cost optimization platform for AWS, managing 200+ enterprise accounts with cost visualization, idle and unused resource detection, rightsizing, and reservation recommendations.}
+        \begin{highlights}
+            \item Built the React and TypeScript SPA that turns multi-account AWS cost data into real-time analytics dashboards.
+            \item Developed the data-visualization layer (charts, gauges, geo maps) from Figma as responsive React components.
+            \item Created account-onboarding flows and global account and date-range filtering across the dashboard.
+            \item Contributed Node.js and PostgreSQL API endpoints that aggregate and serve cloud cost data to the front end.
+            \item Cut initial bundle 40\% and reached 95+ Core Web Vitals via code-splitting, lazy loading, and TanStack Query.
+            \item Shipped the idle-detection and rightsizing UI surfacing savings across EC2, Lambda, EFS, and S3.
+        \end{highlights}
+        \vspace{0.08 cm}
+        \textbf{Tech Stack: React, TypeScript, Redux, Zustand, Context API, TanStack Query, Axios, Webpack, Node.js, PostgreSQL, AWS}
+    \end{onecolentry}
+
+    \vspace{0.25 cm}
+
+    \begin{onecolentry}
+        \textbf{DentScribe (AI-Powered Dental Documentation Platform)} | \textit{Team Size:} \textbf{\textit{10}}
+    \end{onecolentry}
+    \vspace{0.08 cm}
+    \begin{onecolentry}
+        \textit{An AI-powered healthcare SaaS for dental practices that converts patient visits into signed SOAP notes and writes them back into the practice management software, saving 40-50 minutes per visit.}
+        \begin{highlights}
+            \item Built the portal surface for reviewing and signing AI-generated SOAP notes, from recording to PMS writeback.
+            \item Developed the SOAP report editor with dynamic sections, inline find-and-replace editing, and perio charting.
+            \item Delivered the appointment calendar with operatory filtering and a multi-stage review workflow.
+            \item Shipped the admin portal for user and subscription management, trials, and per-model AI cost tracking.
+            \item Structured the portal on 10 Redux Toolkit slices with role-gated routing and global 401 auth middleware.
+        \end{highlights}
+        \vspace{0.08 cm}
+        \textbf{Tech Stack: React, Redux Toolkit, TypeScript, JavaScript, Material-UI (MUI), NestJS, PostgreSQL, AWS S3, OpenAI API}
+    \end{onecolentry}
+
+    \vspace{0.25 cm}
+
+    \begin{onecolentry}
+        \textbf{MyWorkMyDay (HR Management System)} | \textit{Team Size:} \textbf{\textit{7}}
+    \end{onecolentry}
+    \vspace{0.08 cm}
+    \begin{onecolentry}
+        \textit{An HR management SaaS serving 20+ business clients with employee management, payroll processing, and performance analytics.}
+        \begin{highlights}
+            \item Built the platform's core surfaces: employee dashboard, payroll processing, and analytics views.
+            \item Created reusable, typed React components and custom hooks for form validation and data fetching.
+            \item Implemented role-based access control (RBAC) with authentication and authorization across user roles.
+            \item Cut API calls 50\% and load time from 3.2s to 1.1s with debounced search and memoization (React.memo, useMemo).
+        \end{highlights}
+        \vspace{0.08 cm}
+        \textbf{Tech Stack: React, React Hooks, Redux, TanStack Query, Material-UI (MUI), TypeScript}
+    \end{onecolentry}
+
+    \vspace{0.25 cm}
+
+    % ================= PROJECTS =======================
+    \section{Projects}
+
+    \begin{twocolentry}{\hrefWithoutArrow{https://gradejar.com}{gradejar.com}}
+        \textbf{GradeJar}
+    \end{twocolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textit{Local-first gradebook web app for teachers.} A no-login, browser-persisted gradebook with rosters, assignments, and custom grading scales, running entirely client-side with zero backend.
+        \vspace{0.05 cm}
+
+        \textbf{Tech Stack: Astro, TypeScript, Cloudflare Workers}
+    \end{onecolentry}
+
+    \vspace{0.18 cm}
+
+    \begin{twocolentry}{\hrefWithoutArrow{https://jsonbeam.com}{jsonbeam.com}}
+        \textbf{JsonBeam}
+    \end{twocolentry}
+    \vspace{0.05 cm}
+    \begin{onecolentry}
+        \textit{Fast, ad-free JSON formatter and validator.} Built static-first for sub-second loads and search visibility, deployed on the edge.
+        \vspace{0.05 cm}
+
+        \textbf{Tech Stack: Astro, TypeScript, Cloudflare Workers}
+    \end{onecolentry}
+
+    \vspace{0.25 cm}
+
+    % ================= EDUCATION =======================
+    \section{Education}
+
+    \begin{twocolentry}{Jul 2021 -- Apr 2022}
+        \textbf{Full Stack Web Development}, Masai School
+    \end{twocolentry}
+    \vspace{0.08 cm}
+    \begin{onecolentry}
+        \begin{highlights}
+            \item Specialized in MERN Stack and JavaScript ES6+ with hands-on experience in 11+ major and minor projects.
+            \item Developed end-to-end solutions across frontend, backend, databases, and deployment.
+            \item Demonstrated strong proficiency in React, React Hooks, Node.js, Express, MongoDB, REST APIs, Git, and Agile workflows.
+        \end{highlights}
+    \end{onecolentry}
+
+    \vspace{0.25 cm}
+
+    \begin{twocolentry}{Aug 2013 -- Jul 2017}
+        \textbf{Bachelor of Technology (B.Tech)}, Marwadi University, Rajkot
+    \end{twocolentry}
+    \vspace{0.08 cm}
+    \begin{onecolentry}
+        \begin{highlights}
+            \item CGPA: 7.15 / 10
+        \end{highlights}
+    \end{onecolentry}
+
+    \vspace{0.25 cm}
+
+    % ================= CERTIFICATIONS =======================
+    \section{Certifications}
+
+    \begin{onecolentry}
+        \textbf{\hrefWithoutArrow{https://www.udemy.com/certificate/UC-4d935bc7-5184-4be5-8d5c-2b3e0b28234c/}{GitHub Copilot Beginner to Pro}} -- Udemy (Aug 2025)\\
+        \textbf{\hrefWithoutArrow{https://www.credly.com/badges/7f477dfd-f09a-48e3-b867-777bd44cde19/linked_in_profile}{Edchart Certified React JS Developer (SME)}} -- Credly (Jul 2025)
+    \end{onecolentry}
+
+\end{document}
