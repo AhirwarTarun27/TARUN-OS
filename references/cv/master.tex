@@ -174,15 +174,12 @@
     % ================= SKILLS =======================
     \section{Skills}
     \begin{onecolentry}
-        \textbf{Frontend Development:} React.js, Next.js, Vue.js, TypeScript, JavaScript (ES6+), Redux, Redux Toolkit, Zustand, Context API, TanStack Query, Axios, Astro, HTML5, CSS3\\[2pt]
-        \textbf{Backend Development:} Node.js, PostgreSQL, REST APIs, Real-time (SignalR, WebSockets)\\[2pt]
+        \textbf{Frontend:} React.js, Next.js, Vue.js, TypeScript, JavaScript (ES6+), Redux Toolkit, Context API, React Hooks, Astro, HTML5/CSS3\\[2pt]
+        \textbf{UI \& Visualization:} Material-UI (MUI), Tailwind CSS, SASS/SCSS, ECharts, Recharts\\[2pt]
+        \textbf{Backend \& Data:} Node.js, Express, PostgreSQL, Sequelize, REST APIs, Real-time (SignalR, Socket.IO)\\[2pt]
         \textbf{AI \& GenAI:} Large Language Model (LLM) Integration, OpenAI API, AI Agents \& Agentic Workflows, Model Context Protocol (MCP), Context Engineering, Prompt Engineering, AI-Assisted Development (Claude Code, GitHub Copilot)\\[2pt]
-        \textbf{Cloud \& Deployment:} AWS (Lambda, S3, EFS, EC2), Cloudflare Workers, Docker\\[2pt]
-        \textbf{UI / Styling:} Material-UI (MUI), Tailwind CSS, SASS/SCSS, Responsive Design\\[2pt]
-        \textbf{Build \& Tooling:} Webpack, Vite, Git\\[2pt]
-        \textbf{Quality \& Performance:} React Testing Library, Vitest, Core Web Vitals, Performance Optimization, Bundle Optimization, SEO\\[2pt]
-        \textbf{Accessibility \& Security:} WCAG Standards, ARIA Implementation, XSS/CSRF Prevention\\[2pt]
-        \textbf{Soft Skills:} Agile Methodologies, Team Collaboration, Problem Solving, Communication
+        \textbf{Cloud, Tooling \& Practices:} AWS (EC2, S3, EBS, EFS, Lambda, CloudWatch, STS), Cloudflare Workers, Docker, Webpack, Vite, Git, Agile Methodologies\\[2pt]
+        \textbf{Quality \& Performance:} Vitest, Core Web Vitals, Bundle Optimization, WCAG / ARIA, SEO
     \end{onecolentry}
 
     % ================= EXPERIENCE =======================
@@ -193,78 +190,78 @@
     \end{twocolentry}
     \vspace{0.10 cm}
 
-    \begin{onecolentry}
-        \textbf{Dwellworks (Corporate Relocation \& Destination Services Platform)} | \textit{Team Size:} \textbf{\textit{12}}
-    \end{onecolentry}
+    \begin{twocolentry}{Jun 2025 -- Present}
+        \textbf{Dwellworks (Corporate Relocation \& Destination Services)} | \textit{Team Size:} \textbf{\textit{12}}
+    \end{twocolentry}
     \vspace{0.08 cm}
     \begin{onecolentry}
-        \textit{An enterprise corporate-relocation platform (internally, Odin) that manages an employee's entire international move, from home and school finding through lease, visa, tenancy, and departure.}
+        \textit{A US-based enterprise corporate-relocation platform that manages an employee's entire international move, from home and school finding through lease, visa, tenancy, and departure.}
         \begin{highlights}
-            \item Owned Odin's front end, the flagship relocation app, delivering 20+ feature modules in React and Vue.js.
-            \item Managed application state (Redux, React Hooks) and the Axios data layer powering every screen.
-            \item Built a server-to-client hydration layer and migrated legacy server-rendered pages into componentized React.
-            \item Delivered real-time notifications and in-app messaging with SignalR for consultants and relocating families.
-            \item Optimized a large legacy front end with Webpack code-splitting and cross-browser support down to Internet Explorer 11 (IE11).
+            \item Ship React features across 20 independently-mounted SPA bundles embedded in a legacy .NET Razor monolith, holding IE11 support.
+            \item Built a real-time operations dashboard on Redux and SignalR with auto-reconnect and state recovery, tracking every active relocation.
+            \item Built the shared component library -- form fields, virtualized selects, advanced data grid, Google Maps views -- reused across all 20 bundles.
+            \item Hardened the UI with layered React error boundaries and a stack-trace logger, containing failures to one cell instead of the whole page.
+            \item Instrumented React surfaces with Google Analytics 4 virtual pageview tracking, giving product per-page visibility into user drop-off.
+            \item Work directly with the US client in an Agile environment: requirements, design sessions, feature demos, sprint ceremonies and release coordination.
         \end{highlights}
         \vspace{0.08 cm}
-        \textbf{Tech Stack: React, Redux, Vue.js, TypeScript, JavaScript (ES6+), Webpack, SignalR, REST APIs}
+        \textbf{Tech Stack: React, Redux, Redux Thunk, Vue.js, JavaScript (ES6+), Webpack, SignalR, Google Maps API, Google Analytics 4, REST APIs}
     \end{onecolentry}
 
     \vspace{0.25 cm}
 
-    \begin{onecolentry}
+    \begin{twocolentry}{Jul 2023 -- May 2025}
         \textbf{CloudForestX (Cloud Cost Optimization Platform)} | \textit{Team Size:} \textbf{\textit{6}}
-    \end{onecolentry}
+    \end{twocolentry}
     \vspace{0.08 cm}
     \begin{onecolentry}
         \textit{A multi-tenant cloud cost optimization platform for AWS, managing 200+ enterprise accounts with cost visualization, idle and unused resource detection, rightsizing, and reservation recommendations.}
         \begin{highlights}
-            \item Built the React and TypeScript SPA that turns multi-account AWS cost data into real-time analytics dashboards.
-            \item Developed the data-visualization layer (charts, gauges, geo maps) from Figma as responsive React components.
-            \item Created account-onboarding flows and global account and date-range filtering across the dashboard.
-            \item Contributed Node.js and PostgreSQL API endpoints that aggregate and serve cloud cost data to the front end.
-            \item Cut initial bundle 40\% and reached 95+ Core Web Vitals via code-splitting, lazy loading, and TanStack Query.
-            \item Shipped the idle-detection and rightsizing UI surfacing savings across EC2, Lambda, EFS, and S3.
+            \item Built the React and TypeScript SPA behind 40 cost dashboards spanning waste detection, rightsizing, reservations and power scheduling.
+            \item Built Node.js ingestion and REST APIs that pull EC2, EBS, S3 and CloudWatch data via STS cross-account roles into PostgreSQL.
+            \item Architected global account and month filtering in Redux Toolkit, keeping every dashboard in sync from a single selection.
+            \item Built the data-visualization layer -- charts, gauges, geo maps -- on ECharts and Recharts behind a reusable chart hook.
+            \item Built a typed API layer and a generic fetch hook with request-id guards, eliminating stale-response races across 36 service modules.
         \end{highlights}
         \vspace{0.08 cm}
-        \textbf{Tech Stack: React, TypeScript, Redux, Zustand, Context API, TanStack Query, Axios, Webpack, Node.js, PostgreSQL, AWS}
+        \textbf{Tech Stack: React, TypeScript, Redux Toolkit, Context API, Axios, ECharts, Recharts, Material-UI (MUI), Socket.IO, Node.js, Express, PostgreSQL, Sequelize, AWS SDK}
     \end{onecolentry}
 
     \vspace{0.25 cm}
 
-    \begin{onecolentry}
+    \begin{twocolentry}{Oct 2022 -- Jun 2023}
         \textbf{DentScribe (AI-Powered Dental Documentation Platform)} | \textit{Team Size:} \textbf{\textit{10}}
-    \end{onecolentry}
+    \end{twocolentry}
     \vspace{0.08 cm}
     \begin{onecolentry}
-        \textit{An AI-powered healthcare SaaS for dental practices that converts patient visits into signed SOAP notes and writes them back into the practice management software, saving 40-50 minutes per visit.}
+        \textit{A US-based AI-powered healthcare SaaS for dental practices that converts patient visits into signed SOAP notes and writes them back into the practice management software, saving 40-50 minutes per visit.}
         \begin{highlights}
-            \item Built the portal surface for reviewing and signing AI-generated SOAP notes, from recording to PMS writeback.
-            \item Developed the SOAP report editor with dynamic sections, inline find-and-replace editing, and perio charting.
-            \item Delivered the appointment calendar with operatory filtering and a multi-stage review workflow.
-            \item Shipped the admin portal for user and subscription management, trials, and per-model AI cost tracking.
-            \item Structured the portal on 10 Redux Toolkit slices with role-gated routing and global 401 auth middleware.
+            \item Built the React and TypeScript portal for a multi-tenant clinical product: 19 surfaces spanning clinical review, billing and admin across four user roles.
+            \item Built the report review surface for AI-generated clinical notes -- tabbed note, transcript, aftercare and coordinator sections with per-section editing.
+            \item Integrated the portal against a queue-backed AI generation pipeline, surfacing report state and triggering writeback into the practice's management software.
+            \item Structured the portal on 10 Redux Toolkit slices with global auth middleware and route guards deriving access from role, tenant and subscription state.
+            \item Worked directly with the US client on requirements, demos and release cycles, coordinating API contracts across the backend and mobile teams.
         \end{highlights}
         \vspace{0.08 cm}
-        \textbf{Tech Stack: React, Redux Toolkit, TypeScript, JavaScript, Material-UI (MUI), NestJS, PostgreSQL, AWS S3, OpenAI API}
+        \textbf{Tech Stack: React, TypeScript, Redux Toolkit, Material-UI (MUI), MUI X Data Grid, Stripe, Axios, REST APIs, PostgreSQL, AWS S3, OpenAI API}
     \end{onecolentry}
 
     \vspace{0.25 cm}
 
-    \begin{onecolentry}
+    \begin{twocolentry}{Apr 2022 -- Sep 2022}
         \textbf{MyWorkMyDay (HR Management System)} | \textit{Team Size:} \textbf{\textit{7}}
-    \end{onecolentry}
+    \end{twocolentry}
     \vspace{0.08 cm}
     \begin{onecolentry}
         \textit{An HR management SaaS serving 20+ business clients with employee management, payroll processing, and performance analytics.}
         \begin{highlights}
-            \item Built the platform's core surfaces: employee dashboard, payroll processing, and analytics views.
-            \item Created reusable, typed React components and custom hooks for form validation and data fetching.
-            \item Implemented role-based access control (RBAC) with authentication and authorization across user roles.
-            \item Cut API calls 50\% and load time from 3.2s to 1.1s with debounced search and memoization (React.memo, useMemo).
+            \item Built the platform's core surfaces: employee management, payroll processing and performance analytics dashboards.
+            \item Created reusable, typed React components and custom hooks for form validation and data fetching, adopted across the platform.
+            \item Implemented role-based access control (RBAC) across user roles, gating both route access and in-page actions.
+            \item Cut redundant search API calls 50\% with request debouncing, and reduced re-render cost with React.memo and useMemo.
         \end{highlights}
         \vspace{0.08 cm}
-        \textbf{Tech Stack: React, React Hooks, Redux, TanStack Query, Material-UI (MUI), TypeScript}
+        \textbf{Tech Stack: React, React Hooks, Redux, TypeScript, Material-UI (MUI), Tailwind CSS, REST APIs}
     \end{onecolentry}
 
     \vspace{0.25 cm}
@@ -316,14 +313,8 @@
     \vspace{0.25 cm}
 
     \begin{twocolentry}{Aug 2013 -- Jul 2017}
-        \textbf{Bachelor of Technology (B.Tech)}, Marwadi University, Rajkot
+        \textbf{Bachelor of Technology (B.Tech), Mechanical Engineering}, Marwadi University, Rajkot
     \end{twocolentry}
-    \vspace{0.08 cm}
-    \begin{onecolentry}
-        \begin{highlights}
-            \item CGPA: 7.15 / 10
-        \end{highlights}
-    \end{onecolentry}
 
     \vspace{0.25 cm}
 

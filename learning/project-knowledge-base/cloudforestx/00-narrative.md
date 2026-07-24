@@ -65,7 +65,7 @@ as the platform's scale ("built to manage hundreds of enterprise cloud accounts 
 
 ## 5. Your role (frame it truthfully — this matters)
 
-You were the **Senior Frontend Developer** on a **team of ~6**, from Apr 2022. Own this cleanly:
+You were the **Senior Frontend Developer** on a **team of ~6**, from Jul 2023 to May 2025. Own this cleanly:
 
 - **What you owned:** the **React + TypeScript single-page app** — the dashboards that turn raw AWS
   data into something a finance or DevOps team can act on: cost analytics screens, idle/rightsizing/unused
@@ -142,7 +142,7 @@ frontend, AWS model) instead of letting them fish for a weak spot.
   large, deeply nested dataset (hundreds of screens) in a way that stays fast and usable.
 - **"Who were the users?"** → FinOps / DevOps / platform + finance teams at enterprises with a large,
   multi-account cloud bill.
-- **"How big was the team / how long were you on it?"** → ~6 people; since Apr 2022.
+- **"How big was the team / how long were you on it?"** → ~6 people; Jul 2023 to May 2025, just under two years.
 - **Push-back: "You're a frontend dev — why should I trust your view of the whole system?"** → *"Because the
   frontend had to integrate with every backend service — every cost view, every analysis result, the
   account onboarding, the real-time notifications all flow through the UI I built. I couldn't build that

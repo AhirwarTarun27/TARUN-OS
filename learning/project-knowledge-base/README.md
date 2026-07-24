@@ -37,7 +37,7 @@ remote-first job switch — priority #1.
 | CloudForestX (Cloud Cost Optimization) | **In progress** | `cloudforestx/` |
 | Dwellworks (Relocation / Destination Services) | **In progress** | `dwellworks/` |
 | DentScribe (AI Dental Docs) | **In progress** | `dentscribe/` |
-| MyWorkMyDay (HR SaaS) | Awaiting repo | `myworkmyday/` |
+| MyWorkMyDay (HR SaaS) | **Mechanism-only defense** ✅ · repo promised, not yet shared | `myworkmyday/defense-notes.md` |
 | ThinkSys Website | Awaiting repo | `thinksys-website/` |
 
 ## The module shape (standard from Dwellworks onward)
@@ -60,13 +60,14 @@ so both projects share one shape; not done yet.
 | 1 | System architecture | Senior expectation; grounds everything |
 | 2 | AWS access & cost model | The "wow" material unique to this domain |
 | 3 | Analysis engine | The product's actual value |
-| 4 | Frontend architecture | My domain — drilled hardest for a frontend role |
-| 5 | Frontend performance (honest reframe) | Where the CV is weakest — must be truthful |
+| 4 | **Frontend architecture & the data layer** ✅ **written** | My domain — 470 TS files, RTK global filters, `useFetchData` race guard, `useEcharts`, **plus the STS→SDK→PostgreSQL ingestion path**. **Carries the per-CV-bullet drill sheet (§8).** Drilled hardest |
+| 5 | Frontend performance (honest reframe) | **Largely resolved 2026-07-24** — the 40% bundle claim was deleted rather than reframed, since TanStack Query was never installed and CRA was never ejected. What remains: the no-test-suite answer (kb 04 §7) |
 | 6 | Tradeoffs & what I'd improve | Senior differentiator |
 | 7 | Behavioral / STAR | Every interview has this |
 
-Reference artifacts, built when their module comes up (not tested directly):
-`cloudforestx/architecture-diagram.md` (Module 1) and `cloudforestx/cv-truth-table.md` (Module 5).
+Reference artifacts: `cloudforestx/cv-truth-table.md` ✅ **written** — claim vs. code, the three claims
+deleted on 2026-07-24 (RTL coverage, the 40%/TanStack bundle line, Zustand), and the safe-to-quote
+number list. `cloudforestx/architecture-diagram.md` (Module 1) still to build.
 
 ## Dwellworks module ladder
 
@@ -79,7 +80,7 @@ Module 0 treatment before anything technical.
 | 0.5 | Narrative & pitch | The 30s / 2min scripts + honest role framing |
 | 1 | Ecosystem & repo map | 9 repos — how they fit and why they're split |
 | 2 | Odin backend architecture | MVC5 + Web API 2, EF6, Unit of Work, Ninject, OWIN |
-| 3 | **Odin frontend architecture** | My domain — 20 webpack bundles, `window.globalObject`, Redux vs hooks, IE11. Drilled hardest |
+| 3 | **Odin frontend architecture** ✅ **written** | My domain — 20 webpack bundles, `window.globalObject`, Redux vs hooks, the shared library, SignalR Control Tower, error boundaries + Seq, GA4, IE11. **Carries the per-CV-bullet drill sheet (§10).** Drilled hardest |
 | 4 | Identity & auth across services | JWT-RSA issue/verify split, Redis revocation, the role model |
 | 5 | The .NET Core microservices | Property, Stats, ECoordService, DsInternal, NetworkManagement |
 | 6 | Integrations & async | ServiceEngine / Destination / Aires, Azure Queues, change trackers, batch jobs, SignalR |
@@ -87,9 +88,10 @@ Module 0 treatment before anything technical.
 | 8 | Tradeoffs & what I'd improve | Legacy .NET 4.6.1, IE11, Node 12, 100+ DbSets — the senior differentiator |
 | 9 | Behavioral / STAR | Every interview has this |
 
-Reference artifact, built alongside Module 0.5 (not tested directly): `dwellworks/cv-truth-table.md` —
-what the CV claims vs. what the code backs, so a frontend-heavy role is never caught defending backend
-work it didn't do.
+Reference artifact ✅ **written**: `dwellworks/cv-truth-table.md` — what the CV claims vs. what the code
+backs, so a frontend-heavy role is never caught defending backend work it didn't do. It also records the
+**five claims removed from the CV on 2026-07-24** because the repo contradicted them (hydration,
+code-splitting, SignalR-to-families, TypeScript, "own the front end"), and the safe-to-quote number list.
 
 ## DentScribe module ladder
 
@@ -104,14 +106,30 @@ treatment before anything technical.
 | 0.5 | Narrative & pitch | The 30s / 2min scripts + honest role framing |
 | 1 | System architecture | One NestJS repo, seven deployed processes, SNS→SQS, ECS via AWS Copilot |
 | 2 | The AI pipeline | Whisper → GPT analysis → JSON formatting. The product's actual value |
-| 3 | **Portal frontend architecture** | My domain — 10 Redux slices, role-gated route allow-lists, the global 401 middleware. Drilled hardest |
+| 3 | **Portal frontend architecture** ✅ **written** | My domain — 19 surfaces / 4 roles, 10 Redux slices + `resetStore`, the 5-shape auth middleware, the 4-dimension access guard, the report review tabs, the pipeline boundary. **Carries the per-CV-bullet drill sheet (§10).** Drilled hardest |
 | 4 | Sikka & PMS integration | PQL, the requestKey lifecycle, writeback + retry + status polling. The domain moat |
 | 5 | Auth, security & PHI | JWT, 2FA, trusted devices, login lockout, `officeId` tenancy, data purge — it's medical data |
 | 6 | Billing & subscriptions | Stripe tiers, trials, coupons, pause/cancel, and per-model AI cost tracking |
 | 7 | Tradeoffs & what I'd improve | A 12k-line service, `synchronize: true` in production, no migrations, unversioned prompts — the senior differentiator |
 | 8 | Behavioral / STAR | Every interview has this |
 
-Reference artifact, built alongside Module 0.5 (not tested directly): `dentscribe/cv-truth-table.md`.
+Reference artifact ✅ **written**: `dentscribe/cv-truth-table.md` — claim vs. code, the **four claims
+deleted on 2026-07-24** (find-and-replace, "the note editor", polling, the operatories calendar), the
+never-say table, and the two boundary sentences (AI pipeline · the mobile app).
+
+## MyWorkMyDay — the one exception to the module shape
+
+**No repo on this machine** (all of `Documents/` searched, 2026-07-24) — **Tarun will share it later**, so
+this is interim. For now the project gets a single `defense-notes.md` instead of a module ladder, and it
+runs on a different standard: the other three projects are defended by **pointing at a file**; this one is
+defended by **explaining the mechanism**. The notes open with a **five-item re-verify list** for the day
+the repo lands (TypeScript, Tailwind, the debounce behind the 50%, the two custom hooks, both RBAC levels).
+
+That is not a lesser standard — an interviewer can't see any of these repos either, so a mechanism that
+holds up *is* the proof. What fails here is a mechanism that doesn't, which is exactly why the
+`3.2s → 1.1s via memoization` claim was deleted rather than reframed. The notes keep his own account and
+the general web mechanisms strictly separated, and they end with the instruction that matters most for
+this entry: **don't go deep, connect it forward to CloudForestX, and move on.**
 
 ## Guardrails
 
