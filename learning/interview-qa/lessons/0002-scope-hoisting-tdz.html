@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 2 · Scope, Hoisting &amp; the TDZ — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 2 · Module 2 — JavaScript Foundations</p>
+    <h1>Scope, Hoisting &amp; the TDZ</h1>
+    <p class="subtitle">Where a variable lives, and when it starts existing. Two different questions —
+    and interviewers test both in one snippet.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Where this sits</span>
+    Lesson 1 answered <em>what a value is</em>. This one answers <em>where a name is visible</em> and
+    <em>when it becomes usable</em>. You need both before closures make any sense — a closure is
+    literally "a function that kept its scope alive," so Module 3 is unreachable until this is solid.
+    This is also the single most-asked cluster in the ebook: hoisting, TDZ, and
+    <code>let</code>/<code>var</code>/<code>const</code> are all flagged "Most asked."
+  </div>
+
+  <h2>1 · Scope: the three kinds</h2>
+  <p><strong>Scope</strong> is the region of code where a name is visible. JavaScript has three:</p>
+  <ul>
+    <li><strong>Global scope</strong> — declared outside every function and block. Visible everywhere.</li>
+    <li><strong>Function scope</strong> — declared inside a function. Visible anywhere in that function,
+      including nested functions. <code>var</code> only respects <em>this</em> boundary.</li>
+    <li><strong>Block scope</strong> — declared inside <code>{ }</code> (an <code>if</code>, a
+      <code>for</code>, or a bare block). Visible only inside those braces. <code>let</code> and
+      <code>const</code> respect this; <code>var</code> ignores it completely.</li>
+  </ul>
+  <pre><code>function demo() {
+  if (true) {
+    var  a = "var";
+    let  b = "let";
+  }
+  console.log(a);   <span class="tok-com">// "var"  — var ignored the block, it's function-scoped</span>
+  console.log(b);   <span class="tok-com">// ReferenceError — let stayed inside the { }</span>
+}</code></pre>
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "<code>var</code> is function-scoped, <code>let</code> and <code>const</code> are block-scoped. That
+    single difference is why <code>var</code> leaks out of <code>if</code> blocks and loops."
+  </div>
+
+  <h3>The scope chain</h3>
+  <p>When JavaScript can't find a name in the current scope, it looks in the enclosing scope, then the
+  one outside that, up to global — then throws <code>ReferenceError</code>. That upward path is the
+  <strong>scope chain</strong>, and it only goes <em>outward</em>, never inward.</p>
+  <pre><code>const outerVal = "outer";
+
+function parent() {
+  const midVal = "middle";
+
+  function child() {
+    console.log(outerVal, midVal);  <span class="tok-com">// "outer middle" — found by walking up</span>
+  }
+  child();
+}
+console.log(midVal);   <span class="tok-com">// ReferenceError — parent's scope is not visible from outside</span></code></pre>
+  <div class="note">
+    <span class="callout-label">Remember the direction</span>
+    Inner code can reach out. Outer code can never reach in. Hold onto that sentence — in Module 3
+    it becomes the definition of a closure.
+  </div>
+
+  <h2>2 · Hoisting: declarations move, assignments don't</h2>
+  <p>Before running a line of your code, the JavaScript engine scans the scope and registers every
+  declaration it finds. That's why you can use some things <em>before</em> the line that declares them.
+  This is <strong>hoisting</strong>.</p>
+  <p>The trap: only the <strong>declaration</strong> is hoisted, not the <strong>assignment</strong>.</p>
+  <pre><code>console.log(x);   <span class="tok-com">// undefined  ← NOT an error, and NOT 5</span>
+var x = 5;
+console.log(x);   <span class="tok-com">// 5</span>
+
+<span class="tok-out">// The engine effectively sees:</span>
+<span class="tok-out">//   var x;          ← hoisted, auto-initialised to undefined</span>
+<span class="tok-out">//   console.log(x); ← undefined</span>
+<span class="tok-out">//   x = 5;          ← assignment stays put</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">Precision beats the textbook answer</span>
+    Most candidates say "declarations are moved to the top." Nothing physically moves — the engine
+    <em>registers</em> declarations in the scope before execution. Saying it that way, then adding the
+    words <strong>temporal dead zone</strong>, is exactly the follow-up bait interviewers want.
+  </div>
+
+  <h2>3 · What is hoisted, and how</h2>
+  <p>This is a straight recall question in the ebook. Learn the table, not the vibes:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Declaration</th><th>Hoisted?</th><th>Usable before its line?</th></tr></thead>
+    <tbody>
+      <tr><td><code>function foo() {}</code> (declaration)</td><td>Yes, fully</td><td><strong>Yes</strong> — body and all</td></tr>
+      <tr><td><code>var x</code></td><td>Yes, initialised to <code>undefined</code></td><td>Yes, but the value is <code>undefined</code></td></tr>
+      <tr><td><code>let x</code></td><td>Yes, <em>uninitialised</em></td><td>No — <code>ReferenceError</code> (TDZ)</td></tr>
+      <tr><td><code>const x</code></td><td>Yes, <em>uninitialised</em></td><td>No — <code>ReferenceError</code> (TDZ)</td></tr>
+      <tr><td><code>class X {}</code></td><td>Yes, <em>uninitialised</em></td><td>No — <code>ReferenceError</code> (TDZ)</td></tr>
+      <tr><td><code>var f = function(){}</code> (expression)</td><td>Only the <code>var</code></td><td>No — <code>f</code> is <code>undefined</code>, calling it is a <code>TypeError</code></td></tr>
+      <tr><td><code>var f = () =&gt; {}</code> (arrow)</td><td>Only the <code>var</code></td><td>No — same <code>TypeError</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <pre><code>greet();          <span class="tok-com">// "hi" — function declarations are fully hoisted</span>
+function greet() { console.log("hi"); }
+
+speak();          <span class="tok-com">// TypeError: speak is not a function</span>
+var speak = function () { console.log("yo"); };
+<span class="tok-out">// var speak was hoisted as undefined; undefined() is a TypeError, not a ReferenceError.</span></code></pre>
+  <div class="note">
+    <span class="callout-label">The distinction that scores points</span>
+    <code>ReferenceError</code> = the name isn't usable yet (or doesn't exist).
+    <code>TypeError</code> = the name resolved fine, but the value isn't the kind of thing you just did
+    to it. Naming the right error is a small detail that reads as real experience.
+    <a href="https://developer.mozilla.org/en-US/docs/Glossary/Hoisting">MDN: Hoisting</a>
+  </div>
+
+  <h2>4 · The Temporal Dead Zone</h2>
+  <p>Here's the part people fumble: <code>let</code> and <code>const</code> <strong>are</strong> hoisted.
+  They're registered in the scope from the very top. They're just not <em>initialised</em>. The window
+  between entering the scope and reaching the declaration line is the <strong>temporal dead zone</strong>
+  — the variable exists but touching it throws.</p>
+  <pre><code>{
+  <span class="tok-com">// ── TDZ for `name` starts here ──</span>
+  console.log(typeof other);  <span class="tok-com">// "undefined" — undeclared names are fine with typeof</span>
+  console.log(typeof name);   <span class="tok-com">// ReferenceError — TDZ isn't even safe for typeof</span>
+  let name = "Tarun";
+  <span class="tok-com">// ── TDZ ends at the declaration line ──</span>
+  console.log(name);          <span class="tok-com">// "Tarun"</span>
+}</code></pre>
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "The temporal dead zone is the period between a <code>let</code>/<code>const</code> being hoisted
+    into the scope and its declaration being evaluated. The binding exists but is uninitialised, so any
+    access throws a <code>ReferenceError</code>. It exists on purpose — it turns a silent
+    <code>undefined</code> bug into a loud error."
+  </div>
+  <p>Notice the <em>why</em> in that last sentence. <code>var</code>'s hoisting hands you
+  <code>undefined</code> and lets the bug travel downstream. The TDZ was ES6 deciding that failing
+  immediately is better. Interviewers remember candidates who explain the design intent.</p>
+
+  <h2>5 · <code>var</code> vs <code>let</code> vs <code>const</code> — the full answer</h2>
+  <p>Flagged "Most asked" in the ebook. Answer on <strong>four</strong> axes, in this order:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th><code>var</code></th><th><code>let</code></th><th><code>const</code></th></tr></thead>
+    <tbody>
+      <tr><td>Scope</td><td>function / global</td><td>block</td><td>block</td></tr>
+      <tr><td>Reassign</td><td>yes</td><td>yes</td><td><strong>no</strong></td></tr>
+      <tr><td>Redeclare in same scope</td><td>yes</td><td>no</td><td>no</td></tr>
+      <tr><td>Hoisting</td><td>hoisted as <code>undefined</code></td><td>hoisted, TDZ</td><td>hoisted, TDZ</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note">
+    <span class="callout-label">The <code>const</code> follow-up they always ask</span>
+    <code>const</code> freezes the <strong>binding</strong>, not the value. You can't point the name at
+    something else, but if it points at an object you can still mutate its insides.
+    <code>const u = {n:1}; u.n = 2;</code> is legal. <code>u = {}</code> throws
+    <code>TypeError: Assignment to constant variable</code>. (Want a genuinely immutable object? That's
+    <code>Object.freeze</code> — Module 5.)
+  </div>
+
+  <h2>6 · The classic: "it prints 6 every time"</h2>
+  <p>The single most-asked output question in the ebook, and it's pure scope. Read it before the answer:</p>
+  <pre><code>function x() {
+  for (var i = 1; i &lt;= 5; i++) {
+    setTimeout(() =&gt; { console.log(i); }, i * 1000);
+  }
+}
+x();   <span class="tok-com">// 6, 6, 6, 6, 6 — one second apart</span></code></pre>
+  <details class="reveal">
+    <summary>Why 6, and why five times?</summary>
+    <p>Two facts collide. <strong>One:</strong> <code>var i</code> is function-scoped, so there is exactly
+    <em>one</em> <code>i</code> for the whole loop — not one per iteration. All five arrow functions close
+    over that same single variable. <strong>Two:</strong> <code>setTimeout</code> is asynchronous — the
+    callbacks don't run during the loop, they run after it finishes (full mechanics in Module 7). By the
+    time the first one fires, the loop has already run its exit check, which is what pushed <code>i</code>
+    to <code>6</code>. Five callbacks, all reading the same variable, all seeing <code>6</code>.</p>
+  </details>
+  <details class="reveal">
+    <summary>Fix 1 — the one-character fix</summary>
+    <p>Change <code>var</code> to <code>let</code>. <code>let</code> is block-scoped, and a
+    <code>for</code> loop creates a <strong>fresh binding per iteration</strong> — five separate
+    <code>i</code>s, each frozen at its own value. Output: <code>1 2 3 4 5</code>. This is the answer to
+    give first, because it's what you'd actually write.</p>
+    <pre><code>for (let i = 1; i &lt;= 5; i++) {
+  setTimeout(() =&gt; console.log(i), i * 1000);
+}</code></pre>
+  </details>
+  <details class="reveal">
+    <summary>Fix 2 — the pre-ES6 fix (say this one too)</summary>
+    <p>Wrap the timer in a function call. Every call creates a new function scope with its own parameter,
+    so each callback captures a different variable. This is the ebook's closure solution — and giving
+    both fixes shows you understand <em>why</em> <code>let</code> works, rather than having memorised it.</p>
+    <pre><code>function x() {
+  function closur(n) {                      <span class="tok-com">// new scope per call</span>
+    setTimeout(() =&gt; console.log(n), n * 1000);
+  }
+  for (var i = 1; i &lt;= 5; i++) closur(i);   <span class="tok-com">// 1 2 3 4 5</span>
+}</code></pre>
+  </details>
+  <div class="tip">
+    <span class="callout-label">You just met a closure</span>
+    That inner function remembering <code>n</code> after <code>closur</code> already returned <em>is</em>
+    a closure. Module 3 names it and drills it — you've now seen the problem it solves before the
+    definition, which is the right order.
+  </div>
+
+  <h2>7 · Retrieval check</h2>
+  <p>No scrolling up. Answer, then read the explanation.</p>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">What does this log? <code>console.log(a); var a = 10;</code></p>
+    <ul class="quiz-opts">
+      <li><button>ReferenceError is thrown</button></li>
+      <li><button>undefined gets logged</button></li>
+      <li><button>the number 10 is logged</button></li>
+      <li><button>TypeError is thrown here</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>undefined.</strong> The declaration <code>var a</code> is hoisted
+    and auto-initialised to <code>undefined</code>; only the assignment <code>a = 10</code> stays on its
+    original line. Swap <code>var</code> for <code>let</code> and this becomes a <code>ReferenceError</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">Which of these is hoisted <em>and</em> usable before its line?</p>
+    <ul class="quiz-opts">
+      <li><button>a let declaration of x</button></li>
+      <li><button>an arrow function expr</button></li>
+      <li><button>a class declaration Foo</button></li>
+      <li><button>a function declaration f</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The function declaration.</strong> It's the only one hoisted
+    <em>with its body</em>, so calling it early works. <code>let</code> and <code>class</code> are hoisted
+    but sit in the TDZ; an arrow assigned to <code>var</code> hoists only the variable, so calling it
+    early is a <code>TypeError</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">Inside the TDZ, what does <code>typeof myLet</code> do?</p>
+    <ul class="quiz-opts">
+      <li><button>throws a ReferenceError</button></li>
+      <li><button>returns the string "let"</button></li>
+      <li><button>returns "undefined" safely</button></li>
+      <li><button>returns the string "object"</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>It throws.</strong> <code>typeof</code> is famously safe on
+    <em>undeclared</em> names — it returns <code>"undefined"</code> instead of throwing. That safety net
+    does <strong>not</strong> extend to the TDZ. A great follow-up answer to have ready.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">Which line throws? <code>const u = {n:1};</code> then…</p>
+    <ul class="quiz-opts">
+      <li><button>u.n = 2 reassigns a key</button></li>
+      <li><button>u.city = "Kutch" is added</button></li>
+      <li><button>u = {n:2} rebinds it</button></li>
+      <li><button>delete u.n removes a key</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>u = {n:2}</code>.</strong> <code>const</code> locks the
+    binding, not the contents — mutating, adding and deleting properties are all fine. Only pointing the
+    name at a new value throws <code>TypeError: Assignment to constant variable</code>.</div>
+  </div>
+
+  <details class="reveal">
+    <summary>Bonus (harder): what does this log, and why?</summary>
+    <pre><code>var v = "global";
+function test() {
+  console.log(v);
+  var v = "local";
+}
+test();</code></pre>
+    <p><strong><code>undefined</code></strong> — not <code>"global"</code>. The inner <code>var v</code>
+    is hoisted to the top of <code>test</code>, which <em>shadows</em> the global <code>v</code> for the
+    entire function body. So the lookup never walks up the scope chain; it finds the local
+    <code>v</code>, which is still <code>undefined</code> at that point. This is called
+    <strong>variable shadowing</strong>, and it's the cleanest one-snippet proof of why hoisting matters.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/closure#code-blocks">javascript.info — Variable scope, closure</a>
+    (read up to "Nested functions"; stop before the closure section, that's Lesson 3). Pair it with
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let#temporal_dead_zone_tdz">MDN's TDZ section</a>
+    for the precise wording.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Want to go harder?</strong> Ask me to fire ten cold hoisting snippets at you with no
+    explanations until you've committed to each answer, or to have you explain the TDZ out loud so I can
+    grade the wording. Saying it is a different muscle from knowing it.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0001-types-and-coercion.html">← Lesson 1: Types &amp; Coercion</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

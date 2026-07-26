@@ -22,3 +22,8 @@
 
 ## Progress log
 - 2026-07-07: Workspace created. Mapped all 5 non-Angular sections. Built course map + Lesson 0001 (Types & Coercion).
+- 2026-07-25: M1 marked done. Built Lesson 0002 (Scope, Hoisting & the TDZ) — scope chain, hoisting
+  table, TDZ, var/let/const 4-axis answer, the "prints 6" loop with both fixes, 4 quizzes + shadowing
+  bonus. Added `.tbl` / `.tbl-scroll` comparison-table styles to `assets/course.css` (first lesson to
+  need tables). Deliberately previewed a closure at the end of the loop drill so M3 lands as a name
+  for something already felt. Next: Lesson 0003 — Functions, closures & HOFs.

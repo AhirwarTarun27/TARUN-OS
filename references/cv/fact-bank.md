@@ -167,24 +167,31 @@ Performance Optimization 🟢 · SEO 🟢 · lazy loading 🟡 · memoization �
 
 When a JD uses the left-hand term, it is legitimate to use the mapped real skill/phrasing — same fact, JD's vocabulary.
 
+> **REPAIRED 2026-07-24.** Six rows of this table were still mapping JD terms onto **TanStack Query,
+> Zustand, React Testing Library, code-splitting** and **"server-to-client hydration layer"** — every
+> one of which is banned 100 lines above in this same file. That is the worst possible place for a
+> stale row: the ban list is read by a human, this table is read by the tailoring skill, so a JD
+> saying "state management" would have quietly put Zustand back on a CV. **If a claim is ever removed
+> above, grep this table before closing the edit.**
+
 | JD says | Use (all in the allow-list) |
 |---|---|
-| state management | Redux, Redux Toolkit, Zustand, Context API, TanStack Query |
-| server state / data fetching / caching | TanStack Query (React Query), Axios |
+| state management | Redux, Redux Toolkit (5 slices, CloudForestX), Context API |
+| server state / data fetching / caching | Axios data layer, Redux Toolkit slices, a generic fetch hook with request-id guards. **No dedicated server-cache library — do not reach for TanStack Query.** |
 | API integration / RESTful services / consuming APIs | REST APIs, Axios data layer |
-| API development / building endpoints | Node.js + PostgreSQL endpoints (CloudForestX only — 🟡, "contributed") |
-| real-time / live updates / websockets | SignalR, WebSockets |
-| unit / component testing, TDD | React Testing Library, Vitest |
+| API development / building endpoints | Node.js + Express + Sequelize + PostgreSQL endpoints (CloudForestX — 🟢, "built") |
+| real-time / live updates / websockets | SignalR (Dwellworks), Socket.IO (CloudForestX), WebSockets |
+| unit / component testing, TDD | Vitest — **personal projects only (22 test files).** Neither employer codebase has a frontend suite; that is an honest gap for the notes file, never a CV claim. |
 | SPA / single-page app | React SPA |
 | responsive / mobile-first / cross-browser | Responsive Design, IE11 support |
-| performance / speed / web vitals | Core Web Vitals, code-splitting, lazy loading, bundle optimization, memoization |
+| performance / speed / web vitals | Core Web Vitals, bundle optimization, memoization (re-render cost), react-window virtualization, request debouncing. **Not code-splitting** — 🔴 on both employer projects. |
 | accessibility / a11y | WCAG, ARIA |
 | SSR / SSG / static generation | Astro (SSG), Next.js |
-| component library / design system | reusable typed components, custom hooks, MUI |
+| component library / design system | reusable typed components, custom hooks, MUI, the 78-file Odin shared library |
 | GenAI / LLM / AI-powered features | LLM integration, OpenAI API, prompt engineering |
 | AI agents / agentic / workflow automation | AI Agents & Agentic Workflows, MCP, Claude Code, subagent orchestration |
-| cloud / AWS | AWS (Lambda, S3, EFS, EC2) — 🟡, integration/UI scope |
-| legacy modernization / migration / micro-frontend-ish | server-to-client hydration layer, legacy-to-React migration (Dwellworks) |
+| cloud / AWS | AWS SDK reads of EC2, EBS, S3, CloudWatch through STS cross-account roles 🟢 (CloudForestX ingestion). Lambda + EFS surfaced in the UI 🟡. **The cost/analysis engine is 🔴.** |
+| legacy modernization / migration / micro-frontend-ish | 20 independently-mounted SPA bundles inside a .NET Razor monolith, legacy-to-React migration (Dwellworks). **Never "hydration", never "micro-frontends"** — see the removed-claims list above. |
 | enterprise SaaS / multi-tenant / B2B | Dwellworks, CloudForestX, DentScribe, MyWorkMyDay (all enterprise SaaS) |
 
 ---
