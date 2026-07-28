@@ -1,0 +1,379 @@
+{
+  "version": 1,
+  "problemSlug": "counter",
+  "problemTitle": "Counter",
+  "rung": "R0",
+  "targetMinutes": 15,
+  "primitives": [
+    "controlled-input-react",
+    "derived-state"
+  ],
+  "warmupSlug": "event-delegation",
+  "startedAt": "2026-07-28T09:00:12.081Z",
+  "startedAtMs": 1785229212081,
+  "phases": {
+    "warmup": {
+      "start": 6,
+      "end": 300014
+    },
+    "clarify": {
+      "start": 300014,
+      "end": 480267
+    },
+    "design": {
+      "start": 480267,
+      "end": 637601
+    },
+    "code": {
+      "start": 637601,
+      "end": 1537762
+    },
+    "buzzer": {
+      "start": 1537762
+    }
+  },
+  "questions": [
+    {
+      "t": 347439,
+      "q": "Shoud the count number be negative? and is there any max limit for the count?",
+      "matched": true,
+      "answer": "Min 0, max 10. The buttons should disable at the bounds.",
+      "reqIndex": 2
+    },
+    {
+      "t": 391923,
+      "q": "how much css is needed for showing the counter app?",
+      "matched": true,
+      "answer": "Step of 1.",
+      "reqIndex": 1
+    },
+    {
+      "t": 444792,
+      "q": "Do we need to send the count number in another component?",
+      "matched": false,
+      "answer": "Not something I've thought about. Make a call and state your assumption.",
+      "reqIndex": -1
+    }
+  ],
+  "design": "Component\n\nCounter props: count, incrementHandler, decrementHandler\n\nState: count\n\nHandlers: incrementHandler, decrementHandler",
+  "designReviewRequested": false,
+  "snapshots": [
+    {
+      "t": 697770,
+      "file": "jsx",
+      "full": "// Component\n// \n// Counter props: count, incrementHandler, decrementHandler\nfunction App(){\n// \n// State: count\n// \n// Handlers: incrementHandler, decrementHandler\n\n"
+    },
+    {
+      "t": 758017,
+      "file": "jsx",
+      "diff": {
+        "s": 3,
+        "del": 1,
+        "add": [
+          "",
+          "function App(){",
+          "  const [count,setCount] = useState(0);",
+          "  ",
+          "  return ",
+          "  }"
+        ]
+      }
+    },
+    {
+      "t": 818268,
+      "file": "jsx",
+      "diff": {
+        "s": 7,
+        "del": 1,
+        "add": [
+          "  return </>",
+          "  <h1>{count}</h1>",
+          "  <button></button><button></button>",
+          "  </>"
+        ]
+      }
+    },
+    {
+      "t": 878268,
+      "file": "jsx",
+      "diff": {
+        "s": 9,
+        "del": 1,
+        "add": [
+          "  <button onClick={decrementHandler}>Decrease</button><button onClick={incrementHandler}>Increase</button>"
+        ]
+      }
+    },
+    {
+      "t": 938508,
+      "file": "jsx",
+      "diff": {
+        "s": 7,
+        "del": 0,
+        "add": [
+          "  const decrementHandler = ()=> {",
+          "     setState(prev => ",
+          "    }",
+          "  const incrementHandler = ()=> {}",
+          "  "
+        ]
+      }
+    },
+    {
+      "t": 998511,
+      "file": "jsx",
+      "diff": {
+        "s": 8,
+        "del": 3,
+        "add": [
+          "     setState(prev => prev < 0 ? 0 : prev - 1);",
+          "    }",
+          "  const incrementHandler = ()=> {",
+          "    setState(prev => prev >= 10 ? 10 : prev + 1);",
+          "    }"
+        ]
+      }
+    },
+    {
+      "t": 1058511,
+      "file": "jsx",
+      "diff": {
+        "s": 3,
+        "del": 12,
+        "add": [
+          "import {useState} from 'react';",
+          "",
+          "function App(){",
+          "  const [count,setCount] = useState(0);",
+          "  ",
+          "  const decrementHandler = ()=> {",
+          "     setState(prev => prev < 0 ? 0 : prev - 1);",
+          "    }",
+          "  const incrementHandler = ()=> {",
+          "    setState(prev => prev >= 10 ? 10 : prev + 1);",
+          "    }",
+          "  ",
+          "  return <>"
+        ]
+      }
+    },
+    {
+      "t": 1118518,
+      "file": "jsx",
+      "diff": {
+        "s": 4,
+        "del": 0,
+        "add": [
+          "function Counter(count, incrementHandler,decrementHandler){",
+          "  }"
+        ]
+      }
+    },
+    {
+      "t": 1178772,
+      "file": "jsx",
+      "diff": {
+        "s": 3,
+        "del": 17,
+        "add": [
+          "function Counter(count, incrementHandler,decrementHandler){",
+          "  }",
+          "",
+          "function App(){",
+          "  const [count,setCount] = useState(0);",
+          "  ",
+          "  const decrementHandler = ()=> {",
+          "     setState(prev => prev < 0 ? 0 : prev - 1);",
+          "    }",
+          "  const incrementHandler = ()=> {",
+          "    setState(prev => prev >= 10 ? 10 : prev + 1);",
+          "    }",
+          "  ",
+          "  return <>",
+          " <Counter count={count} decrementHandler={decrementHandler} incrementHandler={incrementHandler}/>"
+        ]
+      }
+    },
+    {
+      "t": 1239013,
+      "file": "jsx",
+      "diff": {
+        "s": 4,
+        "del": 15,
+        "add": [
+          "  return <>",
+          "   <h1>{count}</h1>",
+          "  <button onClick={decrementHandler}>Decrease</button><button onClick={incrementHandler}>Increase</button>",
+          "  </>",
+          "  }",
+          "",
+          "function App(){",
+          "  const [count,setCount] = useState(0);",
+          "  ",
+          "  const decrementHandler = ()=> {",
+          "     setState(prev => prev < 0 ? 0 : prev - 1);",
+          "    }",
+          "  const incrementHandler = ()=> {",
+          "    setState(prev => prev >= 10 ? 10 : prev + 1);",
+          "    }",
+          "  ",
+          "  return <>",
+          "          <Counter count={count} decrementHandler={decrementHandler} incrementHandler={incrementHandler}/>",
+          "         </>"
+        ]
+      }
+    },
+    {
+      "t": 1299270,
+      "file": "jsx",
+      "diff": {
+        "s": 3,
+        "del": 25,
+        "add": [
+          "// ",
+          "// State: count",
+          "// ",
+          "// Handlers: incrementHandler, decrementHandler",
+          "function Counter(count, incrementHandler,decrementHandler){",
+          "  return <>",
+          "   <h1>{count}</h1>",
+          "  <button onClick={decrementHandler}>Decrease</button><button onClick={incrementHandler}>Increase</button>",
+          "  </>",
+          "  }",
+          "",
+          "function App(){",
+          "  const [count,setCount] = useState(0);",
+          "  ",
+          "  const decrementHandler = ()=> {",
+          "     setState(prev => prev < 0 ? 0 : prev - 1);",
+          "    }",
+          "  const incrementHandler = ()=> {",
+          "    setState(prev => prev >= 10 ? 10 : prev + 1);",
+          "    }",
+          "  ",
+          "  return <>",
+          "          <Counter count={count} decrementHandler={decrementHandler} incrementHandler={incrementHandler}/>",
+          "        </>",
+          "  }",
+          ""
+        ]
+      }
+    },
+    {
+      "t": 1359273,
+      "file": "jsx",
+      "diff": {
+        "s": 7,
+        "del": 1,
+        "add": [
+          "function Counter({count, incrementHandler,decrementHandler}){"
+        ]
+      }
+    }
+  ],
+  "pauses": [
+    {
+      "t": 1252391,
+      "ms": 53184,
+      "line": 8,
+      "file": "jsx",
+      "context": "// Handlers: incrementHandler, decrementHandler ⏎ function Counter({){ ⏎   return <>"
+    },
+    {
+      "t": 1309562,
+      "ms": 60594,
+      "line": 8,
+      "file": "jsx",
+      "context": "// Handlers: incrementHandler, decrementHandler ⏎  ⏎ function Counter({count, incrementHandler,decrementHandler}){"
+    },
+    {
+      "t": 1418210,
+      "ms": 119552,
+      "line": 17,
+      "file": "jsx",
+      "context": "  const [count,setCount] = useState(0); ⏎    ⏎   const decrementHandler = ()=> {",
+      "ongoing": true
+    }
+  ],
+  "runs": [
+    {
+      "t": 65670,
+      "ok": true
+    },
+    {
+      "t": 85481,
+      "ok": false
+    },
+    {
+      "t": 713769,
+      "ok": true
+    },
+    {
+      "t": 1000090,
+      "ok": false,
+      "error": "/app.jsx: Unexpected token (15:10)\n\n  13 |     }\n  14 |   \n> 15 |   return </>\n     |           ^\n  16 |   <h1>{count}</h1>\n  17 |   <button onClick={decrementHandler}>Decrease</button><button onClick={incrementHandler}>Increase</button>\n  18 |   </>"
+    },
+    {
+      "t": 1011986,
+      "ok": true
+    },
+    {
+      "t": 1168937,
+      "ok": true
+    },
+    {
+      "t": 1194017,
+      "ok": false
+    },
+    {
+      "t": 1254933,
+      "ok": false
+    },
+    {
+      "t": 1260966,
+      "ok": false
+    },
+    {
+      "t": 1288374,
+      "ok": false
+    },
+    {
+      "t": 1312173,
+      "ok": true
+    },
+    {
+      "t": 1388206,
+      "ok": true
+    }
+  ],
+  "milestones": {
+    "firstRun": 65589,
+    "designSubmitted": 637601,
+    "firstKeystroke": 658570,
+    "firstRender": 713769
+  },
+  "goals": {},
+  "finalCode": {
+    "jsx": "// Component\n// \n// Counter props: count, incrementHandler, decrementHandler\n// \n// State: count\n// \n// Handlers: incrementHandler, decrementHandler\nfunction Counter({count, incrementHandler,decrementHandler}){\n  return <>\n   <h1>{count}</h1>\n  <button onClick={decrementHandler}>Decrease</button><button onClick={incrementHandler}>Increase</button>\n  </>\n  }\n\nfunction App(){\n  const [count,setCount] = useState(0);\n  \n  const decrementHandler = ()=> {\n     setState(prev => prev < 0 ? 0 : prev - 1);\n    }\n  const incrementHandler = ()=> {\n    setState(prev => prev >= 10 ? 10 : prev + 1);\n    }\n  \n  return <>\n          <Counter count={count} decrementHandler={decrementHandler} incrementHandler={incrementHandler}/>\n        </>\n  }\n\n\n",
+    "css": ""
+  },
+  "finalDom": "<h1>0</h1><button>Decrease</button><button>Increase</button>",
+  "report": {
+    "stuck": "Not in scope\nNo imports needed here — React, the hooks, document, window and root are all injected (see the IN SCOPE strip). If it is your own helper, define it above the line that uses it.\nUncaught ReferenceError: setState is not defined\n\nThis error appears when I use the setState",
+    "lookups": "I didn't look up anything. I write the code by myself I just want your score. That is a fine code or not.",
+    "rating": 4,
+    "tag": "solo"
+  },
+  "phase": "code",
+  "elapsedMs": 1537763,
+  "scratch": "- Create a state for the count\n- create handler function for increase or decrease the count\n- on handle function the I will take the parameter and the type for increment and decrement so that it increase or decrease the count for maintaing the limit not \n- create html tamplate to showing the counter live with increment and decrement button handling the handler function on click",
+  "importsStripped": 1,
+  "endedAt": "2026-07-28T09:25:49.844Z",
+  "missedRequirements": [
+    "Starts at 0.",
+    "Yes, a reset button. P1.",
+    "No persistence needed.",
+    "Unstyled is fine. Function over form.",
+    "Plus and minus updating a number on screen. That's it."
+  ]
+}

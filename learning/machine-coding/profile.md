@@ -9,7 +9,7 @@
 > A human coach doesn't reread every past session either. They carry a model of you. **This is that
 > model.** Everything else (`builds/**`) is cold storage and is not read.
 
-**Sessions banked:** 0 · **Last updated:** — (seeded 2026-07-14, pre-first-session)
+**Sessions banked:** 1 · **Last updated:** 2026-07-28 (counter, R0 attempt-day 2, 4.25/10, P0 ✗)
 
 ---
 
@@ -23,7 +23,7 @@ Full definitions + target times: [`primitives.md`](primitives.md).
 |---|---|---|---|---|---|
 | List render | — | Controlled input | — | Drag & drop | — |
 | Controlled input | — | List CRUD | — | Infinite scroll | — |
-| Event delegation | — | Lifting state | — | Pagination | — |
+| Event delegation | — | Lifting state | ~ | Pagination | — |
 | Debounce | — | useEffect cleanup | — | Undo/redo | — |
 | Throttle | — | Derived vs stored | — | Optimistic update | — |
 | localStorage | — | Custom hooks | — | Tree recursion | — |
@@ -33,7 +33,16 @@ Full definitions + target times: [`primitives.md`](primitives.md).
 | Keyboard nav | — | Form validation | — | | |
 | | | Refs | — | | |
 
-**Owned: 0 / 27** · shaky: 0 · untouched: 27
+**Owned: 0 / 27** · shaky: 1 · untouched: 26
+
+**Lifting state** is `~` on structure, not on execution — `count` in `App`, handlers passed down to a
+presentational `Counter`. Correct on the first try. It never ran, so it doesn't graduate past `~`.
+
+**Derived vs stored stays `—`, and this is deliberate.** Counter exists to train it: the bounds are
+derived (`count === max`), and the requirement he was *given* was "the buttons should disable at the
+bounds." He never implemented the disable, so he never wrote the derivation. He didn't store derived
+state — but only by not writing the feature at all. **That is a vacuous pass and it must not be
+credited.** The primitive is untouched until a build actually derives something.
 
 ---
 
@@ -44,15 +53,18 @@ gets targeted directly by the next problem the profile picks.
 
 | Failure mode | Count | Last seen | Status |
 |---|---|---|---|
-| _(nothing yet — needs a first session)_ | | | |
+| **Never exercises the interaction he just wired** | 1 | 2026-07-28 | 🎯 **THE fix.** Wrote both handlers, never clicked a button. `setState is not defined` survived 15 min and the buzzer. |
+| Blows the time target badly | 1 | 2026-07-28 | 25:38 vs a 15:00 target (+71%) on the smallest problem in the bank. |
+| **Builds a near-miss of the requirement he was handed** | 1 | 2026-07-28 | Asked about bounds, was told *"Min 0, max 10. **The buttons should disable at the bounds.**"* Built value-clamping instead — and the min clamp is off by one, so it reaches −1 anyway. Winning the clarify point and then not implementing the answer is worse than never asking. |
+| Self-rates high on a build that doesn't run | 1 | 2026-07-28 | Tagged `solo` 4/5 with P0 ✗. Watch this one — an inflated rating poisons every rung above it. |
 
-**Candidates to watch for, based on the stated diagnosis** *(hypotheses, not findings — delete any that
-don't show up in the data):*
-- Starts coding without asking a single clarifying question
-- Discovers the component structure while typing instead of deciding it first
-- Stores derived state (the #1 structural bug in this round)
-- Styles before P0 renders
-- Forgets the empty state
+**Disconfirmed on session 1** *(predicted by the seed diagnosis, did NOT happen — do not re-add without
+new evidence):*
+- ~~Starts coding without asking a single clarifying question~~ → asked 3, two landed.
+- ~~Discovers the component structure while typing~~ → wrote the design first and the code matched it.
+- ~~Styles before P0 renders~~ → touched zero CSS.
+
+Still unobserved (no data): stores derived state; forgets the empty state.
 
 ---
 
@@ -63,14 +75,17 @@ produce. Populated from pauses > 45s in the session replay.
 
 | Stage | Freezes | Median length | Typical cursor location |
 |---|---|---|---|
-| Clarify | — | — | — |
-| Design | — | — | — |
-| State init | — | — | — |
-| Event wiring | — | — | — |
-| Render / JSX | — | — | — |
-| Debugging | — | — | — |
+| Clarify | 0 | — | — |
+| Design | 0 | — | — |
+| State init | 1 | 2:00 | `useState(0)` → first handler body |
+| Event wiring | 2 | 0:57 | the `Counter({...})` props signature |
+| Render / JSX | 0 | — | — |
+| Debugging | 0 | — | — |
 
-**Current read:** *no data yet.*
+**Current read:** he does not freeze while *deciding*. He freezes while *connecting* — every stall was
+at the seam between a component and its handlers. Design phase: clean. Clarify phase: clean. All three
+freezes landed inside CODE, and none of them were spent debugging, because he never ran the path that
+was broken. **Zero debugging freezes with a broken P0 is the tell, not a compliment.**
 
 ---
 
@@ -80,11 +95,12 @@ Last 5 sessions unless noted. **These are the numbers that show whether this is 
 
 | Metric | Value | Direction |
 |---|---|---|
-| Median time-to-first-render | — | — |
-| Clarifying questions asked | — | — |
-| Rubric score (out of 10) | — | — |
-| P0 hit-rate (last 10) | — | — |
-| Longest single freeze | — | — |
+| Median time-to-first-render | 1:16 (from CODE start) | — (baseline, and it's strong) |
+| Clarifying questions asked | 3 (2 landed) | — (baseline) |
+| Rubric score (out of 10) | 4.25 | — (baseline) |
+| P0 hit-rate (last 10) | 0 / 1 | — |
+| Longest single freeze | 2:00 | — (baseline) |
+| Time vs target | +71% | — (baseline) |
 
 ---
 
@@ -100,7 +116,7 @@ Last 5 sessions unless noted. **These are the numbers that show whether this is 
 
 | When he's stuck on | The hint that worked | Times used |
 |---|---|---|
-| _(empty)_ | | |
+| _(empty — session 1 took no hints and no lookups; nothing has been tested on him yet)_ | | |
 
 ---
 
@@ -109,10 +125,21 @@ Last 5 sessions unless noted. **These are the numbers that show whether this is 
 *One paragraph, rewritten each review. What I'd tell an interviewer about him, and what he should
 work on next. Kept short on purpose.*
 
-> **Seed (2026-07-14, pre-first-session):** Working developer; the JavaScript is not the gap. The gap
-> is the **cold build** — AI-assisted coding atrophied *blank file → structure*, and confidence is low
-> enough that he expects to fail simple problems. Phase 1 is deliberately set below his level so he
-> finishes every one. **Watch specifically for whether he asks zero clarifying questions and whether he
-> discovers structure while typing** — those are the two predicted habits, and the design gate exists to
-> break the second one. Do not let him skip ahead to interviewer mode early; the confidence rebuild is
-> load-bearing, not a nicety.
+> **After session 1 (2026-07-28, counter, 4.25/10, P0 ✗):** The seed diagnosis was **wrong about the
+> shape of the gap.** He clarifies, he designs before he types, he doesn't style early, and he hit
+> first render 1:16 into CODE with a component split that was correct on the first attempt. Blank
+> file → structure is **not** the problem. The problem is the **verification loop**: he writes code
+> forward and never runs the path he just wrote, so a one-word typo (`setState` where `setCount` was
+> declared four lines up) lived through 15 minutes and cost the entire 3-point P0 block on a problem
+> he had already solved structurally. He also stalls at **wiring**, never at deciding — all three
+> freezes sat at the component/handler seam. He also **won the clarify point and then didn't build the
+> answer** — told the buttons should disable at the bounds, he wrote value-clamping instead. Next
+> session, grade him hardest on **click-after-wire** and on **finishing under target**; his structure
+> does not need coaching yet. Watch the honesty of his self-ratings — he tagged a non-running build
+> 4/5, and the ladder is only worth anything if that number is brutal. He is closer to a passing round
+> than the score suggests; do not soften the score to tell him that, tell him directly.
+>
+> **Live ladder decision (2026-07-28):** Counter is Building at attempt-day 2 and got a **one-time
+> extension to day 3** instead of the `watched` force-bank. The cap exists for *can't derive the
+> structure*; he derived it. Blank file, solo — green → bank R0 `solo`, not green → `watched`, no
+> further extension.

@@ -212,7 +212,46 @@ x();   <span class="tok-com">// 6, 6, 6, 6, 6 — one second apart</span></code>
     definition, which is the right order.
   </div>
 
-  <h2>7 · Retrieval check</h2>
+  <h2>7 · The three-question procedure</h2>
+  <p>Knowing the rules is not the same as applying the right one under pressure. The failure mode is
+  pattern-matching on the <em>shape</em> of a snippet and firing a rule you recognise, instead of reading
+  the actual state of the binding. Run these three questions on every identifier, in order, and never
+  skip ahead to the answer.</p>
+  <ol>
+    <li><strong>Which keyword declares it?</strong> <code>function</code> declaration ·
+      <code>var</code> · <code>let</code> · <code>const</code> · <code>class</code> · parameter · nothing</li>
+    <li><strong>What state is the binding in <em>at this exact line</em>?</strong> not registered
+      (undeclared) · registered but uninitialised (<strong>TDZ</strong>) · registered holding
+      <code>undefined</code> · holding a real value</li>
+    <li><strong>What are you doing to it?</strong> reading · calling · assigning · <code>typeof</code></li>
+  </ol>
+  <p>The outcome falls straight out of the intersection:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>State of binding</th><th>read</th><th>call</th><th>assign</th><th><code>typeof</code></th></tr></thead>
+    <tbody>
+      <tr><td>undeclared</td><td><code>ReferenceError</code></td><td><code>ReferenceError</code></td><td>creates a global (sloppy mode)</td><td><strong><code>"undefined"</code></strong></td></tr>
+      <tr><td>TDZ (<code>let</code>/<code>const</code>/<code>class</code>)</td><td><code>ReferenceError</code></td><td><code>ReferenceError</code></td><td><code>ReferenceError</code></td><td><strong><code>ReferenceError</code></strong></td></tr>
+      <tr><td>holds <code>undefined</code> (<code>var</code>)</td><td><code>undefined</code></td><td><strong><code>TypeError</code></strong></td><td>fine</td><td><code>"undefined"</code></td></tr>
+      <tr><td>holds a real value</td><td>the value</td><td>depends on the value</td><td><code>const</code> → <strong><code>TypeError</code></strong></td><td>its type</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="tip">
+    <span class="callout-label">Re-run question 2 after every line</span>
+    State changes as the program executes. Hoisting only decides the <em>starting</em> state — an
+    assignment further down still runs at its own line. The most common slip is answering correctly for
+    line 1, then never re-reading the state before answering for line 4.
+  </div>
+  <div class="note">
+    <span class="callout-label">The two no-ops worth memorising</span>
+    A bare <code>var a;</code> when <code>a</code> already holds a value does <strong>nothing</strong> —
+    it does not reset to <code>undefined</code>. Same for <code>var a</code> when <code>a</code> is
+    already a <em>parameter</em>. The declaration was processed at parse time; re-stating it later is
+    dead weight. Both show up as "guess the output" questions constantly.
+  </div>
+
+  <h2>8 · Retrieval check</h2>
   <p>No scrolling up. Answer, then read the explanation.</p>
 
   <div class="quiz" data-correct="1">

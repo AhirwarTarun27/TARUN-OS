@@ -111,6 +111,9 @@ function summarize(s) {
   L.push(`| Freezes > 45s | ${(s.pauses || []).length} · longest ${mmss(longest)} |`);
   L.push(`| Failed runs | ${fails} |`);
   L.push(`| Design block | ${(s.design || '').trim() ? `${s.design.split('\n').length} lines` : '**none written**'} |`);
+  // Only shown when it happened. A high count on a session that never hit P0 is a procrastination
+  // tell worth seeing — reaching for Ctrl+S is what stalling looks like with a formatter installed.
+  if (s.formatCount) L.push(`| Ctrl+S formats | ${s.formatCount} |`);
   L.push('');
   L.push('## Timeline');
   L.push('');
@@ -163,6 +166,45 @@ function nextDue(s, r0Date, r0Tag) {
   }
 }
 
+/**
+ * R0 is defined as **the date a working P0 exists** — not the date he first opened the problem.
+ * Without this gate a session that never ran gets a next-due date, a cold-fluency rating and a place
+ * on the ladder, and the profile then reports a primitive he does not own. It happened on
+ * 2026-07-28: counter went in at `R0:4`, due 07-31, on a session whose own header read `P0 ✗`.
+ * No P0 → the problem stays in **Building** and burns an attempt-day.
+ */
+function bankBuilding(s, lines, cell) {
+  const date = s.startedAt.slice(0, 10);
+  const start = lines.findIndex((l) => l.startsWith('## Building'));
+  const end = lines.findIndex((l) => l.startsWith('## Active'));
+
+  // Building rows have 5 columns; Active rows have 9. The column count is what tells them apart.
+  const i = lines.findIndex(
+    (l, n) => n > start && n < end && l.startsWith('| ' + s.problemTitle + ' |') && l.split('|').length === 7
+  );
+
+  let days = 1;
+  if (i >= 0) {
+    const prev = parseInt(lines[i].split('|')[4].trim(), 10);
+    days = (Number.isFinite(prev) ? prev : 1) + 1;
+  }
+
+  const started = i >= 0 ? lines[i].split('|')[3].trim() : date;
+  const row = `| ${cell(s.problemTitle)} | ${(s.primitives || []).join(', ') || '—'} | ${started} | ${days} | ${cell(s.report?.stuck).slice(0, 80)} |`;
+
+  if (i >= 0) lines[i] = row;
+  else {
+    const head = lines.findIndex((l, n) => n > start && l.startsWith('| Problem | Primitives | Started |'));
+    lines.splice(head + 2, 0, row);
+  }
+
+  console.warn(
+    `  ⚠ P0 ✗ — NOT banked to the ladder. "${s.problemTitle}" stays Building, attempt-day ${days}.` +
+    (days >= 2 ? '\n    Cap reached: next attempt is the last one before it force-banks R0 `watched`.' : '')
+  );
+  return lines;
+}
+
 function updateQueue(s) {
   let q = fs.readFileSync(QUEUE, 'utf8');
   const date = s.startedAt.slice(0, 10);
@@ -170,19 +212,33 @@ function updateQueue(s) {
   const tag = s.report?.tag ?? '—';
 
   const lines = q.split('\n');
-  const idx = lines.findIndex((l) => l.includes('| _(empty — the first row lands'));
 
   // A stray `|` in his self-report would silently corrupt the table.
   const cell = (v) => String(v ?? '—').replace(/\|/g, '/').replace(/\n/g, ' ');
 
+  if (s.rung === 'R0' && s.goals?.p0 == null) {
+    fs.writeFileSync(QUEUE, bankBuilding(s, lines, cell).join('\n'));
+    return;
+  }
+
   if (s.rung === 'R0') {
     const { due, rung } = nextDue(s, date, tag);
     const row = `| ${cell(s.problemTitle)} | ${(s.primitives || []).join(', ') || '—'} | ${date} | \`${tag}\` | R0 | R0:${rating} | ${due} (${rung}) | ${s.targetMinutes} min | ${cell(s.report?.stuck).slice(0, 40)} |`;
+    // Placeholder text drifts when the file is hand-edited; match the shape, not the sentence.
+    const idx = lines.findIndex((l) => /^\| _\(empty/.test(l) && l.split('|').length > 8);
     if (idx >= 0) lines[idx] = row;
     else {
       const head = lines.findIndex((l) => l.startsWith('| Problem | Primitives | R0 |'));
       lines.splice(head + 2, 0, row);
     }
+
+    // It graduated out of Building the moment a P0 existed — leave no ghost row behind.
+    const bStart = lines.findIndex((l) => l.startsWith('## Building'));
+    const bEnd = lines.findIndex((l) => l.startsWith('## Active'));
+    const b = lines.findIndex(
+      (l, n) => n > bStart && n < bEnd && l.startsWith('| ' + s.problemTitle + ' |') && l.split('|').length === 7
+    );
+    if (b >= 0) lines.splice(b, 1);
   } else {
     const i = lines.findIndex(
       (l) => l.startsWith('| ' + s.problemTitle + ' |') && l.split('|').length > 8

@@ -27,3 +27,14 @@
   bonus. Added `.tbl` / `.tbl-scroll` comparison-table styles to `assets/course.css` (first lesson to
   need tables). Deliberately previewed a closure at the end of the loop drill so M3 lands as a name
   for something already felt. Next: Lesson 0003 — Functions, closures & HOFs.
+- 2026-07-28: Drilled L2 cold — 13 snippets, 3 rounds. Score fell round over round (4/5 → 1/5 → 1/3).
+  Finding: **not a knowledge gap, a retrieval-indexing gap.** He answered three rules correctly and
+  then missed the SAME rule in a different-shaped snippet minutes later. He fires the first rule the
+  snippet's surface resembles and stops, instead of reading binding state per line. Fix shipped as
+  lesson §7 "The three-question procedure" + a 4×4 state/operation table (every miss was one cell).
+  Full record: `learning-records/0002-scope-hoisting-tdz.md`.
+  **Gate for Lesson 3: he applies the procedure unprompted, not that he scores higher.** Re-drill 5
+  snippets first and reject output-only answers.
+- Teaching note (generalise this): cold-drill every lesson before moving on. The lesson HTML alone
+  produced confident recall of definitions and unreliable application. The drill is where the real
+  diagnosis came from, and the misses are better lesson content than anything written up front.

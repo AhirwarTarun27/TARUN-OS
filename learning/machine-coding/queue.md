@@ -106,7 +106,7 @@ Not on the ladder. Carried daily. Force-banks as `watched` at the end of attempt
 
 | Problem | Primitives | Started | Attempt-days | Where you got stuck |
 |---------|-----------|---------|--------------|---------------------|
-| Counter | state + event handlers + render-from-state | 2026-07-17 | 1 | No working P0 in the block. Cap = 2 attempt-days, then reference-rebuild + bank R0 `watched`. |
+| Counter | lifting-state, derived-state | 2026-07-17 | 2 | Structure derived solo and correct. P0 ✗ on one identifier: handlers call `setState`, the setter is `setCount`. Never clicked a button, so it never surfaced. **One-time extension to attempt-day 3** — the `watched` cap is for *can't derive the structure*, and he derived it. Green tomorrow → R0 `solo`. Not green → `watched`, no further extension. |
 
 ## Active — on the ladder
 
@@ -114,7 +114,7 @@ Ratings column logs each rung, e.g. `R3:3 R7:4`. Next due e.g. `2026-07-17 (R3)`
 
 | Problem | Primitives | R0 | R0 tag | Last rung | Ratings | Next due | Target | Notes |
 |---------|-----------|----|--------|-----------|---------|----------|--------|-------|
-| _(empty — the first row lands when `lab/ingest.mjs` runs)_ | | | | | | | | |
+| _(empty — nothing has produced a working P0 yet)_ | | | | | | | | |
 
 ## Graduated
 

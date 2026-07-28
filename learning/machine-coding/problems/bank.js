@@ -23,7 +23,10 @@ window.MC_PROBLEMS = [
     targetMinutes: 15,
     mode: "react",
     prompt: "Build a counter.",
-    primitives: ["controlled-input-react", "derived-state"],
+    // No controlled input anywhere in a counter — this said `controlled-input-react` until
+    // 2026-07-28, which would have credited the profile with a primitive the problem never trains.
+    // What it actually trains: count lives in the parent, the buttons live in the child.
+    primitives: ["lifting-state", "derived-state"],
     teaches:
       "The bounds are DERIVED (count === max), not stored. If you add an `isMaxed` state, that's the bug this problem exists to find.",
     hiddenRequirements: [

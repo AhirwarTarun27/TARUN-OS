@@ -472,17 +472,34 @@ function initEditor() {
     updateAutocomplete();
   });
 
-  // What this editor will and will not do for him, and why the line sits where it does:
+  // What this editor will and will not do for him, and why the line sits where it does.
   //
-  //   Tab inserts spaces. Enter copies the current indent. Neither supplies a single piece of
-  //   KNOWLEDGE — they save keystrokes on decisions already made, which is why they are free. Every
-  //   real editor does both; a textarea that doesn't is harder than a real round in a way that
-  //   trains typing, not machine coding.
+  // THE TEST, and it is the only one: does the feature supply KNOWLEDGE, or does it save keystrokes
+  // on a decision he has already made? Knowledge is the thing being measured. Keystrokes are tax.
   //
-  //   No autocomplete in app.jsx, no bracket matching, no snippets — that IS cold API recall, and
-  //   it is muscle #2, and it is the entire reason this lab exists. styles.css gets a CSS dropdown
-  //   ONLY after P0 is green; see the CSS autocomplete section for why that exception is principled
-  //   and not drift.
+  //   FREE — saves keystrokes on a decision already made:
+  //     · Tab inserts spaces. Enter copies the current indent. Every real editor does both; a
+  //       textarea that doesn't is harder than a real round in a way that trains typing, not
+  //       machine coding.
+  //     · Ctrl/Cmd+S formats via Prettier. Indentation is not on the rubric — "code structure" is
+  //       about the component split and honest names, not where the braces sit. Ungated on purpose
+  //       (unlike the CSS dropdown): formatting is not the thing being tested in ANY phase.
+  //     · Typing `>` closes a JSX tag. He already decided it was an <h1>; typing `</h1>` is
+  //       transcription. See the Enter branch below for why brackets are NOT the same case.
+  //
+  //   BANNED IN app.jsx, permanently — that IS cold API recall, it is muscle #2, and it is the
+  //   entire reason this lab exists:
+  //     · identifier/variable autocomplete · hook suggestions · snippets · bracket matching
+  //
+  //   The evidence, so this ban survives the next time it gets asked for. Session 2026-07-28
+  //   (counter, 4.25/10): `const [count, setCount] = useState(0)` on line 16, `setState(...)` typed
+  //   on line 19. That one identifier cost the entire 3-point P0 block. An identifier dropdown would
+  //   have offered `setCount`, he would have taken it, P0 would have gone green, and the profile
+  //   would now record a primitive he does not own. **The feature would have deleted the only
+  //   finding the session produced.** It was requested that same day and declined for this reason.
+  //
+  //   styles.css gets a CSS dropdown ONLY after P0 is green; see the CSS autocomplete section for
+  //   why that one exception is principled and not drift.
   //
   //   (Syntax colour is not autocomplete either: it never supplies an API name, and every real round
   //   runs in a highlighted editor. A white-on-black textarea is the unrealistic option.)
@@ -493,6 +510,27 @@ function initEditor() {
       if (e.key === 'ArrowUp') { e.preventDefault(); acMove(-1); return; }
       if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); acceptAutocomplete(); return; }
       if (e.key === 'Escape') { e.preventDefault(); hideAutocomplete(); return; }
+    }
+
+    // He asked for "format on save". There is no save in here, so Ctrl/Cmd+S is the muscle memory
+    // it maps to. preventDefault or the browser offers to save the page.
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+      e.preventDefault();
+      formatEditor();
+      return;
+    }
+
+    if (e.key === '>' && activeFile === 'jsx' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const closer = jsxCloserAt(ed.value, ed.selectionStart);
+      if (closer && ed.selectionStart === ed.selectionEnd) {
+        e.preventDefault();
+        const s = ed.selectionStart;
+        ed.setRangeText('>' + closer, s, s, 'end');
+        // Caret lands between the two tags, which is where the child goes.
+        ed.selectionStart = ed.selectionEnd = s + 1;
+        ed.dispatchEvent(new Event('input'));
+        return;
+      }
     }
 
     if (e.key === 'Tab') {
@@ -509,7 +547,10 @@ function initEditor() {
       const before = ed.value.slice(0, s);
       const line = before.slice(before.lastIndexOf('\n') + 1);
       const indent = (line.match(/^[ \t]*/) || [''])[0];
-      // An opener earns one more level. Closing it is still his job — no auto-close.
+      // An opener earns one more level. Closing the BRACKET is still his job — and unlike a JSX
+      // tag, that is not an arbitrary line: an unbalanced brace is a structural mistake, and
+      // noticing it is part of holding the shape of the code in your head. A tag's closer carries
+      // no such information — it is the name you already typed, spelled backwards.
       const extra = /[{([]\s*$/.test(line) ? '  ' : '';
       ed.setRangeText('\n' + indent + extra, s, ed.selectionEnd, 'end');
       ed.dispatchEvent(new Event('input'));
@@ -557,6 +598,104 @@ function syncTabs() {
 function setEditorValue(v) {
   $('editor').value = v || '';
   paintEditor();
+}
+
+/* ── JSX tag auto-close ─────────────────────────────────────────────────────
+ * Returns the closing tag to insert after the `>` being typed, or null to leave it alone.
+ *
+ * Deliberately naive about strings and comments, same tolerance as `cssContextAt`: the failure
+ * mode is a tag that does not auto-close, which costs one keystroke. The opposite failure —
+ * inserting a closer where none belongs — would corrupt his code mid-round, so every ambiguous
+ * case returns null.
+ */
+const VOID_TAGS = new Set([
+  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+  'link', 'meta', 'param', 'source', 'track', 'wbr'
+]);
+
+function jsxCloserAt(text, pos) {
+  const before = text.slice(0, pos);
+  const lt = before.lastIndexOf('<');
+  if (lt === -1) return null;
+
+  const open = before.slice(lt);
+  // Arrow functions in props are everywhere in this lab (`onClick={() => setCount(...)}`), and a
+  // raw `>` scan would read that arrow as the tag already being closed. Blank them out first.
+  if (open.replace(/=>/g, '  ').includes('>')) return null; // that `<` is already closed
+  if (open.startsWith('</')) return null;                   // he's typing a closing tag
+  if (open.endsWith('/')) return null;                      // self-closing: <br />
+  if (open === '<') return '</>';                           // bare fragment
+
+  const m = /^<([A-Za-z][\w.:$-]*)/.exec(open);
+  if (!m) return null;                                      // `a < b`, not a tag
+  if (VOID_TAGS.has(m[1].toLowerCase())) return null;
+  return '</' + m[1] + '>';
+}
+
+/* ── Formatting ─────────────────────────────────────────────────────────────
+ * Prettier, on Ctrl/Cmd+S. Keystroke only, deliberately no button. See the doctrine block in
+ * initEditor for why this is free and identifier autocomplete is not.
+ */
+
+/**
+ * Replace the editor's contents WITHOUT counting as activity.
+ *
+ * This is the whole reason formatting doesn't route through a synthetic `input` event: that path
+ * calls `recordActivity()`, which resets `lastActivity` and is what detects freezes > 45s. Freezes
+ * are the highest-value signal this lab produces — 3 of them on 2026-07-28, all at the wiring seam,
+ * and none of it self-reportable. A Ctrl+S every 30 seconds while stuck would erase exactly the
+ * pauses worth seeing.
+ */
+function applyEditorText(text, cursorOffset) {
+  const ed = $('editor');
+  ed.value = text;
+  const c = Math.max(0, Math.min(cursorOffset ?? 0, text.length));
+  ed.selectionStart = ed.selectionEnd = c;
+  if (phase === 'warmup') scratch = text;
+  else if (phase === 'code') files[activeFile] = text;
+  hideAutocomplete();
+  paintEditor();
+}
+
+let fmtMsgTimer = null;
+
+/** Transient note in the tab strip. Never says WHERE the error is — see `.fmt-msg` in lab.css. */
+function flashFormat(msg, warn) {
+  const el = $('fmt-msg');
+  el.textContent = msg;
+  el.classList.toggle('warn', !!warn);
+  el.classList.remove('hidden');
+  clearTimeout(fmtMsgTimer);
+  fmtMsgTimer = setTimeout(() => el.classList.add('hidden'), 2200);
+}
+
+async function formatEditor() {
+  if (phase !== 'warmup' && phase !== 'code') return;
+  if (editorLocked) return;
+  const ed = $('editor');
+  if (!ed.value.trim()) return;
+
+  try {
+    // formatWithCursor, not format: `format` alone drops the caret to offset 0 on every run, which
+    // makes the feature actively hostile mid-line.
+    const out = await prettier.formatWithCursor(ed.value, {
+      parser: activeFile === 'css' ? 'css' : 'babel',
+      plugins: [prettierPlugins.babel, prettierPlugins.estree, prettierPlugins.postcss],
+      cursorOffset: ed.selectionStart,
+      printWidth: 100,
+      tabWidth: 2,
+      singleQuote: true,
+      semi: true
+    });
+    if (out.formatted === ed.value) { flashFormat('already formatted'); return; }
+    applyEditorText(out.formatted, out.cursorOffset);
+    session.formatCount = (session.formatCount || 0) + 1;
+    flashFormat('formatted');
+  } catch {
+    // No line number, no parser message. Finding your own broken brace is part of the round, and a
+    // formatter that points at it is a linter he didn't earn.
+    flashFormat("can't format — syntax error", true);
+  }
 }
 
 function paintEditor() {
