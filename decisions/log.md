@@ -773,3 +773,41 @@ channels at 15 minutes a day is precisely what produced zero posts twice.
 impressions in ~2 weeks, first referral traffic 60-90 days, compounding months 3-4. **It will look dead
 through August. That is the channel's normal shape, not a failure**, and this date exists so it does not get
 killed on feel in week three. Write the outcome here either way.
+
+## 2026-07-29 — The .NET track becomes a two-performance backend track, on job-hunt hours
+
+**Decision:** `learning/dotnet-backend/` is renamed `learning/backend/` and re-scoped from a .NET-only
+translation course into **one curriculum serving two different performances**: Node.js **written and
+spoken** (the interview), C#/.NET **read and explained** (the job). It moves off employer hours onto a
+scored 3:00-5:00pm block. C#-the-language is taught first and fast, purely by correlation to JavaScript.
+SQL is folded in at sessions 7-8. Code moves outside the repo to `MyProjects/backend-lab/`. A new
+`/backend` skill runs the block. This supersedes the decision of 2026-07-18 above.
+
+**Why:** management wants him .NET-ready for internal shortlisting, and the job switch is interviewed on
+Node. The 07-18 framing treated those as competing claims on the calendar and solved it by fencing .NET
+into office hours. That was right when the track was 100% .NET. It is wrong now: roughly **60% of this
+curriculum is Node backend interview prep** — concurrency, async, the request pipeline, SQL — which is
+priority #1 work and legitimately earns job-hunt hours. Fencing it into employer time would have meant
+either teaching Node on the employer's clock or not teaching it at all.
+
+**The non-obvious call — the .NET rep is code review, not composition.** Tarun's stated plan is to let AI
+write the high-level C# and to focus on explanation. Taken literally that yields no C# hands-on at all.
+The reframe: the firing risk was never that he cannot *write* C#, it is that he **approves** what he
+cannot *read*. `.Result` on a Framework controller deadlocks. A `static` field on a controller is a race
+under a thread pool. A lazy-loaded navigation property in a loop is an N+1. All three are things a Node
+developer writes without flinching, and none are visible without reading fluency. So every .NET session
+ends with a **planted-bug review** instead of a build. It trains the skill his goal actually needs and
+costs less block time than composition.
+
+**The second call — internals are woven, not front-loaded.** He asked for computer internals first.
+Internals-first is right for retention and wrong for sequencing; a week of CPU and memory leaves him
+able to explain neither backend. The resolution is that they are the same thing — every place the two
+runtimes diverge *is* an internals fact (event loop vs thread pool, stack vs heap and why `int` cannot
+be null, epoll vs IOCP, pool starvation causing the deadlock, disk pages under a B-tree). Internals
+enter at the divergence point via a new `.internals` component, never as a standalone chapter.
+
+**What would change my mind:** if the sprint ends and the .NET half starts crowding out `dsa`,
+`machine-coding` or `interview-qa` once office blocks return, this goes back behind the employer-hours
+fence. The risk named on 07-18 has not gone away: **.NET has a boss attached to it and the job hunt does
+not, so urgency will keep trying to beat importance.** Also: if work moves to .NET Core, the C# 7.3
+ceiling and half the trap material stop applying and the mission gets revised again.

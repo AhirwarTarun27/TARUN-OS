@@ -35,6 +35,18 @@
   Full record: `learning-records/0002-scope-hoisting-tdz.md`.
   **Gate for Lesson 3: he applies the procedure unprompted, not that he scores higher.** Re-drill 5
   snippets first and reject output-only answers.
+  → Round 4 (same day): 3/5 clean, procedure applied, halted execution flagged unprompted. **Gate
+  passed, cleared for Lesson 3.** One item still open: he will not name `TypeError` (3 misses in one
+  session, behavior understood, label won't stick). Re-test it cold at the top of Lesson 3 and again
+  at the `Object.freeze` drill in M5, where it recurs naturally.
+- 2026-07-29: Built Lesson 0003 (Functions, Closures & HOFs). Opens with a **§0 gate check** re-testing
+  the open `TypeError` item before any new material — that pattern (carry the open item into the next
+  lesson's cold open) should repeat for every unresolved drill finding. Covers functions-as-values →
+  lexical environment → closure → private state → callbacks → HOFs → pure/impure → IIFE → arrow limits,
+  plus `once`/`memoize`/counter drills. Deliberately re-uses M2's "prints 6" loop and its `3 3 3`
+  synchronous twin, so closures are introduced as the NAME for something already met twice.
+  `this` is parked for M4 with an explicit note (arrows can't be taught without touching it).
+  M2 marked done, M3 current. **Not drilled yet — do not advance to M4 until it is.**
 - Teaching note (generalise this): cold-drill every lesson before moving on. The lesson HTML alone
   produced confident recall of definitions and unreliable application. The drill is where the real
   diagnosis came from, and the misses are better lesson content than anything written up front.

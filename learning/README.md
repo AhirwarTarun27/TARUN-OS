@@ -9,8 +9,10 @@ Home for every learning track. Keeps tutor state out of the AIOS root (`week.md`
 | Track | Relationship | Driven by |
 |---|---|---|
 | `system-design-interview/`, `interview-qa/` | **Taught** — full `/teach` workspaces | `/teach` |
+| `backend/` | **Taught *and* drilled** | `/backend` + the T0→T2→T7→T21 ladder |
 | `dsa/` | **Tracked, not taught** | course + the D0→D2→D5→D10 queue |
 | `machine-coding/` | **Tracked *and* coached** | `/machine-coding` + the R0→R3→R10 ladder |
+| `cv-defense/` | **Tracked and drilled, not taught** | say "drill me" — no skill drives it |
 | `reading/` | **Tracked and interrogated, not taught** | `/reading` — the source is the book, not the AI |
 
 Read that blockquote first — it tells you who owns the folder.

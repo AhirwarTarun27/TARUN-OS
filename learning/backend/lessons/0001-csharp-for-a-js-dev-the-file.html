@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 1 · C# for a JS dev: the file — Backend</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Session 1 · Phase A — C# through JavaScript</p>
+  <h1>C# for a JS dev: the file</h1>
+  <p class="subtitle">Everything you need to open a C# file and know what you are looking at. Nothing more.</p>
+</header>
+
+<div class="why">
+  <span class="callout-label">Where this sits</span>
+  You cannot read .NET until you can read C#, and .NET is the part that pays. So this session and the
+  next are the on-ramp, and they are deliberately fast. <strong>Nothing here is a backend concept</strong> — no
+  HTTP, no routing, no ORM. You already own all of that. This is vocabulary, and vocabulary is cheap if
+  you learn it against words you already have.
+  <br><br>
+  Every C# thing below arrives <em>beside its JavaScript counterpart</em>. If you ever see a C# construct
+  in this course with no JS column next to it, that is a bug in the lesson. Tell me.
+</div>
+
+<h2>1 · The layers above the code</h2>
+
+<p>JavaScript has two containers: the file, and the function. C# has four, and the two extra ones are
+where new readers get lost — not because they are hard, but because nothing in JS occupies that slot.</p>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head">
+    <div>JavaScript / Node</div><div class="xlate-arrow"></div><div>C# / .NET</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">a folder of files</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><b>namespace</b> — a naming scope, declared in the file</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">a <code>.js</code> file / module</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net">a <code>.cs</code> file — but the file name means nothing</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>class</code> or a factory function</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><b>class</b> — and <em>everything</em> must live inside one</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>require</code> / <code>import</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>using System.Text;</code> — imports a <em>namespace</em>, not a file</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>package.json</code> · npm</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>.csproj</code> · NuGet · and a <b>project</b> above that</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">— <em>no equivalent</em></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><b>solution</b> (<code>.sln</code>) — several projects built together</div>
+  </div>
+  <div class="catch">
+    <code>using</code> is not <code>import</code>. It does not pull in a file and it does not create a binding you can
+    rename. It says "when I write <code>StringBuilder</code>, look in <code>System.Text</code> too." The code was
+    already linked at compile time. <code>using</code> only saves you from typing the full name.
+  </div>
+</div>
+
+<p>So the smallest legal C# file has three levels of nesting before you get to a line that does
+anything. That is not ceremony for its own sake — it is what makes a compiler able to find any symbol
+in a million-line codebase without reading every file.</p>
+
+<div class="sbs">
+  <figure>
+    <figcaption>Node</figcaption>
+<pre><code>// tickets.js
+function summarize(t) {
+  return `#${t.id} ${t.title}`;
+}
+
+module.exports = { summarize };</code></pre>
+  </figure>
+  <figure>
+    <figcaption>C# 7.3</figcaption>
+<pre><code>using System;
+
+namespace HelpDesk.Core
+{
+    public class TicketFormatter
+    {
+        public string Summarize(Ticket t)
+        {
+            return $"#{t.Id} {t.Title}";
+        }
+    }
+}</code></pre>
+  </figure>
+</div>
+
+<div class="note">
+  <span class="callout-label">You will see this written differently online</span>
+  Modern C# lets you write <code>namespace HelpDesk.Core;</code> on one line with no braces — a
+  <em>file-scoped namespace</em>. It is nicer. <strong>It does not compile on .NET Framework 4.8.</strong> When you
+  see it in a Stack Overflow answer, that answer is for the wrong .NET. Keep the braces.
+</div>
+
+<h2>2 · <code>var</code> is a false friend</h2>
+
+<p>Same three letters, near-opposite meaning. This is the single most likely thing to mislead you in
+week one, so it gets its own section.</p>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head">
+    <div>JavaScript</div><div class="xlate-arrow"></div><div>C#</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>var</code> = function-scoped, hoisted, retype freely</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>var</code> = <b>infer the static type, then lock it</b></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>let x = 1; x = "hi";</code> is fine</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>var x = 1; x = "hi";</code> <b>will not compile</b></div>
+  </div>
+  <div class="catch">
+    <code>var</code> in C# is a typing shortcut, not a looseness. <code>var x = 1;</code> and <code>int x = 1;</code>
+    compile to <em>byte-identical output</em>. The variable is an <code>int</code> forever. Reading C#, treat
+    <code>var</code> as "the type is obvious from the right-hand side" — and if it is not obvious to you, that
+    is the compiler's hint that the line deserves a second look.
+  </div>
+</div>
+
+<div class="quiz" data-correct="0">
+  <p class="quiz-q">In C#, what does <code>var</code> actually do?</p>
+  <ul class="quiz-opts">
+    <li><button>Infers one fixed type at compile time</button></li>
+    <li><button>Creates a function scoped mutable slot</button></li>
+    <li><button>Declares a value typed at runtime only</button></li>
+    <li><button>Permits the stored type to change later</button></li>
+  </ul>
+  <div class="quiz-explain"><strong>Infers one fixed type at compile time.</strong> The compiler reads the
+  right-hand side, picks the type, and locks it. There is no runtime flexibility involved at all —
+  <code>var x = 1</code> is literally <code>int x = 1</code> after compilation. C# does have a genuinely dynamic
+  type, spelled <code>dynamic</code>, and you will almost never see it in a well-kept codebase.</div>
+</div>
+
+<h2>3 · The types you will actually meet</h2>
+
+<p>JS has one number. C# has about ten, and picking the wrong one is a real bug in money code.</p>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head">
+    <div>JavaScript</div><div class="xlate-arrow"></div><div>C#</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>number</code> (whole)</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>int</code> (±2.1 billion) · <code>long</code> for bigger</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>number</code> (fractional)</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>double</code> — fast, and <em>wrong for money</em></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>number</code> (money)</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><b><code>decimal</code></b> — base-10, exact, slower</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>string</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>string</code> — also immutable, same as JS</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>boolean</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>bool</code> — and <b>only</b> <code>bool</code> works in <code>if</code></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>Date</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>DateTime</code> · <code>DateTimeOffset</code> when zone matters</div>
+  </div>
+  <div class="catch">
+    <code>if (someString)</code> and <code>if (count)</code> do not compile. There is <b>no truthiness</b> in C#.
+    <code>if</code> takes a <code>bool</code> and nothing else, so you write <code>if (count > 0)</code> and
+    <code>if (!string.IsNullOrEmpty(name))</code>. Every falsy-value bug you have ever debugged in JS is
+    structurally impossible here, and every "just check the value" shortcut is gone with it.
+  </div>
+</div>
+
+<h2>4 · Value types and reference types</h2>
+
+<p>This is the concept the rest of C# hangs off. It is also the first place where the machine underneath
+becomes visible, so it is worth slowing down on.</p>
+
+<div class="internals">
+  <span class="callout-label">the machine</span>
+  A running program has two places to put things. The <strong>stack</strong> is a scratch area per thread:
+  push on call, pop on return, effectively free, and it dies when the method returns. The
+  <strong>heap</strong> is a shared pool that outlives any single call and has to be garbage collected.
+  <br><br>
+  JavaScript hides this from you completely — every object is on the heap and every variable holds a
+  reference. <strong>C# lets you choose</strong>, and that choice is what "value type vs reference type" means.
+  A value type holds the bytes; a reference type holds an address pointing at the bytes.
+</div>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head">
+    <div>JavaScript</div><div class="xlate-arrow"></div><div>C#</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">primitives copy · objects share</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><b>value types copy · reference types share</b></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>number</code>, <code>boolean</code>, <code>string</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>int</code>, <code>bool</code>, <code>double</code>, <code>decimal</code>, <code>DateTime</code>, <code>struct</code>, <code>enum</code></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>{}</code>, <code>[]</code>, functions</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>class</code>, <code>interface</code>, arrays, <code>string</code>, delegates</div>
+  </div>
+  <div class="catch">
+    <code>string</code> is a <em>reference</em> type in C# but behaves like a value because it is immutable —
+    exactly like JS strings. It is the one type that sits in both mental buckets, and interviewers like
+    asking about it for that reason.
+  </div>
+</div>
+
+<p>The consequence that actually bites: <strong>a value type has no null.</strong> It always holds a real value,
+and if you never assigned one, it holds the type's zero.</p>
+
+<pre><code>int    a;          <span class="tok-com">// default 0     — not undefined, not null</span>
+bool   b;          <span class="tok-com">// default false</span>
+string s;          <span class="tok-com">// default null  — string is a reference type</span>
+
+int  id = null;    <span class="tok-com">// compile error. int cannot hold null.</span>
+int? id = null;    <span class="tok-com">// fine. int? is Nullable&lt;int&gt;, a different type.</span></code></pre>
+
+<div class="trap">
+  <span class="callout-label">The bug this causes, over and over</span>
+  In JS, a property you never set is <code>undefined</code>, which is falsy and obvious. In C#, an
+  <code>int</code> property you never set is <strong><code>0</code></strong> — which is a perfectly valid id, quantity or
+  price. <strong>"Not provided" and "zero" become the same value</strong>, and nothing warns you. This is why you
+  will see <code>int?</code> all over real .NET code: it is how the codebase says "this one is genuinely
+  optional".
+</div>
+
+<div class="note">
+  <span class="callout-label">Two nullables, and only one of them exists for you</span>
+  <code>int?</code> — a <em>nullable value type</em>. Been in C# since 2005. <strong>You have it.</strong><br>
+  <code>string?</code> — a <em>nullable reference type</em>. C# 8, .NET Core era. <strong>You do not have it</strong>, and on
+  Framework 4.8 it will not compile. Reference types are already nullable; the <code>?</code> was only ever an
+  annotation for the compiler to warn you. Expect null checks by hand.
+</div>
+
+<div class="quiz" data-correct="2">
+  <p class="quiz-q">A class has an unassigned <code>public int Count;</code> field. What is its value?</p>
+  <ul class="quiz-opts">
+    <li><button>Null, until something assigns a number</button></li>
+    <li><button>Undefined, matching JavaScript field behaviour</button></li>
+    <li><button>Zero, because int cannot hold null</button></li>
+    <li><button>Nothing, reading it throws an exception</button></li>
+  </ul>
+  <div class="quiz-explain"><strong>Zero, because int cannot hold null.</strong> Value types always hold a
+  real value, and the runtime zeroes the memory for you. That is exactly the trap: the field looks
+  legitimately set to <code>0</code> and you cannot tell it apart from someone genuinely passing zero. If
+  "unset" needs to be distinguishable, the field has to be <code>int?</code>.</div>
+</div>
+
+<h2>5 · Properties, not object literals</h2>
+
+<p>JS objects are bags you can add to at any time. C# objects have a fixed shape decided at compile
+time. The declaration is longer; the payoff is that the compiler catches every typo'd field name.</p>
+
+<div class="sbs">
+  <figure>
+    <figcaption>Node</figcaption>
+<pre><code>const ticket = {
+  id: 1,
+  title: "Login fails",
+  status: "open",
+  assignedToId: null
+};
+
+ticket.titel = "oops";
+<span class="tok-com">// silently creates a new key</span></code></pre>
+  </figure>
+  <figure>
+    <figcaption>C# 7.3</figcaption>
+<pre><code>public class Ticket
+{
+    public int    Id           { get; set; }
+    public string Title        { get; set; }
+    public string Status       { get; set; }
+    public int?   AssignedToId { get; set; }
+}
+
+ticket.Titel = "oops";
+<span class="tok-com">// compile error. Caught before it runs.</span></code></pre>
+  </figure>
+</div>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head">
+    <div>JavaScript</div><div class="xlate-arrow"></div><div>C#</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">a plain key on an object</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><b>field</b> — <code>private int _count;</code>, usually hidden</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>get</code> / <code>set</code> accessor</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><b>property</b> — <code>public int Count { get; set; }</code></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>#privateField</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>private</code> — and it is enforced by the compiler</div>
+  </div>
+  <div class="catch">
+    <code>{ get; set; }</code> looks like it does nothing, and that is the point — it is an
+    <em>auto-property</em>. The compiler generates a hidden backing field plus a getter and setter method.
+    It matters because a property is a pair of <em>method calls</em>, not a memory slot, so it can be put on
+    an interface, intercepted, or made read-only later without breaking any caller.
+  </div>
+</div>
+
+<p><strong>The convention that will trip your fingers:</strong> C# uses <code>PascalCase</code> for everything public —
+classes, methods, properties. <code>camelCase</code> is only for locals and parameters. A private field is
+usually <code>_leadingUnderscore</code>. This is not preference; every codebase you touch will follow it.</p>
+
+<h2>6 · Access modifiers</h2>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head">
+    <div>JavaScript</div><div class="xlate-arrow"></div><div>C#</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">exported from the module</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>public</code> — anyone, any project</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">not exported</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>private</code> — this class only. <b>The default.</b></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">— <em>no equivalent</em></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>internal</code> — this <b>project</b> only</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">prototype chain access</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>protected</code> — this class and its subclasses</div>
+  </div>
+  <div class="catch">
+    <code>internal</code> is the one with no JS analogue, and it is why the layered solution in session 6 works
+    at all: <code>HelpDesk.Data</code> can expose things to itself that <code>HelpDesk.Api</code> physically cannot
+    call. In Node, "internal to the package" is a naming convention and a promise. Here it is enforced by
+    the compiler.
+  </div>
+</div>
+
+<h2>7 · Strings and collections</h2>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head">
+    <div>JavaScript</div><div class="xlate-arrow"></div><div>C#</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>`#${id} ${title}`</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>$"#{id} {title}"</code> — note the leading <code>$</code></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>[1, 2, 3]</code> — grows freely</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>new List&lt;int&gt;()</code> — <code>.Add()</code>, <code>.Count</code></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>arr.length</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>list.Count</code> · <code>array.Length</code> · <code>string.Length</code></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>new Map()</code> · plain object</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>Dictionary&lt;string, Ticket&gt;</code></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node"><code>for (const t of list)</code></div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-net"><code>foreach (var t in list)</code></div>
+  </div>
+  <div class="catch">
+    <code>int[]</code> is a <b>fixed-size</b> array — it has <code>Length</code> and no <code>.Add()</code>. If you want JS
+    array behaviour, you want <code>List&lt;T&gt;</code>, and that is what real code uses almost everywhere.
+    The <code>&lt;T&gt;</code> is not optional decoration: <code>List&lt;Ticket&gt;</code> can only ever hold tickets, so
+    the compiler already knows the type of every element you pull out of it.
+  </div>
+</div>
+
+<div class="quiz" data-correct="3">
+  <p class="quiz-q">Which line will the C# compiler reject?</p>
+  <ul class="quiz-opts">
+    <li><button>var name = ticket.Title ?? "none";</button></li>
+    <li><button>foreach (var t in tickets) { }</button></li>
+    <li><button>int? assigned = ticket.AssignedToId;</button></li>
+    <li><button>if (tickets.Count) { Save(); }</button></li>
+  </ul>
+  <div class="quiz-explain"><strong><code>if (tickets.Count)</code>.</strong> <code>Count</code> is an
+  <code>int</code>, and <code>if</code> requires a <code>bool</code>. There is no truthiness to fall back on, so you
+  write <code>if (tickets.Count > 0)</code>. The other three are all valid — <code>??</code> is the null-coalescing
+  operator and works exactly like it does in modern JS.</div>
+</div>
+
+<h2>8 · The compiler is now your fastest feedback loop</h2>
+
+<p>The habit shift that matters more than any syntax on this page.</p>
+
+<p>In Node you find out something is wrong by running it. In C# you find out by <em>building</em> it, and the
+build is faster than the run. Roughly the whole class of bug you are used to hunting — typo'd property
+name, wrong shape passed to a function, forgot to handle a case — is now a red squiggle before you leave
+the file. <strong>Read the first error, not the last.</strong> One real error commonly produces a cascade of
+twenty, and fixing the first usually clears the rest.</p>
+
+<div class="build">
+  <span class="callout-label">Build A — Node · you compose this from blank</span>
+  <p>In <code>backend-lab/node/01-the-file/tickets.js</code>. No copying, no reference. This is the interview
+  rep, so struggling here is the point.</p>
+  <ol>
+    <li>An array of 4 ticket objects: <code>id</code>, <code>title</code>, <code>status</code>, <code>assignedToId</code>.
+        Leave <code>assignedToId</code> unset on two of them — actually unset, not <code>null</code>.</li>
+    <li><code>findById(id)</code> — returns the ticket or <code>undefined</code>.</li>
+    <li><code>summarize(ticket)</code> — a template literal, <code>"#3 Login fails [open]"</code>.</li>
+    <li><code>unassignedCount()</code> — how many have no assignee. <strong>Decide what "no assignee" means</strong> and
+        write down the check you used. You will need that decision in ten minutes.</li>
+    <li>Run it. Print all four summaries and the count.</li>
+  </ol>
+  <p class="ship">it prints four lines and a count, and you can say out loud what <code>findById(99)</code> returns.</p>
+</div>
+
+<div class="build">
+  <span class="callout-label">Build B — C# · you transcribe this</span>
+  <p>New Console App in Visual Studio 2022, <strong>targeting .NET Framework 4.8</strong>, saved to
+  <code>backend-lab/dotnet/</code>. Type it; do not paste. The goal is that your fingers stop treating
+  <code>{ get; set; }</code> as strange.</p>
+  <ol>
+    <li>A <code>Ticket</code> class with <code>Id</code>, <code>Title</code>, <code>Status</code> and
+        <code>AssignedToId</code>. <strong>Choose the type of <code>AssignedToId</code> yourself</strong> and be ready
+        to defend it.</li>
+    <li>A <code>List&lt;Ticket&gt;</code> with the same four tickets.</li>
+    <li><code>FindById</code> — a <code>foreach</code>, returning <code>null</code> when nothing matches. No LINQ; that
+        is session 2.</li>
+    <li><code>Summarize</code> — <code>$"#{t.Id} {t.Title} [{t.Status}]"</code>.</li>
+    <li><code>UnassignedCount</code> — same rule you chose in Build A.</li>
+    <li>Build it, then run it. Notice which mistakes the compiler caught before you ran anything.</li>
+  </ol>
+  <p class="ship">both programs print the same five lines, and you can name one error C# caught that JS would have shipped.</p>
+</div>
+
+<div class="review">
+  <span class="callout-label">Code review — you are the reviewer</span>
+  <p>This compiles, passes review, and ships. It is wrong. One bug, and it is the exact thing a Node
+  developer writes without noticing.</p>
+<pre><code>public class TicketFilter
+{
+    public int    AssignedToId { get; set; }
+    public string Status       { get; set; }
+}
+
+public List&lt;Ticket&gt; Search(TicketFilter filter)
+{
+    var results = new List&lt;Ticket&gt;();
+
+    foreach (var t in _allTickets)
+    {
+        if (t.Status == filter.Status &amp;&amp;
+            t.AssignedToId == filter.AssignedToId)
+        {
+            results.Add(t);
+        }
+    }
+    return results;
+}
+
+<span class="tok-com">// caller — the user only filtered by status</span>
+var filter = new TicketFilter { Status = "open" };
+var open   = Search(filter);
+<span class="tok-out">// returns 0 rows. Nobody knows why.</span></code></pre>
+  <p class="prompt">What is the bug, and why would the same code in JavaScript have worked?</p>
+  <details class="reveal">
+    <summary>The answer</summary>
+    <div class="verdict">
+      <p><strong>The caller never set <code>AssignedToId</code>, so it is <code>0</code>, not null.</strong> The filter
+      then silently demands <em>"assigned to user 0"</em>, which is nobody, so the result is empty. There is no
+      error, no warning, and no null reference to trace. It just quietly returns nothing.</p>
+      <p><strong>Why JS is safe here:</strong> an unset property is <code>undefined</code>, so
+      <code>t.assignedToId === filter.assignedToId</code> is comparing against <code>undefined</code> and the mistake
+      shows up immediately, or the developer writes a truthiness guard out of habit. C# has no
+      <code>undefined</code> and no truthiness, so the zero looks like a deliberate value.</p>
+      <p><strong>The fix:</strong> <code>public int? AssignedToId { get; set; }</code>, and guard the comparison —
+      <code>(filter.AssignedToId == null || t.AssignedToId == filter.AssignedToId)</code>. The type now carries
+      the meaning "optional", which is what <code>int?</code> is for and why you see it everywhere in real .NET.</p>
+      <p><strong>Say this part out loud:</strong> "a value type has no null, so unset and zero are the same value,
+      and the type system cannot tell them apart unless I ask for <code>int?</code>." That sentence is the whole
+      session.</p>
+    </div>
+  </details>
+</div>
+
+<h2>9 · Retrieval check</h2>
+
+<p>Close the page. Answer out loud, in full sentences. Written answers let you fool yourself; spoken
+ones do not.</p>
+
+<div class="drill">
+  <span class="callout-label">Say these before session 2</span>
+  <ol>
+    <li>What are the four containers above a line of C#, and which two have no JS equivalent?</li>
+    <li>Why does <code>var x = 1; x = "hi";</code> fail to compile, when the JS version is fine?</li>
+    <li>Where does a value type live, where does a reference type live, and why does that make
+        <code>int</code> unable to hold null?</li>
+    <li>What is the practical difference between a field and a property, and why is a property not just
+        a slower field?</li>
+    <li><code>internal</code> — what does it mean, and why does Node have no word for it?</li>
+    <li>Name two bug classes the C# compiler catches that Node would have shipped to production.</li>
+  </ol>
+</div>
+
+<div class="note">
+  <span class="callout-label">Primary source — read this next</span>
+  <a href="https://learn.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/tips-for-javascript-developers">Tips
+  for JavaScript and TypeScript Developers — A tour of C# (Microsoft Learn)</a>. First-party, and written
+  for exactly your situation. Read the type-system section. <strong>Skip the Blazor recommendation at the
+  end</strong> — that is modern .NET and not your stack.
+</div>
+
+<div class="ask-teacher">
+  <strong>Drill it before you move on.</strong> Ask me to fire cold snippets at you — I will show C# and you
+  say what it does, no running it, no notes. That drill is where the real diagnosis comes from, and the
+  misses become the content of session 2. <strong>Session 2 opens with a gate check on section 4</strong>, cold,
+  before any new material. If it does not land, we re-drill today instead of starting tomorrow.
+</div>
+
+<nav class="lesson-nav">
+  <a href="../reference/course-map.html">← Course map</a>
+  <a href="../reference/node-to-dotnet.html">Translation reference →</a>
+</nav>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 3 · Functions, Closures &amp; HOFs — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 3 · Module 3 — JavaScript Foundations</p>
+    <h1>Functions, Closures &amp; HOFs</h1>
+    <p class="subtitle">The 99%-asked topic. A function that remembers where it was born, and every
+    pattern built on top of that one fact.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Where this sits</span>
+    Lesson 2 ended on one sentence: <strong>inner code can reach out, outer code can never reach in.</strong>
+    That was not a throwaway line. It <em>is</em> the closure. This lesson names it, proves it, and then
+    shows you the five interview patterns that are all the same trick wearing different clothes. The
+    ebook flags "what is a closure" as <strong>asked in 99% of interviews</strong>. Nothing else in the
+    JavaScript half pays better.
+  </div>
+
+  <h2>0 · Gate check — carried from Lesson 2</h2>
+  <p>One item stayed open: naming the right error. Answer both before you scroll.</p>
+  <details class="reveal">
+    <summary>Which error, and why? <code>const n = 5; n = 6;</code></summary>
+    <p><strong><code>TypeError: Assignment to constant variable.</code></strong></p>
+    <p>The rule in one sentence, worth memorising word for word: <strong>the name resolved fine, so the
+    reference is not the problem — the operation on that binding is illegal, therefore
+    <code>TypeError</code>.</strong> A <code>ReferenceError</code> means JavaScript could not
+    <em>find</em> the name at all (undeclared) or was forbidden from touching it yet (TDZ).</p>
+    <p>Find vs do. Can't find it → <code>ReferenceError</code>. Found it, illegal operation →
+    <code>TypeError</code>.</p>
+  </details>
+  <details class="reveal">
+    <summary>Which error? <code>var f; f();</code></summary>
+    <p><strong><code>TypeError: f is not a function.</code></strong> Same test: the name <code>f</code>
+    resolved perfectly, it holds <code>undefined</code>. Calling <code>undefined</code> is the illegal
+    operation. Compare <code>g();</code> with no <code>g</code> anywhere →
+    <code>ReferenceError: g is not defined</code>.</p>
+  </details>
+
+  <h2>1 · Functions are values</h2>
+  <p>Everything in this lesson follows from one property: in JavaScript a function is just a
+  <strong>value</strong>. You can store it in a variable, pass it as an argument, return it from another
+  function, or stick it in an array. This is what "functions are first-class citizens" means.</p>
+  <pre><code><span class="tok-com">// declaration — hoisted with its body (Lesson 2)</span>
+function add(a, b) { return a + b; }
+
+<span class="tok-com">// expression — only the variable hoists</span>
+const sub = function (a, b) { return a - b; };
+
+<span class="tok-com">// arrow — same hoisting story as the expression</span>
+const mul = (a, b) =&gt; a * b;
+
+const ops = [add, sub, mul];        <span class="tok-com">// stored in an array, totally normal</span>
+console.log(ops[2](3, 4));          <span class="tok-com">// 12</span></code></pre>
+  <div class="note">
+    <span class="callout-label">Watch the parentheses</span>
+    <code>add</code> is the function <em>value</em>. <code>add()</code> is the <em>result of calling it</em>.
+    Passing <code>add()</code> where you meant <code>add</code> is the single most common beginner bug in
+    every callback and event handler, and it's a favourite interview typo-spotting question.
+  </div>
+
+  <h2>2 · The lexical environment</h2>
+  <p><strong>Lexical</strong> means "determined by where it's written in the source," not by where or
+  when it's called. Every function, the moment it's created, gets an invisible reference to the scope it
+  was born in. That reference is its <strong>lexical environment</strong>.</p>
+  <p>Critically, that reference is attached at <em>authoring</em> time and never changes. Move the
+  function, call it from anywhere, hand it to a library: it still points home.</p>
+  <pre><code>function outer() {
+  const secret = 42;
+  function inner() {
+    console.log(secret);   <span class="tok-com">// reaches out to outer's scope</span>
+  }
+  return inner;            <span class="tok-com">// ← we hand `inner` OUT, without calling it</span>
+}
+
+const fn = outer();        <span class="tok-com">// outer() has now FINISHED and returned</span>
+fn();                      <span class="tok-com">// 42 — how? outer's scope should be gone.</span></code></pre>
+
+  <h2>3 · So: what is a closure?</h2>
+  <div class="qa">
+    <p class="q">What is a closure? (asked in ~99% of interviews)</p>
+    <p><strong>A closure is a function bundled together with the lexical environment it was created in.</strong>
+    Because of that bundle, the function keeps access to its outer variables even when it is executed
+    somewhere else entirely, long after the outer function has returned.</p>
+  </div>
+  <p>In the snippet above, <code>outer()</code> finished and returned. Normally its local variables would
+  be garbage collected. They aren't, because <code>inner</code> still holds a live reference to that
+  environment. JavaScript keeps <code>secret</code> alive for exactly as long as something can still
+  reach it.</p>
+  <div class="tip">
+    <span class="callout-label">Say this in the interview</span>
+    "A closure is a function plus its lexical environment. Every function in JavaScript closes over the
+    scope where it was <em>defined</em>, not where it's called, so it can still read those variables after
+    the outer function has returned. That's what makes private state, function factories and
+    <code>once</code>/memoise patterns possible."
+  </div>
+  <div class="note">
+    <span class="callout-label">The word that scores</span>
+    Say <strong>lexical</strong> and mean it. Plenty of candidates say "a function inside a function."
+    That's a description of the <em>shape</em>, not the mechanism, and the follow-up ("so why does it
+    still work after the outer function returned?") is where they fall over. You already have the
+    answer: the environment reference is attached at authoring time and keeps the scope alive.
+  </div>
+
+  <h3>You already met this in Lesson 2</h3>
+  <p>The "prints 6 every time" fix. Here it is again, now with the real name on it:</p>
+  <pre><code>function closur(n) {                          <span class="tok-com">// each CALL makes a new environment</span>
+  setTimeout(() =&gt; console.log(n), n * 1000); <span class="tok-com">// the arrow closes over THAT n</span>
+}
+for (var i = 1; i &lt;= 5; i++) closur(i);      <span class="tok-com">// 1 2 3 4 5</span></code></pre>
+  <p>Five calls, five separate lexical environments, five separate <code>n</code>s. With bare
+  <code>var i</code> there was only ever <em>one</em> environment and therefore one <code>i</code>. And
+  <code>let</code> works for the same reason: the <code>for</code> loop builds a fresh binding per
+  iteration, so each arrow closes over a different one. Same mechanism both times.</p>
+
+  <h2>4 · Closures in practice: private state</h2>
+  <p>This is what closures are actually <em>for</em>, and the counter is the classic whiteboard ask.</p>
+  <pre><code>function makeCounter() {
+  let count = 0;                    <span class="tok-com">// unreachable from outside — genuinely private</span>
+  return {
+    inc:   () =&gt; ++count,
+    value: () =&gt; count
+  };
+}
+
+const c = makeCounter();
+c.inc(); c.inc();
+console.log(c.value());   <span class="tok-com">// 2</span>
+console.log(c.count);     <span class="tok-com">// undefined — no way in</span>
+
+const c2 = makeCounter(); <span class="tok-com">// a SECOND, independent environment</span>
+console.log(c2.value());  <span class="tok-com">// 0 — not 2</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">The follow-up they ask</span>
+    "Why is <code>c2</code> zero?" Because each <em>call</em> to <code>makeCounter</code> creates a new
+    lexical environment. Closures capture an environment per invocation, not per function definition.
+    If you can explain that, you've shown you understand closures rather than having memorised the shape.
+  </div>
+
+  <h2>5 · Callbacks</h2>
+  <div class="qa">
+    <p class="q">What is a callback?</p>
+    <p>A function passed as an argument to another function, to be called later.</p>
+  </div>
+  <pre><code>function greet(name, callback) {
+  console.log("Hi " + name);
+  callback();                    <span class="tok-com">// called later, by someone else</span>
+}
+greet("Tarun", () =&gt; console.log("done"));
+<span class="tok-out">// Hi Tarun</span>
+<span class="tok-out">// done</span></code></pre>
+  <p>Where you meet them: <code>setTimeout</code>, array methods (<code>map</code>,
+  <code>filter</code>, <code>forEach</code>), DOM event handlers, and any async work. Note the overlap
+  with the last section: a callback almost always <em>is</em> a closure, because it gets executed inside
+  some other function's scope while still reading variables from where you wrote it. That's the whole
+  reason callbacks are usable at all.</p>
+
+  <h2>6 · Higher-order functions</h2>
+  <div class="qa">
+    <p class="q">What is a higher-order function?</p>
+    <p>A function that <strong>takes a function as an argument</strong>, <strong>returns a function</strong>,
+    or both.</p>
+  </div>
+  <pre><code><span class="tok-com">// takes a function</span>
+[1, 2, 3].map(n =&gt; n * 2);        <span class="tok-com">// map is a HOF</span>
+
+<span class="tok-com">// returns a function (a "function factory")</span>
+function multiplier(factor) {
+  return n =&gt; n * factor;          <span class="tok-com">// closes over `factor`</span>
+}
+const double = multiplier(2);
+const triple = multiplier(3);
+console.log(double(5), triple(5)); <span class="tok-com">// 10 15</span></code></pre>
+  <div class="note">
+    <span class="callout-label">The connection to name out loud</span>
+    A HOF that <em>returns</em> a function is only useful <strong>because</strong> of closures. Without
+    them, the returned function would forget <code>factor</code> the instant <code>multiplier</code>
+    returned. Interviewers love hearing the two concepts linked instead of recited separately.
+    Advantages to list if pushed: abstraction, reusability, composition, and readable async code.
+  </div>
+
+  <h2>7 · Pure vs impure functions</h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th>Pure</th><th>Impure</th></tr></thead>
+    <tbody>
+      <tr><td>Same input → same output</td><td>always</td><td>not guaranteed</td></tr>
+      <tr><td>Side effects</td><td>none</td><td>yes</td></tr>
+      <tr><td>Touches outside state</td><td>never</td><td>reads or mutates it</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <pre><code><span class="tok-com">// PURE — depends only on its arguments, changes nothing</span>
+const greet = name =&gt; `Hello ${name}`;
+
+<span class="tok-com">// IMPURE — reads outside state, so the output can change under it</span>
+let msg = "Hello";
+const greet2 = name =&gt; `${msg} ${name}`;
+
+<span class="tok-com">// IMPURE — mutates its input (a side effect)</span>
+const addItem = (arr, x) =&gt; { arr.push(x); return arr; };
+
+<span class="tok-com">// PURE version — returns a new array instead</span>
+const addItemPure = (arr, x) =&gt; [...arr, x];</code></pre>
+  <div class="tip">
+    <span class="callout-label">The React tie-in (say this, it lands)</span>
+    "Pure functions are predictable, testable and cacheable. It's why React expects render to be pure
+    and why you never mutate state directly — you return a new object. <code>useMemo</code> and
+    <code>React.memo</code> only work <em>because</em> the same input reliably gives the same output."
+    That connects the JavaScript half of the interview to the React half, which very few candidates do.
+  </div>
+  <p>A "side effect" is anything a function does beyond returning a value: mutating an argument, writing
+  to a global, logging, hitting the network, touching the DOM. Note the honest bit worth saying out
+  loud: impure is not a synonym for bad. Every useful program needs side effects. The discipline is
+  keeping them at the edges instead of scattered through your logic.</p>
+
+  <h2>8 · IIFE</h2>
+  <p>An <strong>Immediately Invoked Function Expression</strong> runs the moment it's defined.</p>
+  <pre><code>(function () {
+  console.log("runs immediately");
+})();
+
+(() =&gt; {
+  console.log("arrow flavour");
+})();</code></pre>
+  <p>The wrapping parentheses matter. They force JavaScript to read <code>function</code> as an
+  <em>expression</em> rather than a declaration, and only expressions can be invoked on the spot.</p>
+  <div class="note">
+    <span class="callout-label">Why it existed, and why you rarely write one now</span>
+    Before ES6 there was no block scope. An IIFE was the <em>only</em> way to get a private scope and
+    keep variables off the global object. Modules and <code>let</code>/<code>const</code> replaced that
+    job. Saying "IIFEs solved the scoping problem that <code>let</code> and modules now solve" is a much
+    better answer than the definition alone, because it shows you know <em>why</em> a feature exists.
+  </div>
+
+  <h2>9 · Arrow functions</h2>
+  <p><strong>Advantages:</strong> shorter syntax, implicit return for single expressions, and no own
+  <code>this</code> — which removes a whole category of binding bugs in callbacks.</p>
+  <div class="qa">
+    <p class="q">What are the limitations of arrow functions? (straight recall)</p>
+    <ol>
+      <li>Not hoisted with a body — they follow the function-expression rule from Lesson 2.</li>
+      <li>No <code>arguments</code> object.</li>
+      <li>No own <code>this</code> — they inherit it from the enclosing scope.</li>
+      <li>Cannot be used as constructors — <code>new</code> throws a <code>TypeError</code>.</li>
+      <li>Cannot be generator functions (no <code>yield</code>).</li>
+    </ol>
+  </div>
+  <pre><code>const Person = (name) =&gt; { this.name = name; };
+new Person("Tarun");   <span class="tok-com">// TypeError: Person is not a constructor</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">Deliberately parked</span>
+    Item 3 is the big one, and it's the whole of <strong>Module 4</strong>. For now hold exactly this
+    much: an arrow has no <code>this</code> of its own, so it uses whatever <code>this</code> the
+    surrounding code had. Next lesson explains what decides that value. The ebook warns that
+    "arrow function + <code>this</code>" combination questions get asked heavily here, so we're giving
+    it a full module rather than a bullet point.
+  </div>
+
+  <h2>10 · Coding drills</h2>
+  <p>Predict, then write it yourself before opening the answer. These are standard live-coding asks and
+  all three are closures.</p>
+
+  <details class="reveal">
+    <summary>Write <code>once(fn)</code> — a function that runs <code>fn</code> only the first time</summary>
+    <pre><code>function once(fn) {
+  let called = false;       <span class="tok-com">// private, per call to once()</span>
+  let result;
+  return function (...args) {
+    if (called) return result;
+    called = true;
+    result = fn(...args);
+    return result;
+  };
+}
+
+const init = once(() =&gt; { console.log("init!"); return 1; });
+init();  <span class="tok-com">// "init!" → 1</span>
+init();  <span class="tok-com">// (silent)  → 1</span></code></pre>
+    <p>The flag lives in the closure. Nothing outside can flip it back, which is exactly why this is
+    trustworthy.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Write <code>memoize(fn)</code> — cache results by argument</summary>
+    <pre><code>function memoize(fn) {
+  const cache = {};                   <span class="tok-com">// survives between calls via closure</span>
+  return function (n) {
+    if (n in cache) return cache[n];
+    cache[n] = fn(n);
+    return cache[n];
+  };
+}
+
+const slowSquare = n =&gt; { for (let i = 0; i &lt; 1e7; i++); return n * n; };
+const fast = memoize(slowSquare);
+fast(9);   <span class="tok-com">// slow the first time</span>
+fast(9);   <span class="tok-com">// instant — served from the closed-over cache</span></code></pre>
+    <p>Mention the caveat and you'll stand out: this key-by-argument version only works for primitive
+    arguments, and the cache grows forever. In production you'd bound it or use a <code>Map</code>.
+    And note <em>why</em> memoisation is safe here: <code>fn</code> must be <strong>pure</strong>.
+    Caching an impure function returns stale answers.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>What does this log, and why?</summary>
+    <pre><code>function make() {
+  let n = 0;
+  return () =&gt; ++n;
+}
+const a = make();
+const b = make();
+console.log(a(), a(), b());</code></pre>
+    <p><strong><code>1 2 1</code></strong>. <code>a</code> and <code>b</code> came from two separate
+    <em>calls</em>, so they closed over two separate environments. <code>b</code>'s <code>n</code> was
+    never touched by <code>a</code>. This is the single fastest way to check whether someone actually
+    understands closures or just recognises the shape.</p>
+  </details>
+
+  <h2>11 · Retrieval check</h2>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">Why can a returned inner function still read the outer function's variable?</p>
+    <ul class="quiz-opts">
+      <li><button>the variable became global</button></li>
+      <li><button>it was copied by value</button></li>
+      <li><button>it kept its lexical env</button></li>
+      <li><button>outer never really returns</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>It kept its lexical environment.</strong> The function holds a live
+    reference to the scope it was <em>defined</em> in, so that scope isn't garbage collected. Nothing is
+    copied, nothing goes global, and <code>outer</code> really did return.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">What does <code>const f = multiplier(2)</code> return, if <code>multiplier</code> returns <code>n =&gt; n * factor</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>the computed number 2</button></li>
+      <li><button>a function closing on 2</button></li>
+      <li><button>undefined until called</button></li>
+      <li><button>throws a TypeError here</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>A function that closed over <code>factor = 2</code>.</strong>
+    <code>multiplier</code> is a higher-order function because it <em>returns</em> a function, and that
+    returned function is a closure. Nothing is computed until you call <code>f(...)</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">Which of these is a <strong>pure</strong> function?</p>
+    <ul class="quiz-opts">
+      <li><button>a =&gt; { arr.push(a); }</button></li>
+      <li><button>() =&gt; Math.random() * 10</button></li>
+      <li><button>a =&gt; { count++; return a; }</button></li>
+      <li><button>(a, b) =&gt; [...a, b]</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>(a, b) =&gt; [...a, b]</code>.</strong> It returns a new array
+    and mutates nothing. The others mutate an outer array, produce a different result every call, and
+    mutate an outer counter. Same input, same output, no side effects — both halves are required.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">Which is <strong>not</strong> a limitation of arrow functions?</p>
+    <ul class="quiz-opts">
+      <li><button>they cannot be passed on</button></li>
+      <li><button>they have no arguments obj</button></li>
+      <li><button>they cannot use new here</button></li>
+      <li><button>they have no own this val</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>They can absolutely be passed around.</strong> Arrows are values
+    like any function — that's the whole point of first-class functions. The other three are real
+    limitations, along with "not hoisted" and "cannot be generators".</div>
+  </div>
+
+  <details class="reveal">
+    <summary>Bonus (harder): why does this print <code>3 3 3</code>, and what are the two fixes?</summary>
+    <pre><code>const fns = [];
+for (var i = 0; i &lt; 3; i++) {
+  fns.push(function () { return i; });
+}
+console.log(fns[0](), fns[1](), fns[2]());</code></pre>
+    <p>Same mechanism as Lesson 2's <code>setTimeout</code> question, with the async part stripped away
+    — which proves the bug was never about timing at all. One <code>var i</code> means one binding;
+    all three functions closed over the <em>same</em> environment, and the loop left <code>i</code> at
+    <code>3</code>. <strong>Fix 1:</strong> <code>let i</code>, giving a fresh binding per iteration.
+    <strong>Fix 2:</strong> push <code>((n) =&gt; () =&gt; n)(i)</code>, creating a new environment per
+    iteration by hand. Saying "it isn't a timing bug, it's a single-binding bug" is the answer that
+    ends the follow-ups.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/closure">javascript.info — Variable scope, closure</a>, this time
+    the whole page including the lexical-environment diagrams. Then
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures">MDN — Closures</a> for the
+    practical patterns section.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Drill it before you move on.</strong> Module 2's lesson looked solid until the cold drill
+    found the gap, and closures hide worse than scope does. Ask me to fire snippets at you — closure
+    identity, per-invocation environments, and HOFs that return functions. Same rules: no notes, no
+    running code, commit first.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0002-scope-hoisting-tdz.html">← Lesson 2: Scope, Hoisting &amp; the TDZ</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

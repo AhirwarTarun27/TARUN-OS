@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course Map — Backend: Node.js and .NET</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap wide">
+
+<header class="masthead">
+  <p class="eyebrow">Course Map · Backend — Node.js and .NET</p>
+  <h1>Two performances, ten sessions</h1>
+  <p class="subtitle">C# first and fast, then straight into .NET. Node written every single day. SQL where it actually matters.</p>
+  <p style="font-family:var(--sans);font-size:0.9rem;color:var(--ink-soft);margin-top:0.9rem">
+    Progress:
+    <span class="pip now"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+    <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+    &nbsp;0 of 10
+  </p>
+</header>
+
+<h2>The two performances</h2>
+
+<p>This is one curriculum serving two goals that are <em>not the same skill</em>. Everything about how
+each session is structured follows from this table.</p>
+
+<div class="tradeoff">
+  <div>
+    <h4>Node.js — write and speak</h4>
+    <ul>
+      <li>Goal: <span class="pro">clear a backend interview</span></li>
+      <li>You already know JS and Express</li>
+      <li>You <strong>compose</strong> from a blank file</li>
+      <li>Failure looks like: freezing on a blank file</li>
+    </ul>
+  </div>
+  <div>
+    <h4>C# / .NET — read and explain</h4>
+    <ul>
+      <li>Goal: <span class="pro">get shortlisted, then hold the job</span></li>
+      <li>You know zero C#</li>
+      <li>You <strong>transcribe</strong>, then <strong>review</strong></li>
+      <li>Failure looks like: approving a PR you can't audit</li>
+    </ul>
+  </div>
+</div>
+
+<div class="why">
+  <span class="callout-label">Why they are trained differently</span>
+  Typing equal amounts in both languages spends half the block on the half that does not need
+  composition. You will never be asked to write C# from a blank file under time pressure. You
+  <em>will</em> be asked to explain why a <code>.Result</code> call took production down.
+</div>
+
+<div class="trap">
+  <span class="callout-label">The thing that actually gets people fired</span>
+  Your plan is to have AI write the high-level C#. Fine. But the risk was never that you cannot
+  <em>write</em> it — it is that you <strong>approve</strong> what you cannot <em>read</em>. Three bugs that
+  ship silently, all of which a Node developer writes without flinching:
+  <code>.Result</code> on a controller (deadlocks on Framework), a <code>static</code> field on a controller
+  (a race under a thread pool), a lazy-loaded navigation property in a loop (an N+1 nobody sees until the
+  table grows). <strong>Every .NET session here ends with you finding a planted bug and saying why.</strong>
+</div>
+
+<h2>Where the code gets typed</h2>
+
+<div class="arch">
+  <span class="node hi">TARUN-OS</span><span class="arrow">teach · drill · bank</span>
+  <span class="node">the lesson, in your browser</span><span class="arrow">read</span>
+  <span class="node">backend-lab</span><span class="arrow">you type</span>
+  <span class="node">node · dotnet · sql</span>
+</div>
+
+<ul>
+  <li><strong>Lab:</strong> <code>MyProjects/backend-lab/</code>, its own repo, outside the AIOS. One Node project,
+      one VS solution, a folder per session. <code>node_modules</code> plus <code>bin/obj/packages</code> would bury
+      the workspace and slow every search in it.</li>
+  <li><strong>Node in VS Code. C# in Visual Studio 2022.</strong> Not VS Code and not <code>dotnet new</code> — neither
+      will scaffold .NET Framework web projects, and the old <code>.csproj</code> format needs real VS.</li>
+  <li><strong>The AI reads your code and never edits it.</strong> A bug gets reported with the reasoning; you type
+      the fix. Every line written for you is a rep you do not get.</li>
+</ul>
+
+<div class="trap">
+  <span class="callout-label">C# 7.3 is a hard ceiling</span>
+  .NET Framework 4.8 cannot compile <code>record</code>, <code>init</code> setters, switch expressions, top-level
+  statements, file-scoped namespaces or nullable reference types. <strong>Most C# written after 2020 targets
+  .NET 5+ and will not build for you.</strong> That is not you doing it wrong. When a lesson shows the clumsy
+  7.3 way, it is because the elegant way does not exist on your runtime — and it will say so, because you
+  will meet the modern version on Stack Overflow and need to recognise it as the wrong .NET.
+</div>
+
+<p class="part-label">Phase A · C# through JavaScript</p>
+<p style="font-family:var(--sans);font-size:0.92rem;color:var(--ink-soft)">
+Fast, and first, because reading .NET is impossible without it. Pure correlation: you never meet a C#
+construct without its JS counterpart on the same line. Two sessions, then straight into .NET.</p>
+
+<div class="module">
+  <h3><span class="modnum">01</span> C# for a JS dev — the file <span class="status now">in progress · Build B owed</span></h3>
+  <ul>
+    <li>namespace / class / method vs module / function — the layers JS has no word for</li>
+    <li><code>var</code> in C# is <em>inferred static type</em>, not JS <code>var</code>. Same word, opposite meaning.</li>
+    <li>Value vs reference types, and why <code>int</code> cannot be null unless you ask</li>
+    <li>Properties vs fields vs object properties · access modifiers · <code>$""</code> vs template literals</li>
+    <li><code>List&lt;T&gt;</code> and <code>Dictionary&lt;K,V&gt;</code> vs array and Map</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: a Node script you compose, then the same shapes transcribed in C#. Review: the <code>FirstOrDefault</code> returns <code>0</code> trap.</p>
+</div>
+
+<div class="module">
+  <h3><span class="modnum">02</span> C# for a JS dev — the shapes <span class="status next">next</span></h3>
+  <ul>
+    <li>Interfaces, and why enterprise .NET has so many of them</li>
+    <li>Generics, which will feel like TypeScript generics until they do not</li>
+    <li><strong>LINQ is your array methods</strong> — <code>Select/Where/FirstOrDefault/Any/OrderBy</code></li>
+    <li>Exceptions vs error-first callbacks · <code>using</code> and <code>IDisposable</code></li>
+    <li><code>async</code>/<code>await</code> syntax only. The machinery is day 4, and it is not what you expect.</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: the same transform pipeline in array methods and in LINQ. Review: a missing <code>using</code> leaking a connection.</p>
+</div>
+
+<p class="part-label">Phase B · The machine underneath</p>
+<p style="font-family:var(--sans);font-size:0.92rem;color:var(--ink-soft)">
+Where internals enter, and the only place they do. Every difference between these two runtimes is a fact
+about threads, memory or syscalls. Learn the fact once and both languages stop being magic.</p>
+
+<div class="module">
+  <h3><span class="modnum">03</span> What a server actually is <span class="status next">the foundation</span></h3>
+  <ul>
+    <li>Process, thread, socket, syscall, and the accept loop underneath every framework</li>
+    <li>Node = one thread and an event loop. <strong>Plus a libuv pool of 4</strong> that most people forget exists.</li>
+    <li>.NET = a real thread pool, requests genuinely in parallel, plus IOCP</li>
+    <li>Why every shared, static or cached thing you write is now a potential bug</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: a raw TCP echo server in <code>net</code>, no framework. Review: a <code>static</code> field on a controller.</p>
+</div>
+
+<div class="module">
+  <h3><span class="modnum">04</span> async/await — one keyword, two machines <span class="status next">the important one</span></h3>
+  <ul>
+    <li><code>Promise</code> is cold and always async. <code>Task</code> is hot and can complete synchronously.</li>
+    <li>Microtask queue vs <code>SynchronizationContext</code> · thread hopping across an <code>await</code></li>
+    <li><strong><code>.Result</code> and <code>.Wait()</code> deadlock on Framework</strong> — and the bug vanished in .NET Core, which is exactly why nothing you google will warn you</li>
+    <li>Stack, heap and GC generations — which is where day 1's "<code>int</code> cannot be null" finally means something</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: <code>Promise.all</code> vs sequential await, timed. Review: cause the deadlock and watch it hang.</p>
+</div>
+
+<p class="part-label">Phase C · .NET proper — the shortlisting payload</p>
+<p style="font-family:var(--sans);font-size:0.92rem;color:var(--ink-soft)">
+After session 6 you can hold the management conversation: trace a request end to end, name the four
+places .NET differs from Node and why, and say what you would watch for in a review.</p>
+
+<div class="module">
+  <h3><span class="modnum">05</span> The request pipeline <span class="status next">next</span></h3>
+  <ul>
+    <li>Express's one <code>(req, res, next)</code> chain vs Web API 2's <strong>four</strong> extension points</li>
+    <li><code>Global.asax</code>, <code>WebApiConfig</code>, attribute vs convention routing</li>
+    <li>Model binding — how JSON becomes a typed parameter before your code runs</li>
+    <li>Breakpoints and the call stack, which beat <code>console.log</code> outright</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: a 3-endpoint Express API with middleware, composed from blank. Review: a filter ordering bug that skips auth.</p>
+</div>
+
+<div class="module">
+  <h3><span class="modnum">06</span> DI, lifetimes, layering <span class="status next">next</span></h3>
+  <ul>
+    <li>Constructor injection, and why session 2's interfaces suddenly pay off</li>
+    <li><strong>Singleton vs Scoped vs Transient</strong> as one question: who owns this memory, and which thread touches it</li>
+    <li>No Node equivalent — and it only makes sense <em>after</em> session 3. Order matters.</li>
+    <li>Controller → Service → Repository, and why Node mostly does not need a container</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: the same API refactored into layers with factory functions. Review: a <code>DbContext</code> registered as a Singleton.</p>
+</div>
+
+<p class="part-label">Phase D · Data and SQL</p>
+<p style="font-family:var(--sans);font-size:0.92rem;color:var(--ink-soft)">
+Both stacks query the same LocalDB database, so the only variable is the client library. The schema ships
+deliberately un-indexed. You add the indexes here and measure what changed.</p>
+
+<div class="module">
+  <h3><span class="modnum">07</span> SQL — the query <span class="status next">interview gold</span></h3>
+  <ul>
+    <li>An index is a <strong>B-tree over disk pages</strong>. That one fact explains every "why is this slow".</li>
+    <li>Joins · reading an execution plan · what a table scan costs at 20,000 rows</li>
+    <li>Raw SQL through <code>mssql</code> vs EF6 LINQ, and the SQL EF actually emitted</li>
+    <li><code>IEnumerable</code> vs <code>IQueryable</code> — deferred execution, and where the filtering really happened</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: the same query three ways, plan read for each. Review: a <code>Where</code> after <code>.ToList()</code>.</p>
+</div>
+
+<div class="module">
+  <h3><span class="modnum">08</span> SQL — connections and correctness <span class="status next">next</span></h3>
+  <ul>
+    <li>Connection pooling, because a socket is expensive — the same internals fact as session 3</li>
+    <li>Transactions and isolation levels, in the language an interviewer expects</li>
+    <li>The N+1, in both stacks, and <code>.Include()</code> vs eager loading</li>
+    <li><code>new HttpClient()</code> per request: socket exhaustion, the same lesson in a different suit</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: cause an N+1 in Node, then fix it. Review: the <code>HttpClient</code> leak.</p>
+</div>
+
+<p class="part-label">Phase E · The two performances</p>
+
+<div class="module">
+  <h3><span class="modnum">09</span> Errors, auth, production shape <span class="status next">next</span></h3>
+  <ul>
+    <li>Exceptions vs error-first callbacks — in .NET, everything throws</li>
+    <li>Global exception filters and structured logging · <code>DataAnnotations</code> and <code>ModelState</code></li>
+    <li>JWT on both sides, and the <code>[Authorize]</code> attribute</li>
+    <li>Config and secrets: <code>Web.config</code> vs <code>.env</code>, and where secrets do <em>not</em> go</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Build: auth middleware in Express, composed from blank. Review: a secret in <code>Web.config</code>.</p>
+</div>
+
+<div class="module">
+  <h3><span class="modnum">10</span> The double mock <span class="status next">the exam</span></h3>
+  <ul>
+    <li><strong>A. 45-minute Node backend interview.</strong> Speak and write, live, with follow-ups pushed two deep.</li>
+    <li><strong>B. The management pitch.</strong> Explain the .NET pipeline and what you would watch for, in ten minutes, without bluffing.</li>
+    <li><strong>C. A cold code review of AI-generated C#</strong> with unannounced bugs. No hints about how many.</li>
+  </ul>
+  <p class="ship" style="font-family:var(--sans);font-size:0.85rem;color:var(--good);margin:0.6rem 0 0">Done when: both performances land without notes, and the drill board says so.</p>
+</div>
+
+<h2>Pace</h2>
+
+<p>Ten sessions of two hours, in the 3:00-5:00pm block. <strong>Days 1-6 produce the internal-shortlisting
+outcome. Days 7-10 make the interview solid.</strong> Node is written every single day, never deferred.</p>
+
+<div class="tip">
+  <span class="callout-label">Don't rush Phase A</span>
+  Reading fluency is the gate on everything after it. Two sessions on C#-the-language feels like a
+  detour when .NET is what you actually need — it is the opposite. Every session from 3 onwards assumes
+  you can read a C# file without stopping to decode the syntax. Sessions 4 and 7 are the two worth
+  slowing down for a second sitting.
+</div>
+
+<div class="ask-teacher">
+  <strong>This map is not fixed.</strong> If work hands you a real task tomorrow, say so — the order gets
+  rewritten around what you actually need. That is the whole advantage of learning against a real job
+  instead of a syllabus. And <strong>a failed gate check re-drills yesterday instead of starting today.</strong>
+  The lesson can wait a day. A concept that half-landed and then got buried cannot be recovered later.
+</div>
+
+<nav class="lesson-nav">
+  <a href="node-to-dotnet.html">← Translation reference</a>
+  <a href="../lessons/0001-csharp-for-a-js-dev-the-file.html">Session 1: C# for a JS dev →</a>
+</nav>
+
+</div>
+</body>
+</html>

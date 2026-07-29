@@ -176,7 +176,7 @@
     \begin{onecolentry}
         \textbf{Frontend:} React.js, Next.js, Vue.js, TypeScript, JavaScript (ES6+), Redux Toolkit, Context API, React Hooks, Astro, HTML5/CSS3\\[2pt]
         \textbf{UI \& Visualization:} Material-UI (MUI), Tailwind CSS, SASS/SCSS, ECharts, Recharts\\[2pt]
-        \textbf{Backend \& Data:} Node.js, Express, PostgreSQL, Sequelize, REST APIs, Real-time (SignalR, Socket.IO)\\[2pt]
+        \textbf{Backend \& Data:} Node.js, Express, REST APIs, PostgreSQL, Sequelize, TypeORM, Real-time (SignalR, Socket.IO)\\[2pt]
         \textbf{AI \& GenAI:} Large Language Model (LLM) Integration, OpenAI API, AI Agents \& Agentic Workflows, Model Context Protocol (MCP), Context Engineering, Prompt Engineering, AI-Assisted Development (Claude Code, GitHub Copilot)\\[2pt]
         \textbf{Cloud, Tooling \& Practices:} AWS (EC2, S3, EBS, EFS, Lambda, CloudWatch, STS), Cloudflare Workers, Docker, Webpack, Vite, Git, Agile Methodologies\\[2pt]
         \textbf{Quality \& Performance:} Vitest, Core Web Vitals, Bundle Optimization, WCAG / ARIA, SEO
@@ -218,8 +218,8 @@
         \textit{A multi-tenant cloud cost optimization platform for AWS, managing 200+ enterprise accounts with cost visualization, idle and unused resource detection, rightsizing, and reservation recommendations.}
         \begin{highlights}
             \item Built the React and TypeScript SPA behind 40 cost dashboards spanning waste detection, rightsizing, reservations and power scheduling.
-            \item Built Node.js ingestion and REST APIs that pull EC2, EBS, S3 and CloudWatch data via STS cross-account roles into PostgreSQL.
-            \item Architected global account and month filtering in Redux Toolkit, keeping every dashboard in sync from a single selection.
+            \item Built the Node.js ingestion service pulling EC2, EBS, S3 and CloudWatch data via STS cross-account roles across 200+ AWS accounts.
+            \item Modeled the ingested cost data in PostgreSQL with Sequelize and served it to the dashboards through Express REST endpoints.
             \item Built the data-visualization layer -- charts, gauges, geo maps -- on ECharts and Recharts behind a reusable chart hook.
             \item Built a typed API layer and a generic fetch hook with request-id guards, eliminating stale-response races across 36 service modules.
         \end{highlights}
@@ -238,12 +238,12 @@
         \begin{highlights}
             \item Built the React and TypeScript portal for a multi-tenant clinical product: 19 surfaces spanning clinical review, billing and admin across four user roles.
             \item Built the report review surface for AI-generated clinical notes -- tabbed note, transcript, aftercare and coordinator sections with per-section editing.
+            \item Built Node.js and TypeScript REST endpoints behind the portal -- ownership-scoped TypeORM queries, validated DTOs, sanitized inputs and paginated list responses.
             \item Integrated the portal against a queue-backed AI generation pipeline, surfacing report state and triggering writeback into the practice's management software.
-            \item Structured the portal on 10 Redux Toolkit slices with global auth middleware and route guards deriving access from role, tenant and subscription state.
             \item Worked directly with the US client on requirements, demos and release cycles, coordinating API contracts across the backend and mobile teams.
         \end{highlights}
         \vspace{0.08 cm}
-        \textbf{Tech Stack: React, TypeScript, Redux Toolkit, Material-UI (MUI), MUI X Data Grid, Stripe, Axios, REST APIs, PostgreSQL, AWS S3, OpenAI API}
+        \textbf{Tech Stack: React, TypeScript, Redux Toolkit, Material-UI (MUI), MUI X Data Grid, Stripe, Axios, Node.js, TypeORM, REST APIs, PostgreSQL, AWS S3, OpenAI API}
     \end{onecolentry}
 
     \vspace{0.25 cm}

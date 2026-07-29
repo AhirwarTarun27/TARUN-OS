@@ -1,4 +1,17 @@
-# Scout Brief — SaaS Revenue Analytics (open-core) — GO
+# Scout Brief — SaaS Revenue Analytics (open-core) — GO, SHELVED 2026-07-28
+
+> **SHELVED, not disproven.** Tarun stood this down on 2026-07-28 in favour of an AI-first product,
+> because here AI is a "later" bullet (the `AI "why did MRR move" summary` in the roadmap) rather
+> than the core of the offering, and he wants the build to produce a defensible AI-integration
+> interview story for the active job hunt.
+>
+> **It failed no gate.** The 2026-07-20 NO-GO sweep explicitly exempted this brief: it monetizes by
+> subscription, not ad impressions, and distributes via GitHub / HN / dev communities rather than a
+> SERP, so none of the three walls that killed 46 AdSense candidates apply to it. If the AI-first
+> scout returns NO-GO, **this is the fallback and it can be picked up unchanged.**
+>
+> Successor plan: `.claude/plans/research-saas-revenue-analytics-md-here-velvety-popcorn.md`.
+> Margin gate for the successor: `references/ai-saas-economics.md`.
 
 **Verdict: GO.** Full-stack open-core SaaS candidate. Scouted 2026-07-17 under a *non-AdSense* scout
 (subscription/open-core, React+Node full-stack, BYO-key/cheap-to-serve constraint). **Recommended to

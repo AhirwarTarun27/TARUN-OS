@@ -46,6 +46,19 @@ not-configured (skipped), not a failure.
 
 When you wire a new tool, also save `references/{tool}-api.md` capturing endpoints, auth flow, and common queries — researched-once-saved-forever.
 
+## Local workspaces reachable from this repo
+
+Registered in `.claude/settings.local.json` under `permissions.additionalDirectories`, so a session
+running from TARUN-OS can reach them without `cd`-ing out of the repo.
+
+| Path | What it is | Access | Added |
+|---|---|---|---|
+| `Documents/Learning/MyProjects/backend-lab/` | Where the backend track's code gets typed — Node in VS Code, C#/.NET in Visual Studio 2022, one shared LocalDB. Its own git repo. Paired with `learning/backend/` (`/backend`). | **READ ONLY in practice.** Scaffold files only (`package.json`, `.gitignore`, `README.md`, `sql/*.sql`) may ever be written. **Never session code** — every line Tarun writes there is a rep, and writing it for him destroys the point. | 2026-07-29 |
+
+> **The direction of truth matters here.** Code lives in the lab; *learning state* (ratings, records,
+> the drill board) lives in `learning/backend/` and never leaks the other way. This is the opposite of
+> the product-repo rule, deliberately — the lab is a scratchpad, not a source of truth.
+
 ---
 
 **Boundaries (do not cross):**

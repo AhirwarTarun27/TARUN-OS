@@ -91,9 +91,19 @@
     <div class="catch"><code>.First()</code> <em>throws</em> when nothing matches. <code>.FirstOrDefault()</code> returns <code>null</code> for classes, but <strong><code>0</code> for <code>int</code></strong> and <code>false</code> for <code>bool</code>. A "not found" can silently become a real-looking zero.</div>
   </div>
   <div class="xlate-row">
-    <div class="xlate-node">null / undefined</div><div class="xlate-arrow">→</div>
-    <div class="xlate-net">null (and int? for nullable value types)</div>
-    <div class="catch">No <code>undefined</code>. And <code>int</code>, <code>bool</code>, <code>DateTime</code> <strong>cannot be null</strong> unless declared <code>int?</code>. An unset <code>int</code> is <code>0</code>, and an unset <code>DateTime</code> is <code>1/1/0001</code>, not null.</div>
+    <div class="xlate-node">null / undefined / absent key — <strong>three</strong> states</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">null — <strong>one</strong> state</div>
+    <div class="catch">JS has three ways an object can lack a value and they are not interchangeable. Key <strong>absent</strong>, key present holding <code>undefined</code>, key present holding <code>null</code>. Reading the property collapses the first two into <code>undefined</code>, which is why <code>'k' in obj</code> and <code>Object.keys()</code> exist to tell them apart. Over HTTP the difference is real: <code>JSON.stringify</code> <strong>drops</strong> an <code>undefined</code> key and <strong>keeps</strong> <code>"k":null</code>. Convention: <code>undefined</code> = nobody set it, <code>null</code> = someone set it to nothing. C# has only <code>null</code>, so a JS object with an absent key and one with an explicit null deserialize to the <em>same</em> C# object. <em>[Session 1, 2026-07-29]</em></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">if (!x) — the falsy trap</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">if (x == null) / x.HasValue</div>
+    <div class="catch"><code>!x</code> is <strong>true</strong> for <code>0</code>, <code>''</code>, <code>false</code> and <code>NaN</code>, so <code>if (!ticket.assignedToId)</code> is a bug the moment id <code>0</code> exists. The check that catches <code>undefined</code> and <code>null</code> and <em>nothing else</em> is loose <code>x == null</code> — the one place <code>==</code> beats <code>===</code>. C# will not let you make this mistake: there is no truthiness, <code>if</code> takes a <code>bool</code> or it does not compile. <em>[Session 1, 2026-07-29]</em></div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-node">int cannot hold "nothing"</div><div class="xlate-arrow">→</div>
+    <div class="xlate-net">int is 4 bytes that always mean a number</div>
+    <div class="catch">There is no spare bit pattern for "no value" — every one of the 2³² combinations is already a valid <code>int</code>. That is <em>why</em> nullability has to be added on the outside as <code>int?</code> (<code>Nullable&lt;int&gt;</code>), which is a struct wrapping an <code>int</code> plus a <code>bool HasValue</code>. An unset <code>int</code> is <code>0</code>, an unset <code>DateTime</code> is <code>1/1/0001</code>, an unset <code>bool</code> is <code>false</code>. None of them are null. <em>[Gate check for session 2]</em></div>
   </div>
   <div class="xlate-row">
     <div class="xlate-node">`Hello ${name}`</div><div class="xlate-arrow">→</div>
@@ -299,7 +309,7 @@
 
 <nav class="lesson-nav">
   <a href="course-map.html">← Course map</a>
-  <a href="../lessons/0001-the-shape-of-a-dotnet-app.html">Lesson 1: The shape of a .NET app →</a>
+  <a href="../lessons/0001-csharp-for-a-js-dev-the-file.html">Session 1: C# for a JS dev →</a>
 </nav>
 
 </div>
