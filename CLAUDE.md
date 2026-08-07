@@ -129,6 +129,22 @@ Applies to this repo and to every project the pipeline scopes. The goal is fewer
 - **Action MCPs (they execute things — GitHub, databases, filesystem, etc.)** — the exemption. A file can't run a command, so install the real MCP at least-privilege scope once I approve it.
 - Default for anything new: suggest first, wait for my yes, then pick the right path above. Never auto-install.
 
+## Agent skills
+
+_Config for the `mattpocock-*` engineering skills (wayfinder, triage, to-tickets, to-spec, code-review, etc.), copied locally into `.claude/skills/`. Set up 2026-08-01 via `mattpocock-setup-matt-pocock-skills`._
+
+### Issue tracker
+
+GitHub Issues on this repo's own remote (`AhirwarTarun27/TARUN-OS`, private) via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`), unchanged. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one `CONTEXT.md` + `docs/adr/` at the repo root, created lazily by `/mattpocock-domain-modeling` when it actually resolves a term or decision. See `docs/agents/domain.md`.
+
 ## How you work with me
 
 - **Start every session by opening `week.md`.** Ground the work in this week's 3 outcomes and today's must-ship before anything else.

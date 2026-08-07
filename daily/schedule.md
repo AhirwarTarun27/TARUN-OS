@@ -14,10 +14,10 @@
 | Time | Block | Code | Owner |
 |------|-------|------|-------|
 | 9:00–11:00 am | Interview Q&A practice | `interview-qa` | **→ `/teach`** (50 min + 10 min break) |
-| 11:00 am–1:00 pm | CV interview-defense | `cv-defense` | you — say "drill me" (`learning/cv-defense/`) |
+| **11:00 am–1:00 pm** | **Backend — Node.js + .NET** | **`backend`** | **→ `/backend`** (`learning/backend/`) |
 | 1:00–1:30 pm | Lunch | — | unscored |
-| 1:30–3:00 pm | Machine coding | `machine-coding` | **→ `/machine-coding`** (lab + rubric + profile) |
-| **3:00–5:00 pm** | **Backend — Node.js + .NET** | **`backend`** | **→ `/backend`** (`learning/backend/`) |
+| 1:30–3:30 pm | CV interview-defense | `cv-defense` | you — say "drill me" (`learning/cv-defense/`) |
+| 3:30–5:00 pm | Machine coding | `machine-coding` | **→ `/machine-coding`** (lab + rubric + profile) |
 | 5:00–5:10 pm | Break | — | unscored |
 | 5:10–6:00 pm | AI fluency study | `ai-fluency` | you |
 | 6:00–7:00 pm | Break / dinner | — | unscored |
@@ -26,6 +26,21 @@
 
 **7 scored blocks:** `interview-qa`, `cv-defense`, `machine-coding`, `backend`, `ai-fluency`, `dsa`,
 `apply`. A day is a win when the **majority** land.
+
+> **Swapped 2026-07-30, first pass** (`backend` ↔ `machine-coding`), plus 30 min moved from
+> `machine-coding` to `backend`: backend went to 2h, machine-coding to **3:30–5:00 (1.5h)**. Rationale:
+> the triage order already ranks the Node half of `backend` above `machine-coding`, so the
+> higher-priority block gets the longer hour count. Consistent with the 07-29 triage, not a
+> contradiction of it.
+>
+> **Swapped again 2026-07-30, same day** (`backend` ↔ `cv-defense`) — a straight swap, both are 2h.
+> `backend` is now **11:00–1:00 (pre-lunch)** and `cv-defense` **1:30–3:30 (post-lunch)**. Same
+> argument as above, applied one step further: the triage order is
+> `interview-qa` → Node → `cv-defense`, so **the block ranked #2 should not sit behind the block ranked
+> #3.** Backend now runs on the second-freshest slot of the day and no longer eats the post-lunch dip.
+> **The cost, stated plainly:** `cv-defense` moves *into* that dip, and it is the block that carries the
+> hardest recall work (closed-book, spoken, no notes). Watch its scores for a week — if they drop after
+> this change, the swap is what did it, and it should go back.
 
 ### ⚠ The triage order when the day compresses (stated 2026-07-29)
 

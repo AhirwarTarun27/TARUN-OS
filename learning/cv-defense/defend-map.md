@@ -6,8 +6,13 @@
 > **Rule: no line goes to an interview un-mapped.**
 >
 > **Depth ≠ color.** Color is *risk* (can you defend it). Depth is *how hard we drill it*.
-> **Dwellworks and CloudForestX are full deep-drill** — every bullet to explanation level, even the 🟢 ones
-> (Tarun's call: his top two projects, he wants to narrate every line cold).
+>
+> **Re-scoped 2026-07-31 — Phase 1 is breadth-first.** The "full deep-drill Dwellworks and CloudForestX
+> first" order is gone. In **Phase 1 every bullet on this page** — all four projects, both personal
+> projects, the Skills clusters, the Summary and the Education lines — gets the same treatment:
+> **mechanism → two follow-ups → the boundary sentence.** Nothing on the page is skipped and nothing
+> gets a deeper pass than anything else, because an interviewer samples the CV at random. The extra
+> platform depth that used to be "deep-drill" is **Phase 2**, and Phase 2 is gap-driven. See `roadmap.md`.
 
 ## Summary
 
@@ -26,7 +31,23 @@
 > (Odin, CloudSaver, Spark, Sikka, the PMS vendors) are **off the CV but still fair game in the
 > room** — an interview is not a public document. Know them; don't print them.
 
-## Dwellworks (Team 12) — **Jun 2025 – Present** — all 🟢 · **FULL DEEP-DRILL**
+## The lines nobody was drilling — Summary, Education, the title
+
+> **Added 2026-07-31.** Three CV lines had **zero material anywhere in the system** and every one of
+> them gets asked. The rule at the top of this file says no line goes to an interview un-mapped; these
+> were the exceptions. Drill: **D01** (`drills/01-origin-and-summary.md`).
+
+| Claim | Color | Grounding | Drill |
+|---|:--:|---|:--:|
+| **"Senior Full-Stack Developer with 4+ years"** (Summary, line 1 of the CV) | 🟢 | Apr 2022 → now = 4 yr 3 mo. The number is correct. | D01 |
+| **"building data-heavy enterprise SaaS end to end, from PostgreSQL and Node APIs to fast, typed React interfaces"** | 🟡 | CloudForestX is the only project where he genuinely spans PG → Node → React (kb `04` §5). DentScribe adds the CRUD/support tier (fact-bank, 2026-07-29). **"End to end" means those two, and he must name them unprompted** — otherwise it reads as a claim over all four. | D01 |
+| **"AI-powered products, LLM integration, context engineering"** (Summary) | 🟡 | DentScribe *consumed* the pipeline; context engineering is TARUN-OS. Same boundary as D12/D32 — **do not let the Summary imply more than those two drills can defend.** | D01 |
+| **`Senior Software Developer, ThinkSys Inc, Apr 2022 – Present`** — one unbroken title | 🔴 **risk, not a lie** | The CV shows a single title spanning from four months after a 9-month bootcamp. An interviewer reads "Senior on day one." **Needs a prepared answer**, and the honest one is about the title's scope at a services company plus what actually changed between MyWorkMyDay and Dwellworks. | D01 |
+| **B.Tech Mechanical Engineering → developer** (2013-17 → Masai 2021) | 🟢 | His own story. **Guaranteed question, and the 4-year gap between graduating and Masai gets asked with it.** Answer it in one confident pass, don't apologise, don't over-explain. | D01 |
+| **Masai School — "11+ major and minor projects"** | 🟡 | Bootcamp portfolio. Safe to say; **do not offer a project name you can't then discuss.** Pivot to GradeJar/JsonBeam, which are current and live. | D01 |
+| **"Edchart Certified React JS Developer (SME)"** · **"GitHub Copilot Beginner to Pro"** | 🟢 | Both linked and verifiable (Credly, Udemy). Low risk. **Only trap: don't let "SME" get inflated in the room** — it's a certification title, not a role. | D01 |
+
+## Dwellworks (Team 12) — **Jun 2025 – Present** — all 🟢
 
 > **Bullets rewritten 2026-07-24 (v2), grounded in the Odin repo.** The old set described the
 > *product*, not his work, and three lines were **factually contradicted by the code**. Full detail in
@@ -40,10 +61,13 @@
 | **Shared component library** (form fields, virtualized selects, advanced grid, Maps) across 20 bundles | 🟢 built + extended | kb 03 §5 — `shared/` 78 files, `virtual-select.js` on react-window | D20 |
 | **Layered error boundaries + stack-trace logger**, failures contained to one cell | client 🟢 / Seq server 🔴 | kb 03 §7 — 7 boundaries at 3 levels, `seq-logger.js` | D20 |
 | **GA4 virtual pageview instrumentation** → per-page drop-off visibility | instrumentation 🟢 / analysis 🔴 | kb 03 §8 — `useGoogleAnalytics`, `isInitialMount` guard | D20 |
-| **Client-facing: requirements, design sessions, demos, ceremonies, release coordination** | 🟢 | Tarun's own fact — **not in the kb**, which is code-derived only | D20 |
+| **Client-facing: requirements, design sessions, demos, ceremonies, release coordination** | 🟢 | Tarun's own fact — **not in the kb**, which is code-derived only | D20 + **D50** |
 
-_No backend claims here (.NET dropped on purpose). **Full deep-drill: every bullet to explanation
-level — 🟢 means "you built it," not "skip it."**_
+_No backend claims here (.NET dropped on purpose) — **which is exactly why Dwellworks modules 1, 2, 4,
+5, 6 and 7 are Phase 2.** Six of that project's ten kb modules defend backend work this CV does not
+claim. **Phase 1 drills the six bullets above and stops at the boundary.**_
+
+_🟢 means "you built it," not "skip it" — every bullet still needs mechanism → 2 follow-ups → boundary._
 
 **Three words that must never leave your mouth on this project** — the code contradicts all three:
 **"hydration"** (it's `ReactDOM.render`, no SSR), **"code-splitting"** (no `splitChunks`, no
@@ -54,7 +78,7 @@ TypeScript** and **no React tests** exist in Odin — never claim either here.
 _Shadow-resource note: he works this account under Navnit Singh, so his commits are under
 `--author="avnit" --since=2025-06-01`, never his own name._
 
-## CloudForestX (Team 6) — **Jul 2023 – May 2025** — **FULL DEEP-DRILL**
+## CloudForestX (Team 6) — **Jul 2023 – May 2025**
 
 > **Bullets rewritten 2026-07-24 (v2), grounded in all six repos.** Three claims were **factually
 > contradicted by the code** and are gone. Detail in `project-knowledge-base/cloudforestx/cv-truth-table.md`;
@@ -63,7 +87,7 @@ _Shadow-resource note: he works this account under Navnit Singh, so his commits 
 | Bullet | Color | Grounding | Drill |
 |---|:--:|---|:--:|
 | React + TypeScript SPA behind **40 cost dashboards** (waste detection, rightsizing, reservations, power scheduling) | surfaces 🟢 / **algorithms 🔴** | kb 04 §1 — 470 TS files, 0 JS; 40 pages | D21 |
-| **Node ingestion + REST APIs**: EC2/EBS/S3/CloudWatch via **STS cross-account roles** → PostgreSQL | 🟢 *(raised from 🟡 2026-07-24)* / **recommendation logic 🔴** | kb 04 §5 — `auth.ts` STS factory, 18 cron jobs, Sequelize models | D33 |
+| **Node ingestion + REST APIs**: EC2/EBS/S3/CloudWatch via **STS cross-account roles** → PostgreSQL | 🟢 *(raised from 🟡 2026-07-24)* / **recommendation logic 🔴** | kb 04 §5 — `auth.ts` STS factory, 18 cron jobs, Sequelize models | D21 *(D33 reuses it as the Node/PG anchor)* |
 | **Global account + month filtering** in Redux Toolkit, every dashboard in sync | 🟢 | kb 04 §2 — `accountSlice`/`monthSlice`, `ALL_VALUE` sentinel | D21 |
 | Data-viz layer (charts, gauges, geo maps) on **ECharts + Recharts** behind a reusable hook | 🟢 | kb 04 §4 — `useEcharts` | D21 |
 | **Typed API layer + fetch hook with request-id guards**, killing stale-response races across 36 services | 🟢 | kb 04 §3 — `useFetchData` `requestIdRef` | D21 |
@@ -79,9 +103,11 @@ a frontend test suite. The honest answer — and it's a good one: "those codebas
 culture; I use **Vitest** on my own projects" — that's real, **22 test files** across GradeJar (2),
 JsonBeam (6), AccentWallPlanner (10), KesariEnterprise (4)._
 
-_**Full deep-drill: the whole project to explanation level** — the 🔴 engine + number and the 🟢
-frontend alike. The two 🔴-adjacent UI bullets each need their boundary sentence ready: "I built the
-surface that shows the recommendation; I didn't write the analysis that produces it."_
+_The two 🔴-adjacent UI bullets each need their boundary sentence ready: **"I built the surface that
+shows the recommendation; I didn't write the analysis that produces it."** That sentence is the whole
+point of **D10**, which drills the cost model and the analysis engine **to boundary depth only** —
+enough vocabulary to describe what the dashboards show and where your authorship stops. The full
+engine internals are Phase 2._
 
 ## DentScribe (Team 10) — **Oct 2022 – Jun 2023**
 
@@ -159,16 +185,24 @@ system, and DentScribe's LLM work stays 🟡 integration._
 
 ## Skills clusters (defend what a keyword-scan will probe)
 
-| Cluster | To defend | Color | Drill |
+> **The per-token board is `skills-defense.md`** — every token on all six Skills lines, its fact-bank
+> flag, its anchor, its spoken line, and the rep that closes it. **That file is the detail; this table
+> is just the index.** Flags come from `references/cv/fact-bank.md` — never re-derive them here.
+
+| Cluster (CV Skills line) | The thing that gets probed | Color | Drill |
 |---|---|:--:|:--:|
-| Frontend (React, Next, Vue, TS, Astro, ECharts, Recharts…) | Next.js, Vue, Astro; **ECharts/Recharts now anchored in the CloudForestX bullet** | 🟡/🟢 | D30, D31, D34 |
-| Backend (Node, PostgreSQL, REST, SignalR) | the Node/PG boundary | 🟡 | D33 |
-| AI & GenAI (LLM, OpenAI API, prompt eng, agents, MCP, Claude Code) | LLM integration 🟡 · agents/MCP/Claude Code 🟢 — **now anchored in the Projects lead-in, not Skills-only** | 🟡/🟢 | D32 |
-| Cloud & Deployment (AWS, Cloudflare, Docker) | the AWS cost model | 🔴/🟢 | D10, D34 |
-| Quality & Perf (bundle opt, SEO, RTL) | the 40%; **CWV claim is gone — do not re-argue it** | 🔴/🟡 | D11 |
+| **Frontend** — React, Next, Vue, TS, Redux Toolkit, Context API, Hooks, Astro, HTML/CSS | **Next.js** (portfolio-only) and **Vue** (one legacy surface) are the two thin ones. TypeScript is CloudForestX + DentScribe, **never Dwellworks**. | 🟡/🟢 | D30, D31 |
+| **UI & Visualization** — MUI, Tailwind, SASS/SCSS, ECharts, Recharts | ECharts/Recharts are anchored in the CloudForestX bullet. **SCSS is the thin one** — in Odin it lives on the Razor side, not in his React. | 🟢 | D34 |
+| **Backend & Data** — Node, Express, REST, PostgreSQL, Sequelize, TypeORM, SignalR, Socket.IO | the Node/PG boundary; **TypeORM is one DentScribe module in a repo with no `.git`** | 🟡/🟢 | D33 |
+| **AI & GenAI** — LLM integration, OpenAI API, agents, MCP, context engineering, AI-assisted dev | LLM integration 🟡 (consumed a pipeline) · agents/MCP/Claude Code 🟢 (his own AIOS). **Anchored in the Projects lead-in, not Skills-only.** | 🟡/🟢 | D32 |
+| **Cloud, Tooling & Practices** — AWS (EC2/S3/EBS/EFS/Lambda/CloudWatch/STS), Cloudflare Workers, Docker, Webpack, Vite, Git, Agile | **STS is 🟢** (he wrote the factory, kb `04` §5). **The cost/analysis engine is 🔴** → D10. **Lambda and EFS are surfaced-in-UI only**, and **Docker is light** — the three highest-risk tokens on the whole Skills block. | 🔴/🟡/🟢 | D35, D10 |
+| **Quality & Performance** — Vitest, Core Web Vitals, bundle optimization, WCAG/ARIA, SEO | **Vitest is personal projects only** (22 real test files) and that is the honest, good answer. The 40% bundle claim and the 95+ CWV claim are **deleted — do not re-argue either.** | 🟡/🟢 | D34 |
 
 ---
 
-**Reading this map before a session:** find the drill you're on, read only its rows, note the color. 🔴 and
-🟡 rows carry a boundary sentence you must be able to say. 🟢 rows just need to come out sharp — and for
-**Dwellworks + CloudForestX, every row is drilled deep** regardless of color.
+**Reading this map before a session:** find the drill you're on, read only its rows, note the color.
+🔴 and 🟡 rows carry a boundary sentence you must be able to say. 🟢 rows just need to come out sharp.
+
+**In Phase 1 every row gets the same pass:** mechanism → two follow-ups → boundary. No row is skipped
+for being 🟢 and no row is drilled deeper for being a favourite project. Depth is Phase 2, and Phase 2
+is driven by what a real interview actually punished. See `roadmap.md`.

@@ -65,11 +65,47 @@ is reporting *back* to the RMC. **The RMC is a first-class user of the product, 
 | **Home finding** | The core service — shortlisting and touring properties with the transferee |
 | **Area orientation** | The city-familiarization tour before home finding |
 | **Settling in** | Post-arrival admin: bank account, utilities, phone, registration |
-| **Tenancy management** | Ongoing landlord/lease handling *during* the assignment |
+| **Tenancy management** | Everything *after* the lease is signed — the landlord relationship, the recurring bills and the damage claims, for the length of the assignment. **Detail box below** |
 | **Departure** | End-of-assignment move-out: walkthrough, repairs, deposit recovery |
 | **Metro area** | The geographic unit the platform organizes coverage and pricing around |
 | **Service team** | The pool of consultants/agents covering a given metro |
 | **Spark** | The internal name for consultant (DSC) assignment — offering an order to a consultant and having them accept |
+
+#### Detail box — tenancy management (added 2026-07-30)
+
+Expanded because the one-line version was too thin to defend under follow-up. **Home finding ends at the
+lease signature; tenancy management begins there and runs to move-out.** The transferee is now somebody's
+tenant in a foreign country, possibly without the language, and Dwellworks stays in the middle of that
+relationship. `TenancyManagement.cs` is one record per order, in three blocks:
+
+**1. The tenancy record — terms and people.** `MonthlyRent`, `LeaseStart`, `LeaseEnd`, `LeaseTerm`,
+`LengthOfAssignment`, `StampDuty`; the full property address; a complete **landlord** contact block (`Ll*`)
+and **real-estate agent** contact block (`Re*`). The fields that matter most are
+`DepositPaidBy` / `RentPaidBy` / `BrokerFeePaidBy` — **who bears each cost**: employer, transferee, or
+Dwellworks. That is the entire commercial shape of a relocation package expressed in three columns.
+
+**2. `TenancyPayment` — recurring bills with an approval workflow.** Types: `Rent`, `CouncilTax`, `Water`,
+`Gas`, `Electric`, `HeatingCooling`. Each carries provider, account number, due date, amount, **currency**,
+and a `PeriodFrom`/`PeriodTo` window. Status runs **`Pending → Approved → Exported`** or `Declined`, with
+approver/decliner, timestamps and reasons (`NoLongerOccupant`, `OverlappingDates`). `Exported` means it
+leaves for finance — this is a real money pipeline, not a notes field.
+
+**3. `TenancyClaim` — damage and disputes.** `TenantDamage` / `ThirdPartyDamage` / `Other`, moving
+`New → Solved / Unsolved / N/A`, recording who raised it and who resolved it.
+
+**The frontend maps one-to-one, and it's the best "modernization in place" evidence in the product.** The
+`tenancy-management` bundle is `TenancyManagement.jsx` with exactly two tabs — `claims/` and `payments/` —
+behind `TenancyErrorBoundary.jsx`, while the property/landlord/agent record is still edited through the
+older `Scripts/app/views/orders/program_details_components/tenancy_management_{property,landlord,real_estate}.js`.
+New work in React, the legacy record in the old stack, **same feature**. Use this in the "nine repos /
+over-engineered" push-back.
+
+There is also a client-specific DTO and notification builder under `Odin.Data/ClientApi/<RMC>/` for tenancy
+management — tenancy events are pushed back out to the RMC. That is concrete proof the **RMC is a real
+user with its own surface**, not merely the payer.
+
+> **Verify before quoting:** `TenancyManagement` inherits `MobileTable`, which *suggests* it syncs to a
+> mobile client. Confirm what that base class actually does before saying so in an interview.
 
 ### The lifecycle of one move
 
@@ -238,6 +274,12 @@ tradeoffs to discuss.
   `TenancyManagement.cs`, `SettlingInTask.cs`, `DepartureWalkthrough.cs`, `DepartureDeposit.cs`,
   `DepartureRepair.cs`, `VisaImmigrationInfo.cs`, `RemovalService.cs`, `AirportPickup.cs`,
   `RentTask.cs`, `Appointment.cs`, `Task.cs`, `WorkflowStages.cs`.
+- **Tenancy detail box:** `Odin.Data/Core/Models/TenancyManagement.cs`, `TenancyClaim.cs`,
+  `TenancyPayment.cs`; `Odin/Controllers/Api/TenancyManagementController.cs`;
+  `Odin/Validators/TenancyManagement/`; `Odin/Scripts/react/src/components/tenancy-management/`
+  (`TenancyManagement.jsx`, `claims/`, `payments/`, `TenancyErrorBoundary.jsx`);
+  `Odin/Scripts/app/views/orders/program_details_components/tenancy_management*.js`;
+  `Odin.Data/ClientApi/<RMC>/Dtos/` + `NotificationBuilders/`.
 - **User-facing surfaces:** `Odin/CLAUDE.md` §3 webpack entry points (survey, school, discover,
   my-resources, resource-library, tenancy-management, rmc-reporting, feedback, payment, funds,
   help-center, pulse-check, admin, spark-app, order-dashboard, new-mymove, chatbot);

@@ -15,6 +15,12 @@ notes: <block=one-liner on what got done; learning blocks = what /teach covered>
 <!-- entries below -->
 
 <!-- 2026-07-10 Fri and 2026-07-13 Mon were never logged. Left un-logged by choice at the 07-14 wrap — an honest gap beats a reconstructed one. -->
+<!-- 2026-07-20 → 2026-07-28 (7 weekdays) were never logged. Same call at the 07-29 wrap — not reconstructed. -->
+
+## 2026-07-29 Wed · 4/7 · energy 3/5 · office ✗ (none — sprint table held)
+✓ interview-qa cv-defense backend apply
+✗ machine-coding — capacity · ai-fluency — capacity · dsa — capacity (blocks overran; nothing avoided)
+notes: **sprint day 1** (new table, 7 scored blocks) · apply=**6+ applications submitted** — the block's real output, first time it's been measured · dsa=**untouched: 2 D5s overdue since 07-19 (Stock, Merge Sorted), Move Zeroes still Attempting day 1** · machine-coding=still zero reps since the system was built 07-14 · office ✗ = correct, sprint dropped it and no unlogged hours happened · schedule change banked: backend ↔ machine-coding swapped, backend now 1:30-3:30 (2h), machine-coding 3:30-5:00 (1.5h) · must-ship=✅ · dashboard NOT ingested — build.mjs BLOCK_KEYS are still the standing routine, sprint codes would fail validation
 
 ## 2026-07-17 Fri · 6/7 · energy 3/5 · office ✗
 ✓ reading dsa machine-coding interview-qa workout project

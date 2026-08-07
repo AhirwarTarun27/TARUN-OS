@@ -811,3 +811,50 @@ enter at the divergence point via a new `.internals` component, never as a stand
 fence. The risk named on 07-18 has not gone away: **.NET has a boss attached to it and the job hunt does
 not, so urgency will keep trying to beat importance.** Also: if work moves to .NET Core, the C# 7.3
 ceiling and half the trap material stop applying and the mission gets revised again.
+
+---
+
+## 2026-07-31 — Interview prep re-sequenced: breadth-first (Phase 1) before depth (Phase 2)
+
+**Decision:** Flipped `learning/cv-defense/` and `learning/project-knowledge-base/` from depth-first to breadth-first. **Phase 1 — CV Surface:** every line of `references/cv/master.tex` (all 20 bullets, the 6 Skills lines, the Summary, Education, the title) drilled to *mechanism → two follow-ups → boundary*, in a fixed 14-drill sequence of ~15-17 sittings. **Phase 2 — Depth:** everything past what the CV claims, **gap-driven with no fixed order**, started only after the Phase 1 exit mock. Phase 1 uses a **coverage gate** (no numeric score, no re-queue); the ≥7/≥3 mastery gate returns in Phase 2. `cv-defense/progress.md` is the single Phase 1 tracker; the kb's `tests/` and `progress.md` become Phase 2 instruments.
+
+**Why:** Applications go out nightly in the 8pm `apply` block, so callbacks land in weeks. After a week the old order had produced **one test** (Dwellworks Module 0, 6.8, re-queued) out of ~30 modules — at that pace, being interview-ready on the whole CV was 8-10 weeks away against a window closing mid-Sept to mid-Oct. Interviewers sample the CV at random, so depth-first fails catastrophically (excellent on one project, mute on 70% of the page) while breadth-first fails recoverably (solid everywhere, not encyclopedic on one).
+
+**The cut was scope, not depth — this is the part worth remembering.** Tarun's ask was "make Phase 1 quick," but he also asked to defend every word *including counter-questions*, and those contradict: handling the follow-up ladder **is** depth. So nothing got shallower. What left Phase 1 is every module defending a claim the CV **doesn't make** — most visibly **six of Dwellworks' ten modules** (repo map, Odin .NET, identity/auth, microservices, integrations, persistence), all of which defend backend work `defend-map.md` records as *"dropped on purpose."* That is where "ten days per project" went.
+
+**It was also far cheaper than it looked:** ~75% of Phase 1 was already written. Each project's frontend module already carries a per-CV-bullet drill sheet and a facts-list. The real gaps were the Skills block (zero drills, tier 5 in the old order), the two 🔴 boundary areas, and **three CV lines with no material anywhere** — the Mechanical→dev career change, the Summary paragraph, and the unbroken `Senior … Apr 2022 – Present` title.
+
+**Thin skills tokens get quick-learned for real** (Tarun's call over cut-or-hedge): a brief plus one real artifact, 7 reps ≈ 6.5 hrs, several doubling as `backend`-block work. **Stated limit:** where the gap is production time rather than knowledge (AWS EFS, enterprise Docker), no rep manufactures years — those get a rehearsed honest-scope sentence instead, flagged per token in `cv-defense/skills-defense.md`.
+
+**Two things this surfaced that were already broken:** (1) `drills/00-opener.md` — the *first* drill in the sequence — was seeded before the 2026-07-24 CV rewrite and was teaching **four deleted claims**, including the banned word "hydration". Rewritten. **Standing lesson: when a claim is deleted, grep every file that teaches it, not just the CV.** (2) **SASS/SCSS has no artifact he can open** — 189 `.scss` files exist in Odin but on the Razor side, and there are zero in the CloudForestX frontend, the DentScribe frontend, and all five personal projects. Verified by count, not assumed.
+
+**Alternatives considered:** Keep the mastery gate in Phase 1 (rejected — a 6.8 re-queue costs a whole scarce sitting while three projects sit at zero). Keep the fixed ladder for Phase 2 (rejected — targeted beats pre-emptive; the JD in front of him is better information than a schedule). Cut the non-CV modules permanently (rejected — they're still the right Phase 2 menu for senior rounds that reach past the CV).
+
+**What would change my mind:** if a real interview punishes him on platform depth the CV doesn't claim, Phase 2 pulls forward for that project immediately — that is exactly what the gap queue is for.
+
+**Open, needs Tarun's call:** `cv-defense` only exists in the sprint override table, which expires ~2026-08-06. The standing routine has **no `cv-defense` block and no `apply` block**. That's ~5 weekdays against a Phase 1 of ~15-17 sittings. Extend the sprint, add the block to the standing routine, or accept the spill — not decided here.
+
+**Owner:** Tarun.
+
+---
+
+## 2026-08-03 — The capability platform measures juniors, and the §6.1 line becomes a written positioning rule
+
+**Decision:** Two things, taken together because the second is the price of the first.
+
+1. **The free front door is designed for the senior; the paid product's measured population is predominantly junior.** Two sides of one funnel, not competing choices. The senior converts because they are the only one who has reports; the juniors are measured because that is where the organisation's need for visibility actually sits.
+2. **A standing positioning rule, binding on all customer-facing copy for this product from now on.** *"Can this person do X unaided?"* is verification and is fine. A manager reading that record and choosing a team is fine. **"This tool tells you who to staff" is not, and must never be written.** Intended use for worker allocation is what moves a product into the **EU AI Act Annex III high-risk class** (`research/capability-platform.md` §6.1 calls this line absolute).
+
+**Why:** Tarun's argument, and it holds — an organisation's willingness to pay for capability visibility is **higher on juniors than seniors**, because the senior is already trusted and the junior is the unknown. But the second-order effect is the better one and it fixes a hole the plan already had: **seniors certify once, juniors arrive continuously through hiring**, so the measured population never stops refreshing. That converts org recurrence from a **bounded window** (finish a cohort, stop paying) into an **unbounded** one. The bounded-window churn problem had been sitting unresolved on the Phase 0 map since charting.
+
+**The rule in item 2 is the price of item 1, not a separate concern.** The buyer's honest motive for measuring juniors *is* project readiness. That was always true, but with seniors as the nominal subject it stayed abstract. Making juniors the primary population puts the tempting sentence one slide away from every sales conversation, and it is the easiest line on this project to cross by accident. Writing it down now costs nothing; discovering it during a compliance review costs the product.
+
+**Second-order risk, named and deliberately not solved here:** a junior who knows the record affects their staffing will optimise for the record, which corrupts the record. The Phase 0 map holds this **out of scope** — it does not need answering to pick a front door — but it is now the first item to charter once that map closes, and it must be settled before the core loop is built.
+
+**Alternatives considered.** *Design the free tool for juniors and convert their employer* — rejected: the free user could never buy, so the upgrade becomes a cold second sale to someone who never used the product, and the map had already rejected that shape on three independent strikes. *Keep seniors as the measured population* — rejected on Tarun's argument above; it also leaves the churn problem unsolved. *Leave §6.1 as plan prose rather than a logged rule* — rejected: §6.1 is one line in a 19-section reference, and a cold session writing a landing page will not have read it.
+
+**What would change my mind:** if the volume data shows entry-tier certification queries are thin while senior-tier queries carry the demand, the measured population and the channel point in different directions and this gets revisited. That is an open watch item on the Phase 0 map, flagged on the audience ticket. Separately, if the Annex III position on verification-only tooling clarifies in a way that makes the distinction unnecessary, rule 2 relaxes — but nothing about that is knowable now, so the conservative line stands.
+
+**Not decided here:** the front door itself and the launch vertical. Those are the Phase 0 map's exit criterion and get logged when it closes.
+
+**Owner:** Tarun.

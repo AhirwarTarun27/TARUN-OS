@@ -13,6 +13,23 @@
 ## Method
 - Interleave: teach a concept, then immediately pull the ebook's OUTPUT-based Qs and PROBLEMS that use
   it as retrieval practice in the same/next lesson. This is what makes the dots connect.
+- **Every drill has TWO halves (locked 2026-07-30, his request).** A lesson is not gated until both pass:
+  1. **Speak it** — interviewer-style theory questions on the material just taught. "What is X?",
+     "X vs Y?", "when would you reach for X?" — asked the way a human asks them, not as snippets.
+     Always **first**, before any snippet, so it's genuine recall and not read-off-the-code.
+  2. **Predict it** — the cold output snippets / coding drills.
+  Reason: he was passing gates on output prediction alone. Predicting output wrong loses a whiteboard
+  question; going blank on "what is a closure" loses the phone screen. Different failures, both real.
+- **How to grade the speak half — wording free, keywords strict.** He will NOT recite definitions
+  word-for-word and must never be marked down for paraphrasing, reordering, or using his own words.
+  But each theory question carries **2-4 must-hit terms** that encode the mechanism (`lexical` for
+  closures, `call time` for `this`, `TypeError` for an illegal op on a resolved binding, `microtask`
+  for promise ordering). Missing a must-hit term is a miss — those are the exact words interviewers
+  listen for, and his own L3 lesson makes the point that "a function inside a function" describes the
+  shape, not the mechanism. State the must-hit terms in the grade, not in the question.
+- **Every theory answer gets one mandatory "so why…?" follow-up.** The first answer is usually the
+  memorised surface; the follow-up is where the understanding is. A correct definition that collapses
+  on the follow-up is a miss.
 - Every lesson: knowledge (cited) → retrieval quiz → output-prediction/coding drill → primary source → next.
 - Source of truth for question mapping: `reference/232Questions.txt` (extracted from the PDF).
 
@@ -47,6 +64,62 @@
   synchronous twin, so closures are introduced as the NAME for something already met twice.
   `this` is parked for M4 with an explicit note (arrows can't be taught without touching it).
   M2 marked done, M3 current. **Not drilled yet — do not advance to M4 until it is.**
+- 2026-07-30: Drilled L3 cold — 9 snippets, 2 rounds. R1 2/5, R2 3/4. Finding: **not a closure gap, a
+  read-point gap.** All three R1 misses put a *time gap* between the write and the read (counter
+  mutation, `var` loop, `push` before a `length` read) — L2's three-question procedure assumes the read
+  is on the line you're looking at, so it doesn't fire across a gap. Fix shipped as lesson **§3b "The
+  fourth question"** (*when does this run, and what is the binding at that moment?*) + a
+  captured-vs-copied table + a pre/post increment callout. R2 confirmed the fix on three deferred-read
+  snippets. **L2's open `TypeError` item closed cold, first try, unprompted.** M3 done, M4 current.
+  Full record: `learning-records/0003-functions-closures-hofs.md`.
+  → **Open item to carry into Lesson 4's §0 gate check:** pre vs post increment as a *returned* value
+  (`n++` → old, `++n` → new). Cold, before any new material.
+- 2026-07-30 (late, ran past midnight): unplanned coding-drill session on L3 §10 — `once` then `memoize`.
+  He asked for `once` to be explained; the block was that he read the two moments (`once()` runs vs the
+  wrapper runs) as one. Taught it as A/B moments + the box-and-remote picture; landed. Then he built
+  `memoize` in three passes: v1 compared *results* not *arguments* (the real conceptual error — you
+  can't know the result without doing the work you're skipping) → v2 `{}` cache, single arg, worked →
+  v3 `Map` + `JSON.stringify(args)`. He found the `let key;` unassigned bug by tracing, not running.
+  **He learns this material by tracing execution by hand — keep pushing traces over "run it and see".**
+  Covered: prototype-chain `in` bug, string-coerced object keys, type-preserving serialization,
+  and the serialize-key limitation (object key order, functions → `null`).
+  Note for L4: he twice answered only the output half of a two-part question (`n++` vs `++n`; the
+  collide question). Consistent enough to be a pattern, not a slip — see the note below.
+- Teaching note (generalise this): **a skipped sub-question is a miss signal, not an oversight.** When a
+  drill attaches "and say why X differs from Y" to a snippet and he answers only the output, grade the
+  sub-question as missed. Same avoidance shape as L2's refusal to name `TypeError` — describe the
+  behavior, dodge the label.
 - Teaching note (generalise this): cold-drill every lesson before moving on. The lesson HTML alone
   produced confident recall of definitions and unreliable application. The drill is where the real
   diagnosis came from, and the misses are better lesson content than anything written up front.
+- 2026-07-31: Ran the **owed M3 speak half** + a re-drill (§0 gate, S1-S7 spoken, Q1-Q5 cold snippets).
+  §0 pre/post increment missed cold, taught, then **passed twice unprompted** in the same session — item
+  **closed**. Speak: 5 pass, 1 miss (HOF vs callback), 1 half (memory leaks). Predict: 3/5.
+  Finding: **it is a labelling gap, not a reasoning gap.** Three times he stated the correct mechanism
+  and then produced the wrong label or value from it — said "same reference", answered `out === user`
+  as `false`; had *built* `once`/`memoize`/a factory, defined HOF as "a function inside a function".
+  Closures themselves are solid (Q2's let-vs-var discrimination held from last session). The M3 gate's
+  "verbal coverage unproven" caveat is **discharged**. Full record: `learning-records/0003-functions-closures-hofs.md`.
+  → **Open items to carry into Lesson 4's §0 gate check:** (1) **HOF vs callback**, cold, and do NOT hand
+  him examples first — he can build them and not name them; (2) **`===` on objects** — reference identity
+  vs structural equality; test it inside M4's objects material, not in isolation.
+- Teaching note (generalise this): **when he states the right mechanism, do not accept it as a pass until
+  he produces the label or the value from it.** The mechanism sentence is where he is strong and it masks
+  the gap — the failure is always one step downstream, at the name. Grade the label, not the explanation.
+  This is now confirmed across three sessions and three unrelated topics (`TypeError`, `n++`, `===`).
+- 2026-07-31: Built Lesson 0004 (The `this` keyword & binding). Scope taken from the course map — M4 is
+  `this` only; objects/prototypes stay M5. Opens with the **§0 gate check** carrying both open L3 items
+  (HOF vs callback; `===` on objects) *before* any new material — that pattern is now standard for every
+  lesson. Structure: this-is-decided-at-call-time → the four binding rules in **precedence order**
+  (new > explicit > implicit > default) → losing `this` (the copied-method bug) → call/apply/bind +
+  partial application → **arrows as the payoff L3 deliberately owed** → classes/React → the procedure's
+  **fifth question** → 5 quizzes, 6 output drills, `myBind` coding drill.
+  Three deliberate connective choices: (1) the whole lesson is framed as the **inverse of L3** —
+  closures are lexical and fixed at authoring time, `this` is dynamic and re-decided per call; that
+  contrast is the most common follow-up in the module. (2) The copied-method bug is taught as a
+  *Lesson 3* fact (functions are values, you threw the call site away), not a new rule. (3) The arrow
+  section proves "an object literal is not a scope", which is why the arrow reaches past it — that's the
+  L2 scope rule doing the work, not a new arrow rule.
+  **Not drilled yet — do not advance to M5 until it is.** When drilling, per the 07-31 grading rule:
+  ask for the **rule number and name**, not just the output — he states mechanisms correctly and then
+  fails to produce the label.

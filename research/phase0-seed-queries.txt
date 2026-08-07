@@ -1,0 +1,49 @@
+# Phase 0 seed queries — the live set after #12.
+# Source: shortlist locked in TARUN-OS#7, cut down by TARUN-OS#12 (2026-08-03).
+# 16 live, from an original 21. Priced by TARUN-OS#8 against the ~3,000/mo
+# addressable-cluster bar at KD under 30 pre-committed in TARUN-OS#4.
+#
+# Usable directly:  node scripts/keyword-volumes.mjs --file research/phase0-seed-queries.txt
+# (Bing cross-check only — coverage is ~25% on this set. See TARUN-OS#5.)
+#
+# DEAD, do not price, do not reopen on a high number:
+#   az-900 practice questions      Microsoft ships free unlimited practice assessments (#12)
+#   az-104 practice questions      same
+#   kcna practice exam             CNCF cut on product fit: performance exam, not MCQ (#12)
+#   cka practice exam free         same
+#   ckad practice questions        same
+
+# ── Row 1 · Cloud certification — AWS primary, GCP secondary ──────────────────
+# entry tier
+aws cloud practitioner practice exam free
+clf-c02 practice test
+# senior tier
+saa-c03 practice exam
+google cloud certification practice test
+
+# ── Row 2 · Platform admin certification — Salesforce / ServiceNow (on hold) ──
+# entry tier
+salesforce associate practice exam
+salesforce certification practice test free
+# senior tier
+salesforce admin practice exam free
+servicenow csa practice questions
+
+# ── Row 3 · Security certification — CompTIA (hold, reprice risk) / ISC2 ──────
+# entry tier
+security+ practice test free
+sy0-701 practice test
+comptia security plus questions
+# senior tier
+cissp practice exam free
+
+# ── Row 4 · IaC — HashiCorp long tail, no official practice product at all ────
+# entry tier (its senior-tier pair was CKA/CKAD, both cut by #12 — this row has
+# no senior tier left, which is itself a finding for #9's tier-gap question)
+terraform associate practice exam
+
+# ── Row 5 · Trade & professional licensing — CONTROL, expected to lose ────────
+# Kept so #8's losers table is falsifiable. Fails on judgement + channel, not gates.
+real estate exam practice test free
+hvac certification practice test
+nclex practice questions free

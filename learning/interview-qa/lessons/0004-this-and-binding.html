@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 4 · The `this` keyword &amp; binding — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 4 · Module 4 — JavaScript Foundations</p>
+    <h1>The <code>this</code> keyword &amp; binding</h1>
+    <p class="subtitle">Closures are decided by where a function was written. <code>this</code> is
+    decided by how it was called. That one contrast is the whole module.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Where this sits</span>
+    Lesson 3 gave you <strong>lexical</strong> — a function is bundled with the scope it was
+    <em>born</em> in, and nothing you do at call time can change that. <code>this</code> is the exact
+    opposite: it is bound fresh on <strong>every single call</strong>, and the same function can see a
+    different <code>this</code> on two consecutive lines. Hold those two sentences side by side and
+    most of this lesson is already done. Lesson 3 also left one thing deliberately unfinished — "an
+    arrow has no own <code>this</code>" was stated without proof. This lesson pays that off, and the
+    ebook marks this section <strong>"asked frequently, all scenarios covered, learn carefully."</strong>
+  </div>
+
+  <h2>0 · Gate check — carried from Lesson 3</h2>
+  <p>Two items came out of the L3 drill. Answer both <strong>out loud, cold</strong>, before you scroll.
+  No peeking at Lesson 3 first — the point is whether the label is there without the examples.</p>
+
+  <details class="reveal">
+    <summary>Define <strong>higher-order function</strong> and <strong>callback</strong>. Are they the same thing?</summary>
+    <p><strong>A higher-order function takes a function as an argument, returns a function, or both.</strong>
+    <strong>A callback is a function passed into another function to be called later, by someone else.</strong>
+    They are not the same — they are the two ends of one handoff. In <code>arr.map(fn)</code>,
+    <code>map</code> is the higher-order function and <code>fn</code> is the callback.</p>
+    <p><strong>Nesting has nothing to do with it.</strong> Where the function sits in the source is
+    irrelevant; what matters is whether functions cross the boundary as values. You have already written
+    three: <code>once</code> takes one, the counter factory returns one, <code>memoize</code> does both.</p>
+    <p>And keep this separate from Lesson 3: <code>memoize</code> is a <em>higher-order function</em>
+    because of its signature, and a <em>closure</em> because the returned wrapper keeps reading
+    <code>cache</code> after <code>memoize</code> returned. Interviewers ask them as one question.
+    Answer them as two.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>What does <code>===</code> compare when both sides are objects?</summary>
+    <p><strong>Reference identity, and nothing else.</strong> It asks one question: are these two names
+    pointing at the <em>same object in memory</em>? It never looks inside.</p>
+    <pre><code>{ a: 1 } === { a: 1 }        <span class="tok-com">// false — two objects, identical contents</span>
+
+const x = { a: 1 };
+const y = x;
+x === y                      <span class="tok-com">// true  — one object, two names</span></code></pre>
+    <p>This is the one you will meet again in three places: mutating an argument (below), React refusing
+    to re-render because you mutated state in place and the reference never changed, and
+    <code>Object.freeze</code> in Lesson 5.</p>
+  </details>
+
+  <h2>1 · The one rule that generates all the others</h2>
+  <p><code>this</code> is <strong>not</strong> decided by where a function is written. It is decided at
+  <strong>call time</strong>, by <em>how</em> the function is invoked. The same function body can see
+  four different <code>this</code> values depending on nothing but the call site.</p>
+  <pre><code>function whoAmI() {
+  console.log(this.name);
+}
+
+const a = { name: "A", who: whoAmI };
+const b = { name: "B", who: whoAmI };
+
+a.who();            <span class="tok-com">// "A"</span>
+b.who();            <span class="tok-com">// "B"  — same function, different this</span>
+whoAmI();           <span class="tok-com">// undefined / crashes — no call-site object at all</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">The sentence that answers the whole module</span>
+    "<strong><code>this</code> refers to the object that is currently executing the function, and it's
+    bound at call time, not at definition time.</strong> So to work out <code>this</code>, I don't read
+    the function — I read the <em>call site</em>."
+  </div>
+  <div class="note">
+    <span class="callout-label">Contrast with Lesson 3 — say this if they push</span>
+    <strong>Closures are lexical, <code>this</code> is dynamic.</strong> A closure's variables are fixed
+    by where the function was authored and can never be reassigned from outside. <code>this</code> is
+    re-decided on every invocation and <em>can</em> be forced from outside, with
+    <code>call</code>/<code>apply</code>/<code>bind</code>. This single contrast is the most common
+    follow-up in the module.
+  </div>
+
+  <h2>2 · The four binding rules, in precedence order</h2>
+  <p>Every <code>this</code> question in every interview is one of these four. Check them <strong>top
+  down</strong> and stop at the first match — that order <em>is</em> the precedence.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>#</th><th>Rule</th><th>Call looks like</th><th><code>this</code> is</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>new</strong> binding</td><td><code>new Fn()</code></td><td>the brand-new object being constructed</td></tr>
+      <tr><td>2</td><td><strong>explicit</strong> binding</td><td><code>fn.call(o)</code> · <code>fn.apply(o)</code> · <code>fn.bind(o)</code></td><td>whatever you passed in — <code>o</code></td></tr>
+      <tr><td>3</td><td><strong>implicit</strong> binding</td><td><code>obj.fn()</code></td><td>the object <em>left of the dot</em> — <code>obj</code></td></tr>
+      <tr><td>4</td><td><strong>default</strong> binding</td><td><code>fn()</code></td><td><code>globalThis</code>/<code>window</code>, or <code>undefined</code> in strict mode</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p><strong>Arrow functions are not on this list, and that is the point.</strong> An arrow has no
+  <code>this</code> of its own, so none of the four rules apply to it — it is skipped entirely and
+  <code>this</code> resolves lexically instead. §5 proves it.</p>
+
+  <div class="note">
+    <span class="callout-label">Rule 4, the bit that gets asked</span>
+    In <strong>non-strict</strong> mode, if <code>this</code> would be <code>null</code> or
+    <code>undefined</code>, JavaScript substitutes the global object. That substitution is why a plain
+    <code>fn()</code> sees <code>window</code>. In <strong>strict mode</strong> (and inside ES modules
+    and class bodies, which are strict by default) there is no substitution and <code>this</code> stays
+    <code>undefined</code>. "Depends on strict mode" is the answer that scores; "it's window" is the
+    answer that gets a follow-up.
+  </div>
+
+  <h3>Rule 3 in one line: read left of the dot</h3>
+  <pre><code>const user = {
+  name: "Tarun",
+  greet() { console.log("Hi " + this.name); }
+};
+user.greet();                <span class="tok-com">// "Hi Tarun" — `user` is left of the dot</span>
+
+const outer = { name: "outer", inner: { name: "inner", greet() { console.log(this.name); } } };
+outer.inner.greet();         <span class="tok-com">// "inner" — only the LAST dot counts</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">The only dot that matters</span>
+    <code>a.b.c.fn()</code> → <code>this</code> is <code>a.b.c</code>. Not <code>a</code>. Interviewers
+    love a three-deep chain precisely because people answer with the outermost object.
+  </div>
+
+  <h2>3 · Losing <code>this</code> — the bug this module exists for</h2>
+  <p>Here is the failure that generates 90% of real-world <code>this</code> bugs. A method is only a
+  method <em>because of how it's called</em>. Pull it off its object and it is just a function again.</p>
+  <pre><code>const user = {
+  name: "Tarun",
+  greet() { console.log("Hi " + this.name); }
+};
+
+user.greet();                     <span class="tok-com">// "Hi Tarun"     — rule 3</span>
+
+const g = user.greet;             <span class="tok-com">// we copied the FUNCTION, not the binding</span>
+g();                              <span class="tok-com">// "Hi undefined" — rule 4</span>
+
+setTimeout(user.greet, 100);      <span class="tok-com">// "Hi undefined" — passed as a value, called bare</span>
+button.addEventListener("click", user.greet);  <span class="tok-com">// same bug</span></code></pre>
+  <div class="note">
+    <span class="callout-label">Why this is a Lesson 3 problem wearing a Lesson 4 costume</span>
+    <code>const g = user.greet</code> copies the function value — exactly the "functions are values"
+    fact from L3 §1. The object was never <em>part</em> of the function; it was supplied by the call
+    site, and you just threw the call site away. <strong>There is no such thing as a bound method in
+    JavaScript unless you bind it.</strong>
+  </div>
+  <p>Three fixes, and you should be able to name all three:</p>
+  <pre><code>setTimeout(user.greet.bind(user), 100);          <span class="tok-com">// 1. bind — rule 2</span>
+setTimeout(() =&gt; user.greet(), 100);             <span class="tok-com">// 2. wrap it, restore the dot — rule 3</span>
+setTimeout(function () { user.greet(); }, 100);  <span class="tok-com">// 3. same idea, older syntax</span></code></pre>
+
+  <h2>4 · <code>call</code>, <code>apply</code>, <code>bind</code></h2>
+  <p>Rule 2 — forcing <code>this</code> from outside. The ebook flags this as <strong>very frequently
+  asked</strong>, and it wants the example first, then the difference.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Method</th><th>Invokes?</th><th>Arguments</th><th>Returns</th></tr></thead>
+    <tbody>
+      <tr><td><code>call</code></td><td><strong>immediately</strong></td><td>one by one, comma-separated</td><td>the function's result</td></tr>
+      <tr><td><code>apply</code></td><td><strong>immediately</strong></td><td>as a single <strong>array</strong></td><td>the function's result</td></tr>
+      <tr><td><code>bind</code></td><td><strong>no</strong> — later</td><td>one by one (and can be pre-filled)</td><td>a <strong>new function</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <pre><code>function intro(greeting, punct) {
+  console.log(greeting + ", I'm " + this.name + punct);
+}
+const t = { name: "Tarun" };
+
+intro.call(t, "Hello", "!");       <span class="tok-com">// runs now — args one by one</span>
+intro.apply(t, ["Hello", "!"]);    <span class="tok-com">// runs now — args in an array</span>
+
+const bound = intro.bind(t);       <span class="tok-com">// runs NOTHING. returns a new function.</span>
+bound("Hello", "!");               <span class="tok-com">// now it runs</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">Say this</span>
+    "<code>call</code> and <code>apply</code> both invoke immediately — <strong>the only difference is
+    argument syntax: call takes a list, apply takes an array</strong>. <code>bind</code> doesn't invoke
+    at all; it returns a new function with <code>this</code> permanently fixed, which is what you want
+    for an event handler or a <code>setTimeout</code>, where you know the context now but not the
+    firing time."
+  </div>
+  <div class="note">
+    <span class="callout-label">A for array — the mnemonic that survives the pressure</span>
+    <strong>a</strong>pply → <strong>a</strong>rray. And <code>bind</code> is the odd one out because it
+    is the only one that returns instead of runs.
+  </div>
+
+  <h3>Partial application — the bind detail that separates candidates</h3>
+  <pre><code>const hello = intro.bind(t, "Hello");   <span class="tok-com">// pre-fill the FIRST argument</span>
+hello("!");                             <span class="tok-com">// "Hello, I'm Tarun!"</span>
+hello("?");                             <span class="tok-com">// "Hello, I'm Tarun?"</span></code></pre>
+  <p>Arguments passed to <code>bind</code> are locked in ahead of the ones passed at call time. That is
+  <strong>partial application</strong>, and it is the same closure-over-configuration shape as the
+  <code>multiplier</code> factory from Lesson 3.</p>
+  <div class="note">
+    <span class="callout-label">Once bound, always bound</span>
+    A bound function cannot be re-bound. <code>intro.bind(a).bind(b)</code> still uses <code>a</code>,
+    and <code>bound.call(b)</code> is ignored too. <code>bind</code> beats <code>call</code> because the
+    inner binding was already applied when the wrapper was created — rule 2 already fired.
+  </div>
+
+  <h2>5 · Arrows: the payoff Lesson 3 owed you</h2>
+  <p>Lesson 3 told you an arrow "has no own <code>this</code>". Here is what that actually means:
+  <strong>an arrow is not in the four-rule table at all.</strong> When you write <code>this</code> inside
+  an arrow, it is not resolved by the call — it is resolved <em>the same way any ordinary variable is
+  resolved</em>, by walking up the scope chain from Lesson 2 to the nearest enclosing function that
+  <em>does</em> have a <code>this</code>.</p>
+  <pre><code>const obj = {
+  name: "Tarun",
+  regular() { console.log(this.name); },
+  arrow:   () =&gt; console.log(this.name)
+};
+
+obj.regular();      <span class="tok-com">// "Tarun"    — rule 3, left of the dot</span>
+obj.arrow();        <span class="tok-com">// undefined  — the dot is IGNORED</span></code></pre>
+  <div class="tip">
+    <span class="callout-label">Why <code>obj.arrow()</code> fails — the exact wording</span>
+    "An arrow has no <code>this</code> binding of its own, so <code>this</code> resolves
+    <strong>lexically</strong>, from the scope where the arrow was <em>defined</em> — not from the call
+    site. <strong>An object literal does not create a scope</strong>, so the enclosing scope here is the
+    module or global, and <code>this</code> is <code>undefined</code>/<code>window</code>.
+    <strong>That's why an arrow can never be used as a method.</strong>"
+  </div>
+  <div class="note">
+    <span class="callout-label">The trap inside the trap</span>
+    People say "an object creates a scope." It does not. Only <strong>functions</strong> and
+    <strong>blocks</strong> create scope (Lesson 2). <code>{ name: "Tarun" }</code> is data, not a scope.
+    That is the real reason the arrow reaches straight past it.
+  </div>
+
+  <h3>So when IS an arrow the right answer?</h3>
+  <p>Exactly when you <em>want</em> to keep the outer <code>this</code> — the callback-inside-a-method
+  problem, which was a genuine ES5 pain point:</p>
+  <pre><code><span class="tok-com">// ES5 — the callback got its own `this`, so you had to hand it in</span>
+const timer = {
+  name: "T",
+  start: function () {
+    setTimeout(function () {
+      console.log(this.name);      <span class="tok-com">// undefined — rule 4, bare call</span>
+    }.bind(this), 1000);           <span class="tok-com">// ← the fix everyone wrote for years</span>
+  }
+};
+
+<span class="tok-com">// ES6 — the arrow simply never had its own `this` to lose</span>
+const timer2 = {
+  name: "T",
+  start() {
+    setTimeout(() =&gt; console.log(this.name), 1000);   <span class="tok-com">// "T"</span>
+  }
+};</code></pre>
+  <p><strong>The rule that decides it every time:</strong> use a regular function when the object should
+  supply <code>this</code> (a method). Use an arrow when you want to <em>inherit</em> the surrounding
+  <code>this</code> (a callback inside a method). Arrows didn't add a feature — they removed a footgun.</p>
+
+  <h3>The full arrow limitation list</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>An arrow has no…</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr><td>own <code>this</code></td><td>can't be a method; can't be re-bound by <code>call</code>/<code>apply</code>/<code>bind</code></td></tr>
+      <tr><td>own <code>arguments</code></td><td>use rest <code>(...args)</code> instead</td></tr>
+      <tr><td><code>[[Construct]]</code></td><td><code>new Arrow()</code> throws a <strong><code>TypeError</code></strong></td></tr>
+      <tr><td>hoisted body</td><td>it's an expression — TDZ applies (Lesson 2)</td></tr>
+      <tr><td>generator ability</td><td>can't be a <code>function*</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><code>fn.call(obj)</code> on an arrow does not error — it is simply <strong>ignored</strong>, which
+  is worse, because it fails silently. And notice row 3 is your <code>TypeError</code> rule again: the
+  name resolved fine, the <em>operation</em> was illegal.</p>
+
+  <h2>6 · <code>this</code> in classes and React</h2>
+  <p>Class bodies are strict mode, so a lost <code>this</code> throws instead of silently reading the
+  global — which is why the React class-component bug was so loud:</p>
+  <pre><code>class Counter {
+  constructor() { this.count = 0; }
+  inc() { this.count++; }
+}
+const c = new Counter();          <span class="tok-com">// rule 1 — `this` is the new object</span>
+
+const f = c.inc;
+f();                              <span class="tok-com">// TypeError: Cannot read properties of undefined</span>
+
+<span class="tok-com">// the three historical fixes, in the order the ecosystem found them</span>
+this.inc = this.inc.bind(this);   <span class="tok-com">// 1. bind in the constructor</span>
+onClick={() =&gt; this.inc()}        <span class="tok-com">// 2. arrow at the call site</span>
+inc = () =&gt; { this.count++; }     <span class="tok-com">// 3. class field — arrow captures instance `this`</span></code></pre>
+  <div class="note">
+    <span class="callout-label">Worth saying out loud in a React interview</span>
+    "Hooks made this mostly moot — a function component has no <code>this</code> to lose, which removed
+    an entire category of bug. But the mechanism is the same one: pulling a method off its object drops
+    the call site." That answer shows you know <em>why</em> the framework moved, not just that it did.
+  </div>
+
+  <h2>7 · The procedure — the fifth question</h2>
+  <p>Lesson 2 gave you three questions. Lesson 3 added a fourth (<em>when does this run, and what is the
+  binding at that moment?</em>). <code>this</code> gets the fifth, and it is deliberately worded to fire
+  at the <strong>call site</strong>, because that is where you keep not looking:</p>
+  <div class="tip">
+    <span class="callout-label">Question 5</span>
+    <strong>How was this function called — and is it an arrow?</strong>
+    <br>Arrow → skip the table, walk the scope chain to the enclosing function's <code>this</code>.
+    <br>Not an arrow → run the four rules top down: <code>new</code> → explicit → left of the dot → bare call.
+  </div>
+  <p>Do it in that order and never read the function body first. The body cannot tell you the answer.
+  The <em>call</em> tells you the answer.</p>
+
+  <h2>8 · Retrieval quiz</h2>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">When is <code>this</code> decided?</p>
+    <ul class="quiz-opts">
+      <li><button>when the fn is written</button></li>
+      <li><button>when the fn is called</button></li>
+      <li><button>when the file is parsed</button></li>
+      <li><button>when the scope is made</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>At call time.</strong> This is the exact opposite of a closure,
+    which is fixed lexically at authoring time. Same function, two call sites, two different
+    <code>this</code> values.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q"><code>a.b.c.fn()</code> — what is <code>this</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>a</button></li>
+      <li><button>window / global</button></li>
+      <li><button>a.b.c</button></li>
+      <li><button>the fn itself</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>a.b.c</code>.</strong> Implicit binding reads only the
+    <em>last</em> dot. The outer objects in the chain are irrelevant to <code>this</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">Which one does <strong>not</strong> invoke the function immediately?</p>
+    <ul class="quiz-opts">
+      <li><button>fn.call(obj)</button></li>
+      <li><button>fn.apply(obj)</button></li>
+      <li><button>obj.fn()</button></li>
+      <li><button>fn.bind(obj)</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>bind</code>.</strong> It returns a new function with
+    <code>this</code> fixed, to be called whenever you like. <code>call</code> and <code>apply</code>
+    both run right now and differ only in how arguments are passed — a list vs an array.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q"><code>const o = { n: 1, f: () =&gt; console.log(this.n) }; o.f();</code></p>
+    <ul class="quiz-opts">
+      <li><button>undefined</button></li>
+      <li><button>1</button></li>
+      <li><button>TypeError</button></li>
+      <li><button>null</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>undefined</code>.</strong> An arrow has no own
+    <code>this</code>, so the dot is ignored and <code>this</code> resolves lexically. An object literal
+    is <em>not</em> a scope, so it skips straight to module/global scope, where there is no
+    <code>n</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">Non-strict mode, plain <code>fn()</code> — what is <code>this</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>undefined</button></li>
+      <li><button>the fn itself</button></li>
+      <li><button>the global object</button></li>
+      <li><button>throws an error</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The global object</strong> (<code>window</code>/<code>globalThis</code>),
+    because non-strict mode <em>substitutes</em> the global object whenever <code>this</code> would be
+    <code>null</code> or <code>undefined</code>. In strict mode there is no substitution and it stays
+    <code>undefined</code>. Naming the substitution is what scores.</div>
+  </div>
+
+  <h2>9 · Output drills</h2>
+  <p>Cold. Per line, apply question 5 first — <em>how was it called, and is it an arrow?</em> — before
+  you read a single line of the body.</p>
+
+  <details class="reveal">
+    <summary>D1 · the copied method</summary>
+    <pre><code>const user = { name: "T", greet() { return this.name; } };
+const g = user.greet;
+console.log(user.greet(), g());</code></pre>
+    <p><strong><code>"T" undefined</code></strong> (non-strict; throws in strict mode/modules).
+    <code>user.greet()</code> is rule 3. <code>g()</code> is a bare call — rule 4. Copying the function
+    copied the value, never the binding.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 · method vs arrow in the same object</summary>
+    <pre><code>const o = {
+  n: 10,
+  reg()  { return this.n; },
+  arrow: () =&gt; this.n
+};
+console.log(o.reg(), o.arrow());</code></pre>
+    <p><strong><code>10 undefined</code></strong>. Same object, same dot, opposite results — because the
+    arrow is never in the four-rule table. If <code>this</code> is <code>undefined</code> at module
+    scope, <code>this.n</code> throws; at top-level script scope <code>this</code> is
+    <code>window</code>, so it reads <code>undefined</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 · the nested function</summary>
+    <pre><code>const obj = {
+  n: 5,
+  run() {
+    function inner() { return this.n; }
+    return inner();
+  }
+};
+console.log(obj.run());</code></pre>
+    <p><strong><code>undefined</code></strong>. <code>run()</code> gets <code>this = obj</code> fine, but
+    <code>inner()</code> is a <strong>bare call</strong> — rule 4. <code>this</code> does not inherit
+    down into nested regular functions the way scope does. This is the difference between the scope
+    chain and <code>this</code> in one snippet: <code>inner</code> can read <code>obj</code>'s
+    <em>variables</em> lexically, but not its <code>this</code>. Fix: make <code>inner</code> an arrow.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 · bind beats call</summary>
+    <pre><code>function f() { return this.v; }
+const a = { v: 1 }, b = { v: 2 };
+const bf = f.bind(a);
+console.log(bf(), bf.call(b));</code></pre>
+    <p><strong><code>1 1</code></strong>. A bound function cannot be re-bound — rule 2 already fired when
+    <code>bind</code> created the wrapper, and the later <code>call</code> is ignored.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 · call vs apply</summary>
+    <pre><code>function sum(a, b) { return a + b + this.base; }
+const ctx = { base: 100 };
+console.log(sum.call(ctx, 1, 2), sum.apply(ctx, [1, 2]));</code></pre>
+    <p><strong><code>103 103</code></strong>. Identical results — the <em>only</em> difference is
+    argument syntax. If you can't name a behavioural difference beyond that, you're right: there isn't one.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 · the callback trap</summary>
+    <pre><code>const timer = {
+  n: 7,
+  start() {
+    setTimeout(function () { console.log(this.n); }, 0);
+    setTimeout(() =&gt; console.log(this.n), 0);
+  }
+};
+timer.start();</code></pre>
+    <p><strong><code>undefined</code> then <code>7</code></strong>. The regular callback is invoked bare
+    by the timer — rule 4, and the call site is inside the browser, not your code. The arrow never had
+    its own <code>this</code>, so it reads <code>start</code>'s, which is <code>timer</code>. This is the
+    single most useful snippet in the module.</p>
+  </details>
+
+  <h2>10 · Coding drill — write <code>bind</code> yourself</h2>
+  <p>The classic follow-up: <em>"implement <code>Function.prototype.bind</code>."</em> It is a Lesson 3
+  problem in disguise — a higher-order function that returns a closure over <code>this</code> and the
+  pre-filled arguments. <strong>Attempt it before opening the answer.</strong></p>
+  <pre><code>Function.prototype.myBind = function (ctx, ...preset) {
+  <span class="tok-com">// return a NEW function that calls the original with `ctx` as this</span>
+};</code></pre>
+  <details class="reveal">
+    <summary>Answer + what it proves</summary>
+    <pre><code>Function.prototype.myBind = function (ctx, ...preset) {
+  const fn = this;                       <span class="tok-com">// `this` IS the function — rule 3, left of the dot</span>
+  return function (...later) {           <span class="tok-com">// closure over fn, ctx and preset</span>
+    return fn.apply(ctx, [...preset, ...later]);
+  };
+};</code></pre>
+    <p>Three things it demonstrates at once: <code>this</code> inside <code>myBind</code> is the function
+    it was called on (implicit binding, because you write <code>intro.myBind(...)</code>); the returned
+    function is a <strong>closure</strong> holding <code>fn</code>, <code>ctx</code> and
+    <code>preset</code> alive after <code>myBind</code> returned; and <code>apply</code> is the natural
+    choice because you already have the arguments as an array.</p>
+    <p>Also try <code>myCall</code>: same shape, but invoke immediately with a spread instead of
+    returning a wrapper.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/object-methods">javascript.info — Object methods, "this"</a>, then
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#no_separate_this">MDN
+    — Arrow functions: no separate <code>this</code></a>. Read the MDN section specifically for the
+    sentence about arrows ignoring <code>call</code>/<code>apply</code>/<code>bind</code>.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Drill it before you move on.</strong> Both halves, same as always: <em>speak it</em> first —
+    the four rules from memory, call vs apply vs bind, why an arrow can't be a method — then
+    <em>predict it</em> on cold snippets. And the standing L3 finding applies here more than anywhere:
+    stating the mechanism is not the same as producing the label. Expect to be asked for the <em>rule
+    number and name</em>, not just the output.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0003-functions-closures-hofs.html">← Lesson 3: Functions, Closures &amp; HOFs</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

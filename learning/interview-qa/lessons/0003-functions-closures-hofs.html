@@ -121,6 +121,48 @@ for (var i = 1; i &lt;= 5; i++) closur(i);      <span class="tok-com">// 1 2 3 4
   <code>let</code> works for the same reason: the <code>for</code> loop builds a fresh binding per
   iteration, so each arrow closes over a different one. Same mechanism both times.</p>
 
+  <h3>The fourth question — added after the 2026-07-30 drill</h3>
+  <p>Lesson 2 gave you a three-question procedure: which keyword declares it, what state is the binding
+  in <em>at this line</em>, what are you doing to it. That procedure assumes the read happens on the line
+  you're looking at. A closure breaks that assumption, because it moves the read into the future.</p>
+  <div class="tip">
+    <span class="callout-label">Question 4</span>
+    <strong>When does this function actually run — and what is the binding at <em>that</em> moment?</strong>
+    Never read a closed-over variable at the line where the function was <em>written</em>. Read it at the
+    line where the function is <em>called</em>.
+  </div>
+  <p>The whole trap is that a closure captures the <strong>variable</strong>, not a copy of its value.
+  Arguments, by contrast, capture the value at call time. Knowing which of the two you're looking at
+  answers almost every deferred-read question:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Snippet</th><th>Captured</th><th>Read at</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td><code>let m="a"; const f=()=&gt;m; m="b"; f()</code></td><td>the variable <code>m</code></td><td>the call</td><td><code>"b"</code> — live binding</td></tr>
+      <tr><td><code>for(var i…) fns.push(()=&gt;i)</code></td><td>the one shared <code>i</code></td><td>after the loop</td><td><code>3 3 3</code> — loop is over</td></tr>
+      <tr><td><code>for(let i…) fns.push(()=&gt;i)</code></td><td>a fresh <code>i</code> per iteration</td><td>the call</td><td><code>0 1 2</code></td></tr>
+      <tr><td><code>function g(n){return ()=&gt;n}</code></td><td>the <em>parameter</em> — a new one per call</td><td>the call</td><td>the value passed in</td></tr>
+      <tr><td><code>nums.map(n=&gt;n*2)</code> then <code>nums[0]=99</code></td><td>values copied out</td><td>already read</td><td>unaffected — no link back</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>And the mirror of that: a mutation to a closed-over variable <em>persists</em> across calls, because
+  there is only one of it. <code>a.inc()</code> twice on a counter leaves <code>n</code> at 2, not 1 — the
+  environment is not rebuilt per call, only per <em>call of the factory</em>.</p>
+
+  <div class="note">
+    <span class="callout-label">The operator that decides the return value</span>
+    Same side effect, different value handed back — and interviewers pick whichever one you didn't expect:
+    <ul>
+      <li><code>n++</code> (<strong>post</strong>) → returns the <em>old</em> value, then increments.
+      A counter built on <code>n++</code> yields <code>0 1 2</code>.</li>
+      <li><code>++n</code> (<strong>pre</strong>) → increments, then returns the <em>new</em> value.
+      The same counter yields <code>1 2 3</code>.</li>
+    </ul>
+    After three calls <code>n</code> is 3 either way. The difference is only what each call
+    <em>evaluated to</em>. Read the operator before you read the sequence.
+  </div>
+
   <h2>4 · Closures in practice: private state</h2>
   <p>This is what closures are actually <em>for</em>, and the counter is the classic whiteboard ask.</p>
   <pre><code>function makeCounter() {

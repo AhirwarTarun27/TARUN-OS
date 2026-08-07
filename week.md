@@ -28,9 +28,13 @@ ladder was reasoned out solo. A Kesri task was logged as shipped and wasn't. Sam
 
 > The single thing that, if you do nothing else today, makes the day count.
 
-- **Date:** Sun Jul 19
-- **Must-ship:** **Both mandatory D5 revisions** — Best Time to Buy & Sell Stock + Merge Sorted Arrays. Both due today, both forced by `watched` D0s. It's the weekend and `/daily-log` doesn't run — do them manually or they're overdue Monday.
-- **Also today (5 min, not optional):** the Kesri robots.txt flip, then verify with curl. It's been "done" once already without being done.
+- **Date:** Thu Jul 30 *(sprint day 2 — this board is 11 days stale, see the note below)*
+- **Must-ship:** **Backend Build B done, in Node.** Session 1's lesson was read on 07-29 with zero reps landed, and session 2 is blocked until Build B exists. Reading is not landing.
+- **Also today, both with hard deadlines:** (1) **Counter to P0 green by 4:50pm** — last day of the extension; not green means it force-banks as `watched` and the `solo` tag he already earned is gone. (2) **Both overdue DSA D5s** (Stock + Merge Sorted) — 11 days late, both mandatory.
+
+> ⚠ **This board expired Sun Jul 26 and was never reset.** The 3 outcomes below are from Jul 20-26.
+> Two of them (DSA quality gate, machine-coding's first rep) are *still* the open items, so the day
+> does ladder up — but to a dead board. Reset at the next `/weekly-review`.
 
 ## Parking lot (capture, do NOT act)
 

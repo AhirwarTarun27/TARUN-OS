@@ -44,19 +44,22 @@ can't teach it, so it can't be tested.
 
 ## Grading key (Claude only — do not read before testing)
 
-**A1 — the plain-English explanation (2 pts).** Full marks: a company moves an employee to another
+**Section totals: A 3.5 · B 2.5 · C 2.0 · D 2.0 = 10.0**, matching the stated 35/25/20/20 weights.
+(Normalized 2026-07-30 — the original values summed to 11 against a /10 score.)
+
+**A1 — the plain-English explanation (1.5 pts).** Full marks: a company moves an employee to another
 city/country; the employee can't navigate a foreign housing market alone; Dwellworks runs that move —
 local consultant, find a home, find schools, handle the lease and paperwork, through to move-out.
 **Deduct hard for jargon** (this question specifically bans it) and for describing software instead of
 the business. Deduct if he leads with the tech stack.
 
-**A2 — the lifecycle (1.5 pts).** Wants the ordered spine: authorization → order → consultant assigned
+**A2 — the lifecycle (1.25 pts).** Wants the ordered spine: authorization → order → consultant assigned
 (Spark) → intake survey → area orientation → home + school finding → lease → settling in →
 tenancy management → departure/deposit → billing & reporting. 8+ steps in roughly the right order = full
 marks. 5-7 = half. Order matters more than completeness — a scrambled sequence means he memorized a list,
 not a process.
 
-**A3 — vocabulary (1 pt, ~0.17 each).** transferee = the relocating employee/end user · authorization =
+**A3 — vocabulary (0.75 pts, 0.125 each).** transferee = the relocating employee/end user · authorization =
 the corporate's formal approval to move someone, which starts the order · RMC = relocation management
 company, the middleman, and **a real user with its own reporting surface** · home finding = shortlisting
 and touring properties, the core service · tenancy management = ongoing lease/landlord handling *during*
