@@ -1,12 +1,21 @@
+<meta charset="utf-8">
 <!--
+  Added 2026-08-09: this file is UTF-8 and declared nothing, so opening dashboard.html locally
+  mangled every · and — into mojibake. It must stay the FIRST bytes of the file — a browser only
+  sniffs the first 1024, and the contract comment below is longer than that.
+
   GENERATED CONTRACT: daily/dashboard.html is BUILT from this template by daily/dashboard/build.mjs.
   Edit HERE, then run:  node daily/dashboard/build.mjs
   Never hand-edit dashboard.html. Never open this file during /daily-log rituals — the ritual only
   writes today.json and runs build.mjs (see .claude/skills/daily-log/SKILL.md).
 
   Scoring semantics — deliberate, do NOT "correct" them (documented in the daily-streak-dashboard memory):
-  - WIN  = >=4 of 7 scored blocks, OR a protected "minimum viable day": energy<=2 AND >=3 hits.
-    MVD is evaluated first — it IS a win (BJ Fogg: on hard days shrink the habit, don't skip it).
+  - WIN  = the FLOOR was met, OR >=4 of 5 scored blocks. REVISED 2026-08-09 — the floor now
+    outranks the count, and is a concrete deliverable rather than an energy score: 1 CV drill +
+    1 coding rep (machine-coding or interview-qa) + applications. build.mjs derives `floor` on
+    every scored entry. Same BJ Fogg principle as before (on hard days shrink the habit, don't
+    skip it), but tied to output instead of to self-reported energy, because the collapses are
+    anxiety-driven and self-reported energy is exactly what an anxious day distorts.
   - SHIELDS: every 7 consecutive wins banks 1 shield (max 2). A LOSS consumes a banked shield and
     the chain survives (Milkman's emergency-reserves research / Duolingo streak freeze). Shields
     never apply to wins; a shielded day resets the 7-win earning counter and adds no streak day.
@@ -42,15 +51,10 @@
 
     --shadow: 0 1px 0 rgba(255,255,255,.03) inset, 0 18px 40px -22px rgba(0,0,0,.9);
   }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
-      --ground:#f3f2ee; --surface:#ffffff; --surface-2:#f6f5f1; --raise:#eeece5;
-      --border:#e3e0d8; --border-2:#d5d1c6; --text:#1a1d24; --muted:#5b6272; --faint:#8a91a0;
-      --ember-1:#e8930a; --ember-2:#e8461f; --ember-3:#d61f6a; --ember-glow:rgba(232,70,31,.22);
-      --jade:#0e9c78; --jade-dim:#48c7a5; --jade-deep:#d7f0e7; --cool:#2563c9; --empty:#e7e5dd; --rest:#efede7;
-      --shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 16px 36px -24px rgba(30,25,10,.4);
-    }
-  }
+  /* DARK IS THE UNCONDITIONAL DEFAULT (2026-08-09). This used to be an
+     `@media (prefers-color-scheme: light)` branch, so the page went light whenever the OS was
+     light. Light hurts his eyes — every generated page in this repo is dark by default. Light now
+     requires an explicit [data-theme="light"] from the toggle, and nothing else can trigger it. */
   :root[data-theme="light"] {
     --ground:#f3f2ee; --surface:#ffffff; --surface-2:#f6f5f1; --raise:#eeece5;
     --border:#e3e0d8; --border-2:#d5d1c6; --text:#1a1d24; --muted:#5b6272; --faint:#8a91a0;
@@ -61,7 +65,10 @@
 
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; }
+  /* body must paint the ground itself. `.page` sets it, but a transparent body lets the HOST's
+     ground show through anywhere .page doesn't cover — short content, overscroll, the Artifact
+     viewer's own background. That is how a dark page ends up with a light band across it. */
+  body { margin: 0; background: var(--ground); color: var(--text); }
 
   :root {
     --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -164,6 +171,45 @@
     background: linear-gradient(180deg, var(--surface), var(--surface));
     border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
   }
+
+  /* ============================== MISSION =============================== */
+  .mission {
+    background: linear-gradient(180deg, var(--surface-2), var(--surface));
+    border: 1px solid var(--border-2); border-left: 4px solid var(--ember-2);
+    border-radius: 16px; box-shadow: var(--shadow); padding: 18px 20px; display: grid; gap: 14px;
+  }
+  .msn-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .msn-title { font-size: clamp(17px, 2.4vw, 22px); font-weight: 700; line-height:1.3; margin-top:4px; }
+  .msn-why { color: var(--muted); font-size: 13px; margin-top: 5px; max-width: 62ch; }
+  .msn-phase {
+    font-family: var(--mono); font-size: 11px; letter-spacing:.1em; text-transform:uppercase;
+    color: var(--muted); background: var(--raise); border:1px solid var(--border);
+    padding: 6px 10px; border-radius: 999px; white-space: nowrap;
+  }
+  .msn-alerts { display:grid; gap:6px; }
+  .msn-alert {
+    font-family: var(--mono); font-size: 12px; padding: 8px 11px; border-radius: 9px;
+    border:1px solid color-mix(in srgb, var(--ember-3) 40%, transparent);
+    background: color-mix(in srgb, var(--ember-3) 11%, transparent); color: var(--text);
+  }
+  .msn-alert.fatal { border-color: var(--ember-2); background: color-mix(in srgb, var(--ember-2) 18%, transparent); font-weight:600; }
+  .msn-clocks { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap:10px; }
+  .msn-clock { background: var(--raise); border:1px solid var(--border); border-radius:11px; padding:10px 12px; }
+  .msn-clock .k { font-family: var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color: var(--faint); }
+  .msn-clock .v { font-size: 21px; font-weight:700; font-variant-numeric: tabular-nums; margin-top:3px; }
+  .msn-clock.hot { border-color: var(--ember-2); }
+  .msn-clock.hot .v { color: var(--ember-1); }
+  .msn-counters { display:grid; gap:7px; }
+  .msn-ctr { display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:center; font-size:13px; }
+  .msn-ctr .lbl { color: var(--muted); }
+  .msn-ctr .track { grid-column: 1 / -1; height:5px; border-radius:99px; background: var(--empty); overflow:hidden; }
+  .msn-ctr .fill { height:100%; border-radius:99px; background: linear-gradient(90deg, var(--jade-dim), var(--jade)); }
+  .msn-ctr .val { font-family: var(--mono); font-size:12px; font-variant-numeric: tabular-nums; color: var(--text); }
+  .msn-ctr.cut .fill { background: linear-gradient(90deg, var(--ember-2), var(--ember-1)); }
+  .msn-ctr.cut .val { color: var(--ember-1); }
+  .msn-ctr.idle .val, .msn-ctr.idle .lbl { color: var(--faint); }
+  .msn-ctr .note { grid-column:1/-1; font-size:11px; color: var(--ember-1); font-family: var(--mono); }
+  @media (max-width: 560px) { .msn-phase { align-self:flex-start; } }
   .card-h { display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 16px 18px 0; }
   .card-h h2 { margin:0; font-size: 13px; font-family: var(--mono); letter-spacing:.14em; text-transform:uppercase; color: var(--muted); font-weight:600; }
 
@@ -412,10 +458,26 @@
       <div>
         <div class="eyebrow">Tarun&nbsp;OS · daily execution</div>
         <h1>Momentum <span class="accent">Console</span></h1>
-        <div class="sub">Seven blocks a day. Win the week, not just the streak.</div>
+        <div class="sub">Signed offer by 15 Nov. Hit the floor, bank the day.</div>
       </div>
       <div class="date-chip" id="dateChip">—</div>
     </header>
+
+    <!-- MISSION — written by `node scripts/console.mjs` into dashboard/mission.json.
+         Hidden entirely if the console has never run, so the page never shows empty scaffolding. -->
+    <section class="mission" id="mission" hidden>
+      <div class="msn-head">
+        <div>
+          <div class="eyebrow">The mission</div>
+          <div class="msn-title" id="msnAction">—</div>
+          <div class="msn-why" id="msnWhy"></div>
+        </div>
+        <div class="msn-phase" id="msnPhase">—</div>
+      </div>
+      <div class="msn-alerts" id="msnAlerts"></div>
+      <div class="msn-clocks" id="msnClocks"></div>
+      <div class="msn-counters" id="msnCounters"></div>
+    </section>
 
     <!-- FRESH START (Milkman: reset points are when rebuilds stick) -->
     <section class="freshstart" id="freshStart">
@@ -614,33 +676,32 @@
    Shields: 7 straight wins bank one (max 2); a shield absorbs a loss.
    ===================================================================== */
   /* Order = schedule order (display only; every consumer is key-based).
-     Swapped 2026-07-17: interview-qa → 11:00am, reading → 11:45pm. See daily/schedule.md. */
+     Rebuilt 2026-08-09 for the mission board. Must stay in sync with build.mjs BLOCK_KEYS and
+     daily/schedule.md — the 07-29 ingest failure was these three drifting apart. */
   const BLOCK_DEFS = [
-    { key:'interviewQa',  name:'Interview Q&A',  code:'interview-qa',  time:'11:00' },
-    { key:'dsa',          name:'DSA practice',   code:'dsa',           time:'11:45' },
-    { key:'machineCoding',name:'Machine coding', code:'machine-coding',time:'12:45' },
-    { key:'sysdesign',    name:'System design',  code:'sysdesign',     time:'2:00pm' },
-    { key:'workout',      name:'Home workout',   code:'workout',       time:'6:00pm' },
-    { key:'project',      name:'Project work',   code:'project',       time:'8:00pm' },
-    { key:'reading',      name:'Book reading',   code:'reading',       time:'11:45pm' },
+    { key:'cvDefense',    name:'CV defense',     code:'cv-defense',    time:'8:00pm' },
+    { key:'machineCoding',name:'Machine coding', code:'machine-coding',time:'9:00pm' },
+    { key:'interviewQa',  name:'Interview Q&A',  code:'interview-qa',  time:'9:00pm' },
+    { key:'backend',      name:'Backend',        code:'backend',       time:'office' },
+    { key:'apply',        name:'Applications',   code:'apply',         time:'10:15pm' },
   ];
-  const TOTAL = BLOCK_DEFS.length; // 7
+  const TOTAL = BLOCK_DEFS.length; // 5
 
   /* THE DAY'S CLOCK — mirrors daily/schedule.md. Minutes from midnight; the late blocks
      run past 1440 because reading + wrap spill over into the next calendar day.
      Edit this and daily/schedule.md together, or the dashboard starts lying. */
+  /* PHASE A (office) day clock, set 2026-08-09.
+     ⚠ OFFICE HOURS ARE A PLACEHOLDER (10:00–19:00). Correct them here AND in daily/schedule.md the
+     first office day, or the now-bar lies to you. `backend` sits inside office hours on purpose:
+     it is .NET until 31 Aug (the employer's ask) then Node from 1 Sept. */
   const SCHED = [
-    { code:'plan',          name:'Today’s planning',      s:10*60+30, e:10*60+45, kind:'ritual' },
-    { code:'interview-qa',  name:'Interview Q&A',         s:11*60,    e:11*60+30, kind:'scored' },
-    { code:'dsa',           name:'DSA practice',          s:11*60+45, e:12*60+30, kind:'scored' },
-    { code:'machine-coding',name:'Machine coding',        s:12*60+45, e:13*60+30, kind:'scored' },
-    { code:'sysdesign',     name:'System design · Xu V1', s:14*60,    e:15*60+30, kind:'scored' },
-    { code:'office-am',     name:'Office work',           s:15*60+30, e:17*60+30, kind:'office' },
-    { code:'workout',       name:'Home workout',          s:18*60,    e:19*60,    kind:'scored' },
-    { code:'project',       name:'Project work',          s:20*60,    e:21*60,    kind:'scored' },
-    { code:'office-pm',     name:'Office work',           s:22*60,    e:23*60+30, kind:'office' },
-    { code:'reading',       name:'Book reading · intake', s:23*60+45, e:24*60+15, kind:'scored' },
-    { code:'wrap',          name:'Day wrap-up',           s:24*60+15, e:24*60+45, kind:'ritual' },
+    { code:'plan',          name:'Today’s planning',       s: 9*60+30, e: 9*60+45, kind:'ritual' },
+    { code:'office-am',     name:'Office · backend slot',  s:10*60,    e:13*60,    kind:'office' },
+    { code:'office-pm',     name:'Office · bench',         s:14*60,    e:19*60,    kind:'office' },
+    { code:'cv-defense',    name:'CV defense · drill me',  s:20*60,    e:21*60,    kind:'scored' },
+    { code:'machine-coding',name:'Machine coding / IQA',   s:21*60,    e:22*60+15, kind:'scored' },
+    { code:'apply',         name:'Applications',           s:22*60+15, e:22*60+45, kind:'scored' },
+    { code:'wrap',          name:'Day wrap-up',            s:22*60+45, e:23*60+15, kind:'ritual' },
   ];
   const SCHED_BY_CODE = Object.fromEntries(SCHED.map(b => [b.code, b]));
 
@@ -669,10 +730,67 @@
 
   const DATA = /*__DATA_START__*/ { "month": "", "today": "", "weekOutcomes": "", "entries": [] } /*__DATA_END__*/;
 
+  /* =========================== MISSION PANEL ============================
+     Source: daily/dashboard/mission.json, written by `node scripts/console.mjs`.
+     This panel RENDERS, it never computes — the console owns every number so the terminal and the
+     page can never disagree. If mission is absent the section stays hidden. */
+  (function(){
+    const M = DATA.mission;
+    const host = document.getElementById('mission');
+    if (!M || !host) return;
+    host.hidden = false;
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const el = id => document.getElementById(id);
+
+    el('msnAction').textContent = M.action ? M.action.do : '—';
+    el('msnWhy').textContent    = M.action ? M.action.why : '';
+    el('msnPhase').textContent  = 'phase ' + M.phase + ' · ' + M.wave + ' wave';
+
+    // Parse failures rank above staleness: an unknown number is more dangerous than a stale one.
+    const alerts = [
+      ...(M.parseErrors || []).map(t => ({ t: 'PARSE FAILED — ' + t + ' (counter is UNKNOWN, not zero)', fatal: true })),
+      ...(M.stale || []).map(t => ({ t, fatal: false })),
+    ];
+    el('msnAlerts').innerHTML = alerts.map(a => '<div class="msn-alert' + (a.fatal ? ' fatal' : '') + '">' + esc(a.t) + '</div>').join('');
+
+    const c = M.countdown || {};
+    el('msnClocks').innerHTML = [
+      ['Resign',      c.resign,     false],
+      ['Phase gate',  c.phaseGate,  false],
+      ['OFFER FLOOR', c.offerFloor, true ],
+    ].map(([k, v, hot]) =>
+      '<div class="msn-clock' + (hot ? ' hot' : '') + '"><div class="k">' + esc(k) + '</div>' +
+      '<div class="v">' + (typeof v === 'number' ? v + 'd' : '—') + '</div></div>'
+    ).join('') +
+      '<div class="msn-clock"><div class="k">Applications</div><div class="v">' + ((M.funnel||{}).applications ?? 0) + '</div></div>' +
+      '<div class="msn-clock"><div class="k">Interviews</div><div class="v">' + ((M.funnel||{}).interviews ?? 0) + '</div></div>';
+
+    el('msnCounters').innerHTML = (M.counters || []).map(x => {
+      if (x.status === 'unknown')
+        return '<div class="msn-ctr idle"><span class="lbl">' + esc(x.label) + '</span><span class="val">??</span></div>';
+      const pct = x.target ? Math.min(100, Math.round((x.done / x.target) * 100)) : 0;
+      const idle = x.status === 'not-yet';
+      // A cut counter shows what IS reachable. It never shows a deficit — the board must never accuse.
+      const note = x.status === 'cut'
+        ? '<div class="note">re-cut to ' + x.reachable + ' at a sustainable ' + x.sustainable + '/day</div>'
+        : idle ? '<div class="note" style="color:var(--faint)">starts ' + esc(x.startsOn) + '</div>' : '';
+      return '<div class="msn-ctr ' + (x.status === 'cut' ? 'cut' : idle ? 'idle' : '') + '">' +
+        '<span class="lbl">' + esc(x.label) + '</span>' +
+        '<span class="val">' + x.done + ' / ' + x.target + '</span>' +
+        '<span class="track"><span class="fill" style="width:' + (idle ? 0 : pct) + '%"></span></span>' +
+        note + '</div>';
+    }).join('');
+  })();
+
   /* ------------------------- derive ------------------------- */
   const hits = e => BLOCK_DEFS.reduce((n,b)=> n + (e.blocks && e.blocks[b.key] ? 1 : 0), 0);
-  // MVD first: energy<=2 with >=3 hits IS a win (protected). Then the normal 4/7 bar.
-  const isWin = e => !e.pending && (hits(e) >= 4 || (typeof e.energy === 'number' && e.energy <= 2 && hits(e) >= 3));
+  /* THE FLOOR OUTRANKS THE COUNT (2026-08-09). Minimum viable day = 1 CV drill + 1 coding rep
+     + applications; build.mjs derives `floor` on every scored entry. If the floor was met the day
+     is a WIN however few blocks landed — that is the entire mechanism. His failure mode is binary
+     (6/7 or 1/7) and the collapses are anxiety-driven, so a bad day has to be able to land
+     somewhere above zero, or one bad day becomes nine dark ones. Legacy pre-08-09 entries have no
+     `floor` field and fall through to the old count bar. */
+  const isWin = e => !e.pending && (e.floor === true || hits(e) >= 4);
   const isMVD = e => isWin(e) && hits(e) < 4;
   const scored = DATA.entries.filter(e => !e.pending);
   const today = DATA.entries.find(e => e.date === DATA.today) || null;
@@ -1024,8 +1142,9 @@
       mod('Energy → wins', '<div class="rfall">Needs at least one win and one loss to compare.</div>');
     }
 
-    // 4. office-day drag on evening blocks (post-2026-07-17 swap: reading is the late block, not interview-qa)
-    const evening = ['workout','project','reading'];
+    // 4. office-day drag on evening blocks. Rebuilt 2026-08-09: in phase A the ENTIRE scored board
+    //    is an evening board (office runs 10-19), so this measures the whole day's survival.
+    const evening = ['cvDefense','machineCoding','interviewQa','apply'];
     const rate = ds => {
       let hit = 0, tot = 0;
       ds.forEach(e => evening.forEach(k => { tot++; if (e.blocks && e.blocks[k]) hit++; }));
@@ -1178,7 +1297,9 @@
     const btn = $('themeBtn'), root = document.documentElement;
     btn.addEventListener('click', ()=>{
       const cur = root.getAttribute('data-theme');
-      const dark = cur ? cur === 'dark' : !matchMedia('(prefers-color-scheme: light)').matches;
+      // Unset means DARK now (the default is no longer OS-dependent), so the first click must
+      // go to light. Reading the media query here would make that first click a visual no-op.
+      const dark = cur ? cur === 'dark' : true;
       root.setAttribute('data-theme', dark ? 'light' : 'dark');
     });
   })();

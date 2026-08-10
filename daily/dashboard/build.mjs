@@ -22,9 +22,14 @@ const DATA_DIR = join(HERE, 'data');
 const TEMPLATE = join(HERE, 'template.html');
 const TODAY_JSON = join(HERE, 'today.json');
 const META_JSON = join(DATA_DIR, 'meta.json');
+const MISSION_JSON = join(HERE, 'mission.json');
 const OUT = join(HERE, '..', 'dashboard.html');
 
-const BLOCK_KEYS = ['reading', 'dsa', 'machineCoding', 'sysdesign', 'workout', 'project', 'interviewQa'];
+// Mission board, locked 2026-08-09. Replaced the standing-routine keys
+// ['reading','dsa','machineCoding','sysdesign','workout','project','interviewQa'], which had been
+// rejecting every ingest since 2026-07-29 because the schedule changed and this line did not.
+// Legacy entries in data/*.json keep their old keys — validation only applies to NEW ingests.
+const BLOCK_KEYS = ['cvDefense', 'machineCoding', 'interviewQa', 'backend', 'apply'];
 const REASONS = ['avoidance', 'capacity', 'clarity', 'energy', 'disruption', 'other'];
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -56,6 +61,10 @@ function validateEntry(e) {
   if (!Number.isInteger(e.energy) || e.energy < 1 || e.energy > 5) fail('energy must be an integer 1-5');
   if (typeof e.office !== 'boolean') fail('office must be true/false on a scored entry');
   if (typeof e.mustShip !== 'boolean') fail('mustShip must be true/false on a scored entry');
+  // The minimum viable day: 1 CV drill + 1 coding rep (either alternation track) + applications.
+  // Hitting the floor is a WIN — that is the whole mechanism. Derived unless explicitly set.
+  if (e.floor == null) e.floor = !!(e.blocks.cvDefense && (e.blocks.machineCoding || e.blocks.interviewQa) && e.blocks.apply);
+  if (typeof e.floor !== 'boolean') fail('floor must be true/false');
   if (e.reasons) {
     for (const [k, v] of Object.entries(e.reasons)) {
       if (!BLOCK_KEYS.includes(k)) fail(`reasons: unknown block "${k}"`);
@@ -115,7 +124,9 @@ function ingest(months) {
   rmSync(TODAY_JSON); // consumed — next ritual Writes a fresh one (no read needed)
 
   const hits = entry.pending ? null : BLOCK_KEYS.filter(k => entry.blocks[k]).length;
-  const win = hits == null ? '' : ` (${hits}/7 ${hits >= 4 || (entry.energy <= 2 && hits >= 3) ? 'WIN' : 'loss'})`;
+  // A day is a WIN if the floor was met, whatever else happened. That is the point of the floor:
+  // an anxious day lands on it instead of on zero, and one bad day stops becoming nine dark ones.
+  const win = hits == null ? '' : ` (${hits}/${BLOCK_KEYS.length}${entry.floor ? ', floor MET' : ''} ${entry.floor || hits >= 4 ? 'WIN' : 'loss'})`;
   return `ingested ${entry.date} ${entry.day}${entry.pending ? ' [pending]' : win} -> data/${entry.date.slice(0, 7)}.json${pendingNote}`;
 }
 
@@ -126,7 +137,10 @@ function rebuild(months) {
     : entries.length ? entries[entries.length - 1].date
     : new Date().toISOString().slice(0, 10);
   const weekOutcomes = existsSync(META_JSON) ? (readJson(META_JSON).weekOutcomes || '') : '';
-  const data = { month: today.slice(0, 7), today, weekOutcomes, entries };
+  // Mission payload from `node scripts/console.mjs` — countdowns, counters, next action.
+  // Optional by design: the dashboard still builds if the console has never been run.
+  const mission = existsSync(MISSION_JSON) ? readJson(MISSION_JSON) : null;
+  const data = { month: today.slice(0, 7), today, weekOutcomes, entries, mission };
 
   const tpl = readFileSync(TEMPLATE, 'utf8');
   const START = '/*__DATA_START__*/', END = '/*__DATA_END__*/';

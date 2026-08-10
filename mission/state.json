@@ -1,0 +1,58 @@
+{
+  "_comment": "Explicit state ONLY. Track counters are DERIVED from the learning/ trackers by scripts/console.mjs — never duplicate them here. Written by `/console log` and `/weekly-review`.",
+  "version": 1,
+  "lockedOn": "2026-08-09",
+
+  "milestones": {
+    "resign": "2026-09-07",
+    "released": "2026-09-21",
+    "phaseGate": "2026-09-15",
+    "offerFloor": "2026-11-15",
+    "dry": "2026-12-31"
+  },
+
+  "phases": [
+    { "id": "A1", "start": "2026-08-10", "end": "2026-08-31", "office": true,  "backend": "dotnet", "tracks": ["cvDefense", "machineCoding", "interviewQa", "apply"] },
+    { "id": "A2", "start": "2026-09-01", "end": "2026-09-21", "office": true,  "backend": "node",   "tracks": ["cvDefense", "machineCoding", "interviewQa", "backend", "apply"] },
+    { "id": "B",  "start": "2026-09-22", "end": "2026-11-15", "office": false, "backend": "node",   "tracks": ["cvDefense", "machineCoding", "interviewQa", "backend", "apply", "dsa"] }
+  ],
+
+  "alternation": {
+    "_comment": "Mon/Wed/Fri machine-coding, Tue/Thu interview-qa, Sat whichever is behind. Sunday off (weekly review only).",
+    "Mon": "machineCoding", "Tue": "interviewQa", "Wed": "machineCoding",
+    "Thu": "interviewQa", "Fri": "machineCoding", "Sat": "behind", "Sun": "off"
+  },
+
+  "floor": {
+    "_comment": "The minimum viable day. Hitting this is a WIN, not a failure.",
+    "cvDrill": 1,
+    "codingRep": 1,
+    "applications": 3
+  },
+
+  "targets": {
+    "_comment": "cvDrills/mcBuilds/nodeConcepts/iqaLessons are DERIVED denominators, listed here only as the phase-A goal. applications+interviews are the real explicit targets.",
+    "cvDrills": 14,
+    "mcBuilds": 10,
+    "nodeConcepts": 8,
+    "applications": 60,
+    "interviews": 4
+  },
+
+  "sustainablePace": {
+    "_comment": "Items/day above which the console recommends a CUT instead of showing a debt.",
+    "cvDrills": 1,
+    "mcBuilds": 0.75,
+    "nodeConcepts": 0.75,
+    "iqaLessons": 0.5
+  },
+
+  "applications": [],
+
+  "interviews": [],
+
+  "waves": {
+    "sacrificial": { "start": "2026-08-10", "end": "2026-09-14" },
+    "target": { "start": "2026-09-15", "end": "2026-11-15" }
+  }
+}

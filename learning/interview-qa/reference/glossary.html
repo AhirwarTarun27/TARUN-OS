@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Must-Say Terms · M1-M4 revision — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+<style>
+  /* glossary-only: the keyword chip and the script blocks */
+  .kw {
+    font-family: var(--mono); font-size: 0.82em;
+    background: color-mix(in srgb, var(--accent-2) 16%, var(--bg-sink));
+    border: 1px solid color-mix(in srgb, var(--accent-2) 40%, transparent);
+    color: #ffd9a0; border-radius: 4px; padding: 0.08em 0.4em;
+    white-space: nowrap;
+  }
+  .script {
+    font-family: var(--sans); font-size: 0.94rem; line-height: 1.6;
+    border-left: 3px solid var(--good); background: var(--bg-raise);
+    border-radius: 0 8px 8px 0; padding: 0.9rem 1.1rem; margin: 0.9rem 0;
+  }
+  .script .who { display:block; font-family: var(--sans); font-size: 0.72rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint);
+    margin-bottom: 0.35rem; }
+  .tell { border-left-color: var(--bad); }
+  .mod-head { display:flex; align-items:baseline; gap:0.6rem; flex-wrap:wrap; }
+  .pill { font-family: var(--sans); font-size: 0.68rem; letter-spacing:0.08em;
+    text-transform: uppercase; color: var(--bg); background: var(--good);
+    border-radius: 999px; padding: 0.12em 0.55em; font-weight: 700; }
+  .pill.warn { background: var(--accent-2); }
+  .kwlist { font-family: var(--sans); font-size: 0.9rem; line-height: 2.1; margin: 0.6rem 0 1.2rem; }
+</style>
+</head>
+<body>
+<div class="wrap wide">
+
+  <header class="masthead">
+    <p class="eyebrow">Reference · Modules 1-4 · revised 2026-08-07</p>
+    <h1>Must-Say Terms</h1>
+    <p class="subtitle">Not a summary. The exact words that have to leave your mouth for the
+    answer to count — plus the follow-up each one invites.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">How to use this</span>
+    Anything in an <span class="kw">orange chip</span> is a <strong>scoring term</strong>: the
+    interviewer is listening for that specific word, and a correct answer that omits it reads as
+    a memorised one. Wording around it is free — say it however you like. The
+    <strong>green blocks</strong> are full sentences worth having word-perfect, because they are
+    the answers that end the follow-ups instead of inviting them. <strong>Ten minutes, out
+    loud.</strong> Reading this silently is not the exercise.
+  </div>
+
+  <h2>0 · Your three tells — check these first</h2>
+  <p>Found across the L2, L3 and L4 drills. They are not knowledge gaps. Every one of them is a
+  correct mechanism that came out of your mouth attached to the wrong word.</p>
+
+  <div class="script tell">
+    <span class="who">Tell 1 — surface-shape matching</span>
+    You fire the first rule the snippet's <em>shape</em> resembles, and stop. It produced the L2
+    misses, the L3 read-point misses, and three "rule 3" answers for <code>.call</code>/<code>.bind</code>
+    in L4. <strong>The cure is one beat of doubt: run the rule you just fired and check its answer
+    isn't absurd.</strong> <code>inner.call(this)</code> under rule 3 would make <code>this</code>
+    a function. That absurdity is the signal.
+  </div>
+
+  <div class="script tell">
+    <span class="who">Tell 2 — the label is one step behind the mechanism</span>
+    You explain <em>how</em> it works correctly and then produce the wrong name for it. Confirmed
+    on <code>TypeError</code>, <code>n++</code>, <code>===</code>, HOF, and explicit binding.
+    <strong>Say the label first, then the mechanism</strong> — not the other way round.
+  </div>
+
+  <div class="script tell">
+    <span class="who">Tell 3 — the source-location anchor</span>
+    Under pressure you describe runtime things using authoring-time words: "<em>surrounding</em>",
+    "<em>where it is defined</em>". Those words are correct for <strong>closures</strong> and wrong
+    for <strong><code>this</code></strong>. If one of them is about to come out while you're
+    answering a <code>this</code> question, stop and say <span class="kw">call site</span> instead.
+  </div>
+
+  <h2 class="mod-head">M1 · Types &amp; Coercion <span class="pill">done</span></h2>
+  <p class="kwlist">
+    <span class="kw">dynamically typed</span>
+    <span class="kw">at run time</span>
+    <span class="kw">7 primitives</span>
+    <span class="kw">immutable</span>
+    <span class="kw">by value</span>
+    <span class="kw">by reference</span>
+    <span class="kw">coercion</span>
+    <span class="kw">loose vs strict</span>
+    <span class="kw">ReferenceError</span>
+  </p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Asked as</th><th>Must contain</th><th>The follow-up it invites</th></tr></thead>
+    <tbody>
+      <tr><td>Is JS typed?</td><td><span class="kw">dynamically typed</span>, resolved <span class="kw">at run time</span></td><td>"And TypeScript?" → <strong>statically typed, checks move to compile time</strong></td></tr>
+      <tr><td>List the types</td><td><strong>7</strong>: string, number, boolean, null, undefined, <strong>bigint</strong>, <strong>symbol</strong> — everything else is an <code>object</code></td><td>Naming bigint + symbol is the whole point; most candidates give 5</td></tr>
+      <tr><td>Primitive vs object</td><td>primitives are <span class="kw">immutable</span> and compared <span class="kw">by value</span>; objects compared <span class="kw">by reference</span></td><td>"So what does <code>===</code> do on two objects?" → <strong>reference identity, it never looks inside</strong></td></tr>
+      <tr><td><code>typeof null</code></td><td><code>"object"</code> — a <strong>historical bug kept for backwards compatibility</strong></td><td>Say "bug" and "back-compat" or it sounds like you guessed</td></tr>
+      <tr><td><code>typeof NaN</code></td><td><code>"number"</code> — NaN is a special <em>value of</em> the number type</td><td>—</td></tr>
+      <tr><td>undeclared / undefined / null</td><td>undeclared → <span class="kw">ReferenceError</span> · undefined = declared, unassigned, JS's default · null = <strong>intentional</strong>, assigned by you</td><td>"Which one is a type?" → both undefined and null are, but <code>typeof null</code> lies</td></tr>
+      <tr><td><code>==</code> vs <code>===</code></td><td><code>===</code> compares <strong>value and type</strong>, no conversion. <code>==</code> <span class="kw">coerces</span> first</td><td><code>null == undefined</code> → <strong>true</strong> (special-cased). <code>null === undefined</code> → <strong>false</strong></td></tr>
+      <tr><td>The <code>+</code> rule</td><td><strong>If either side is a string, the other is converted to a string and concatenated.</strong> Otherwise both go numeric. <span class="kw">left to right</span></td><td><code>3+2+"7"</code> → <code>"57"</code> · <code>true+1</code> → <code>2</code> · <code>true+"1"</code> → <code>"true1"</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="script">
+    <span class="who">Say it like this</span>
+    "JavaScript is <strong>dynamically typed</strong> — types resolve at <strong>run time</strong>,
+    so one variable can hold any type. There are <strong>seven primitives</strong> — string,
+    number, boolean, null, undefined, bigint and symbol — and everything else is an object.
+    Primitives are <strong>immutable and compared by value</strong>; objects are <strong>compared
+    by reference</strong>."
+  </div>
+
+  <h2 class="mod-head">M2 · Scope, Hoisting &amp; the TDZ <span class="pill">done</span></h2>
+  <p class="kwlist">
+    <span class="kw">scope chain</span>
+    <span class="kw">function-scoped</span>
+    <span class="kw">block-scoped</span>
+    <span class="kw">hoisting</span>
+    <span class="kw">registers declarations</span>
+    <span class="kw">uninitialised</span>
+    <span class="kw">temporal dead zone</span>
+    <span class="kw">ReferenceError</span>
+    <span class="kw">TypeError</span>
+    <span class="kw">the binding, not the value</span>
+    <span class="kw">shadowing</span>
+    <span class="kw">fresh binding per iteration</span>
+  </p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Asked as</th><th>Must contain</th><th>The follow-up it invites</th></tr></thead>
+    <tbody>
+      <tr><td>What is scope?</td><td>where a name is <strong>visible</strong>. Global / function / block. The <span class="kw">scope chain</span> walks <strong>outward only</strong></td><td>"Can outer code see inner?" → <strong>never</strong>. Inner reaches out, outer never reaches in</td></tr>
+      <tr><td>var vs let vs const</td><td><strong>Four axes, in order: scope · reassign · redeclare · hoisting.</strong> var <span class="kw">function-scoped</span>; let/const <span class="kw">block-scoped</span></td><td>"Is const immutable?" → <strong>no — it freezes <span class="kw">the binding, not the value</span></strong></td></tr>
+      <tr><td>What is hoisting?</td><td>the engine <span class="kw">registers declarations</span> in the scope before execution. <strong>Nothing physically moves</strong></td><td>Saying "moved to the top" is the textbook answer; saying "registers" + TDZ is the senior one</td></tr>
+      <tr><td>Is <code>let</code> hoisted?</td><td><strong>Yes</strong> — hoisted but <span class="kw">uninitialised</span>. That's the trap in the question</td><td>"Then why does it throw?" → the <span class="kw">temporal dead zone</span></td></tr>
+      <tr><td>What is the TDZ?</td><td>the window between the binding entering scope and its declaration being evaluated; any access throws <span class="kw">ReferenceError</span></td><td>"<code>typeof</code> in the TDZ?" → <strong>also throws.</strong> typeof is only safe on <em>undeclared</em> names</td></tr>
+      <tr><td>Why does the TDZ exist?</td><td><strong>It turns a silent <code>undefined</code> bug into a loud error.</strong> Design intent, not an accident</td><td>This sentence alone separates you from candidates who only recite behaviour</td></tr>
+      <tr><td>"prints 6 every time"</td><td>one <code>var i</code> = <strong>one binding</strong> for the whole loop; setTimeout runs after the loop, which left <code>i</code> at 6</td><td><strong>Give both fixes:</strong> <code>let</code> (a <span class="kw">fresh binding per iteration</span>) and the wrapper function (a new scope per call)</td></tr>
+      <tr><td>Which error?</td><td><span class="kw">ReferenceError</span> = couldn't <strong>find</strong> the name. <span class="kw">TypeError</span> = found it, the <strong>operation</strong> was illegal</td><td><em>Find vs do.</em> This one rule answers every error-naming question in the course</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>The hoisting table — straight recall, learn the cells</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Declaration</th><th>Hoisted?</th><th>Usable before its line?</th></tr></thead>
+    <tbody>
+      <tr><td><code>function foo(){}</code></td><td>yes, <strong>fully</strong></td><td><strong>yes</strong> — body and all</td></tr>
+      <tr><td><code>var x</code></td><td>yes, as <code>undefined</code></td><td>yes, but the value is <code>undefined</code></td></tr>
+      <tr><td><code>let</code> / <code>const</code> / <code>class</code></td><td>yes, <span class="kw">uninitialised</span></td><td>no → <code>ReferenceError</code> (TDZ)</td></tr>
+      <tr><td><code>var f = function(){}</code> / <code>=&gt; {}</code></td><td>only the <code>var</code></td><td>no → <code>f</code> is <code>undefined</code>, calling it is a <strong><code>TypeError</code></strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="script">
+    <span class="who">Say it like this</span>
+    "<code>let</code> and <code>const</code> <strong>are</strong> hoisted — they're registered in the
+    scope from the top, they're just <strong>uninitialised</strong>. The gap between entering the
+    scope and reaching the declaration is the <strong>temporal dead zone</strong>, and touching the
+    binding in there throws a <strong>ReferenceError</strong>. It exists on purpose: it turns a
+    silent <code>undefined</code> bug into a loud error."
+  </div>
+
+  <h2 class="mod-head">M3 · Functions, Closures &amp; HOFs <span class="pill">done</span></h2>
+  <p class="kwlist">
+    <span class="kw">first-class</span>
+    <span class="kw">lexical</span>
+    <span class="kw">lexical environment</span>
+    <span class="kw">at authoring time</span>
+    <span class="kw">per invocation</span>
+    <span class="kw">private state</span>
+    <span class="kw">callback</span>
+    <span class="kw">higher-order function</span>
+    <span class="kw">side effect</span>
+    <span class="kw">pure</span>
+    <span class="kw">IIFE</span>
+    <span class="kw">captured, not copied</span>
+  </p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Asked as</th><th>Must contain</th><th>The follow-up it invites</th></tr></thead>
+    <tbody>
+      <tr><td>What is a closure? <em>(99% of interviews)</em></td><td>a function bundled with the <span class="kw">lexical environment</span> it was created in, so it still reads those variables <strong>after the outer function has returned</strong></td><td>"So why does it still work?" → the environment reference is attached <span class="kw">at authoring time</span> and <strong>keeps the scope alive</strong> (not garbage collected)</td></tr>
+      <tr><td>—</td><td><strong>Never say "a function inside a function."</strong> That describes the <em>shape</em>, not the mechanism, and it is the answer that collapses on the follow-up</td><td>—</td></tr>
+      <tr><td>Two counters from one factory</td><td>each <strong>call</strong> creates a new environment → closures capture <span class="kw">per invocation</span>, not per definition</td><td>This is the fastest test of whether you understand closures or recognise the shape</td></tr>
+      <tr><td>What is a callback?</td><td>a function <strong>passed as an argument</strong>, to be <strong>called later, by someone else</strong></td><td>—</td></tr>
+      <tr><td>What is a HOF?</td><td><strong>takes a function as an argument, returns a function, or both.</strong> <span class="kw">Nesting is irrelevant</span></td><td>"Difference from a callback?" → <strong>two ends of one handoff.</strong> In <code>arr.map(fn)</code>, map is the HOF, fn is the callback</td></tr>
+      <tr><td>Pure vs impure</td><td><strong>same input → same output</strong> AND <strong>no <span class="kw">side effect</span></strong>. Both halves required</td><td>The React tie-in: render must be pure, never mutate state, <code>useMemo</code>/<code>React.memo</code> only work because of it</td></tr>
+      <tr><td>What is an IIFE?</td><td>immediately invoked function <strong>expression</strong> — the parens make JS read it as an expression</td><td>"Do you still write them?" → <strong>"IIFEs solved the scoping problem that <code>let</code> and modules now solve."</strong></td></tr>
+      <tr><td>Arrow limitations <em>(recall, all 5)</em></td><td>1. not hoisted with a body · 2. no <code>arguments</code> · 3. no own <code>this</code> · 4. can't be a constructor (<code>new</code> throws <strong><code>TypeError</code></strong>) · 5. can't be a generator</td><td>#3 is all of M4</td></tr>
+      <tr><td>Deferred reads</td><td>a closure captures the <strong>variable</strong>, not a copy — <span class="kw">captured, not copied</span>. Arguments capture the <strong>value</strong> at call time</td><td><code>n++</code> returns the <strong>old</strong> value · <code>++n</code> returns the <strong>new</strong> one. After 3 calls <code>n</code> is 3 either way</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="script">
+    <span class="who">Say it like this — the highest-value 20 seconds in the whole course</span>
+    "A closure is a function plus its <strong>lexical environment</strong>. Every function closes
+    over the scope where it was <strong>defined</strong>, not where it's called, so it can still
+    read those variables after the outer function has returned — the scope stays alive because
+    something can still reach it. That's what makes <strong>private state</strong>, function
+    factories and <code>once</code>/<code>memoize</code> possible."
+  </div>
+
+  <h2 class="mod-head">M4 · The <code>this</code> keyword &amp; binding <span class="pill">done</span></h2>
+  <p class="kwlist">
+    <span class="kw">at call time</span>
+    <span class="kw">the call site</span>
+    <span class="kw">left of the dot</span>
+    <span class="kw">substitution</span>
+    <span class="kw">explicit binding</span>
+    <span class="kw">default binding</span>
+    <span class="kw">partial application</span>
+    <span class="kw">not in the table</span>
+    <span class="kw">an object literal is not a scope</span>
+    <span class="kw">silently ignored</span>
+  </p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>#</th><th>Rule</th><th>Call looks like</th><th><code>this</code> is</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>new</strong> binding</td><td><code>new Fn()</code></td><td>the brand-new object</td></tr>
+      <tr><td>2</td><td><strong>explicit</strong> binding</td><td><code>fn.call(o)</code> · <code>.apply(o)</code> · <code>.bind(o)</code></td><td><code>o</code> — <strong>the object inside the parentheses</strong></td></tr>
+      <tr><td>3</td><td><strong>implicit</strong> binding</td><td><code>obj.fn()</code></td><td>the object <strong>left of the dot</strong> — only the <em>last</em> dot</td></tr>
+      <tr><td>4</td><td><strong>default</strong> binding</td><td><code>fn()</code></td><td><code>globalThis</code>, or <code>undefined</code> in strict mode</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><strong>Check them top down and stop at the first match — that order <em>is</em> the
+  precedence.</strong> Arrows are <span class="kw">not in the table</span> at all.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Asked as</th><th>Must contain</th><th>The follow-up it invites</th></tr></thead>
+    <tbody>
+      <tr><td>What is <code>this</code>?</td><td>the object currently executing the function, bound <span class="kw">at call time</span>, not at definition time. <strong>Read the <span class="kw">call site</span>, not the function</strong></td><td>"How is that different from a closure?" → <strong>closures are lexical, <code>this</code> is dynamic</strong></td></tr>
+      <tr><td><code>a.b.c.fn()</code></td><td><code>a.b.c</code> — <strong>only the last dot counts</strong></td><td>People answer with the outermost object. That's why it's asked</td></tr>
+      <tr><td>Plain <code>fn()</code></td><td>non-strict: the global object, <strong>because of <span class="kw">substitution</span></strong>. Strict/modules/class bodies: stays <code>undefined</code></td><td>"It's window" gets a follow-up. <strong>Naming the substitution ends it</strong></td></tr>
+      <tr><td>call vs apply vs bind</td><td>call and apply <strong>invoke immediately</strong>, differing <strong>only in argument syntax — a list vs an <span class="kw">array</span></strong>. bind <strong>returns a new function</strong></td><td><em>a</em>pply → <em>a</em>rray. Pre-filled bind args = <span class="kw">partial application</span></td></tr>
+      <tr><td><code>const g = user.greet; g()</code></td><td>you copied the <strong>function value</strong>, never the binding — the object was supplied by the call site and you threw the call site away. Rule 3 → rule 4</td><td><strong>Name all three fixes:</strong> <code>bind</code>, an arrow wrapper, a function wrapper</td></tr>
+      <tr><td>Why can't an arrow be a method?</td><td>no own <code>this</code>, so it resolves <strong>lexically</strong> — and <span class="kw">an object literal is not a scope</span>, so it reaches straight past to module/global</td><td>"What creates a scope?" → <strong>only functions and blocks</strong> (M2)</td></tr>
+      <tr><td>Can you rebind an arrow?</td><td>No — <code>call</code>/<code>apply</code>/<code>bind</code> are <span class="kw">silently ignored</span>. <strong>It does not throw</strong></td><td>Don't confuse it with <code>new Arrow()</code>, which <strong>does</strong> throw a <code>TypeError</code></td></tr>
+      <tr><td>Bound function, then <code>.call</code></td><td><strong>Once bound, always bound.</strong> Rule 2 already fired when the wrapper was created</td><td>But <code>new</code> still beats <code>bind</code> — rule 1 outranks rule 2</td></tr>
+      <tr><td>React class binding</td><td>class bodies are <strong>strict</strong>, so a lost <code>this</code> <strong>throws</strong> instead of reading the global. Fixes: bind in constructor · arrow at call site · <strong>arrow class field</strong></td><td>"Why did hooks fix this?" → <strong>a function component has no <code>this</code> to lose.</strong> And: an arrow class field is <strong>per instance</strong>; a prototype method is <strong>shared</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>The two traps you personally failed — do not lose these again</h3>
+  <div class="script tell">
+    <span class="who">Trap A — the dot in <code>.call</code> is not a binding dot</span>
+    <strong>Rule 3 reads the object to the LEFT of the dot. Rule 2 reads the object INSIDE the
+    parentheses.</strong> If the context arrived as an <em>argument</em>, it is rule 2 — always.
+    And anything that came out of <code>bind</code> is <strong>rule 2 forever</strong>, however
+    it is later invoked.
+  </div>
+  <div class="script tell">
+    <span class="who">Trap B — the same arrow, two opposite answers</span>
+    The question is never "is it an arrow", it is <strong>"does a real function enclose it?"</strong>
+    <br>· <code>{ n:1, f: () =&gt; this.n }</code> → <strong>no</strong> enclosing function (an object
+    literal is not a scope) → reaches global → <code>undefined</code>.
+    <br>· <code>function C(){ this.f = () =&gt; this.n }</code> → <strong>yes</strong>, the constructor
+    → captures the instance → <strong>survives extraction, <code>call</code>, and <code>setTimeout</code></strong>.
+  </div>
+
+  <h3>What strips the dot</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>You write</th><th>Callee receives</th><th>Rule</th></tr></thead>
+    <tbody>
+      <tr><td><code>obj.fn()</code></td><td>the call site</td><td>3</td></tr>
+      <tr><td><code>const f = obj.fn; f()</code></td><td>a naked function value</td><td>4</td></tr>
+      <tr><td><code>arr.forEach(obj.fn)</code> · <code>setTimeout(obj.fn, 0)</code></td><td>a naked function value</td><td>4</td></tr>
+      <tr><td><code>(0, obj.fn)()</code></td><td>naked — the comma operator drops the dot</td><td>4</td></tr>
+      <tr><td><code>obj.fn.bind(obj)</code></td><td>permanently welded</td><td>2</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><strong>Anywhere a method crosses a comma, it loses its dot.</strong> And
+  <code>forEach</code>/<code>map</code>/<code>filter</code>/<code>some</code>/<code>every</code>
+  all take an optional <strong><code>thisArg</code> as their second argument</strong> — worth
+  naming, almost nobody does.</p>
+
+  <div class="script">
+    <span class="who">Say it like this</span>
+    "<code>this</code> refers to the object currently executing the function, and it's bound at
+    <strong>call time</strong>, not definition time — so to work out <code>this</code> I don't read
+    the function, I read the <strong>call site</strong>. There are four rules in precedence order:
+    <strong>new, explicit, implicit, default</strong>. Arrows aren't in that list at all — they have
+    no <code>this</code> of their own, so it resolves <strong>lexically</strong>."
+  </div>
+
+  <h2>5 · The procedure — all five questions, one list</h2>
+  <p>Built across three drills. Q1-Q3 came from M2, Q4 from M3, Q5 from M4. Run them in order on
+  every identifier and never skip to the answer.</p>
+  <ol>
+    <li><strong>Which keyword declares it?</strong> function · var · let · const · class · parameter · nothing</li>
+    <li><strong>What state is the binding in <em>at this exact line</em>?</strong> undeclared · TDZ · holds <code>undefined</code> · holds a real value</li>
+    <li><strong>What are you doing to it?</strong> reading · calling · assigning · <code>typeof</code></li>
+    <li><strong>When does this actually run — and what is the binding at <em>that</em> moment?</strong> <em>(closures move the read into the future)</em></li>
+    <li><strong>How was this function called — and is it an arrow?</strong> Arrow → skip the table, walk the scope chain. Not an arrow → new · explicit · left of the dot · bare</li>
+  </ol>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>State of binding</th><th>read</th><th>call</th><th>assign</th><th><code>typeof</code></th></tr></thead>
+    <tbody>
+      <tr><td>undeclared</td><td><code>ReferenceError</code></td><td><code>ReferenceError</code></td><td>creates a global (sloppy)</td><td><strong><code>"undefined"</code></strong></td></tr>
+      <tr><td>TDZ</td><td><code>ReferenceError</code></td><td><code>ReferenceError</code></td><td><code>ReferenceError</code></td><td><strong><code>ReferenceError</code></strong></td></tr>
+      <tr><td>holds <code>undefined</code></td><td><code>undefined</code></td><td><strong><code>TypeError</code></strong></td><td>fine</td><td><code>"undefined"</code></td></tr>
+      <tr><td>holds a real value</td><td>the value</td><td>depends</td><td><code>const</code> → <strong><code>TypeError</code></strong></td><td>its type</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>6 · The 60-second self-test</h2>
+  <p>Cover the right column. Say each answer out loud. Any hesitation is a re-read, not a pass.</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Prompt</th><th>The word that must appear</th></tr></thead>
+    <tbody>
+      <tr><td>Closure, in one sentence</td><td>lexical environment · after the outer function returned</td></tr>
+      <tr><td>Why does it still work after the return?</td><td>attached at authoring time · keeps the scope alive</td></tr>
+      <tr><td>HOF vs callback</td><td>takes/returns a function · passed as an argument · two ends of one handoff</td></tr>
+      <tr><td>When is <code>this</code> decided?</td><td>call time · call site</td></tr>
+      <tr><td>The four rules, in order</td><td>new · explicit · implicit · default</td></tr>
+      <tr><td><code>fn.call(o)</code> — which rule?</td><td><strong>2, explicit</strong> — the context is inside the parentheses</td></tr>
+      <tr><td>call vs apply</td><td>a list vs an array — nothing else</td></tr>
+      <tr><td><code>bind</code></td><td>returns a new function · once bound, always bound · partial application</td></tr>
+      <tr><td>Arrow as a method</td><td>not in the table · an object literal is not a scope</td></tr>
+      <tr><td><code>arrow.call(obj)</code></td><td>silently ignored — does <em>not</em> throw</td></tr>
+      <tr><td><code>new Arrow()</code></td><td>TypeError — no <code>[[Construct]]</code></td></tr>
+      <tr><td>Is <code>let</code> hoisted?</td><td>yes, but uninitialised · temporal dead zone</td></tr>
+      <tr><td>Why does the TDZ exist?</td><td>turns a silent <code>undefined</code> bug into a loud error</td></tr>
+      <tr><td>Is <code>const</code> immutable?</td><td>no — the binding, not the value</td></tr>
+      <tr><td>ReferenceError vs TypeError</td><td>can't find it vs found it, illegal operation</td></tr>
+      <tr><td><code>typeof null</code> / <code>typeof NaN</code></td><td>"object", historical bug / "number"</td></tr>
+      <tr><td>The <code>+</code> rule</td><td>if either side is a string, concatenate · left to right</td></tr>
+      <tr><td>Pure function</td><td>same input same output <em>and</em> no side effects</td></tr>
+      <tr><td>Two counters from one factory</td><td>per invocation, not per definition</td></tr>
+      <tr><td>"prints 6" — both fixes</td><td>fresh binding per iteration · a new scope per call</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">Not in here yet</span>
+    M5 objects &amp; prototypes, M6 arrays, M7 async &amp; the event loop. Update this page at the
+    close of every module — it is the file to re-read the morning of an interview, not the lessons.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="course-map.html">← Course map</a>
+    <a href="../lessons/0004-this-and-binding.html">Lesson 4 →</a>
+  </div>
+
+</div>
+</body>
+</html>

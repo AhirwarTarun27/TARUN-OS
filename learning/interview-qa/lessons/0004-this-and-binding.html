@@ -320,6 +320,140 @@ inc = () =&gt; { this.count++; }     <span class="tok-com">// 3. class field —
   <p>Do it in that order and never read the function body first. The body cannot tell you the answer.
   The <em>call</em> tells you the answer.</p>
 
+  <h2>7b · Find the <code>(</code> — written after the 2026-08-07 drill</h2>
+  <div class="why">
+    <span class="callout-label">Why this section exists</span>
+    In the first drill round, every single miss was the same miss, and it wasn't a
+    <code>this</code> gap — the four rules were named cold, in order, and the hardest
+    precedence question in the module (<code>new</code> beats <code>bind</code>) was answered
+    correctly first try. The failure was narrower: <strong>when a function is invoked by
+    somebody else's code, the eye goes back to where the function was written.</strong>
+    Question 5 asks "how was this called" — but it never fires if you're looking at the wrong
+    place. This section fixes the <em>where</em>.
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">The physical fix</span>
+    Don't look at the line the function is written on. <strong>Find the <code>(</code> that
+    actually runs it</strong> — then ask question 5 <em>there</em>. Sometimes that parenthesis
+    is not in your file at all.
+  </div>
+
+  <p>Here is the snippet that proved it. <code>this</code> means two different things one line
+  apart:</p>
+  <pre><code>const counter = {
+  n: 0,
+  items: [1, 2, 3],
+  addAll() {
+    this.items.forEach(function (x) { this.n += x; });
+    return this.n;
+  }
+};
+counter.addAll();     <span class="tok-com">// 0 — not 6</span></code></pre>
+  <p>The <code>(</code> that runs your callback is inside <code>forEach</code>:</p>
+  <pre><code><span class="tok-com">// roughly what Array.prototype.forEach does internally</span>
+for (let i = 0; i &lt; len; i++) {
+  callback(this[i], i, this);   <span class="tok-com">// ← a BARE call. no dot. rule 4.</span>
+}</code></pre>
+  <p>So inside the callback <code>this</code> is <code>globalThis</code>,
+  <code>this.n</code> is <code>undefined</code>, and <code>undefined += 1</code> is
+  <code>NaN</code> — written to a <em>global</em> <code>n</code>, three times.
+  <code>counter.n</code> is never touched, so the <code>return</code> gives <strong>0</strong>.
+  Three fixes, name all three:</p>
+  <pre><code>this.items.forEach((x) =&gt; { this.n += x; });               <span class="tok-com">// 1. arrow inherits addAll's this</span>
+this.items.forEach(function (x) { this.n += x; }, this);   <span class="tok-com">// 2. forEach's thisArg — the 2nd param</span>
+const self = this;                                         <span class="tok-com">// 3. the ES5 way</span></code></pre>
+  <div class="note">
+    <span class="callout-label">Worth knowing cold</span>
+    <code>forEach</code>, <code>map</code>, <code>filter</code>, <code>some</code> and
+    <code>every</code> all take an optional <strong><code>thisArg</code> as their second
+    argument</strong>. Naming it is a genuine differentiator, because almost nobody does.
+  </div>
+
+  <h3>The table to memorise: what strips the dot</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>You write</th><th>What the callee receives</th><th>Rule</th></tr></thead>
+    <tbody>
+      <tr><td><code>obj.fn()</code></td><td>the call site</td><td>3</td></tr>
+      <tr><td><code>const f = obj.fn; f()</code></td><td>a naked function value</td><td>4</td></tr>
+      <tr><td><code>arr.forEach(obj.fn)</code></td><td>a naked function value</td><td>4</td></tr>
+      <tr><td><code>setTimeout(obj.fn, 0)</code></td><td>a naked function value</td><td>4</td></tr>
+      <tr><td><code>el.addEventListener("click", obj.fn)</code></td><td>naked — but the DOM re-binds <code>this</code> to the element</td><td>4-ish</td></tr>
+      <tr><td><code>(0, obj.fn)()</code></td><td>naked — the comma operator returns the value and drops the dot</td><td>4</td></tr>
+      <tr><td><code>obj.fn.bind(obj)</code></td><td>permanently welded</td><td>2</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><strong>Anywhere a method crosses a comma, it loses its dot.</strong></p>
+
+  <h3>The <code>.call</code> dot is not a binding dot</h3>
+  <p>Second finding from the same drill, and the more valuable one: explicit binding was
+  labelled <em>implicit</em> three separate times — while the outputs for those same snippets
+  were all correct. The mechanism was understood; only the filing was wrong. The cause is the
+  dot:</p>
+  <pre><code>inner.call(this)
+     <span class="tok-com">↑ a dot — so rule 3 fires by reflex</span></code></pre>
+  <p>Run rule 3 honestly and it gives nonsense: the thing left of the dot is
+  <code>inner</code>, a <em>function</em>, so rule 3 would make <code>this === inner</code>.
+  It obviously doesn't. <code>call</code>/<code>apply</code>/<code>bind</code> live on
+  <code>Function.prototype</code> — they belong to the <em>function</em>, not to your context
+  object.</p>
+  <div class="tip">
+    <span class="callout-label">The discriminator</span>
+    <strong>Rule 3 reads the object to the LEFT of the dot. Rule 2 reads the object INSIDE the
+    parentheses.</strong> If the context arrived as an argument, it is rule 2 — always.
+    <br>And: <strong>anything that came out of <code>bind</code> is rule 2 forever</strong>,
+    however it is later invoked.
+  </div>
+  <div class="note">
+    <span class="callout-label">The failure mode this belongs to</span>
+    Lesson 2's drill produced the same diagnosis in different clothes: <em>fire the first rule
+    the snippet's surface resembles, and stop.</em> <code>inner.call(</code> looks like
+    <code>obj.fn(</code>. Three lessons, three appearances — this one has a name now:
+    <strong>surface-shape matching</strong>. The cure is the same every time: run the rule you
+    just fired and check that its answer isn't absurd.
+  </div>
+
+  <h3>The arrow discriminator: is there an enclosing function?</h3>
+  <p>§5 showed an arrow in an object literal reaching past it to the global scope. That is not
+  a fact about arrows in objects — it is a fact about <em>scope</em>, and it flips the moment a
+  real function wraps the arrow:</p>
+  <pre><code>function Greeter(name) {
+  this.name    = name;
+  this.hi      = function () { return this.name; };
+  this.hiArrow = () =&gt; this.name;
+}
+const gr = new Greeter("T");
+const a = gr.hi, b = gr.hiArrow;
+
+a();                    <span class="tok-com">// undefined — regular fn, bare call, rule 4</span>
+b();                    <span class="tok-com">// "T"</span>
+b.call({ name: "X" });  <span class="tok-com">// "T"  — ignored</span>
+setTimeout(b, 0);       <span class="tok-com">// "T"  — cannot be lost</span></code></pre>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Arrow written in…</th><th>Enclosing function?</th><th><code>this</code> resolves to</th></tr></thead>
+    <tbody>
+      <tr><td><code>{ n: 1, f: () =&gt; this.n }</code></td><td><strong>no</strong> — an object literal is not a scope</td><td>module/global → <code>undefined</code></td></tr>
+      <tr><td><code>function C() { this.f = () =&gt; this.n }</code></td><td><strong>yes</strong> — the constructor</td><td>the instance → works, permanently</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Same rule, opposite outcome, and the only variable is whether a real function encloses the
+  arrow. Lesson 2's scope chain is doing all the work.</p>
+  <div class="note">
+    <span class="callout-label">This IS the React class field</span>
+    <pre><code>class Btn extends React.Component {
+  inc = () =&gt; { this.setState(...) };            <span class="tok-com">// same mechanism as hiArrow</span>
+  render() { return &lt;button onClick={this.inc} /&gt;; }  <span class="tok-com">// extracted, still works</span>
+}</code></pre>
+    Class fields are initialised in the constructor's context — that is <em>why</em> the fix
+    works where a normal method fails. Have the follow-up ready: <strong>an arrow class field
+    is created per instance; a prototype method is shared by all instances.</strong> That is
+    the memory trade-off, and it is the standard next question.
+  </div>
+
   <h2>8 · Retrieval quiz</h2>
 
   <div class="quiz" data-correct="1">
@@ -501,11 +635,15 @@ timer.start();</code></pre>
   </div>
 
   <div class="ask-teacher">
-    <strong>Drill it before you move on.</strong> Both halves, same as always: <em>speak it</em> first —
-    the four rules from memory, call vs apply vs bind, why an arrow can't be a method — then
-    <em>predict it</em> on cold snippets. And the standing L3 finding applies here more than anywhere:
-    stating the mechanism is not the same as producing the label. Expect to be asked for the <em>rule
-    number and name</em>, not just the output.
+    <strong>Drilled 2026-08-07 — gate passed.</strong> Five rounds: gate check, speak half,
+    follow-ups, two rounds of fresh cold snippets, and a label-only re-test (7/8). The two
+    findings are written up as <strong>§7b</strong> above, and the full record with every
+    snippet is in <code>learning-records/0004-this-and-binding.md</code>.
+    <br><br>
+    <strong>The lesson that generalises beyond this module:</strong> the output rounds scored
+    3.5/4 while the labels on the <em>same snippets</em> scored 2/4. Predicting output right and
+    naming the rule right are two different skills, and only one of them gets you through a
+    phone screen. Every future lesson gets its own label-only round.
   </div>
 
   <div class="lesson-nav">

@@ -174,17 +174,6 @@
       "shipped": [
         "Kesri Phase 3: flipped off managed robots.txt + sent client questionnaire — both pieces of outcome 3"
       ]
-    },
-    {
-      "date": "2026-07-20",
-      "day": "Mon",
-      "pending": true
-    },
-    {
-      "date": "2026-07-30",
-      "day": "Thu",
-      "pending": true,
-      "mustShip": "Backend Build B done (Node) — unblocks session 2"
     }
   ]
 }

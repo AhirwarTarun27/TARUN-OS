@@ -26,6 +26,14 @@
     <span class="pip now"></span> current · <span class="pip"></span> upcoming.
   </div>
 
+  <div class="tip">
+    <span class="callout-label">Revising, not learning?</span>
+    Go to <a href="glossary.html"><strong>Must-Say Terms</strong></a> instead — every closed module
+    compressed to the exact words that have to leave your mouth, plus the follow-up each answer
+    invites. That is the page to re-read the morning of an interview. The lessons are for the first
+    pass; this is for every pass after it.
+  </div>
+
   <p class="part-label">Part A — JavaScript foundations</p>
 
   <div class="module">
@@ -52,22 +60,25 @@
     <p>The 99%-asked topic. Closures, callbacks, higher-order functions, pure vs impure, IIFE, arrow-fn limits.</p>
     <ul><li>Theory: functions as values · lexical environment · closure · callback · higher-order function · pure vs impure · IIFE · arrow-function limitations & advantages</li>
     <li>Problems: counter with closure · <code>once</code> · <code>memoize</code> · the <code>3 3 3</code> loop</li>
-    <li><a href="../lessons/0003-functions-closures-hofs.html">→ Start Lesson 3</a></li></ul>
+    <li><a href="../lessons/0003-functions-closures-hofs.html">→ Revisit Lesson 3</a> (see §3b, the fourth question)</li></ul>
   </div>
 
   <div class="module">
-    <h3><span class="modnum">M4</span> The <code>this</code> keyword & binding <span class="status now">You are here</span></h3>
+    <h3><span class="modnum">M4</span> The <code>this</code> keyword & binding <span class="status done">done</span></h3>
     <p>How <code>this</code> is decided at call time, and how to force it. Builds directly on arrow functions from M3.</p>
     <ul><li>Theory: the four binding rules · <code>call()</code> / <code>apply()</code> / <code>bind()</code> · why arrow functions have no own <code>this</code></li>
     <li>Output drills: <code>this</code> inside methods, callbacks, and arrows</li>
     <li>Problem: implement <code>Function.prototype.bind</code></li>
-    <li><a href="../lessons/0004-this-and-binding.html">→ Start Lesson 4</a></li></ul>
+    <li><a href="../lessons/0004-this-and-binding.html">→ Revisit Lesson 4</a> (see §7b, find the <code>(</code>)</li></ul>
   </div>
 
   <div class="module">
-    <h3><span class="modnum">M5</span> Objects & prototypes <span class="status next">upcoming</span></h3>
+    <h3><span class="modnum">M5</span> Objects & prototypes <span class="status now">You are here</span></h3>
+    <p>The two questions underneath M4: where does the method actually <em>live</em>, and is this the
+    same object or a new one. Identity, copying, and the prototype chain.</p>
     <ul><li>Theory: ways to create objects · prototype chain · <code>Object.keys/values/entries</code> · <code>freeze</code> vs <code>seal</code> · shallow vs deep copy · pass by value vs reference · destructuring · spread · rest</li>
-    <li>Problems: unique objects from an array · string → object</li></ul>
+    <li>Problems: unique objects from an array · write <code>deepClone</code></li>
+    <li><a href="../lessons/0005-objects-and-prototypes.html">→ Start Lesson 5</a> — <strong>built, not yet drilled</strong></li></ul>
   </div>
 
   <div class="module">
@@ -145,8 +156,8 @@
   </div>
 
   <div class="lesson-nav">
-    <span></span>
-    <a href="../lessons/0003-functions-closures-hofs.html">Continue → Lesson 3: Functions, Closures & HOFs</a>
+    <a href="glossary.html">← Must-Say Terms</a>
+    <a href="../lessons/0005-objects-and-prototypes.html">Continue → Lesson 5: Objects & Prototypes</a>
   </div>
 
 </div>

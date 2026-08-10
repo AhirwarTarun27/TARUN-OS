@@ -34,7 +34,11 @@
 - Source of truth for question mapping: `reference/232Questions.txt` (extracted from the PDF).
 
 ## TODO / backlog
-- [ ] Build `reference/glossary.html` once term count justifies it (hoisting, TDZ, coercion, closure, etc.).
+- [x] Build `reference/glossary.html` — **done 2026-08-07**, built as a **must-say-terms revision
+      sheet**, not a definitions list. Every entry is *asked as → must contain → the follow-up it
+      invites*, with the scoring keywords chipped. Opens with his three drill-derived tells, closes
+      with a 20-row 60-second self-test. **Rule: extend it at the close of every module** — it is
+      the file to re-read the morning of an interview, not the lessons.
 - [ ] Find a trusted React machine-coding source before Module 17 (see RESOURCES Gaps).
 
 ## Progress log
@@ -123,3 +127,57 @@
   **Not drilled yet — do not advance to M5 until it is.** When drilling, per the 07-31 grading rule:
   ask for the **rule number and name**, not just the output — he states mechanisms correctly and then
   fails to produce the label.
+- 2026-08-07: Drilled L4 — 5 rounds (gate, speak, follow-ups, 2 predict rounds, label-only re-test).
+  Both L3 carry-ins (HOF vs callback; `===` on objects) **closed cold**. Speak 5/1/1, follow-ups 4/2/2,
+  predict R1 **2.5/6** → predict R2 **3.5/4**, labels **7/8**. **M4 gate passed, M5 current.**
+  Two findings, both fixed in-session, both shipped as lesson **§7b**:
+  (1) **A call-point gap** — not a `this` gap. He named all four rules in order cold and got
+  `new` beats `bind` first try, but when a function is invoked by *someone else's code*
+  (`forEach`, `setTimeout`, the comma operator) he read the definition site instead of the call.
+  The tell was one word, repeated 5× ("**surrounding**", "**where it is defined**"). This is L3's
+  read-point gap in new clothes — both are "he anchors on source location, not the moment". Fix
+  taught physically: *find the `(` that actually runs the function* + a "what strips the dot" table.
+  Confirmed in R2 (3 of 3 deferred-call snippets clean).
+  (2) **The `.call`/`.bind` dot trap** — he labelled explicit binding as *implicit* **three times**
+  while getting all three outputs right. `inner.call(this)` has a dot, so rule 3 fires by reflex.
+  This is **L2's finding recurring** — fire the first rule the surface resembles, and stop. Named it
+  **surface-shape matching**; it is now the most durable failure mode in the course (3 lessons, 3
+  appearances). Discriminator taught: *rule 3 reads left of the dot, rule 2 reads inside the parens.*
+  Full record: `learning-records/0004-this-and-binding.md`.
+  → **Open items to carry into Lesson 5's §0 gate check:** (1) **an arrow created inside a
+  constructor survives extraction** — he answered `undefined`, truth is the instance value; the
+  discriminator is *does a real function enclose the arrow?* (2) **arrow class field vs prototype
+  method** — per-instance vs shared; taught, never tested, and M5 *is* prototypes so it lands
+  naturally there. (3) `f.call.bind(f, ctx)` — the uncurry-this idiom, the 1/8 he missed. Low priority.
+- **Method change (locked 2026-08-07): every lesson gets a label-only round.** Predict R2 scored
+  **3.5/4 on output and 2/4 on the labels for the same four snippets**. Output rounds mask labelling
+  gaps completely — finding (2) above was invisible until the labels were asked for separately. It
+  costs 60 seconds: list 6-8 bare call shapes, ask for rule number + name only, no outputs, no
+  explanations. Bar = 7/8. This is the third consecutive session where the *separate* label ask
+  produced the real diagnosis.
+- 2026-08-09: **M4 closed out** (§7b shipped, glossary M4 section written, record banked, map marked done)
+  and **Lesson 0005 built — Objects & prototypes.** Framed as *the two questions underneath M4*: where the
+  method actually lives (the chain) and whether this is the same object or a new one (identity). §0 gate
+  carries the two untested L4 items — **arrow-in-constructor survives extraction** and **`f.call.bind(f, ctx)`**;
+  the third carry item (**arrow class field vs prototype method**) is deliberately NOT in the gate, it is
+  tested in §5 where M5 owns it, plus D6.
+  Structure: 7 ways to create an object → keys are strings → **call by sharing** → shallow vs deep →
+  the prototype chain → own vs inherited → freeze/seal → destructuring/spread/rest → the procedure's
+  **sixth question** → 5 quizzes → 7 fresh output drills → **§12 label-only round** (the locked 08-07
+  method, baked into the lesson for the first time) → 2 coding drills.
+  Four deliberate connective choices: (1) the **string-coerced object key** and the **prototype-chain
+  `in` bug** are taught as *the same facts he already found in `memoize` on 07-30*, refiled under objects —
+  and the ebook's own answer to problem 16 contains that exact bug, so the drill is "find it"; (2)
+  **D6 fuses L4 and L5** — the binding rule decides `this`, the chain decides where the method lived;
+  (3) §12's planted trap is `Object.create` sitting in a list of copy operations, aimed squarely at
+  **surface-shape matching**; (4) the ebook's "pass by reference" framing is **corrected to call by
+  sharing** on purpose — he needs the label, and that is what the course grades.
+  **All 30 asserted outputs verified by running them on Node 24, not written from memory** — including
+  the ebook bug (`{name:"toString"}` is silently dropped) and `JSON.stringify` key-order dedupe failure.
+  **Not drilled yet — do not advance to M6 until it is.** Glossary M5 section is deliberately withheld
+  until the gate passes: it is the revision sheet for what he has *proven*, not what he has read.
+- Teaching note (generalise this): **use fresh snippets, never the lesson's own drills.** He has read
+  D1-D6; the whole L4 drill was written new for the session, which is why round 1 caught anything.
+- Teaching note: after round 1 he asked to be taught ("my confidence is not that much"). He asked
+  *after* attempting, not instead of attempting — that is the right instinct. Answer it generously
+  and don't pre-empt it by front-loading explanation before the attempt.

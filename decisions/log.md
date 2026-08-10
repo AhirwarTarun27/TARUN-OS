@@ -858,3 +858,36 @@ ceiling and half the trap material stop applying and the mission gets revised ag
 **Not decided here:** the front door itself and the launch vertical. Those are the Phase 0 map's exit criterion and get logged when it closes.
 
 **Owner:** Tarun.
+
+---
+
+## 2026-08-09 — The mission: a dated job hunt with a hard floor, machine coding as the gate, and a console as the front door
+
+**Decision:** Five things, taken together in one `/grilling` session, because each one depends on the one before it.
+
+1. **The deadline is a signed offer by 15 November 2026, not 31 December.** He resigns 7 Sept, is released ~21 Sept (bench, no project, so the company waives notice — he does not control this), and the ~₹3.14L from the 1 Sept salary + bonus runs out ~31 Dec. But offer → joining is 15-30 days and joining → first salary is another ~30, so **an offer signed in December pays out after he is dry.** Pre-committed at the floor: nothing signed by 15 Nov, he takes the best available offer **at any salary**.
+2. **Target tier is funded startups / mid product, ~16-26 LPA, and the gate is machine coding, not DSA.** Top product tier is off the table this cycle on arithmetic: 0 graduated DSA problems on 2026-08-09, and ~100 problems is 4-6 months of daily reps. DSA is **parked** until 22 Sept and then capped at ~20 problems across 6 patterns for screening rounds.
+3. **Two waves.** Sacrificial now (services, consultancies, recruiters, roles he would decline) → real targets from 15 Sept. Wave 1's goal is **not an offer**: it is to fill the Phase 2 gap queue in `learning/cv-defense/progress.md`, which is empty, with real questions from real rooms.
+4. **The CloudForestX Node bullet reverts 🟢 → 🟡 pending re-grade** (detail below).
+5. **`/console` replaces `week.md` as the session entry point**, backed by `scripts/console.mjs`.
+
+**Why:** the strategy was never the problem — execution was. In the 26 days to 2026-08-09 the prep engine produced **zero machine-coding reps ever**, 1 of 14 CV drills started, 2 DSA problems both `watched` with rungs 21 days overdue, and a daily log dark for 11 days. Three root causes, none of which is discipline:
+
+- **Eight tracks with no finish line.** Nothing could ever be completed, so no day could ever end well. 07-29 states the structural bug plainly: seven blocks, 9am-9pm, two breaks, *"blocks overran, nothing avoided."* He was failing at something arithmetically impossible and reading it as a character flaw.
+- **Two contradictory boards.** `week.md` said *"DSA is the gate"* while `daily/schedule.md` recorded a 07-29 triage that **deliberately demoted DSA out of the top 3.** Both ran for three weeks and he paid the tax of obeying both.
+- **Anxiety-triggered collapse, not avoidance.** The scores are binary (6/7 or 1/7) and 07-15 names the cause outright: *"manager signalled the project is winding down → job-security anxiety derailed the afternoon."* That anxiety is now his permanent condition. **Any plan assuming calm days would fail.**
+
+**The two mechanisms that follow from that diagnosis, and they are the load-bearing part:**
+
+- **The floor (minimum viable day): 1 CV drill + 1 coding rep + 3 applications, ~3 hours, and hitting it is a WIN** whatever else happened. `build.mjs` derives `floor` on every scored entry and it now **outranks the block count** in the dashboard's win rule. The point is not the hours. It is that a bad day stops being a failure — which is what currently turns one bad day into nine dark ones.
+- **Targets re-cut themselves.** When he falls behind, `/console` recomputes what is reachable and prints what to **CUT**. It never prints a deficit, a percentage behind, or a "should have". **A board that can accuse him is a board he stops opening** — that already happened on 2026-07-26, and the 22-day silence that followed is the evidence.
+
+**On item 4, because it is the one with real downside.** The CV bullet *"Built Node.js ingestion and REST APIs … via STS cross-account roles into PostgreSQL"* was graded **🟡 by the system and raised to 🟢 on Tarun's own instruction on 2026-07-24**. The evidence proves the code exists and does those things; it does not prove he wrote it. Asked directly, 15 months after CloudForestX ended, he said he genuinely cannot tell. **The safe grade is the one he can defend cold**, so it is 🟡 until he re-reads `kb 04 §5` and re-grades with evidence in front of him — due before 15 Sept. Forgetting is not the same as not having done it, and this truth table has already deleted four DentScribe and three CloudForestX claims; this is routine maintenance, not an integrity failure.
+
+**Alternatives considered.** *Don't resign until an offer is signed* — raised and **rejected by Tarun twice**; taken as decided and not re-litigated. *Serve the full notice period for ~₹1.3L of extra paid runway* — not available: on bench, the company controls the release and will waive notice. *Apply at full volume to everything now* — rejected: applications to companies he wants are **non-renewable** (6-12 month reapply cooldowns), so burning his 20 best-fit startups during his weakest four weeks would cost him 2027. *Keep DSA at full weight* — rejected on arithmetic. *Hard gates in the console that block until the floor is met* — rejected: he routes around systems that nag, and that is exactly how the daily log died.
+
+**What would change my mind:** if wave-1 interviews consistently punish him on **system design or DSA** rather than machine coding, the tier read is wrong and the syllabus gets re-cut against that evidence — which is precisely what the Phase 2 gap queue exists to detect. Separately, if the re-grade in item 4 confirms he authored the CloudForestX Node work, the backend story gets materially stronger and the Node window can carry more weight.
+
+**Not decided here:** his actual monthly burn (never stated — it is what makes "4 months of runway" real or fiction) and whether a **bonus clawback clause** exists (worth ₹2.5L; if leaving within N months of a payout triggers repayment, the September plan breaks). Both are his to verify before 7 September, and both are on the `week.md` parking lot.
+
+**Owner:** Tarun.

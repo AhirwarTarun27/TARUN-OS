@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 5 · Objects &amp; prototypes — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 5 · Module 5 — JavaScript Foundations</p>
+    <h1>Objects &amp; prototypes</h1>
+    <p class="subtitle">Lesson 4 asked <em>what is <code>this</code> when the method runs</em>. This one
+    asks the two questions underneath it: <strong>where does the method actually live</strong>, and
+    <strong>is this the same object or a different one</strong>.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Where this sits</span>
+    You have spent four lessons on things that are decided by <em>position</em> — scope is decided by
+    where a variable is written, closures by where a function is written, <code>this</code> by where the
+    call happens. Objects are the first topic decided by <strong>identity</strong>: two objects with
+    identical contents are still two different objects, and one object with two names is still one
+    object. Almost every bug in this module is a wrong answer to <em>"same one, or a new one?"</em>
+    <br><br>
+    The second half is <strong>prototypes</strong> — the mechanism that has been quietly running since
+    Lesson 1. Every time you called <code>.length</code>, <code>.map</code>, <code>.toString</code>, you
+    used it. Lesson 4 taught you to read the call site for <code>this</code>; this lesson teaches you to
+    read the <em>lookup path</em> for the method itself.
+  </div>
+
+  <h2>0 · Gate check — carried from Lesson 4</h2>
+  <p>Two items from the 08-07 drill were taught and never re-tested cold. Answer both <strong>out loud,
+  before you scroll</strong>. A third carry item — <em>arrow class field vs prototype method</em> — is
+  deliberately <strong>not</strong> here. It belongs to this module, so it is tested in §5 where it
+  lands naturally.</p>
+
+  <details class="reveal">
+    <summary>Does an arrow function survive being pulled off its object? Say <em>when</em>, and say the rule that decides it.</summary>
+    <p><strong>It depends on one thing only: is there a real function enclosing the arrow?</strong>
+    Not "is it an arrow" — you already know it is.</p>
+    <pre><code>const o = { n: "O", f: () =&gt; this.n };
+const a = o.f;
+a();                       <span class="tok-com">// undefined — an object literal is NOT a scope,</span>
+                           <span class="tok-com">// so the arrow reached past it to module/global</span>
+                           <span class="tok-com">// (in a real ES module `this` is undefined, so this THROWS)</span>
+
+function C() {
+  this.n = "T";
+  this.f = () =&gt; this.n;   <span class="tok-com">// the CONSTRUCTOR encloses this arrow</span>
+}
+const b = new C().f;
+b();                       <span class="tok-com">// "T" — survives extraction, .call(), and setTimeout</span></code></pre>
+    <p>You answered <code>undefined</code> for the second one on 08-07. The arrow captured
+    <code>C</code>'s <code>this</code> at construction time, and that capture is <em>permanent</em> —
+    stronger than <code>bind</code>, because there is no <code>this</code> to rebind. The discriminator
+    to say out loud: <strong>"does a real function enclose the arrow?"</strong> Object literal → no →
+    global. Constructor or method → yes → that function's <code>this</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>What does <code>f.call.bind(f, ctx)</code> produce, and why would anyone write it?</summary>
+    <p>It produces <strong>a function that, when called, runs <code>f</code> with <code>this = ctx</code></strong>
+    — the same thing as <code>f.bind(ctx)</code>, taken the long way round.</p>
+    <p>Unpick it left to right, and the only trick is noticing <em>which function <code>bind</code> is
+    being called on</em>. It is not called on <code>f</code>. It is called on <code>f.call</code>:</p>
+    <pre><code>f.call            <span class="tok-com">// → Function.prototype.call, a normal function value</span>
+f.call.bind(f, ctx)
+<span class="tok-com">//  ^^^^^^ bind's receiver is `call` itself
+//         arg 1 (f)   → becomes `this` INSIDE call  → the fn call will invoke
+//         arg 2 (ctx) → becomes call's first arg    → the `this` f will see</span></code></pre>
+    <p>This is the <strong>uncurry-this</strong> idiom. The real-world version is
+    <code>Object.prototype.hasOwnProperty.call.bind(Object.prototype.hasOwnProperty)</code> — a
+    standalone <code>hasOwn(obj, key)</code> that works even on objects that don't inherit from
+    <code>Object.prototype</code>. You will almost never write it; you should be able to <em>read</em>
+    it. It is the same failure as the <code>.call</code> dot trap at higher difficulty: the dot before
+    <code>bind</code> tells you nothing, <strong>the receiver of <code>bind</code> is whatever sits
+    immediately to its left.</strong></p>
+  </details>
+
+  <h2>1 · Objects, and the ways to make one</h2>
+  <p>An object is an unordered collection of <strong>key → value</strong> pairs, where every key is a
+  string or a symbol, and every value is anything. The ebook flags "different ways to create an object"
+  as <strong>most asked</strong> — the answer is a list, so learn it as a list and deliver it as one.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Way</th><th>Looks like</th><th>Say this about it</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Object literal</strong></td><td><code>const o = { a: 1 }</code></td><td>The default. 99% of real code</td></tr>
+      <tr><td><strong>Constructor function</strong> + <code>new</code></td><td><code>function P(n){ this.n = n } ; new P(1)</code></td><td>Pre-ES6 classes. <strong>Rule 1 binding</strong> (Lesson 4)</td></tr>
+      <tr><td><strong><code>class</code></strong></td><td><code>class P { constructor(n){ this.n = n } }</code></td><td><strong>Syntactic sugar over the constructor function</strong> — same prototype machinery underneath</td></tr>
+      <tr><td><strong><code>Object.create(proto)</code></strong></td><td><code>Object.create(animal)</code></td><td>The only one that lets you <em>choose the prototype directly</em>. <strong>Not a copy</strong></td></tr>
+      <tr><td><strong><code>Object.assign({}, a, b)</code></strong></td><td><code>Object.assign({}, lesson, teacher)</code></td><td>Merge. Shallow. Later sources win</td></tr>
+      <tr><td><strong>Factory function</strong></td><td><code>const make = n =&gt; ({ n })</code></td><td>No <code>new</code>, no <code>this</code>, closures for privacy — the Lesson 3 answer</td></tr>
+      <tr><td><strong><code>new Object()</code></strong></td><td><code>new Object()</code></td><td>Exists. Nobody writes it. Name it and move on</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">The one that separates candidates</span>
+    Everyone lists literal, <code>new</code>, and <code>class</code>. The two that mark you out are
+    <strong><code>Object.create</code></strong> — "because it's the only one where I pick the prototype
+    explicitly" — and the <strong>factory function</strong>, which you can justify from Lesson 3:
+    <em>"a factory gives me private state through a closure instead of through the prototype, and
+    there's no <code>this</code> to lose."</em>
+  </div>
+
+  <h2>2 · Every key is a string (the one that already bit you)</h2>
+  <p>Object keys are <strong>strings or symbols — never anything else</strong>. Hand a key anything
+  else and it is coerced with <code>String()</code> first.</p>
+  <pre><code>const o = {};
+o[1] = "a";
+o["1"] = "b";
+console.log(o);              <span class="tok-com">// { "1": "b" }  — ONE key. 1 and "1" are the same key</span>
+
+o[{ id: 7 }] = "x";
+console.log(o);              <span class="tok-com">// { "1": "b", "[object Object]": "x" }</span></code></pre>
+  <div class="note">
+    <span class="callout-label">You met this in the <code>memoize</code> session, 07-30</span>
+    Your v2 cache was a plain <code>{}</code> keyed by the argument. It worked for numbers and broke the
+    moment an object went in, because <em>every</em> object stringifies to the same
+    <code>"[object Object]"</code>. That is what pushed v3 to <code>Map</code> +
+    <code>JSON.stringify(args)</code>. <strong>Same fact, filed under objects instead of closures.</strong>
+    <br><br>
+    <code>Map</code> is the fix when keys must keep their type: a <code>Map</code> key can be an object,
+    a function, <code>NaN</code>, anything, and it is compared by <strong>reference identity</strong> —
+    the §3 rule below.
+  </div>
+
+  <h2>3 · Copy or reference — the sentence that scores</h2>
+  <p>The ebook asks this as <em>"pass by value vs pass by reference"</em>. That framing is the common
+  one and it is <strong>slightly wrong</strong>, and knowing why is free marks.</p>
+
+  <p><strong>JavaScript is always pass-by-value.</strong> What differs is <em>what the value is</em>.
+  For a primitive, the value is the data. For an object, the value is a <strong>reference</strong> — so
+  copying the variable copies the arrow, not the thing it points at.</p>
+
+  <pre><code>function tweak(o) {
+  o.n = 2;              <span class="tok-com">// follows the reference → the CALLER's object changes</span>
+  o = { n: 99 };        <span class="tok-com">// repoints the local arrow → caller sees nothing</span>
+  return o;
+}
+
+const a = { n: 1 };
+const b = tweak(a);
+console.log(a.n, b.n);  <span class="tok-com">// 2 99</span></code></pre>
+
+  <div class="tip">
+    <span class="callout-label">Say it like this</span>
+    "Technically JavaScript is <strong>always pass-by-value</strong> — but for objects the value
+    <em>is</em> a reference, so <strong>mutation is visible to the caller and reassignment is not</strong>.
+    The precise name for that is <strong>call by sharing</strong>."
+    <br><br>
+    That last sentence is worth memorising verbatim. It is the difference between reciting a table and
+    understanding it, and it is <em>exactly</em> the shape of answer this course has been grading you on
+    — the mechanism <strong>plus the label</strong>.
+  </div>
+
+  <p>This is the same fact as the Lesson 4 gate item, seen from the other side. <code>===</code> on
+  objects compares <strong>reference identity</strong>, never contents:</p>
+  <pre><code>{ a: 1 } === { a: 1 }        <span class="tok-com">// false — two objects</span>
+const x = { a: 1 }, y = x;
+x === y                      <span class="tok-com">// true  — one object, two names</span></code></pre>
+  <div class="note">
+    <span class="callout-label">Where this shows up in React — have this ready</span>
+    <code>state.items.push(x)</code> mutates in place, so the reference never changes,
+    <code>prevState === nextState</code> is <code>true</code>, and React skips the re-render. That is
+    why you replace instead of mutate: <code>setItems([...items, x])</code>. <strong>Immutability in
+    React is not a style preference — it is how change detection works.</strong>
+  </div>
+
+  <h2>4 · Shallow vs deep copy</h2>
+  <p>A <strong>shallow copy</strong> gives you a new top-level object whose nested values are still the
+  <em>same references</em>. A <strong>deep copy</strong> recursively rebuilds every level, so nothing is
+  shared.</p>
+
+  <pre><code>const orig = { id: 1, tags: ["a"], meta: { ok: true } };
+
+const shallow = { ...orig };
+shallow.id = 2;              <span class="tok-com">// top level → independent</span>
+shallow.tags.push("b");      <span class="tok-com">// one level down → SHARED</span>
+
+console.log(orig.id);        <span class="tok-com">// 1</span>
+console.log(orig.tags);      <span class="tok-com">// ["a", "b"]  ← the bug</span></code></pre>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Technique</th><th>Depth</th><th>What it costs you</th></tr></thead>
+    <tbody>
+      <tr><td><code>{ ...obj }</code></td><td>shallow</td><td>Own <em>enumerable</em> props only. Prototype is dropped — you get a plain object</td></tr>
+      <tr><td><code>Object.assign({}, obj)</code></td><td>shallow</td><td>Same, but it <strong>assigns</strong> rather than defines, so <strong>setters on the target fire</strong></td></tr>
+      <tr><td><code>structuredClone(obj)</code></td><td><strong>deep</strong></td><td>The modern native answer. Handles <code>Date</code>, <code>Map</code>, <code>Set</code>, <code>RegExp</code> and <strong>circular references</strong>. <strong>Throws on functions</strong>; class instances come back as plain objects</td></tr>
+      <tr><td><code>JSON.parse(JSON.stringify(obj))</code></td><td><strong>deep</strong></td><td>The old trick, and it silently destroys things — see below</td></tr>
+      <tr><td>Hand-written recursion / lodash <code>cloneDeep</code></td><td><strong>deep</strong></td><td>Full control. The interview follow-up asks you to write it (§13)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="why">
+    <span class="callout-label">What the JSON round-trip silently eats</span>
+    Functions → <strong>gone</strong> · <code>undefined</code> values → <strong>gone</strong> · symbols →
+    <strong>gone</strong> · <code>Date</code> → an ISO <strong>string</strong> ·
+    <code>Map</code>/<code>Set</code> → <code>{}</code> · <code>NaN</code>/<code>Infinity</code> →
+    <code>null</code> · the prototype → gone, so a class instance comes back as a plain object ·
+    circular reference → <strong>throws <code>TypeError</code></strong> · <code>BigInt</code> →
+    <strong>throws</strong>.
+    <br><br>
+    "It's a deep copy but it loses functions, dates and undefined" is the answer that scores. You met
+    the type-loss half of this in <code>memoize</code> v3, where you serialized arguments and had to
+    reason about what survives the trip.
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">The spread-vs-assign discriminator, if they push</span>
+    Both are shallow and both copy own enumerable properties. The real difference:
+    <strong><code>Object.assign</code> uses assignment, so a setter already on the target object will
+    run; spread <em>defines</em> properties, so it never triggers setters.</strong> Almost nobody can
+    name a difference at all.
+  </div>
+
+  <h2>5 · The prototype chain</h2>
+  <p>Every object has a hidden link to another object — its <strong>prototype</strong>. When you read a
+  property, JavaScript looks on the object itself, and if it isn't there it follows that link, and
+  keeps following it until it hits <code>null</code>. That path is the <strong>prototype chain</strong>,
+  and it is the whole of JavaScript's inheritance.</p>
+
+  <pre><code>const arr = [1, 2, 3];
+arr.map(...)
+<span class="tok-com">// `map` is not on arr. Lookup walks:
+//   arr  →  Array.prototype  (found it)  →  Object.prototype  →  null</span></code></pre>
+
+  <h3><code>prototype</code> vs <code>__proto__</code> — the naming trap</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th><code>Fn.prototype</code></th><th><code>obj.__proto__</code></th></tr></thead>
+    <tbody>
+      <tr><td>Lives on</td><td><strong>functions only</strong></td><td><strong>every object</strong></td></tr>
+      <tr><td>Means</td><td>"the object I will hand to instances I construct"</td><td>"the object I actually inherit from, right now"</td></tr>
+      <tr><td>Modern spelling</td><td>—</td><td><code>Object.getPrototypeOf(obj)</code> · <code>Object.setPrototypeOf</code></td></tr>
+      <tr><td>The identity</td><td colspan="2"><code>Object.getPrototypeOf(new P()) === P.prototype</code> → <strong><code>true</code></strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><code>__proto__</code> is a deprecated accessor kept alive for the web. Use it to <em>read</em> in
+  a console; say <code>Object.getPrototypeOf</code> in an interview.</p>
+
+  <pre><code>function Student(name) { this.name = name; }
+Student.prototype.company = "Hexagon";           <span class="tok-com">// shared by every instance</span>
+
+const s1 = new Student("A"), s2 = new Student("B");
+s1.company;                     <span class="tok-com">// "Hexagon" — found on the prototype</span>
+s1.company = "Other";           <span class="tok-com">// creates an OWN property on s1. Shadows, does NOT overwrite</span>
+s2.company;                     <span class="tok-com">// "Hexagon" — untouched</span>
+Student.prototype.company;      <span class="tok-com">// "Hexagon" — untouched</span></code></pre>
+
+  <div class="note">
+    <span class="callout-label">The asymmetry that gets asked</span>
+    <strong>Reads walk the chain. Writes never do.</strong> Assigning always creates or updates an
+    <em>own</em> property on the object in front of you. This is why "I changed one instance and it
+    changed all of them" is almost never true for values — and why it <em>is</em> true when you mutate
+    a shared object <em>on</em> the prototype (<code>s1.tags.push(x)</code> where <code>tags</code>
+    lives on <code>Student.prototype</code>). §3's rule, one level down.
+  </div>
+
+  <h3>Prototypal inheritance, the two spellings</h3>
+  <pre><code><span class="tok-com">// ES5 — explicit</span>
+const package_ = { ship() { return "shipping " + this.name; } };
+const application = Object.create(package_);
+application.name = "app";
+Object.getPrototypeOf(application) === package_;   <span class="tok-com">// true</span>
+
+<span class="tok-com">// ES6 — sugar over exactly the same thing</span>
+class Package { ship() { return "shipping " + this.name; } }
+class Application extends Package {}</code></pre>
+  <p>Say this and the topic is finished: <strong>"JavaScript doesn't have classical inheritance — it
+  has objects linked to other objects. <code>class</code> is syntactic sugar over the prototype chain;
+  <code>extends</code> just sets the link that <code>Object.create</code> sets by hand."</strong></p>
+
+  <h3>Carry item — arrow class field vs prototype method</h3>
+  <p>This was taught on 08-07 and never tested. Here it is, in the module that owns it.</p>
+  <pre><code>class T {
+  name = "T";
+  reg()   { return this.name; }        <span class="tok-com">// on T.prototype — SHARED by all instances</span>
+  arrow = () =&gt; this.name;             <span class="tok-com">// an OWN property of each instance</span>
+}
+const t = new T();
+Object.hasOwn(t, "reg");               <span class="tok-com">// false — it's on the prototype</span>
+Object.hasOwn(t, "arrow");             <span class="tok-com">// true  — a per-instance function object</span></code></pre>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th>Prototype method</th><th>Arrow class field</th></tr></thead>
+    <tbody>
+      <tr><td>Where it lives</td><td><code>T.prototype</code></td><td>the instance</td></tr>
+      <tr><td>How many exist</td><td><strong>one, shared</strong></td><td><strong>one per instance</strong> — memory cost</td></tr>
+      <tr><td>Survives extraction?</td><td><strong>No</strong> — loses the dot, rule 4, and class bodies are strict so it <strong>throws <code>TypeError</code></strong></td><td><strong>Yes</strong> — the constructor encloses it (§0)</td></tr>
+      <tr><td>The React line</td><td>needs <code>bind</code> in the constructor</td><td>the reason class fields became the standard fix</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The follow-up, and it is asked: <em>"so why not always use arrow fields?"</em> →
+  <strong>because they're allocated per instance, they can't be overridden by a subclass through the
+  prototype chain, and they're invisible to prototype-level tooling like spies.</strong> Hooks made the
+  whole argument mostly moot — <em>a function component has no <code>this</code> to lose.</em></p>
+
+  <h2>6 · Own vs inherited — and the four ways to ask</h2>
+  <p>Once there is a chain, every question about properties splits in two: <em>does this object have
+  it</em>, or <em>can this object see it</em>.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Expression</th><th>Own?</th><th>Inherited?</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td><code>Object.hasOwn(o, "k")</code></td><td>✓</td><td>✗</td><td><strong>The modern answer.</strong> ES2022</td></tr>
+      <tr><td><code>o.hasOwnProperty("k")</code></td><td>✓</td><td>✗</td><td>Breaks on <code>Object.create(null)</code> — no prototype, no method</td></tr>
+      <tr><td><code>"k" in o</code></td><td>✓</td><td><strong>✓</strong></td><td><strong>Walks the chain</strong> — the bug you hit in <code>memoize</code></td></tr>
+      <tr><td><code>Object.keys(o)</code></td><td>✓</td><td>✗</td><td>Own <em>enumerable</em> only</td></tr>
+      <tr><td><code>for (const k in o)</code></td><td>✓</td><td><strong>✓</strong></td><td>Enumerable, <strong>including inherited</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <pre><code>const base = { a: 1 };
+const child = Object.create(base);
+child.b = 2;
+
+Object.keys(child);            <span class="tok-com">// ["b"]        — own only</span>
+const seen = [];
+for (const k in child) seen.push(k);
+seen;                          <span class="tok-com">// ["b", "a"]   — walked into base</span>
+"a" in child;                  <span class="tok-com">// true</span>
+Object.hasOwn(child, "a");     <span class="tok-com">// false</span></code></pre>
+
+  <div class="tip">
+    <span class="callout-label">Why <code>for...in</code> doesn't drown in built-ins</span>
+    <code>Object.prototype</code> is full of methods — <code>toString</code>,
+    <code>hasOwnProperty</code>, <code>valueOf</code> — and <code>for...in</code> walks right past
+    them. It sees none of them because they are <strong>non-enumerable</strong>. Enumerability is the
+    filter; the chain is the path. Two separate dials.
+  </div>
+
+  <h3><code>keys</code> / <code>values</code> / <code>entries</code></h3>
+  <pre><code>const data = { name: "Sai", lang: "English" };
+
+Object.keys(data);      <span class="tok-com">// ["name", "lang"]</span>
+Object.values(data);    <span class="tok-com">// ["Sai", "English"]</span>
+Object.entries(data);   <span class="tok-com">// [["name","Sai"], ["lang","English"]]</span>
+
+Object.fromEntries(Object.entries(data).map(([k, v]) =&gt; [k, v.toUpperCase()]));
+<span class="tok-com">// { name: "SAI", lang: "ENGLISH" }  ← entries + fromEntries = map() for objects</span></code></pre>
+  <p>All three return <strong>own enumerable string-keyed</strong> properties, as an <strong>array</strong>
+  — which is the actual reason they exist: they turn an object into something you can
+  <code>map</code>/<code>filter</code>/<code>reduce</code> (Module 6). <code>Object.fromEntries</code>
+  is the return trip, and naming it unprompted is a small, cheap win.</p>
+
+  <h2>7 · <code>freeze</code> vs <code>seal</code> vs <code>preventExtensions</code></h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th>Add a property</th><th>Delete a property</th><th>Change an existing value</th></tr></thead>
+    <tbody>
+      <tr><td><code>Object.preventExtensions</code></td><td>✗</td><td>✓</td><td>✓</td></tr>
+      <tr><td><code>Object.seal</code></td><td>✗</td><td>✗</td><td><strong>✓ — the whole point</strong></td></tr>
+      <tr><td><code>Object.freeze</code></td><td>✗</td><td>✗</td><td>✗</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>One line each: <strong>freeze = read-only. seal = fixed shape, editable contents.</strong> Check
+  with <code>Object.isFrozen</code> / <code>Object.isSealed</code>.</p>
+
+  <div class="note">
+    <span class="callout-label">The two follow-ups that always come</span>
+    <strong>1. Both are shallow.</strong> <code>Object.freeze(cfg)</code> does nothing to
+    <code>cfg.db.host</code>. A "deep freeze" is a recursive walk you write yourself.
+    <br>
+    <strong>2. Failure is silent in sloppy mode and throws <code>TypeError</code> in strict mode</strong>
+    — and modules and class bodies are strict by default, so in real modern code it <em>throws</em>.
+    <br><br>
+    That <code>TypeError</code> is the third time this course has landed on it: the illegal-operation
+    error on a binding that <em>was</em> found. Reassigning a <code>const</code>, calling a non-function,
+    writing to a frozen property — <strong>found it, operation not allowed.</strong>
+  </div>
+
+  <h2>8 · Destructuring, spread and rest</h2>
+  <p>Three ES6 features the ebook asks separately and interviewers ask together. The trap is spread vs
+  rest, because <strong>they are the same three dots doing opposite jobs</strong>.</p>
+
+  <pre><code><span class="tok-com">// DESTRUCTURING — unpack into variables</span>
+const { name, lang: language = "en", meta: { ok } } = data;
+<span class="tok-com">//      ^rename↑         ^default        ^nested</span>
+const [first, , third = 0] = [1, 2];        <span class="tok-com">// arrays destructure by POSITION</span>
+
+<span class="tok-com">// SPREAD — expand one thing into many</span>
+const merged = { ...a, ...b };              <span class="tok-com">// b wins on conflicts</span>
+Math.max(...[1, 2, 3]);
+
+<span class="tok-com">// REST — collect many things into one</span>
+const { id, ...everythingElse } = obj;      <span class="tok-com">// remaining OWN ENUMERABLE props</span>
+function log(first, ...others) {}           <span class="tok-com">// must be LAST</span></code></pre>
+
+  <div class="tip">
+    <span class="callout-label">The one-liner that settles spread vs rest</span>
+    "Same syntax, opposite direction — and you can tell them apart by <strong>which side of the
+    <code>=</code> they're on</strong>. On the <strong>right</strong>, it's <strong>spread</strong>:
+    expanding. On the <strong>left</strong> (or in a parameter list), it's <strong>rest</strong>:
+    collecting."
+  </div>
+
+  <p>Two details worth having ready: object rest gives you <strong>omit-a-key</strong> without mutating
+  (<code>const { password, ...safe } = user</code>), and destructuring a property that doesn't exist
+  gives <code>undefined</code>, but destructuring <em>from</em> <code>null</code> or
+  <code>undefined</code> <strong>throws a <code>TypeError</code></strong> — which is why you see
+  <code>function f({ a } = {})</code> everywhere.</p>
+
+  <h2>9 · The procedure — the sixth question</h2>
+  <p>Five questions so far: three from M2, one from M3, one from M4. This module adds the sixth, and it
+  is the one that catches object bugs before you write them.</p>
+  <ol>
+    <li><strong>Which keyword declares it?</strong></li>
+    <li><strong>What state is the binding in at this exact line?</strong></li>
+    <li><strong>What are you doing to it?</strong></li>
+    <li><strong>When does this actually run — and what is the binding at that moment?</strong></li>
+    <li><strong>How was this function called — and is it an arrow?</strong></li>
+    <li><strong>Is this the same object or a new one — and is the property own or inherited?</strong></li>
+  </ol>
+  <p>Question 6 has two halves because this module has two halves. The first half catches every
+  copy/mutation bug; the second catches every prototype bug. Run <em>both</em>.</p>
+
+  <h2>10 · Retrieval quiz</h2>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q"><code>const c = { ...orig }</code> — what did you get?</p>
+    <ul class="quiz-opts">
+      <li><button>a deep copy</button></li>
+      <li><button>a reference to orig</button></li>
+      <li><button>own enumerable props, one level deep</button></li>
+      <li><button>a copy including the prototype</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Own enumerable properties, one level deep.</strong> Nested objects
+    are still shared references, and the prototype is <em>not</em> carried over — a spread of a class
+    instance gives you a plain object.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">After <code>Object.seal(o)</code>, which one still works?</p>
+    <ul class="quiz-opts">
+      <li><button>o.newKey = 1</button></li>
+      <li><button>o.existingKey = 1</button></li>
+      <li><button>delete o.existingKey</button></li>
+      <li><button>none of them</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Changing an existing value.</strong> Seal fixes the
+    <em>shape</em> — no adding, no deleting — but writable properties stay writable. That is the entire
+    difference from <code>freeze</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">What does <code>for...in</code> give you that <code>Object.keys</code> doesn't?</p>
+    <ul class="quiz-opts">
+      <li><button>the values as well</button></li>
+      <li><button>non-enumerable properties</button></li>
+      <li><button>symbol keys</button></li>
+      <li><button>inherited enumerable properties</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Inherited enumerable properties.</strong> <code>for...in</code>
+    walks the prototype chain; <code>Object.keys</code> stops at own properties. Neither one sees
+    non-enumerables, which is why built-in methods never show up in either.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q"><code>P.prototype</code> vs <code>p.__proto__</code> — which is true?</p>
+    <ul class="quiz-opts">
+      <li><button>prototype is on functions; __proto__ is on every object</button></li>
+      <li><button>they are two names for the same property</button></li>
+      <li><button>prototype is on every object; __proto__ only on instances</button></li>
+      <li><button>__proto__ is a copy of prototype</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>prototype</code> lives on functions</strong> — it's the
+    object instances <em>will</em> inherit from. <strong><code>__proto__</code> lives on every
+    object</strong> — it's the link it <em>does</em> inherit through. They meet at
+    <code>Object.getPrototypeOf(new P()) === P.prototype</code>. Say
+    <code>Object.getPrototypeOf</code> out loud, not <code>__proto__</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">Which deep-copy method drops functions AND turns a <code>Date</code> into a string?</p>
+    <ul class="quiz-opts">
+      <li><button>structuredClone</button></li>
+      <li><button>JSON.parse(JSON.stringify(o))</button></li>
+      <li><button>Object.assign({}, o)</button></li>
+      <li><button>{ ...o }</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The JSON round-trip.</strong> <code>structuredClone</code> keeps
+    <code>Date</code> as a real <code>Date</code> and <em>throws</em> on functions rather than silently
+    dropping them. The other two aren't deep copies at all.</div>
+  </div>
+
+  <h2>11 · Output drills</h2>
+  <p>Cold. Fresh snippets — none of these appear above. For each one, run <strong>question 6</strong>
+  before you answer: <em>same object or new? own or inherited?</em></p>
+
+  <details class="reveal">
+    <summary>D1 · mutate vs reassign</summary>
+    <pre><code>function tweak(o) { o.n = 2; o = { n: 99 }; o.n = 100; return o; }
+const a = { n: 1 };
+const b = tweak(a);
+console.log(a.n, b.n, a === b);</code></pre>
+    <p><strong><code>2 100 false</code></strong>. Line 1 followed the reference into the caller's
+    object. Line 2 repointed the <em>local parameter</em> — the caller's arrow never moved. Line 3
+    edited the new object only. Call by sharing, in three lines.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 · shallow copy, nested value</summary>
+    <pre><code>const orig = { id: 1, tags: ["a"] };
+const copy = { ...orig };
+copy.id = 2;
+copy.tags.push("b");
+console.log(orig.id, orig.tags, copy.tags === orig.tags);</code></pre>
+    <p><strong><code>1 ["a","b"] true</code></strong>. The top level is genuinely independent; one level
+    down is the same array. The third value is the one that explains the second — say it as the
+    <em>reason</em>, not as an extra fact.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 · freeze, in a module</summary>
+    <pre><code>"use strict";
+const cfg = Object.freeze({ port: 80, db: { host: "x" } });
+cfg.db.host = "y";
+console.log(cfg.db.host);
+cfg.port = 90;
+console.log("done");</code></pre>
+    <p><strong>Logs <code>"y"</code>, then throws <code>TypeError</code></strong> — <code>"done"</code>
+    never prints. Freeze is shallow, so the nested write sails through; the top-level write is illegal,
+    and strict mode turns the silent no-op into a throw. <strong>Both halves are the question.</strong>
+    Naming the error type is the half you have historically dropped.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 · shadowing</summary>
+    <pre><code>function P() {}
+P.prototype.tag = "proto";
+const p1 = new P(), p2 = new P();
+p1.tag = "own";
+console.log(p1.tag, p2.tag, P.prototype.tag);
+console.log(Object.hasOwn(p1, "tag"), Object.hasOwn(p2, "tag"), "tag" in p2);
+delete p1.tag;
+console.log(p1.tag);</code></pre>
+    <p><strong><code>own proto proto</code></strong> · <strong><code>true false true</code></strong> ·
+    <strong><code>proto</code></strong>. Writes never walk the chain — they create an own property that
+    <em>shadows</em>. Delete the shadow and the inherited value is revealed again, untouched all
+    along. That last line is the proof that nothing was ever overwritten.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 · <code>for...in</code> vs <code>Object.keys</code></summary>
+    <pre><code>const base = { a: 1 };
+const child = Object.create(base);
+child.b = 2;
+const seen = [];
+for (const k in child) seen.push(k);
+console.log(seen, Object.keys(child), Object.hasOwn(child, "a"), "a" in child);</code></pre>
+    <p><strong><code>["b","a"] ["b"] false true</code></strong>. Four different answers about the same
+    property, and each one is a different question. <code>Object.create(base)</code> is
+    <strong>not a copy</strong> — <code>child</code> is empty and merely <em>linked</em> to
+    <code>base</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 · class field vs prototype method (the carry item)</summary>
+    <pre><code>class T {
+  name = "T";
+  reg()  { return this.name; }
+  arrow = () =&gt; this.name;
+}
+const t = new T();
+const r = t.reg, a = t.arrow;
+console.log(a());
+console.log(Object.hasOwn(t, "arrow"), Object.hasOwn(t, "reg"));
+try { r(); } catch (e) { console.log(e.constructor.name); }</code></pre>
+    <p><strong><code>"T"</code></strong> · <strong><code>true false</code></strong> ·
+    <strong><code>TypeError</code></strong>.</p>
+    <p>The arrow was enclosed by the constructor, so it captured the instance and survived extraction.
+    <code>reg</code> lost its dot — rule 4 — and because <strong>class bodies are always strict</strong>
+    there is no global substitution: <code>this</code> is <code>undefined</code>, and reading
+    <code>.name</code> off it throws. <strong>This snippet is Lesson 4 and Lesson 5 in one</strong>: the
+    binding rule decides <code>this</code>, the prototype chain decides where the method lived.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D7 · what the round-trip eats</summary>
+    <pre><code>const o = { d: new Date("2020-01-01"), f() {}, u: undefined, n: NaN, s: new Set([1]) };
+console.log(JSON.parse(JSON.stringify(o)));</code></pre>
+    <p><strong><code>{ d: "2020-01-01T00:00:00.000Z", n: null, s: {} }</code></strong>.
+    <code>f</code> and <code>u</code> vanish without trace, the <code>Date</code> is now a string,
+    <code>NaN</code> became <code>null</code>, and the <code>Set</code> became an empty object.
+    Five values in, three keys out. <em>This</em> is why <code>structuredClone</code> exists.</p>
+  </details>
+
+  <h2>12 · Label-only round</h2>
+  <p>Locked method since 08-07: a round with <strong>no outputs at all</strong>. Name what each
+  expression <em>is</em> — one short phrase. You have twice scored well on output and badly on labels
+  for the same snippets, so this round is the real diagnostic. Bar: <strong>7 of 8</strong>.</p>
+  <details class="reveal">
+    <summary>Label these 8, then open</summary>
+    <ol>
+      <li><code>{ ...a }</code> → <strong>shallow copy</strong>, own enumerable, prototype dropped</li>
+      <li><code>Object.assign({}, a)</code> → <strong>shallow copy</strong> — and it <em>assigns</em>, so target setters fire</li>
+      <li><code>structuredClone(a)</code> → <strong>deep copy</strong>, native, throws on functions</li>
+      <li><code>Object.create(a)</code> → <strong>not a copy at all</strong> — a new empty object <em>linked</em> to <code>a</code></li>
+      <li><code>Object.freeze(a)</code> → <strong>shallow read-only</strong>; throws in strict mode</li>
+      <li><code>Object.seal(a)</code> → <strong>fixed shape</strong>, values still writable</li>
+      <li><code>"k" in a</code> → own <strong>or inherited</strong> — walks the chain</li>
+      <li><code>Object.hasOwn(a, "k")</code> → <strong>own only</strong></li>
+    </ol>
+    <p><strong>#4 is the planted trap.</strong> It sits in a list of copy operations, it takes an
+    object and returns an object, and it reads like <code>Object.assign</code>'s sibling. That surface
+    resemblance is exactly the failure mode named in Lesson 4 — <em>surface-shape matching</em>: firing
+    the first rule the shape resembles and stopping. Three lessons running, so expect it here.</p>
+  </details>
+
+  <h2>13 · Coding drills</h2>
+
+  <h3>Drill A — unique objects from an array</h3>
+  <p>The ebook's problem 16. <strong>Attempt it before opening anything.</strong></p>
+  <pre><code>const arr = [{name:"sai"}, {name:"Nang"}, {name:"sai"}, {name:"Nang"}, {name:"111111"}];
+<span class="tok-com">// → [{name:"sai"}, {name:"Nang"}, {name:"111111"}]</span></code></pre>
+
+  <details class="reveal">
+    <summary>First: why can't you just use <code>Set</code> or <code>includes</code>?</summary>
+    <p>Because <strong>§3</strong>. <code>new Set(arr)</code> keeps all five — every object is a
+    distinct reference, and <code>Set</code> compares by reference identity. Same reason
+    <code>arr.includes({name:"sai"})</code> is always <code>false</code>. <strong>You must dedupe by a
+    derived key, not by the object.</strong> Getting to that sentence <em>is</em> the question.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Now find the two bugs in the ebook's answer</summary>
+    <pre><code>const seen = {};
+if (!seen[currentItem]) { uniqueArr.push(array[i]); seen[currentItem] = true; }</code></pre>
+    <p><strong>Bug 1 — the prototype chain.</strong> <code>seen</code> is a plain object, so it inherits
+    from <code>Object.prototype</code>. Feed it <code>{name:"toString"}</code> and
+    <code>seen["toString"]</code> finds the inherited <em>function</em>, which is truthy, so a
+    first-time value is silently dropped as a duplicate. <strong>You already hit this exact bug in
+    <code>memoize</code> on 07-30.</strong></p>
+    <p><strong>Bug 2 — it only dedupes by a hard-coded <code>.name</code>.</strong> Fine for the ebook's
+    input, useless as an answer. Say so and generalise it.</p>
+    <p>The fixes, cheapest first: <code>new Set()</code> instead of <code>{}</code> (no prototype, no
+    coercion), or <code>Object.create(null)</code>, or <code>Object.hasOwn(seen, k)</code> instead of
+    truthiness.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>The version to write in an interview</summary>
+    <pre><code>function uniqueBy(arr, keyFn) {
+  const seen = new Set();
+  return arr.filter(item =&gt; {
+    const k = keyFn(item);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+}
+
+uniqueBy(arr, o =&gt; o.name);
+uniqueBy(arr, o =&gt; JSON.stringify(o));   <span class="tok-com">// dedupe on the WHOLE object</span></code></pre>
+    <p>Then volunteer the limitation before they ask — the same one you found in <code>memoize</code>
+    v3: <strong><code>JSON.stringify</code> is key-order sensitive</strong>, so
+    <code>{a:1,b:2}</code> and <code>{b:2,a:1}</code> serialize differently and won't dedupe. The fix
+    is to sort the keys before stringifying. <em>Naming a limitation in your own solution is the
+    single most senior thing you can do in a coding round.</em></p>
+  </details>
+
+  <h3>Drill B — write <code>deepClone</code></h3>
+  <p>The standard follow-up to §4. Handle nested objects and arrays; state your limitations out loud.</p>
+  <details class="reveal">
+    <summary>Answer + what to say about it</summary>
+    <pre><code>function deepClone(value, seen = new WeakMap()) {
+  if (value === null || typeof value !== "object") return value;   <span class="tok-com">// primitives + functions</span>
+  if (seen.has(value)) return seen.get(value);                     <span class="tok-com">// circular refs</span>
+
+  const out = Array.isArray(value) ? [] : {};
+  seen.set(value, out);
+  for (const [k, v] of Object.entries(value)) out[k] = deepClone(v, seen);
+  return out;
+}</code></pre>
+    <p>Four things this proves at once: the <strong>base case is the primitive check</strong> (and
+    <code>typeof null === "object"</code> is why the null guard comes first — Lesson 1);
+    <code>Object.entries</code> gives you own enumerable properties, so inherited stuff is correctly
+    excluded; the <code>WeakMap</code> handles <strong>circular references</strong>, which is the
+    follow-up interviewers reach for; and it does <em>not</em> handle <code>Date</code>,
+    <code>Map</code>, <code>Set</code>, or class prototypes — <strong>say that yourself, then say
+    "which is what <code>structuredClone</code> is for."</strong></p>
+    <p>Why <code>WeakMap</code> and not <code>Map</code>? Keys are held weakly, so the cache can't keep
+    cloned objects alive. Module 6 covers this properly.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/prototype-inheritance">javascript.info — Prototypal inheritance</a>
+    (then the <em>F.prototype</em> chapter that follows it), and
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain">MDN
+    — Inheritance and the prototype chain</a>. Read the MDN page specifically for the section on
+    <code>prototype</code> vs <code>__proto__</code>, which is the naming trap in §5.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Not drilled yet.</strong> Reading this page is not the rep — every previous module's real
+    diagnosis came from the cold drill, not the lesson. Say <em>"drill me on L5"</em> and it runs the
+    full sequence: the §0 gate cold, the speak half, the mandatory "so why" follow-ups, fresh output
+    snippets you have not read, and the <strong>label-only round</strong> from §12.
+    <br><br>
+    <strong>M6 is gated behind that drill.</strong> And the glossary gets its M5 section only when the
+    gate passes — it is the revision sheet for what you have <em>proven</em>, not what you have read.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0004-this-and-binding.html">← Lesson 4: The <code>this</code> keyword &amp; binding</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

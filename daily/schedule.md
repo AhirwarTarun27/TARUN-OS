@@ -1,148 +1,112 @@
-# Weekday Schedule — the fixed routine
+# Weekday Schedule — the mission routine
 
-> The curated weekday plan. `/daily-log` reads this to run the morning plan and the
-> midnight wrap-up. Weekends are OFF (not tracked). Edit this file if the routine changes.
-
----
-
-# ⚡ SPRINT OVERRIDE — active Wed 2026-07-29 → ~Thu 2026-08-06
-
-> **`/daily-log` reads THIS table, not the standing routine below, until the sprint ends.**
-> Declared by Tarun 2026-07-29 as a ~8-day push. The standing routine is intact underneath and
-> resumes when this expires. **At `/weekly-review`, ask whether it is over.**
-
-| Time | Block | Code | Owner |
-|------|-------|------|-------|
-| 9:00–11:00 am | Interview Q&A practice | `interview-qa` | **→ `/teach`** (50 min + 10 min break) |
-| **11:00 am–1:00 pm** | **Backend — Node.js + .NET** | **`backend`** | **→ `/backend`** (`learning/backend/`) |
-| 1:00–1:30 pm | Lunch | — | unscored |
-| 1:30–3:30 pm | CV interview-defense | `cv-defense` | you — say "drill me" (`learning/cv-defense/`) |
-| 3:30–5:00 pm | Machine coding | `machine-coding` | **→ `/machine-coding`** (lab + rubric + profile) |
-| 5:00–5:10 pm | Break | — | unscored |
-| 5:10–6:00 pm | AI fluency study | `ai-fluency` | you |
-| 6:00–7:00 pm | Break / dinner | — | unscored |
-| 7:00–8:00 pm | DSA practice | `dsa` | you |
-| **8:00–9:00 pm** | **Job applications** | **`apply`** | you — see the rule below |
-
-**7 scored blocks:** `interview-qa`, `cv-defense`, `machine-coding`, `backend`, `ai-fluency`, `dsa`,
-`apply`. A day is a win when the **majority** land.
-
-> **Swapped 2026-07-30, first pass** (`backend` ↔ `machine-coding`), plus 30 min moved from
-> `machine-coding` to `backend`: backend went to 2h, machine-coding to **3:30–5:00 (1.5h)**. Rationale:
-> the triage order already ranks the Node half of `backend` above `machine-coding`, so the
-> higher-priority block gets the longer hour count. Consistent with the 07-29 triage, not a
-> contradiction of it.
->
-> **Swapped again 2026-07-30, same day** (`backend` ↔ `cv-defense`) — a straight swap, both are 2h.
-> `backend` is now **11:00–1:00 (pre-lunch)** and `cv-defense` **1:30–3:30 (post-lunch)**. Same
-> argument as above, applied one step further: the triage order is
-> `interview-qa` → Node → `cv-defense`, so **the block ranked #2 should not sit behind the block ranked
-> #3.** Backend now runs on the second-freshest slot of the day and no longer eats the post-lunch dip.
-> **The cost, stated plainly:** `cv-defense` moves *into* that dip, and it is the block that carries the
-> hardest recall work (closed-book, spoken, no notes). Watch its scores for a week — if they drop after
-> this change, the swap is what did it, and it should go back.
-
-### ⚠ The triage order when the day compresses (stated 2026-07-29)
-
-> **1. `interview-qa` · 2. Node practice (the Node half of `backend`) · 3. `cv-defense`.**
-
-If the day falls apart, those three are what get protected. Everything else yields — including `dsa`
-and `machine-coding`, which this **deliberately demotes out of the top 3**. Do not re-promote them from
-the older 07-07 ordering in `context/priorities.md`.
-
-**Inside the `backend` block this has teeth: when the block runs short, cut the C#/.NET half, never the
-Node build.** .NET is the employer's ask; Node is the offer.
-
-### Why `apply` sits at 8:00-9:00pm
-
-It is the **lowest-cognitive-load block of the day**, so it is the only one that survives being last —
-the same argument that put `reading` at 11:45pm in the standing routine. It also lands *after* DSA, so
-the hard thinking is already done. **The 6:00-7:00pm gap was deliberately left alone**: 9am to 9pm is a
-twelve-hour run and killing the only real break in it would cost more than the hour gains.
-
-**The rule for this block: applications only, no polishing.** Tailoring a CV is `cv-defense` work at
-11am (`/cv-tailor`). Researching companies is not applying. **The output is submitted applications, and
-the count gets logged at wrap.** A block that produces zero applications did not happen, however busy it
-felt.
-
-### What the sprint drops, deliberately
-
-`workout`, `project`, `reading`, `sysdesign` — and **both office blocks**. Recorded here so nobody
-"fixes" it later and so `/weekly-review` can ask the honest questions:
-
-- **Office blocks are gone from this table.** The standing routine has 3.5 hours of them and the .NET
-  learning used to be paid for with those hours. If office work is still happening, it is happening
-  outside this schedule and unlogged. **Flag it at the first wrap.**
-- **`workout` is dropped for ~8 days.** Twelve hours of desk time with two breaks. That is a sprint
-  trade, not a new baseline. If the sprint extends past 08-06, `workout` comes back first.
-- **`backend` replaces the old `dotnet-backend` office-hours arrangement entirely.** It is now a
-  scored, job-hunt-hours block, because it is ~60% Node interview prep. See below.
+> The curated plan. `/daily-log` reads this to run the plan and the wrap. `/console` reads
+> `mission/state.json` for the phase and the alternation.
+> **Rebuilt 2026-08-09.** The 07-29 sprint override expired 08-06 and was never closed; the standing
+> routine underneath it belonged to a dead strategy (system design, reading, workout, project blocks,
+> two office blocks). Edit this file if the routine changes — **and edit the dashboard's `SCHED`
+> array in `daily/dashboard/template.html` at the same time, or the now-bar starts lying.**
 
 ---
 
-## The standing routine — resumes after the sprint
+## The phases
 
-## The blocks
+Driven by `mission/state.json`. `/console` prints which one is live.
+
+| Phase | Window | Office | Backend slot | Scored blocks |
+|---|---|---|---|---|
+| **A1** | Mon 10 Aug → Mon 31 Aug | full day, bench | **.NET** (employer's ask) | cv-defense · mc/iqa · apply |
+| **A2** | Tue 1 Sept → Mon 21 Sept | full day, bench | **Node** | + backend |
+| **B** | Tue 22 Sept → Sun 15 Nov | **released** | Node | + dsa, all daily |
+
+---
+
+# Phase A1 / A2 — the office day (live now)
+
+> ⚠ **Office hours below are a PLACEHOLDER (10:00–19:00).** Correct them here and in the dashboard's
+> `SCHED` array on the first office day.
 
 | Time | Block | Code | Owner |
 |------|-------|------|-------|
-| 10:30–10:45 am | Today's planning (with AIOS) | `plan` | **ritual** — `/daily-log plan` |
-| 11:00–11:30 am | Interview Q&A practice | `interview-qa` | **→ `/teach`** |
-| 11:45 am–12:30 pm | DSA practice | `dsa` | you |
-| 12:45–1:30 pm | Machine coding | `machine-coding` | **→ `/machine-coding`** (lab + rubric + profile) |
-| 2:00–3:30 pm | System design — Xu Vol 1 (interview prep) | `sysdesign` | **→ `/teach`** (learning/system-design-interview) |
-| 3:30–5:30 pm | Office work (thinksys) | `office-am` | you — time-adherence only |
-| 6:00–7:00 pm | Home workout | `workout` | you |
-| 8:00–9:00 pm | Project work (this OS / products) | `project` | you |
-| 10:00–11:30 pm | Office work (thinksys) | `office-pm` | you — time-adherence only |
-| 11:45 pm–12:15 am | Book reading — **intake only** | `reading` | you — read, then one line. No AI. |
-| 12:15–12:45 am | Whole-day wrap-up (with AIOS) | `wrap` | **ritual** — `/daily-log wrap` |
+| 9:30–9:45 am | Console + today's plan | `plan` | **ritual** — `/console` then `/daily-log plan` |
+| 10:00 am–1:00 pm | Office — backend slot | `backend` | .NET to 31 Aug, **Node from 1 Sept** |
+| 1:00–2:00 pm | Lunch | — | unscored |
+| 2:00–7:00 pm | Office — bench | `office` | adherence only. **CV-drill reading happens here.** |
+| 8:00–9:00 pm | CV interview-defense | `cv-defense` | you — say **"drill me"** (`learning/cv-defense/`) |
+| 9:00–10:15 pm | Machine coding **/** Interview Q&A | `machine-coding` `interview-qa` | **alternating, see below** |
+| 10:15–10:45 pm | Job applications | `apply` | you — submitted count gets logged |
+| 10:45–11:15 pm | Wrap | `wrap` | **ritual** — `/daily-log wrap` |
 
-**7 scored blocks** — the success count: `reading`, `dsa`, `machine-coding`, `sysdesign`,
-`workout`, `project`, `interview-qa`. A day is a win when the **majority of these** land.
+**5 scored blocks:** `cvDefense`, `machineCoding`, `interviewQa`, `backend`, `apply`.
+`backend` only scores from **1 Sept** (in A1 it is .NET, which is the employer's, not the mission's).
 
-> **Swapped 2026-07-17** (`reading` ↔ `interview-qa`). `interview-qa` hit 1 of 5 weekdays sitting at
-> 11:45pm — the only learning block stranded after two office blocks. That was **placement, not
-> discipline**, so it moved to the fresh 11:00am slot. `reading` took the late slot because it's the
-> one block cheap enough to survive it. See `decisions/log.md`.
+## The alternation
 
-**Office blocks (`office-am`, `office-pm`) are NOT scored** — they're the day-job floor, not the
-scorecard. At `wrap` the recap still *asks* how office work went (✓/✗ adherence, logged separately),
-but they never count toward the daily N/7. `plan` and `wrap` are the ritual itself, also unscored.
+| Mon | Tue | Wed | Thu | Fri | Sat | Sun |
+|---|---|---|---|---|---|---|
+| machine-coding | interview-qa | machine-coding | interview-qa | machine-coding | **whichever is behind** | **OFF** |
+
+Both go daily in **Phase B**, once the day job stops eating 9 hours.
+
+## Saturday is ON. Sunday is OFF.
+
+**Saturday** (~4 hours) exists because office weekdays crush the evening, and machine coding is the
+one track that needs uninterrupted focus you won't have at 9pm after a full office day. It takes
+whichever of machine-coding / interview-qa the console says is behind.
+
+**Sunday is fully off** and holds `/weekly-review` only. It is the only true rest day, and the
+collapse pattern in the July logs is anxiety-driven — a week with no rest day is how a bad day
+becomes a dark week.
+
+---
+
+## THE FLOOR — the minimum viable day
+
+> ## 1 CV drill + 1 coding rep + 3 applications
+> **~3 hours. Hitting this is a WIN, whatever else happened.**
+
+This is the most important line in the file.
+
+The July logs are binary: 6/7 or 1/7, with almost nothing between, and the collapses have causes
+written next to them — 07-15 is *"manager signalled the project is winding down → job-security
+anxiety derailed the afternoon."* That anxiety is now permanent, not an event. **A plan that assumes
+calm days will fail, because there won't be many.**
+
+The floor exists so a bad day lands somewhere above zero. `build.mjs` derives `floor` on every
+scored entry and the dashboard scores a floor day as a **WIN** regardless of block count. That is
+deliberate. **Do not "fix" it to a stricter bar.**
+
+---
 
 ## Handoffs and boundaries
 
-- **`sysdesign` and `interview-qa` run through `/teach`.** `/daily-log` never teaches these —
-  it schedules them, then at wrap-up logs one line on what `/teach` covered (pulled from
-  `learning/<topic>/learning-records/`). Depth lives in the learning workspace, not here.
-- **`machine-coding` runs through `/machine-coding`.** The code gets written in the **lab**
-  (`learning/machine-coding/lab/index.html`), never in chat and never in the terminal. `/daily-log`
-  surfaces what's due at plan and confirms the session was ingested at wrap — it never grades and
-  never coaches. **No AI writes code during that block.** That is the entire point of it.
-- **`reading` is INTAKE ONLY — the block never runs `/reading`.** Read. If something bites, write
-  **one line**. That's the whole block. The one-line capture *is* the rep — if you can't say what bit
-  you in one line, it didn't bite you. The drill (`/reading` — compress, test, own) is expensive and
-  runs **on demand**, prompted at `/weekly-review`, never at 11:45pm. Splitting intake from thinking
-  is the entire point: putting a synthesis drill in this slot is exactly what killed `interview-qa`
-  here, and it would kill `reading` the same way. `/daily-log wrap` banks the line at 12:15am, while
-  it's still warm.
-- **The late slot is narrative books only.** Psychology/business/biography survive 11:45pm after two
-  office blocks. A dense technical book does not — it becomes a page you re-read four times. If a
-  dense book matters, it needs a morning block or it doesn't get read. See `learning/reading/README.md`.
-- **Office blocks are opaque.** Track ✓/✗ adherence only. Never ask for or log thinksys work
-  content — the employer boundary in `CLAUDE.md` holds inside the daily log too.
-- **The backend track (`/backend`) replaced the old .NET arrangement on 2026-07-29.** It was seeded
-  2026-07-18 as `learning/dotnet-backend/`, .NET-only, paid for with employer hours and forbidden from
-  touching a job-hunt block. **Zero sessions ran under that framing.** It is now
-  `learning/backend/` — **two performances**: Node.js written and spoken (the interview), C#/.NET read
-  and explained (the job). Roughly 60% of it is Node interview prep, so it legitimately earns job-hunt
-  hours and is a **scored block** in the sprint table above. Code lives outside this repo at
-  `MyProjects/backend-lab/`.
-  - **The employer boundary still holds inside it.** No thinksys code, repo names, client names or work
-    specifics — in the workspace, in a lesson, or in the daily log. At wrap, log the session number and
-    the ratings, never work content.
-  - **When the sprint ends and office blocks return, the hours question returns with them.** If the
-    .NET half starts crowding out `dsa`, `machine-coding` or `interview-qa`, flag it at
-    `/weekly-review` as a failure, not as progress. The risk is unchanged: .NET has a boss attached to
-    it and the job hunt does not, so urgency will keep trying to beat importance.
-- **Weekends:** no schedule, no log. If you work a weekend, log it manually — the ritual won't prompt.
+- **`/console` runs FIRST, every session.** It names the one next action. `week.md` is no longer the
+  entry point — it went stale for 22 days and nothing caught it.
+- **`cv-defense` is a two-way drill, not a skill.** Say "drill me". Read budget: `defend-map.md` +
+  the one drill file + `progress.md`. **Never glob `drills/`.**
+- **`machine-coding` runs through `/machine-coding`.** Code is written in the **lab**
+  (`learning/machine-coding/lab/index.html`), never in chat, never in the terminal. **No AI writes
+  code during that block** — that is the entire point of it.
+- **`interview-qa` runs through `/teach`.** Drills are speak-it **then** predict-it, wording free,
+  must-hit keywords strict, with a mandatory "so why?" follow-up.
+- **`backend` runs through `/backend`.** In A1 it is .NET **read and explained** — run it as the `X`
+  half of each concept pair on `drill-board.md`, so September's Node is the `W` half of concepts you
+  already understand rather than new material. **That framing is the only thing making the
+  compressed Node window realistic.** The employer boundary holds inside it: no ThinkSys code, repo
+  names, client names or work specifics, ever.
+- **`apply` output is submitted applications**, logged with `/console log`. Researching companies is
+  not applying. Tailoring a CV is `/cv-tailor`, not this block. **A block that produced zero
+  applications did not happen, however busy it felt.**
+- **Office blocks are opaque.** Adherence only. Never log ThinkSys work content.
+- **Interview scheduled?** `mission/interview-sprint.md`. **The board does not change** — one hour
+  swaps in for the JD. Nothing new enters the window.
+
+### What was cut, and why — do not restore without a real interview punishing you for it
+
+`sysdesign` (Xu Vol 1) · `reading` · `workout` · `project` · `ai-fluency` · `dsa` (until Phase B) ·
+**.NET as prep** (office hours only, ends 31 Aug).
+
+These were not cut for being unimportant. They were cut because **14 weeks and 8 tracks is
+arithmetic that produces nothing**, which is exactly what the 26 days to 2026-08-09 demonstrated.
+The full reasoning per track is in `mission/plan.md`. **`workout` comes back first** if the schedule
+loosens — twelve-hour desk days were a July failure mode too.

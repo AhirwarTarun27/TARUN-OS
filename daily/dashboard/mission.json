@@ -1,0 +1,104 @@
+{
+  "generatedAt": "2026-08-10T13:17:18.598Z",
+  "today": "2026-08-10",
+  "day": "Mon",
+  "phase": "A1",
+  "wave": "sacrificial",
+  "countdown": {
+    "resign": 28,
+    "phaseGate": 36,
+    "offerFloor": 97,
+    "offerFloorWorkDays": 84
+  },
+  "counters": [
+    {
+      "label": "CV drills",
+      "done": 0,
+      "target": 14,
+      "remaining": 14,
+      "workDays": 32,
+      "pace": 0.44,
+      "sustainable": 1,
+      "reachable": 14,
+      "status": "on-track"
+    },
+    {
+      "label": "MC builds (R0)",
+      "done": 0,
+      "target": 10,
+      "remaining": 10,
+      "workDays": 32,
+      "pace": 0.31,
+      "sustainable": 0.75,
+      "reachable": 10,
+      "status": "on-track"
+    },
+    {
+      "label": "IQA lessons",
+      "done": 3,
+      "target": 5,
+      "remaining": 2,
+      "workDays": 32,
+      "pace": 0.06,
+      "sustainable": 0.5,
+      "reachable": 5,
+      "status": "on-track"
+    },
+    {
+      "label": "Node concepts",
+      "done": 0,
+      "target": 8,
+      "remaining": 8,
+      "workDays": 13,
+      "pace": 0.62,
+      "sustainable": 0.75,
+      "reachable": 8,
+      "status": "not-yet",
+      "startsOn": "2026-09-01"
+    },
+    {
+      "label": "Applications",
+      "done": 0,
+      "target": 60,
+      "remaining": 60,
+      "workDays": 32,
+      "pace": 1.88,
+      "sustainable": 3,
+      "reachable": 60,
+      "status": "on-track"
+    },
+    {
+      "label": "Interviews sat",
+      "done": 0,
+      "target": 4,
+      "remaining": 4,
+      "workDays": 32,
+      "pace": 0.13,
+      "sustainable": 0.2,
+      "reachable": 4,
+      "status": "on-track"
+    }
+  ],
+  "overdue": [],
+  "dueToday": [],
+  "stale": [
+    "daily log DARK 12 days (last 2026-07-29)",
+    "dashboard not ingested 24 days (last 2026-07-17)"
+  ],
+  "parseErrors": [],
+  "action": {
+    "do": "CV defense: finish the drill already in progress. Say \"drill me\".",
+    "why": "100% of interviews start here and it is the biggest open gap."
+  },
+  "floor": {
+    "_comment": "The minimum viable day. Hitting this is a WIN, not a failure.",
+    "cvDrill": 1,
+    "codingRep": 1,
+    "applications": 3
+  },
+  "codingTrack": "machineCoding",
+  "funnel": {
+    "applications": 0,
+    "interviews": 0
+  }
+}

@@ -87,7 +87,7 @@ _Shadow-resource note: he works this account under Navnit Singh, so his commits 
 | Bullet | Color | Grounding | Drill |
 |---|:--:|---|:--:|
 | React + TypeScript SPA behind **40 cost dashboards** (waste detection, rightsizing, reservations, power scheduling) | surfaces 🟢 / **algorithms 🔴** | kb 04 §1 — 470 TS files, 0 JS; 40 pages | D21 |
-| **Node ingestion + REST APIs**: EC2/EBS/S3/CloudWatch via **STS cross-account roles** → PostgreSQL | 🟢 *(raised from 🟡 2026-07-24)* / **recommendation logic 🔴** | kb 04 §5 — `auth.ts` STS factory, 18 cron jobs, Sequelize models | D21 *(D33 reuses it as the Node/PG anchor)* |
+| **Node ingestion + REST APIs**: EC2/EBS/S3/CloudWatch via **STS cross-account roles** → PostgreSQL | 🟡 **REVERTED 2026-08-09, re-grade pending** / **recommendation logic 🔴** | kb 04 §5 — `auth.ts` STS factory, 18 cron jobs, Sequelize models | D21 *(D33 reuses it as the Node/PG anchor)* |
 | **Global account + month filtering** in Redux Toolkit, every dashboard in sync | 🟢 | kb 04 §2 — `accountSlice`/`monthSlice`, `ALL_VALUE` sentinel | D21 |
 | Data-viz layer (charts, gauges, geo maps) on **ECharts + Recharts** behind a reusable hook | 🟢 | kb 04 §4 — `useEcharts` | D21 |
 | **Typed API layer + fetch hook with request-id guards**, killing stale-response races across 36 services | 🟢 | kb 04 §3 — `useFetchData` `requestIdRef` | D21 |
@@ -102,6 +102,27 @@ _**There is now no test-coverage claim anywhere on the CV, deliberately.** Neith
 a frontend test suite. The honest answer — and it's a good one: "those codebases had no frontend test
 culture; I use **Vitest** on my own projects" — that's real, **22 test files** across GradeJar (2),
 JsonBeam (6), AccentWallPlanner (10), KesariEnterprise (4)._
+
+> ### ⚠ The Node bullet is 🟡 until re-graded — read this before any interview
+>
+> **Reverted 2026-08-09.** It was graded **🟡 by the system and raised to 🟢 on Tarun's own
+> instruction (2026-07-24)**. The evidence column proves the code exists and does those things. It
+> does **not** prove he wrote it. Asked directly on 2026-08-09, 15 months after CloudForestX ended,
+> he said he genuinely cannot tell. **The safe grade is the one he can defend cold.**
+>
+> **To close it:** read `project-knowledge-base/cloudforestx/` kb 04 §5 + `cv-truth-table.md` with
+> the evidence in front of him, then re-grade — 🟢 if he recognises the work as his, or reword the
+> bullet from *"Built"* if not. **Due before 15 Sept**, when wave 2 starts costing real companies.
+>
+> **Until then, in the room:** never volunteer *"I built"*. Describe the architecture, let the
+> follow-up define scope, and say what he actually remembers. The boundary paragraph in
+> `cv-truth-table.md` lines 54-59 is already written and is a strong senior answer — **it does not
+> require him to be a backend engineer**, only to say it and survive two follow-ups. At 16-26 LPA a
+> clean boundary reads as *more* senior than an inflated claim.
+>
+> Forgetting is not the same as not having done it. This is a grading question, not an integrity
+> failure — and this same truth table has already deleted four DentScribe claims and three
+> CloudForestX ones. Striking or downgrading a line here is routine maintenance.
 
 _The two 🔴-adjacent UI bullets each need their boundary sentence ready: **"I built the surface that
 shows the recommendation; I didn't write the analysis that produces it."** That sentence is the whole

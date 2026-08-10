@@ -11,6 +11,7 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 ## Your skills
 
 **Operating rhythm:**
+- `/console` — **THE FRONT DOOR. Run this first, every session.** Runs `scripts/console.mjs`, which derives every track counter from the trackers themselves (never a duplicated copy), computes the countdowns to resign / phase gate / the **15 Nov offer floor**, surfaces overdue ladder rungs and staleness, and names **the ONE next action** — then hands off to the right ritual. Two laws: **a parser that can't find its table reports `??`, never `0`** (a silent zero is a lie that looks like progress), and **targets re-cut themselves** so the board tells him what to *cut*, never how far behind he is. A board that can accuse him is a board he stops opening — that already happened on 2026-07-26. Mission and reasoning: `mission/plan.md`.
 - `/daily-log` — Weekday execution ritual. `plan` at 10:30am sets today's per-block focus; `wrap` at 12:15am runs a short QnA and banks one compact log entry. Tracks the fixed routine in `daily/schedule.md`, keeps a terse rolling log, and compresses to a monthly summary at month-end. The hours-level engine under `/weekly-review`. Also reads/advances `learning/dsa/queue.md` — the DSA spaced-rep tracker (Namaste DSA ladder D0→D2→D5→D10, where **D0 = the day a problem is SOLVED, not first seen**; unsolved problems stay `Attempting` off the ladder, capped at 2 attempt-days) — surfacing due revisions at plan and banking ratings at wrap.
 - `/weekly-review` — Sunday execution ritual. Score the week, bank what shipped, reset next week's 3 outcomes. THIS is the follow-through engine. Don't skip it.
 - `/onboard` — already run if you're seeing this filled in. Re-run any time to refresh from an edited `aios-intake.md`.
@@ -51,7 +52,8 @@ The paid side-business: end-to-end websites for local businesses around Gandhidh
 
 ## Where things live
 
-- `week.md` — **your single source of truth.** This week's 3 outcomes + today's one must-ship. Open it first, every session.
+- `mission/` — **the job hunt, and the highest-priority thing in this repo until 15 Nov 2026.** `plan.md` (the locked strategy + every cut and why — read it when he forgets why DSA is parked), `state.json` (the ONLY hand-maintained state: the funnel, phases, targets — track counters are derived, never duplicated here), `interview-sprint.md` (the 3-day protocol he opens cold when an interview is scheduled; **the board does not change**, one hour swaps in for the JD). Driven by `/console`.
+- `week.md` — this week's 3 outcomes + today's one must-ship. Set by `/weekly-review`. **No longer the session entry point** — `/console` is.
 - `daily/` — the weekday execution tracker (run by `/daily-log`): `schedule.md` (the fixed routine), `log.md` (this month's terse daily entries), `summaries/` (compressed monthly records). Granular months age out to `archives/daily/`.
 - `learning/reading/` — **the book track** (run by `/reading`): `rules.md` (**the artifact** — cross-book, bounded at 20 live, *rewritten* not appended: the rules you tested against reality, with a `Killed` section that keeps the epitaph of every one reality broke), `books/<slug>.md` (one file per book — aim, captures, drilled, close). **Tracked and interrogated, not taught** — `/teach` authors lessons; here the source is the book. **The read budget: a drill reads `rules.md` + the one book file. Never glob `books/`.**
 - `learning/machine-coding/` — **the machine-coding round system** (run by `/machine-coding`): `lab/` (where the code actually gets written — open `index.html`), `rubric.md` (how the round is really scored), `primitives.md` (the 27 building blocks every question composes), `queue.md` (the R0→R3→R10 cold-rebuild ladder + the Phase marker), **`profile.md`** (the compounding model of how Tarun codes), `problems/` (the Phase 1 bank), `builds/` (one folder per session). **The read budget: a review reads `profile.md` + today's `session.md` + today's code. Never glob `builds/`.** `profile.md` is *rewritten*, never appended — that's why it costs the same in month six as on day one.
@@ -91,13 +93,22 @@ no-login gradebook, zero backend; core M1+M2 done, roster/rankings + CSV import 
 (GradeJar) = K-12 + college teachers, US-first; students secondary. Audience priority is
 US first, then global.
 
-**This quarter (90 days):** (1) **land a new job — active switch, 2-3 month target** (declared
-2026-07-07): a frontend-heavy full-stack role now, complete full-stack long-term. This is a real
-priority, not background — the `dsa` / `machine-coding` / `sysdesign` / `interview-qa` blocks are the
-prep engine (DSA is the gate; system design via Xu Vol 1, mainly design-out-loud; LinkedIn is fair
-game for *this*). (2) keep GradeJar + JsonBeam ranking on the hands-off `/marketing` queue (autopilot);
-(3) keep building the side-hustle portfolio (AI-assisted, in the 8pm `project` block — non-negotiable
-for Tarun). See `context/priorities.md`.
+**This quarter — the mission (locked 2026-08-09, supersedes the 07-07 framing):**
+**Signed offer by 15 November 2026.** He resigns 7 Sept without an offer, is released ~21 Sept, and
+his runway ends ~31 Dec — but offer→joining→first-salary is ~6 weeks, so **15 Nov is the real
+deadline, not 31 Dec.** Pre-committed: nothing signed by then, he takes the best available offer at
+any salary. Target is **funded startups / mid product, ~16-26 LPA**, and **machine coding is the
+gate, not DSA** — top product tier is off the table this cycle on arithmetic.
+
+**What this changed, and do not silently revert any of it:** DSA is **parked** until 22 Sept then
+capped at ~20 problems (the old "DSA is the gate" line is dead, and it had been contradicting his own
+07-29 triage for three weeks). **Cut to zero:** system design / Xu Vol 1, AI-fluency as a study
+track, `reading`, `workout`, the 8pm `project` block, and .NET as *prep*. Everything non-mission —
+GradeJar, JsonBeam, AccentWallPlanner, Kesri — stays on autopilot via `/marketing` and does **not**
+compete for hours before 15 Nov. LinkedIn is fair game for the job hunt only.
+
+**Read `mission/plan.md` before advising on any of this.** `context/priorities.md` is the older,
+superseded ordering.
 
 **Revenue:** Google AdSense, currently $0 (pre-revenue). Marketing is his top pain and
 **the AIOS owns it** — drafting promo, researching quick US-first marketing hacks, and
@@ -147,7 +158,7 @@ Single-context — one `CONTEXT.md` + `docs/adr/` at the repo root, created lazi
 
 ## How you work with me
 
-- **Start every session by opening `week.md`.** Ground the work in this week's 3 outcomes and today's must-ship before anything else.
+- **Start every session by running `/console`.** It is the front door: countdowns to the 15 Nov offer floor, the six counters, what's overdue, and the ONE next action. It replaced "open `week.md` first" on 2026-08-09, because `week.md` went stale for 22 days and nothing caught it. `week.md` is still the week's 3 outcomes; the console is what to do *now*.
 - Be direct, concise, and clear. No fluff.
 - Lead with what needs action, not status updates.
 - When I ask a question, answer it. Don't pad with restating the question.
