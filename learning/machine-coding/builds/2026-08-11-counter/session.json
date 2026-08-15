@@ -1,0 +1,432 @@
+{
+  "version": 1,
+  "problemSlug": "counter",
+  "problemTitle": "Counter",
+  "rung": "R0",
+  "targetMinutes": 15,
+  "primitives": [
+    "lifting-state",
+    "derived-state"
+  ],
+  "warmupSlug": "refs",
+  "startedAt": "2026-08-11T15:48:25.273Z",
+  "startedAtMs": 1786463305274,
+  "phases": {
+    "warmup": {
+      "start": 6,
+      "end": 300019
+    },
+    "clarify": {
+      "start": 300019,
+      "end": 480262
+    },
+    "design": {
+      "start": 480262,
+      "end": 694666
+    },
+    "code": {
+      "start": 694666,
+      "end": 1594765
+    },
+    "buzzer": {
+      "start": 1594765
+    }
+  },
+  "questions": [
+    {
+      "t": 364218,
+      "q": "what is the minimum and maximun value of the number",
+      "matched": true,
+      "answer": "Min 0, max 10. The buttons should disable at the bounds.",
+      "reqIndex": 2
+    },
+    {
+      "t": 387056,
+      "q": "should the need to disable when reach the extreme number?",
+      "matched": false,
+      "answer": "Not something I've thought about. Make a call and state your assumption.",
+      "reqIndex": -1
+    },
+    {
+      "t": 458819,
+      "q": "Does the counter should have the seprate component?",
+      "matched": false,
+      "answer": "Not something I've thought about. Make a call and state your assumption.",
+      "reqIndex": -1
+    }
+  ],
+  "design": "Component:\n<Button/> props: count;\n          state: count;\n handlerFunction: onClickHandler => for increment and decrement;",
+  "designReviewRequested": false,
+  "snapshots": [
+    {
+      "t": 754767,
+      "file": "jsx",
+      "full": "// Component:\n// <Button/> props: count;\n//           state: count;\n//  handlerFunction: onClickHandler => for increment and decrement;\n\nfunction App() {\n  const[count,setCount] = useState(0);\n  \n  function handle\n  return <h1>Hi</h1>;\n}\n"
+    },
+    {
+      "t": 815014,
+      "file": "jsx",
+      "diff": {
+        "s": 8,
+        "del": 2,
+        "add": [
+          "  function onClickHandler(){",
+          "    ",
+          "    }",
+          "  return <div>",
+          "   <h1>{count}</h1>",
+          "   <div className='></div>",
+          "  </div>"
+        ]
+      }
+    },
+    {
+      "t": 875259,
+      "file": "jsx",
+      "diff": {
+        "s": 13,
+        "del": 1,
+        "add": [
+          "   <div className='buttonContainer'>",
+          "   <button onClick={onClickHandler}>Decrease</button>",
+          "   <button>Increase</button>",
+          "   </div>"
+        ]
+      }
+    },
+    {
+      "t": 936243,
+      "file": "jsx",
+      "diff": {
+        "s": 9,
+        "del": 7,
+        "add": [
+          "    switch",
+          "    ",
+          "    }",
+          "  return <div>",
+          "   <h1>{count}</h1>",
+          "   <div className='buttonContainer'>",
+          "   <button onClick={()=> onClickHandler('dec')}>Decrease</button>",
+          "   <button onClick={()=> onClickHandler('inc')}>Increase</button>"
+        ]
+      }
+    },
+    {
+      "t": 997239,
+      "file": "jsx",
+      "diff": {
+        "s": 9,
+        "del": 1,
+        "add": [
+          "    ",
+          "    "
+        ]
+      }
+    },
+    {
+      "t": 1118261,
+      "file": "jsx",
+      "diff": {
+        "s": 8,
+        "del": 2,
+        "add": [
+          "  function onClickHandler(value){",
+          "    if(value === 'dec'){"
+        ]
+      }
+    },
+    {
+      "t": 1178264,
+      "file": "jsx",
+      "diff": {
+        "s": 10,
+        "del": 0,
+        "add": [
+          "      setCount((prev)=> prev > 0 ? prev",
+          "      }"
+        ]
+      }
+    },
+    {
+      "t": 1239239,
+      "file": "jsx",
+      "diff": {
+        "s": 10,
+        "del": 1,
+        "add": [
+          "      setCount((prev)=> prev > 0 ? --prev);"
+        ]
+      }
+    },
+    {
+      "t": 1299266,
+      "file": "jsx",
+      "diff": {
+        "s": 10,
+        "del": 2,
+        "add": [
+          "      setCount((prev)=> prev > 0 ? --prev : 0);",
+          "      } else{",
+          "        setCount((prev) => )",
+          "        }"
+        ]
+      }
+    },
+    {
+      "t": 1359269,
+      "file": "jsx",
+      "diff": {
+        "s": 6,
+        "del": 18,
+        "add": [
+          "  const [count, setCount] = useState(0);",
+          "",
+          "  function onClickHandler(value) {",
+          "    if (value === 'dec') {",
+          "      setCount((prev) => (prev > 0 ? --prev : 0));",
+          "    } else {",
+          "      setCount((prev) => (prev < 10 ? ++prev : 10));",
+          "    }",
+          "  }",
+          "  return (",
+          "    <div>",
+          "      <h1>{count}</h1>",
+          "      <div className=\"buttonContainer\">",
+          "        <button onClick={() => onClickHandler('dec')} disabled={count === 0}>Decrease</button>",
+          "        <button onClick={() => onClickHandler('inc')} disabled={count === 10}>Increase</button>",
+          "      </div>",
+          "    </div>",
+          "  );"
+        ]
+      }
+    },
+    {
+      "t": 1420236,
+      "file": "jsx",
+      "diff": {
+        "s": 19,
+        "del": 2,
+        "add": [
+          "        <button onClick={() => onClickHandler('dec')} disabled={count === 0}>",
+          "          Decrease",
+          "        </button>",
+          "        <button onClick={() => onClickHandler('inc')} disabled={count === 10}>",
+          "          Increase",
+          "        </button>"
+        ]
+      }
+    },
+    {
+      "t": 1480264,
+      "file": "css",
+      "full": ".buttonContainer{\n  \n  }"
+    },
+    {
+      "t": 1540511,
+      "file": "css",
+      "diff": {
+        "s": 0,
+        "del": 3,
+        "add": [
+          ".buttonContainer {",
+          "  display: 'flex';",
+          "  width: 100%;",
+          "  justifycontent: 'space-between';",
+          "  ",
+          "}",
+          ""
+        ]
+      }
+    }
+  ],
+  "pauses": [
+    {
+      "t": 927363,
+      "ms": 46476,
+      "line": 10,
+      "file": "jsx",
+      "context": "  function onClickHandler(){ ⏎      ⏎     "
+    },
+    {
+      "t": 975402,
+      "ms": 114360,
+      "line": 9,
+      "file": "jsx",
+      "context": "   ⏎   function onClickHandler(){ ⏎     ",
+      "ongoing": true
+    },
+    {
+      "t": 975402,
+      "ms": 114381,
+      "line": 10,
+      "file": "jsx",
+      "context": "  function onClickHandler(){ ⏎     i ⏎     "
+    },
+    {
+      "t": 1185829,
+      "ms": 86650,
+      "line": 11,
+      "file": "jsx",
+      "context": "    if(value === 'dec'){ ⏎       setCount((prev)=> prev > 0 ? --prev ); ⏎       }"
+    },
+    {
+      "t": 1359003,
+      "ms": 76671,
+      "line": 5,
+      "file": "jsx",
+      "context": "//  handlerFunction: onClickHandler => for increment and decrement; ⏎  ⏎ "
+    }
+  ],
+  "runs": [
+    {
+      "t": 87921,
+      "ok": false
+    },
+    {
+      "t": 92023,
+      "ok": false
+    },
+    {
+      "t": 93011,
+      "ok": false
+    },
+    {
+      "t": 101186,
+      "ok": false
+    },
+    {
+      "t": 102035,
+      "ok": false
+    },
+    {
+      "t": 102230,
+      "ok": false
+    },
+    {
+      "t": 102435,
+      "ok": false
+    },
+    {
+      "t": 102643,
+      "ok": false
+    },
+    {
+      "t": 102842,
+      "ok": false
+    },
+    {
+      "t": 103076,
+      "ok": false
+    },
+    {
+      "t": 116985,
+      "ok": false
+    },
+    {
+      "t": 119418,
+      "ok": false
+    },
+    {
+      "t": 120168,
+      "ok": false
+    },
+    {
+      "t": 120366,
+      "ok": false
+    },
+    {
+      "t": 120582,
+      "ok": false
+    },
+    {
+      "t": 120792,
+      "ok": false
+    },
+    {
+      "t": 161334,
+      "ok": false
+    },
+    {
+      "t": 296188,
+      "ok": false
+    },
+    {
+      "t": 296947,
+      "ok": false
+    },
+    {
+      "t": 297181,
+      "ok": false
+    },
+    {
+      "t": 711375,
+      "ok": true
+    },
+    {
+      "t": 731858,
+      "ok": true
+    },
+    {
+      "t": 1324710,
+      "ok": true
+    },
+    {
+      "t": 1528896,
+      "ok": true
+    },
+    {
+      "t": 1530299,
+      "ok": true
+    },
+    {
+      "t": 1530809,
+      "ok": true
+    },
+    {
+      "t": 1533330,
+      "ok": true
+    },
+    {
+      "t": 1545511,
+      "ok": true
+    },
+    {
+      "t": 1551086,
+      "ok": true
+    }
+  ],
+  "milestones": {
+    "firstRun": 87838,
+    "designSubmitted": 694666,
+    "firstKeystroke": 702312,
+    "firstRender": 731858,
+    "cssTouched": 1457348
+  },
+  "goals": {},
+  "finalCode": {
+    "jsx": "// Component:\n// <Button/> props: count;\n//           state: count;\n//  handlerFunction: onClickHandler => for increment and decrement;\n\nfunction App() {\n  const [count, setCount] = useState(0);\n\n  function onClickHandler(value) {\n    if (value === 'dec') {\n      setCount((prev) => (prev > 0 ? --prev : 0));\n    } else {\n      setCount((prev) => (prev < 10 ? ++prev : 10));\n    }\n  }\n  return (\n    <div>\n      <h1>{count}</h1>\n      <div className=\"buttonContainer\">\n        <button onClick={() => onClickHandler('dec')} disabled={count === 0}>\n          Decrease\n        </button>\n        <button onClick={() => onClickHandler('inc')} disabled={count === 10}>\n          Increase\n        </button>\n      </div>\n    </div>\n  );\n}\n",
+    "css": ".buttonContainer {\n  display: 'flex';\n  width: 100%;\n  justifycontent: 'space-between';\n}\n"
+  },
+  "finalDom": "<div><h1>10</h1><div class=\"buttonContainer\"><button>Decrease</button><button disabled=\"\">Increase</button></div></div>",
+  "report": {
+    "stuck": "I directly think about the solution Haven't thought about these questions, which you have mentioned, like start at 0 step 1. I directly think about, how can I solve that question? What should be the code",
+    "lookups": "I haven't look up anything. I just wrote the one condition about minimum and maximum value, but I haven't thought about does it start with zero? And what is the step And also the reset button And the style related question",
+    "rating": 3,
+    "tag": "solo"
+  },
+  "phase": "code",
+  "elapsedMs": 1594766,
+  "scratch": "export function app() {\n  const ref = useRef();\n  function onClickHandler() {\n    ref.onFocus(true);\n  }\n  return (\n    <div>\n      <input />\n      <input />\n      <input ref={ref} />\n      <input />\n      <input />\n      <input />\n      <button onClick={onClickHandler}>Click</button>\n    </div>\n  );\n}\n",
+  "importsStripped": 0,
+  "formatCount": 10,
+  "endedAt": "2026-08-11T16:15:00.040Z",
+  "missedRequirements": [
+    "Starts at 0.",
+    "Step of 1.",
+    "Yes, a reset button. P1.",
+    "No persistence needed.",
+    "Unstyled is fine. Function over form.",
+    "Plus and minus updating a number on screen. That's it."
+  ]
+}

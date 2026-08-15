@@ -16,7 +16,7 @@ Status: ☐ not started · ⏳ in progress · ✅ covered · ⚠ thin — logged
 |---|---|:--:|:--:|:--:|:--:|:--:|---|
 | 1 | **D00** Opener | ☐ | — | — | — | — | — |
 | 2 | **D01** Origin & Summary | ☐ | — | — | — | — | — |
-| 3 | **D20** Dwellworks — product + 6 bullets | ⏳ | — | — | — | 3 | carried from kb 2026-07-30 (see below) |
+| 3 | **D20** Dwellworks — product + 6 bullets | ⏳ | ✅ | ✅ | ✅ | 4 | **sitting 1 done 08-11** (product context + users + boundary). Gate met, gaps logged below. **Sitting 2 = the 6 CV bullets.** |
 | 4 | **D21** CloudForestX — narrative + 5 bullets | ☐ | — | — | — | — | — |
 | 5 | **D10** CloudForestX 🔴 cost model + engine | ☐ | — | — | — | — | — |
 | 6 | **D22** DentScribe — product + 5 bullets | ☐ | — | — | — | — | — |
@@ -47,6 +47,33 @@ gate that is a **pass with logged gaps**, not a re-take. These five get re-asked
 **Also unresolved and re-asked at D20:** he twice described the **Property microservice** as holding
 "the complete Odin data for the employee — home finding, school finding." That likely overstates
 Property's scope. **Verify against the repo before it goes in any answer.**
+
+### D20 sitting 1 — 2026-08-11 · M ✓ F ✓✓ B ✓ · conf 3 → 4
+
+**Closed from the 07-30 carry:** the **payer/user split** (named corporate *and* RMC as buyers, unprompted)
+· **all four audiences** correctly enumerated · the **density-vs-hand-holding tension** between operator and
+transferee UI, volunteered without being asked — keep that line, it's a room-winner · the **boundary
+sentence**, both halves, with the fluency *justified* (*"every service talks to the frontend, so I need
+to know all of them"*). Kill the word **"just"** in *"I just integrated"* — self-diminishing.
+
+**Still open — service-ownership. 4 claims wrong, 1 unverified.** Full map, the corrections and the
+verification commands live in **`project-knowledge-base/dwellworks/00-product-context.md` §9** —
+written there, not here, so there is only one copy to keep true. Headlines:
+**authorization ≠ login** (carried gap #4, missed twice) · Spark, visa and payments are all **Odin**,
+not NetworkManagement/DsInternal · **Property oversized for the 3rd time** · and the dangerous one —
+*"order dashboard ← Stats"* may be **handing his own headline CV bullet to a service he didn't write.**
+**Load work for an office block; step 5 of §9 first if it gets cut short.**
+
+Also logged: he bucketed **consultants (DSCs) as supply network**. They're group 3, internal operators,
+with program managers; group 4 is agents/brokerages/suppliers/station agents. Conclusion right, box
+wrong. Punished by *"what's the difference between a consultant and a supplier?"* Re-ask at D60.
+
+**THE pattern — the finding of the sitting, and it outranks every fact above.** Three scope questions,
+three system answers: *"what does the product do?"* → the services · *"who looks at the screen?"* → the
+services · *"what did **you** build?"* → the system map. **He does not separate himself from the
+platform.** It reads as either inflation or not knowing his own edges. He fixed it on the fourth pass,
+under direct instruction — so it is a default, not a capability gap. **Every future drill opens with a
+scope question until it stops happening.**
 
 ## Phase 2 — gap queue
 

@@ -134,9 +134,14 @@ enters that window you haven't already touched once. See `mission/interview-spri
 
 | # | Item | Owner | Due |
 |---|---|---|---|
-| 1 | **Bonus clawback clause** — check the offer letter / HR policy. Worth ₹2.5L. | Tarun | before 7 Sept |
-| 2 | **Monthly burn** — never stated. It's what makes "4 months" real or fiction. | Tarun | before 7 Sept |
+| ~~1~~ | ~~**Bonus clawback clause**~~ — **CLOSED 2026-08-10.** Unconditional; once paid it is his, no repayment trigger. **₹3.14L on 1 Sept is safe and the 7 Sept resignation is unencumbered.** | — | done |
+| ~~2~~ | ~~**Monthly burn**~~ — **CLOSED 2026-08-10.** Confirmed: **4 months is real time available**, not a gross figure. Dry date ~31 Dec holds, so the 15 Nov floor arithmetic stands unchanged. | — | done |
 | 3 | **CloudForestX Node authorship** — read `project-knowledge-base/cloudforestx/` kb 04 §5, then re-grade 🟡 → 🟢 or reword. | Tarun | before 15 Sept |
+
+**Items 1 and 2 were the only two things that could have broken this plan from the outside.** Both
+are now closed in its favour, which means **every remaining risk is execution risk** — there is no
+longer a financial surprise that can move the resignation date or the 15 Nov floor. The plan does not
+change; its confidence does.
 
 ### On item 3, so it isn't lost
 

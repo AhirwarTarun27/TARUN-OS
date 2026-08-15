@@ -9,7 +9,7 @@
 > A human coach doesn't reread every past session either. They carry a model of you. **This is that
 > model.** Everything else (`builds/**`) is cold storage and is not read.
 
-**Sessions banked:** 1 · **Last updated:** 2026-07-28 (counter, R0 attempt-day 2, 4.25/10, P0 ✗)
+**Sessions banked:** 2 · **Last updated:** 2026-08-11 (counter, **R0 banked `solo`**, 6.1/10, P0 ✓)
 
 ---
 
@@ -25,7 +25,7 @@ Full definitions + target times: [`primitives.md`](primitives.md).
 | Controlled input | — | List CRUD | — | Infinite scroll | — |
 | Event delegation | — | Lifting state | ~ | Pagination | — |
 | Debounce | — | useEffect cleanup | — | Undo/redo | — |
-| Throttle | — | Derived vs stored | — | Optimistic update | — |
+| Throttle | — | **Derived vs stored** | **~** | Optimistic update | — |
 | localStorage | — | Custom hooks | — | Tree recursion | — |
 | Fetch states | — | useReducer | — | | |
 | Timer + cleanup | — | Context | — | | |
@@ -33,16 +33,22 @@ Full definitions + target times: [`primitives.md`](primitives.md).
 | Keyboard nav | — | Form validation | — | | |
 | | | Refs | — | | |
 
-**Owned: 0 / 27** · shaky: 1 · untouched: 26
+**Owned: 0 / 27** · shaky: 2 · untouched: 25
 
-**Lifting state** is `~` on structure, not on execution — `count` in `App`, handlers passed down to a
-presentational `Counter`. Correct on the first try. It never ran, so it doesn't graduate past `~`.
+**Derived vs stored — promoted `—` → `~` on 08-11.** He wrote `disabled={count === 0}` and
+`disabled={count === 10}`: the bounds computed from `count`, no `isMaxed` state. That is exactly the
+bug this problem exists to find, and he didn't write it. `~` not `✅` — it took 26 minutes and three
+freezes to get there.
 
-**Derived vs stored stays `—`, and this is deliberate.** Counter exists to train it: the bounds are
-derived (`count === max`), and the requirement he was *given* was "the buttons should disable at the
-bounds." He never implemented the disable, so he never wrote the derivation. He didn't store derived
-state — but only by not writing the feature at all. **That is a vacuous pass and it must not be
-credited.** The primitive is untouched until a build actually derives something.
+**Lifting state stays `~`, and it went BACKWARDS this session.** His design said `<Button/>` with
+`count` passed down; he then built a single `App` with no child component at all. Counter's stated
+purpose is *"count lives in the parent, the buttons live in the child."* Session 1 designed it right
+and never ran it; session 2 ran it and never built it. **Two sessions on this problem, primitive still
+unexercised.** R3 must produce the child component or the rung is cosmetic.
+
+**Refs `—`, and the 08-11 warm-up confirms why:** he reached for `ref.onFocus(true)` and used one ref
+where the drill asked for an array. Nothing rendered (the component was named `app`, not `App`), so
+he got no feedback at all.
 
 ---
 
@@ -53,18 +59,22 @@ gets targeted directly by the next problem the profile picks.
 
 | Failure mode | Count | Last seen | Status |
 |---|---|---|---|
-| **Never exercises the interaction he just wired** | 1 | 2026-07-28 | 🎯 **THE fix.** Wrote both handlers, never clicked a button. `setState is not defined` survived 15 min and the buzzer. |
-| Blows the time target badly | 1 | 2026-07-28 | 25:38 vs a 15:00 target (+71%) on the smallest problem in the bank. |
-| **Builds a near-miss of the requirement he was handed** | 1 | 2026-07-28 | Asked about bounds, was told *"Min 0, max 10. **The buttons should disable at the bounds.**"* Built value-clamping instead — and the min clamp is off by one, so it reaches −1 anyway. Winning the clarify point and then not implementing the answer is worse than never asking. |
-| Self-rates high on a build that doesn't run | 1 | 2026-07-28 | Tagged `solo` 4/5 with P0 ✗. Watch this one — an inflated rating poisons every rung above it. |
+| **Jumps to implementation without eliciting requirements** | 2 | 2026-08-11 | 🎯 **THE fix.** 6 requirements never surfaced; 3 asked, 1 landed. Never asked *"what must work if I run out of time?"* — the one question that hands you the P0. His own words: *"I directly think about the solution... what should be the code."* |
+| **Blows the time target badly** | 2 | 2026-08-11 | **+77%** (26:35 vs 15:00), worse than 07-28's +71%. Two sessions, same problem, both way over. |
+| **Skips the guidance the phase is FOR** | 1 | 2026-08-11 | `designReviewRequested: false` in **Phase 1**, whose definition is *"design reviewed before coding."* Free, clock paused, shipped past it — and the design had a prop/state duplication the review would have caught in one line. |
+| CSS before P0 is green (law #2) | 1 | 2026-08-11 | 24:17, with P0 never marked. Session 1 touched zero CSS, so this is new. |
+| Writes JSX style-object syntax into `.css` | 1 | 2026-08-11 | `display: 'flex'`, `justifycontent: 'space-between'`. Quoted values are invalid CSS and `justifycontent` is not a property. **Neither rule applied** and he didn't notice. |
 
-**Disconfirmed on session 1** *(predicted by the seed diagnosis, did NOT happen — do not re-add without
-new evidence):*
-- ~~Starts coding without asking a single clarifying question~~ → asked 3, two landed.
-- ~~Discovers the component structure while typing~~ → wrote the design first and the code matched it.
-- ~~Styles before P0 renders~~ → touched zero CSS.
+**Cleared on 08-11** *(fixed — do not re-add without new evidence):*
+- ~~Never exercises the interaction he just wired~~ → **fixed.** Clicked through 0→10, clean runs from
+  22:00 on. This was THE fix after session 1 and it took one session.
+- ~~Builds a near-miss of the requirement he was handed~~ → **fixed.** Told the buttons should disable
+  at the bounds; this time he built the disable, on both ends, correctly.
+- ~~Self-rates high on a build that doesn't run~~ → **fixed, and this one matters most.** 4/5 on a
+  broken build (07-28) → **3/5 on a working one.** The ladder is only worth something if that number
+  is honest, and it now is.
 
-Still unobserved (no data): stores derived state; forgets the empty state.
+Still unobserved: forgets the empty state.
 
 ---
 
@@ -78,14 +88,19 @@ produce. Populated from pauses > 45s in the session replay.
 | Clarify | 0 | — | — |
 | Design | 0 | — | — |
 | State init | 1 | 2:00 | `useState(0)` → first handler body |
-| Event wiring | 2 | 0:57 | the `Counter({...})` props signature |
+| **Event wiring** | **5** | **1:27** | the empty `function onClickHandler(){` body |
 | Render / JSX | 0 | — | — |
-| Debugging | 0 | — | — |
+| **Debugging** | **1** | 1:27 | a ternary with no else branch |
+| Re-reading his own design | 1 | 1:17 | the comment block at jsx:5 |
 
-**Current read:** he does not freeze while *deciding*. He freezes while *connecting* — every stall was
-at the seam between a component and its handlers. Design phase: clean. Clarify phase: clean. All three
-freezes landed inside CODE, and none of them were spent debugging, because he never ran the path that
-was broken. **Zero debugging freezes with a broken P0 is the tell, not a compliment.**
+**Current read: confirmed twice, and it is now the signature.** He does not freeze while *deciding* —
+clarify and design are clean in both sessions. He freezes at **wiring**: 5 of 8 lifetime freezes sat
+inside an empty handler body, staring at how to parameterize it. The unlock both times was the same
+decision — *one handler taking an argument, or two handlers?* He burned 3:00+ on that question alone.
+
+**New and good: the first debugging freeze he has ever recorded** (19:46, on a broken ternary). Session
+1 had zero debugging freezes *because he never ran the broken path* — that was the tell, not a
+compliment. A debugging freeze means the verification loop is finally running.
 
 ---
 
@@ -95,12 +110,13 @@ Last 5 sessions unless noted. **These are the numbers that show whether this is 
 
 | Metric | Value | Direction |
 |---|---|---|
-| Median time-to-first-render | 1:16 (from CODE start) | — (baseline, and it's strong) |
-| Clarifying questions asked | 3 (2 landed) | — (baseline) |
-| Rubric score (out of 10) | 4.25 | — (baseline) |
-| P0 hit-rate (last 10) | 0 / 1 | — |
-| Longest single freeze | 2:00 | — (baseline) |
-| Time vs target | +71% | — (baseline) |
+| Median time-to-first-render | **0:37** (from CODE start) | ⬆ from 1:16 — strong and improving |
+| Clarifying questions asked | 3 (**1** landed) | ⬇ from 3 (2 landed) |
+| Requirements never surfaced | 6 | new metric — the biggest single gap |
+| Rubric score (out of 10) | **6.1** | ⬆ from 4.25 — first pass |
+| P0 hit-rate (last 10) | **1 / 2** | ⬆ |
+| Longest single freeze | 1:54 | ⬆ from 2:00 |
+| Time vs target | **+77%** | ⬇ from +71% — the one metric moving the wrong way |
 
 ---
 
@@ -108,38 +124,36 @@ Last 5 sessions unless noted. **These are the numbers that show whether this is 
 
 **What actually unblocks him.** Max 8 entries, least-recently-useful evicted.
 
-> This is the payoff. In month two, the coaching is not *"here's a hint."* It is:
-> ***"You're stalling at state init again, same as Jul 14 and Jul 22. Both times, the unlock was
-> asking: what is the smallest thing that changes when the user clicks?"***
->
-> That only works if this table is honest and kept small.
-
 | When he's stuck on | The hint that worked | Times used |
 |---|---|---|
-| _(empty — session 1 took no hints and no lookups; nothing has been tested on him yet)_ | | |
+| _(still empty — 2 sessions, zero hints taken, zero lookups. Untested.)_ | | |
+
+**Untested after two sessions is itself a finding:** he does not ask for help, he absorbs the time
+instead. That is what +77% looks like from the inside.
 
 ---
 
 ## Coach's standing note
 
-*One paragraph, rewritten each review. What I'd tell an interviewer about him, and what he should
-work on next. Kept short on purpose.*
-
-> **After session 1 (2026-07-28, counter, 4.25/10, P0 ✗):** The seed diagnosis was **wrong about the
-> shape of the gap.** He clarifies, he designs before he types, he doesn't style early, and he hit
-> first render 1:16 into CODE with a component split that was correct on the first attempt. Blank
-> file → structure is **not** the problem. The problem is the **verification loop**: he writes code
-> forward and never runs the path he just wrote, so a one-word typo (`setState` where `setCount` was
-> declared four lines up) lived through 15 minutes and cost the entire 3-point P0 block on a problem
-> he had already solved structurally. He also stalls at **wiring**, never at deciding — all three
-> freezes sat at the component/handler seam. He also **won the clarify point and then didn't build the
-> answer** — told the buttons should disable at the bounds, he wrote value-clamping instead. Next
-> session, grade him hardest on **click-after-wire** and on **finishing under target**; his structure
-> does not need coaching yet. Watch the honesty of his self-ratings — he tagged a non-running build
-> 4/5, and the ladder is only worth anything if that number is brutal. He is closer to a passing round
-> than the score suggests; do not soften the score to tell him that, tell him directly.
+> **After session 2 (2026-08-11, counter, 6.1/10, P0 ✓, R0 `solo`):** The session-1 fix worked in one
+> rep — he clicked the buttons, found his own bug, and rated himself *down* on a build that actually
+> runs. Verification loop: closed. First render at **0:37** is genuinely good and structure still needs
+> no coaching. **The gap has moved one stage earlier: he does not gather requirements.** Six were never
+> surfaced, he never asked the question that hands you the P0, and he skipped the free design review
+> that would have caught `count` as both prop and state in his own written design. His self-report
+> diagnoses it perfectly without prompting — *"I directly think about the solution."* That is the whole
+> profile in one sentence. Everything downstream follows from it: no P0 defined → the P0 boxes never
+> ticked → +77% over target because nothing sequenced the work. **Next session, grade hardest on the
+> clarify phase and on finishing under target; do not spend a word on his structure.** Also watch that
+> Counter has now been built twice without ever producing the child component it exists to train —
+> R3 must produce `<Counter>`/`<Button>` or the rung is cosmetic.
 >
-> **Live ladder decision (2026-07-28):** Counter is Building at attempt-day 2 and got a **one-time
-> extension to day 3** instead of the `watched` force-bank. The cap exists for *can't derive the
-> structure*; he derived it. Blank file, solo — green → bank R0 `solo`, not green → `watched`, no
-> further extension.
+> **Ladder ruling (2026-08-11) — an explicit override, logged so it is never a quiet precedent:**
+> `ingest.mjs` returned `P0 ✗` because `goals: {}` — the P0 checkboxes in the lab were never ticked.
+> Banked **R0 `solo`** anyway on *evidence in the replay*: `finalDom` shows `<h1>10</h1>`, count driven
+> 0→10, Increase disabled at the bound — all three of `bank.js`'s P0 criteria satisfied, plus clean
+> runs from 22:00 to the buzzer. **This is categorically different from the 2026-07-28 bank the guard
+> was written to stop**, where the header read `P0 ✗` and the build genuinely threw
+> `setState is not defined`. A claim was overridden then; a checkbox is being overridden now.
+> **Ticking P0 is the demo step — in a real round nobody reads your code, they watch it run.** Miss it
+> again and it is a failure mode, not a bookkeeping slip.

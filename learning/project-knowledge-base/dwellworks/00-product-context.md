@@ -263,6 +263,92 @@ tradeoffs to discuss.
 
 ---
 
+## 9. The service map — who owns what
+
+> **Added 2026-08-11, after the D20 drill.** Asked *"what did you build?"*, the answer was a confident
+> seven-service tour with **four service-ownership claims wrong and one unverified**. The errors are
+> listed at the bottom — but read the whole map first. **Patching five sentences is not the fix; owning
+> the map is.** An interviewer who hears one wrong ownership claim starts checking all of them.
+>
+> **The rule this protects:** claim *fluency* in the services, never *authorship*. Fluency you get wrong
+> is worse than fluency you decline — *"I'd have to check, I was on the front end"* costs nothing.
+
+### The repos
+
+`Odin` is **one of nine**. Eight are named in the sources below; **the ninth is not identified in this
+module — get it off the repo list and fill it in here.** Do not guess it in a room.
+
+| Repo | Stack | What it owns |
+|---|---|---|
+| **Odin** ⭐ | .NET Framework 4.6.1 · MVC 5 + Web API 2 · EF6 · Ninject · OWIN | **The domain and almost all of it.** Orders, transferees, tasks, appointments, leases, departures, tenancy, visa, payments, billing, reporting. **Plus the entire front end — your scope.** |
+| **ClientAPI** | .NET, integration boundary | **Authorizations** in and out. Talks to *external* systems: ServiceEngine, Destination, Aires. Seven batch console jobs + Azure Storage Queues. |
+| **IdentityMicroservice** | .NET Core | **Issues JWTs; everything else only verifies them** against an RSA public key. Redis for revocation. Controllers: User, UserProfile, **Spark**, Brokerage. *The one genuine shared-service win.* |
+| **PropertyMicroserviceCore** | ASP.NET Core 2.2, Dockerized, AKS (`propms-aks.yaml`) | **Home finding, school finding, lease.** JWT verify-only. Redis token validation. Azure Queue change trackers. |
+| **StatsMicroservice** | .NET Core + SignalR + WebJob + Azure Function | **Statistics and reporting.** Lifecycle step 11 (billing + reporting), alongside Odin. |
+| **NetworkManagementWeb** | .NET Core | **The supply side.** Brokerage, Supplier, Concierge, ServiceTeamAdmin, CoverageAreaAdmin, StationAgent, InternationalSupplier, OdinAdmin. |
+| **DsInternal** | .NET Core | **Back-office reference data.** Contracts, CorpClientSurveys, Countries, Customers, NewMetroAreas. |
+| **ECoordService** | .NET Core, Dockerfile, V1 controllers | Carved-off service. *Thin in this module — go read it before claiming its scope.* |
+| **_(ninth)_** | — | **Unknown. Fill this in.** |
+
+### The default is Odin
+
+**When you don't know which service owns something, the answer is almost certainly Odin** — it's the
+monolith and it holds the domain. Every one of tonight's four errors moved something *out* of Odin that
+lives *in* Odin. Concretely, Odin owns:
+
+- **Models** (`Odin.Data/Core/Models/`) — `AreaOrientationTask` · `SchoolFinding` · `TenancyManagement` ·
+  `TenancyClaim` · `TenancyPayment` · `SettlingInTask` · `DepartureWalkthrough` · `DepartureDeposit` ·
+  `DepartureRepair` · **`VisaImmigrationInfo`** · `RemovalService` · `AirportPickup` · `RentTask` ·
+  `Appointment` · `Task` · `WorkflowStages` · `UserRoles`
+- **Controllers** — Orders · Lease · Departures · FinalHousing · Itinerary · MyMove · Payments ·
+  **ProgramPayments** · Reporting · **Spark** · SelectProperties · Notifications · TenancyManagement
+- **Fee machinery** — `DscFeeCalculation` · `ConsultingDailyFee` · `ConsultingHourlyFee` ·
+  `BrokerFeeType` · `AccountPayable` · `AccountReceivable`
+- **All 20 webpack bundles**, including `spark-app`, `order-dashboard`, `payment`, `funds`,
+  `tenancy-management`, `rmc-reporting`
+
+### Where I got it wrong — 2026-08-11
+
+| I said | Actually | Why it matters |
+|---|---|---|
+| *"ClientAPI — **authorization of users**"* | **Repo right, word wrong.** ClientAPI *is* the authorization repo. But **Authorization = the corporate's formal "yes, move this person, and here's what we'll pay for."** It is **not** login. Login/JWT is IdentityMicroservice — which I then said correctly two sentences later. | **Second miss on this exact term** (first: 07-30). I have both concepts and keep attaching the word to the wrong one. In a relocation interview this is the domain's signature vocabulary — getting it backwards is the tell that I learned the code and not the business. |
+| *"Spark ← NetworkManagement"* | **Spark controller in IdentityMicroservice**, plus a **`Spark` controller and `spark-app` bundle in Odin.** NetworkManagement never touches it. | Spark is consultant assignment — a *core lifecycle step* (#3). Putting it in the supplier-admin app says I don't know where the main flow runs. |
+| *"Visa + payments ← DsInternal"* | Both **Odin**. `VisaImmigrationInfo.cs`, `ProgramPaymentsController`, the `Payments` controller, the `payment` and `funds` bundles. DsInternal is contracts, corp surveys, countries, customers, metros. | Two lifecycle steps (#8 settling-in/visa, #11 billing) handed to a back-office reference-data app. |
+| *"Visa ← PropertyMicroservice"* | Property = **home finding, school finding, lease.** Nothing else. | **Third time oversizing Property** (flagged 07-30, unresolved since). This one is now a habit, not a slip. |
+| *"Order dashboard data ← Stats"* | ⚠ **UNVERIFIED — check before this ever enters a room.** The dashboard is grounded in **Odin**: `components/order-dashboard/store/` (`fetchOrders`, `getControlTowerOrders`), `signalrHoc.jsx`, `controlTowerHub`. Stats is .NET Core + SignalR for *statistics*. Both have SignalR, which is probably why they blurred. | **This is the dangerous one in the other direction — I may be giving away my own headline CV bullet** to a service I didn't write. Bullet 2 is the real-time operations dashboard. If Odin serves it, saying "Stats" hands my strongest work to someone else. |
+
+### The verification pass — do this in an office block, not at midnight
+
+Read-only, survives interruption, and it's the `load` half of the track. Run from the repo root:
+
+```bash
+# 1. The ninth repo — name it
+ls
+
+# 2. Spark: where does it actually live?
+grep -ril "spark" --include=*.cs --include=*.jsx --include=*.js . | grep -v node_modules | head -30
+
+# 3. Visa + payments: confirm they are Odin
+find . -name "VisaImmigrationInfo.cs" -o -name "ProgramPaymentsController.cs" | grep -v node_modules
+
+# 4. Property's REAL scope — read the controller list, do not infer it
+ls PropertyMicroserviceCore/*/Controllers/
+
+# 5. THE ONE THAT MATTERS: what backend serves the order dashboard?
+grep -rn "getControlTowerOrders\|fetchOrders\|controlTowerHub" Odin/Scripts/react/src/components/order-dashboard/ | head -20
+```
+
+Step 5 first if the block gets cut short — it's the only one that touches a CV bullet.
+
+**Then update this section, `defend-map.md` if a bullet's grounding moved, and clear the rows in
+`cv-defense/progress.md`.** A verification you don't write down is a verification you repeat.
+
+> **Shadow-resource reminder:** commits on this account are under `--author="avnit" --since=2025-06-01`,
+> never his own name. That's for proving *authorship of a change* — it does not tell you who owns a
+> service. Structure comes from reading the repos.
+
+---
+
 ### Sources (grounding)
 
 - **Product identity + stack:** `Odin/CLAUDE.md` §1–2; `Odin/README.md` ("Dwellworks' Destination

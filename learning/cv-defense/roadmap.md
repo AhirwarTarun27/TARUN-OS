@@ -52,7 +52,7 @@ Drill ids are unchanged so `defend-map.md` references stay valid.
 |---|---|---|---|
 | 1 | **D00** Opener | 30s self-pitch + one pitch per project | seeded — `drills/00-opener.md` |
 | 2 | **D01** Origin & Summary | mechanical→dev, Masai, the title span, the Summary line | `drills/01-origin-and-summary.md` |
-| 3 | **D20** Dwellworks | product context + all 6 bullets + boundaries | kb `dwellworks/00`, `03` §10/§12 |
+| 3 | **D20** Dwellworks | product context + all 6 bullets + boundaries | **`answers/dwellworks/`** + kb `dwellworks/00`, `03` §10/§12 |
 | 4 | **D21** CloudForestX | narrative + all 5 bullets + boundaries | kb `cloudforestx/00`, `04` §8/§9 |
 | 5 | **D10** CloudForestX 🔴 | cost model + analysis engine — **boundary only** | kb `cloudforestx/02`, `03` |
 | 6 | **D22** DentScribe | product context + all 5 bullets + boundaries | kb `dentscribe/00`, `03` §10/§11 |
@@ -67,6 +67,14 @@ Drill ids are unchanged so `defend-map.md` references stay valid.
 
 Rows 3, 4 and 6 may each run over two sittings. That's expected and it is not a failure.
 
+> **The `answers/` layer — added 2026-08-12.** `answers/<project>/NN-*.md` holds **the sentence you say**
+> per CV bullet plus its follow-up table; `answers/concepts/*.md` holds **what the technology is**
+> (Razor, SignalR, IE11, error boundaries). This is **not** a duplicate of the kb: the kb says what the
+> *Odin code does*, `answers/` says what *you say*, and `concepts/` covers generic technology the kb
+> assumes you already know — which is the gap that made the 08-12 sitting stall. Anti-drift guard: every
+> answer file quotes its CV line verbatim, so a CV rewrite makes staleness visible.
+> **Read budget for a sitting: one answer file + the concepts it links.** Never glob `answers/`.
+>
 > **Why the project drills have no `drills/NN` file.** D20, D21, D10, D22, D12 and D70 are run **directly
 > from the kb modules** in the Material column — each of those already carries a per-CV-bullet drill
 > sheet (`dwellworks/03` §10, `cloudforestx/04` §8, `dentscribe/03` §10) plus a *"facts I must never get

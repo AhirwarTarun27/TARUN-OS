@@ -7,12 +7,16 @@
 ## Streak
 
 - **Weeks reviewed in a row:** 2
-- **Total things shipped:** 27
+- **Total things shipped:** 29
 
 ## Log (newest on top)
 
 <!-- Format: ## YYYY-MM-DD — one line on what you shipped -->
 <!-- Example: ## 2026-06-28 — Deployed dark-mode toggle to Jsonbeam -->
+
+## 2026-08-11 — **The machine-coding system produced its first rep.** Built 2026-07-14, zero reps for 28 days; Counter reaches P0 green in the lab, session ingested, R0 banked `solo` at 6.1/10 with R3 due 08-14. The July logs ticked `machine-coding` 3/7 and produced nothing — those ✓s were building the system. This is the first one that used it.
+
+## 2026-08-11 — **The job funnel exists.** First 3 applications of the sacrificial wave submitted — the `apply` block had been dark since 07-29. Also the mission's first FLOOR day (1 CV drill + 1 coding rep + 3 applications), on an evening-only day with no office hours at all.
 
 ## 2026-07-19 — AccentWallPlanner (bet #3) LIVE at accentwallplanner.com + fully onboarded to search — GSC domain-verified via DNS TXT, sitemap submitted, Bing + IndexNow registered, added to .env so /site-report tracks it. Verified over the wire at the 07-19 review: HTTP 200, clean robots.txt (Mediapartners-Google explicitly allowed), GSC + Bing both reporting.
 

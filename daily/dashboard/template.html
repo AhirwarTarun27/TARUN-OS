@@ -679,29 +679,37 @@
      Rebuilt 2026-08-09 for the mission board. Must stay in sync with build.mjs BLOCK_KEYS and
      daily/schedule.md — the 07-29 ingest failure was these three drifting apart. */
   const BLOCK_DEFS = [
-    { key:'cvDefense',    name:'CV defense',     code:'cv-defense',    time:'8:00pm' },
+    { key:'apply',        name:'Applications',   code:'apply',         time:'9:45am' },
+    { key:'backend',      name:'Backend',        code:'backend',       time:'office' },
     { key:'machineCoding',name:'Machine coding', code:'machine-coding',time:'9:00pm' },
     { key:'interviewQa',  name:'Interview Q&A',  code:'interview-qa',  time:'9:00pm' },
-    { key:'backend',      name:'Backend',        code:'backend',       time:'office' },
-    { key:'apply',        name:'Applications',   code:'apply',         time:'10:15pm' },
+    { key:'cvDefense',    name:'CV defense',     code:'cv-defense',    time:'10:30pm' },
   ];
   const TOTAL = BLOCK_DEFS.length; // 5
 
   /* THE DAY'S CLOCK — mirrors daily/schedule.md. Minutes from midnight; the late blocks
      run past 1440 because reading + wrap spill over into the next calendar day.
      Edit this and daily/schedule.md together, or the dashboard starts lying. */
-  /* PHASE A (office) day clock, set 2026-08-09.
-     ⚠ OFFICE HOURS ARE A PLACEHOLDER (10:00–19:00). Correct them here AND in daily/schedule.md the
-     first office day, or the now-bar lies to you. `backend` sits inside office hours on purpose:
-     it is .NET until 31 Aug (the employer's ask) then Node from 1 Sept. */
+  /* PHASE A (office) day clock — REAL HOURS, set 2026-08-10 from Tarun's stated day.
+     Placeholder 10:00–19:00 is gone. Office 9:30am–6:30pm, commute 8:30/6:30, protected 9pm–12am.
+     Two kinds of time, and the split is the whole design:
+       INTERRUPTIBLE (office, bench, can vanish without notice) -> apply + backend + CV reading.
+       PROTECTED     (9pm–12am, nobody can take it)             -> the timed coding rep + the drill.
+     `apply` sits FIRST in the office day on purpose: it is the most interruption-proof scored task
+     and the one that most directly moves 15 Nov, so it gets the slot least likely to be eaten.
+     Edit this and daily/schedule.md together, or the now-bar starts lying. */
   const SCHED = [
-    { code:'plan',          name:'Today’s planning',       s: 9*60+30, e: 9*60+45, kind:'ritual' },
-    { code:'office-am',     name:'Office · backend slot',  s:10*60,    e:13*60,    kind:'office' },
-    { code:'office-pm',     name:'Office · bench',         s:14*60,    e:19*60,    kind:'office' },
-    { code:'cv-defense',    name:'CV defense · drill me',  s:20*60,    e:21*60,    kind:'scored' },
-    { code:'machine-coding',name:'Machine coding / IQA',   s:21*60,    e:22*60+15, kind:'scored' },
-    { code:'apply',         name:'Applications',           s:22*60+15, e:22*60+45, kind:'scored' },
-    { code:'wrap',          name:'Day wrap-up',            s:22*60+45, e:23*60+15, kind:'ritual' },
+    { code:'commute-am',    name:'Commute · spoken reps',   s: 8*60+30, e: 9*60+30, kind:'commute' },
+    { code:'plan',          name:'Console + today’s plan',  s: 9*60+30, e: 9*60+45, kind:'ritual' },
+    { code:'apply',         name:'Applications',            s: 9*60+45, e:10*60+15, kind:'scored' },
+    { code:'office-am',     name:'Office · backend slot',   s:10*60+15, e:13*60,    kind:'office' },
+    { code:'office-load',   name:'Office · load tonight',   s:14*60,    e:16*60,    kind:'office' },
+    { code:'office-pm',     name:'Office · bench',          s:16*60,    e:18*60+30, kind:'office' },
+    { code:'commute-pm',    name:'Commute home',            s:18*60+30, e:19*60+30, kind:'commute' },
+    { code:'dinner',        name:'Dinner · off',            s:19*60+30, e:21*60,    kind:'break'  },
+    { code:'machine-coding',name:'Machine coding / IQA',    s:21*60,    e:22*60+30, kind:'scored' },
+    { code:'cv-defense',    name:'CV defense · drill me',   s:22*60+30, e:23*60+30, kind:'scored' },
+    { code:'wrap',          name:'Day wrap-up',             s:23*60+30, e:24*60,    kind:'ritual' },
   ];
   const SCHED_BY_CODE = Object.fromEntries(SCHED.map(b => [b.code, b]));
 
@@ -1267,9 +1275,10 @@
       const next = SEGMENTS.find(b => b.s >= (cur ? cur.e : m) && b.kind !== 'break');
 
       if (cur){
-        const brk = cur.kind === 'break', office = cur.kind === 'office';
-        set(brk ? 'state-break' : office ? 'state-office' : 'state-now',
-            brk ? 'Break' : office ? 'Now · day-job floor' : 'Now — focus here',
+        // commute reuses the muted office styling — it is real time, but low-fidelity time
+        const brk = cur.kind === 'break', office = cur.kind === 'office', soft = cur.kind === 'commute';
+        set(brk ? 'state-break' : (office || soft) ? 'state-office' : 'state-now',
+            brk ? 'Break' : soft ? 'Now · commute — spoken reps only' : office ? 'Now · day-job floor' : 'Now — focus here',
             cur.name, brk ? '' : cur.code,
             bump(cur),
             'ends in ' + dur(cur.e - m),

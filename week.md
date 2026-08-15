@@ -41,23 +41,55 @@ job is to prove the system moves at all.**
 
 > The single thing that, if you do nothing else today, makes the day count.
 
-- **Date:** Mon Aug 10 *(Phase A1, day 1)*
-- **Must-ship:** **The floor.** 1 CV drill + 1 machine-coding rep + 3 applications. Day 1's job is to
-  prove the board moves, not to be heroic.
-- **Also:** run `/daily-log wrap` tonight. **The log has been dark 12 days**, and both previous dark
-  stretches produced zero output across every track. The log is the control system, not a record of it.
+- **Date:** Wed Aug 12 *(Phase A1, day 3. Tue 08-11 banked **3/5** — **first floor day of the mission.**)*
+- **Full day: office happened AND `apply` produced applications.** First complete day-shape of the
+  mission. The protected 9pm–12am block is fully available.
+- **Must-ship:** **close D20 → `CV drills` moves 0/14 → 1/14.** The only counter still at literal
+  zero, and the console independently named it NEXT: *100% of interviews start here.*
+
+  | 9:00–9:15 | **`/machine-coding` — submit the design FIRST** | Phase 1 keeps the editor locked until the design is in. The design must show a **presentational `<Star>` child**, not one flat `App`. |
+  |---|---|---|
+  | 9:15–9:45 | **machine-coding — Star Rating**, timed | Target **20:00**. Build 2/10. `App` owns `rating`; `<Star filled onPick />` ×5. |
+  | 9:45–10:00 | **TICK THE P0 BOXES**, then `node learning/machine-coding/lab/ingest.mjs` | 08-11 exported `goals: {}` and needed a manual override. Twice = a profile failure mode, not a slip. |
+  | 10:30–11:15 | **cv-defense — D20 sitting 2** — say **"drill me"** | **The must-ship.** The 6 Dwellworks CV bullets. Sitting 1 hit M✓ F✓✓ B✓, conf 4. |
+  | 11:15–11:30 | **`/console log`** the applications | `state.json` `applications: []` — 08-11's 3 plus today's are all missing. |
+  | 11:30–12:00 | `/daily-log wrap` | |
+
+- **Why the coding slot has a design constraint tonight.** `queue.md` says Counter has been built
+  **twice as a single `App`**, so `lifting-state` — the primitive it exists to train — has **zero
+  reps**. A third flat build banks a number and teaches nothing. That is July's exact failure mode
+  (ticks without reps) wearing a new hat. **Star Rating with a real child is the first lifting-state
+  rep either build was supposed to produce.**
+- **Every drill opens with a scope question** until the 08-11 pattern stops: three scope questions,
+  three system answers. He does not separate himself from the platform. Non-negotiable at sitting 2.
 
 ## Parking lot (capture, do NOT act)
 
 Brain-dump here so it leaves your head. Triage at the weekly review. Nothing here is this week's problem.
 
-- **Bonus clawback clause — UNVERIFIED, worth ₹2.5L.** Check the offer letter / HR policy before
-  7 Sept. If leaving within N months of a payout triggers repayment, the September plan breaks.
-- **Monthly burn — never stated.** It's what makes "4 months of runway" real or fiction.
+- ~~Bonus clawback clause~~ — **CLOSED 08-10.** Unconditional. ₹3.14L on 1 Sept is safe.
+- ~~Monthly burn~~ — **CLOSED 08-10.** 4 months is real available time. Dry ~31 Dec holds.
+- ~~Placeholder office hours~~ — **CLOSED 08-10.** Real day filled into `daily/schedule.md` and the
+  dashboard `SCHED` together. Office 9:30-6:30, protected block 9pm-12am.
 - **CloudForestX Node bullet is 🟡 pending re-grade.** Read `project-knowledge-base/cloudforestx/`
   kb 04 §5, then re-grade. **Due before 15 Sept**, when wave 2 starts costing real companies.
-- **Office hours in `daily/schedule.md` and the dashboard `SCHED` are a placeholder (10:00-19:00).**
-  Correct both together on the first office day or the now-bar lies.
+  **This is now the only open item in the whole mission.**
+- **Two lab bugs, found 08-11.** Fix in a dedicated session, never mid-block. (1) `runPreview` mounts
+  `typeof App !== 'undefined' ? App : null` — a component named anything else renders **silently, with
+  no error**, which is how the warm-up looked broken. The lab's own law says it never hides a real
+  mistake; this hides one. (2) `end-btn` calls `enterPhase('buzzer')`, so pressing **End** while
+  already in BUZZER appears to do nothing — the real end is "Export session". Rename or disable it.
+- **The warm-up drill is aimed at the wrong material. Found 2026-08-12, from Tarun, unprompted.**
+  `primitives.md` line 105 weights the rotation toward `~` **or `—`**. But the warm-up is a *retrieval*
+  drill (*"come out of your fingers without thinking"*), and `—` means **never attempted** — there is
+  nothing encoded to retrieve. 25 of 27 primitives are `—`, so the rotation reliably serves a blank
+  wall with a 5-minute clock on it, and `primitives.md` offers one sentence, not a reference.
+  **It is the only part of the system with no path out of "I don't know this yet"** — the build ladder
+  has the 2-attempt-day → read a reference → rebuild from notes → bank `watched` trapdoor; the warm-up
+  never got it. **Fix: cold warm-ups fire only at `~`. A `—` primitive gets first exposure (read the
+  doc, close it, rebuild from notes) → becomes `~` → then it is drill-eligible.** Today that leaves
+  exactly two legal cold targets: `lifting-state`, `derived-vs-stored`. Dedicated session, never
+  mid-block. **Do not "fix" it by having the AI write the example — rule #1 stands.**
 - **AI crawlers `Disallow: /` on jsonbeam, gradejar, kesrienterprise** (Cloudflare managed robots).
   P1, not P0 — Googlebot/Bingbot are allowed everywhere, nothing is de-indexed. Carried from 07-19.
   `shipped.md` 2026-07-03 claims this was fixed; that claim is false in production.
