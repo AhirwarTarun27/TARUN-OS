@@ -67,6 +67,34 @@ _Not written yet. Runs at **D22**. Grounding: `project-knowledge-base/dentscribe
 
 _Not written yet. Runs at **D70**. No repo — mechanism only._
 
+## devflow — the agentic workflow, built 2026-08-11
+
+**⚠ The one folder here with no CV line.** devflow is **deliberately not on `master.tex`** (decided
+2026-08-15) — he raises it verbally and shares the link if the conversation goes there. So the anti-drift
+guard above ("every answer file quotes its CV line verbatim") **does not apply to this folder**; these
+files are grounded in the repo at `file:line` instead, which is a stricter check, not a looser one.
+
+**The only project here he owns outright**, and the only one an interviewer can open and read. Runs at
+**D32**. Grounding: the repo itself, cited `file:line`.
+
+| # | Answers | File |
+|:--:|---|---|
+| — | *(the 90-second pitch)* | **not here — `../../ai-fluency/survival-sheet.md` §0** |
+| 1 | "Walk me through your workflow" | [01-the-loop.md](devflow/01-the-loop.md) |
+| 2 | "How do you stop it doing something stupid?" | [02-the-guardrails.md](devflow/02-the-guardrails.md) |
+| 3 | "What does orchestrating an agentic workflow mean?" | [03-the-agents.md](devflow/03-the-agents.md) |
+| 4 | "You said it's tech-agnostic — how?" | [04-the-contract.md](devflow/04-the-contract.md) |
+| 5 | "What's wrong with it?" + the maintenance log | [05-the-flaws.md](devflow/05-the-flaws.md) |
+| 6 | "Where would you take it next?" | [06-the-roadmap.md](devflow/06-the-roadmap.md) |
+
+> **Two rules specific to this folder.** (1) **The live project it runs on is never named or described** —
+> "my current project" is the whole sentence. (2) **Practice and package are separate facts.** The way of
+> working is ~a year old across several repos; the published plugin is recent. Say both, never merge
+> them — the commit dates are one click away. See [devflow/README.md](devflow/README.md).
+
+**Why the pitch is not in this folder.** It lives in `ai-fluency/survival-sheet.md` §0, which is the page
+actually opened before an interview. One copy, per `roadmap.md:81`.
+
 ---
 
 ## Concepts — the "what even is this" layer

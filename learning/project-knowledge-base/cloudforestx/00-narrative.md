@@ -71,16 +71,20 @@ You were the **Senior Frontend Developer** on a **team of ~6**, from Jul 2023 to
   data into something a finance or DevOps team can act on: cost analytics screens, idle/rightsizing/unused
   views, the account-onboarding flows, the global account+month filtering, the API service layer, real-time
   notifications, and the data visualizations (charts, gauges, geo maps).
-- **Where you contributed beyond the frontend:** you also built some **Node.js / PostgreSQL API endpoints**
-  for serving cost data to the frontend. Say that precisely.
+- **What you owned on the backend:** the **AWS ingestion path and the REST APIs** — STS assume-role into
+  customer accounts, the SDK client factory, the scheduled sync jobs, the Sequelize models that normalize
+  it into PostgreSQL, and the Express endpoints that serve it out. Module 4 §5 is the full flow.
 
-> **How to frame the backend honestly.** The heavy backend (the AWS data-fetch workers, the analysis
-> algorithms, the cron engine) was a large system you **worked alongside and understand**, not one you
-> single-handedly built. The right posture: *"I owned the frontend end-to-end and contributed some backend
-> APIs; I understand the whole system because I had to integrate with all of it."* That lets you speak to
-> architecture (Modules 1–3) with authority **without** claiming to have written the analysis engine.
-> A senior interviewer respects "I understand it and integrated with it" far more than an overclaim they
-> can puncture with two follow-up questions.
+> **Where the backend claim stops — and it stops in exactly one place.** The **recommendation algorithms**
+> (what threshold makes a resource idle, which instance type to rightsize to, which reservation to buy)
+> sat with the analysis team. That is the only line you hand back, and handing it back is what makes the
+> rest credible. The posture: *"I owned the frontend end to end, and on the backend I built the ingestion
+> pipeline and the APIs. The recommendation logic on top sat with the analysis team — I know how it
+> consumed what I stored, but I didn't design the algorithms."* That lets you speak to architecture
+> (Modules 1-3) with authority, and it survives two follow-ups where a vaguer claim would not.
+>
+> **Authorship re-graded 2026-08-16** on Tarun's declaration. The earlier "contributed some endpoints"
+> framing is gone: it undersold what the CV bullet claims, which meant the script and the CV disagreed.
 
 ## 6. The pitch scripts (memorize these)
 
@@ -94,7 +98,8 @@ pulls in all the usage and billing data, and surfaces exactly where the waste is
 instances, rightsizing opportunities, unused resources, reservation recommendations — and it
 can even auto-schedule non-production machines to shut down at night. I was the senior frontend
 developer. I owned the React and TypeScript dashboard that turns all of that data into
-something a finance or DevOps team can actually act on.
+something a finance or DevOps team can actually act on, and I also built the Node ingestion
+pipeline that pulls the AWS data in behind it.
 ```
 
 ### 2-minute version
@@ -119,9 +124,11 @@ workers that fetch and analyze the cloud data, a scheduler, and a monitoring ser
 on AWS. I was the senior frontend developer on a team of about six. I owned the React and
 TypeScript front end end-to-end: the cost dashboards, the data visualizations, the state
 management for the global account and time-range filters, the API service layer, and real-time
-notifications. I also contributed some of the Node and PostgreSQL APIs that serve cost data to
-the front end. Because I had to integrate with the whole platform, I got to understand the full
-architecture, not just my slice — happy to go as deep as you'd like on any part of it.
+notifications. On the backend I built the ingestion path and the APIs: assuming into customer
+accounts with STS, pulling inventory and CloudWatch metrics with the AWS SDK, normalizing that
+into PostgreSQL on a schedule, and serving it out over Express. The recommendation logic on top
+sat with the analysis team. So I know the platform from the AWS call all the way to the chart,
+and I'm happy to go as deep as you'd like on any part of it.
 ```
 
 That last line is a deliberate hook: it invites them into the areas you've prepared (architecture,
@@ -156,7 +163,9 @@ frontend, AWS model) instead of letting them fish for a weak spot.
 - **Multi-tenant** (tenant = a customer company).
 - Core value trio: **find idle/oversized resources → recommend rightsizing & reservations → auto-schedule
   power-off**, wrapped in **cost visualization + alerts**.
-- My role: **Senior Frontend Developer**, ~6-person team, React/TypeScript SPA, some Node/Postgres APIs.
+- My role: **Senior Frontend Developer**, ~6-person team. **React/TypeScript SPA end to end, plus the
+  Node AWS-ingestion pipeline and the PostgreSQL-backed REST APIs.** The one thing I hand back: the
+  **recommendation algorithms**.
 - Runs on **AWS** (details in Module 1 — don't over-commit here beyond "microservices on AWS").
 
 ---

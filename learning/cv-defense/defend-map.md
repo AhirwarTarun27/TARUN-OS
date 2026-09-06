@@ -87,7 +87,7 @@ _Shadow-resource note: he works this account under Navnit Singh, so his commits 
 | Bullet | Color | Grounding | Drill |
 |---|:--:|---|:--:|
 | React + TypeScript SPA behind **40 cost dashboards** (waste detection, rightsizing, reservations, power scheduling) | surfaces 🟢 / **algorithms 🔴** | kb 04 §1 — 470 TS files, 0 JS; 40 pages | D21 |
-| **Node ingestion + REST APIs**: EC2/EBS/S3/CloudWatch via **STS cross-account roles** → PostgreSQL | 🟡 **REVERTED 2026-08-09, re-grade pending** / **recommendation logic 🔴** | kb 04 §5 — `auth.ts` STS factory, 18 cron jobs, Sequelize models | D21 *(D33 reuses it as the Node/PG anchor)* |
+| **Node ingestion + REST APIs**: EC2/EBS/S3/CloudWatch via **STS cross-account roles** → PostgreSQL | 🟢 **re-graded 2026-08-16** / **recommendation logic 🔴** | kb 04 §5 — `auth.ts` STS factory, 18 cron jobs, Sequelize models | D21 *(D33 reuses it as the Node/PG anchor)* |
 | **Global account + month filtering** in Redux Toolkit, every dashboard in sync | 🟢 | kb 04 §2 — `accountSlice`/`monthSlice`, `ALL_VALUE` sentinel | D21 |
 | Data-viz layer (charts, gauges, geo maps) on **ECharts + Recharts** behind a reusable hook | 🟢 | kb 04 §4 — `useEcharts` | D21 |
 | **Typed API layer + fetch hook with request-id guards**, killing stale-response races across 36 services | 🟢 | kb 04 §3 — `useFetchData` `requestIdRef` | D21 |
@@ -103,26 +103,29 @@ a frontend test suite. The honest answer — and it's a good one: "those codebas
 culture; I use **Vitest** on my own projects" — that's real, **22 test files** across GradeJar (2),
 JsonBeam (6), AccentWallPlanner (10), KesariEnterprise (4)._
 
-> ### ⚠ The Node bullet is 🟡 until re-graded — read this before any interview
+> ### ✅ The Node bullet — re-graded 🟢 on 2026-08-16. Read this once, then stop re-litigating it.
 >
-> **Reverted 2026-08-09.** It was graded **🟡 by the system and raised to 🟢 on Tarun's own
-> instruction (2026-07-24)**. The evidence column proves the code exists and does those things. It
-> does **not** prove he wrote it. Asked directly on 2026-08-09, 15 months after CloudForestX ended,
-> he said he genuinely cannot tell. **The safe grade is the one he can defend cold.**
+> **History, so nobody reopens it by accident.** Graded 🟡 by the system, raised to 🟢 on Tarun's
+> instruction (2026-07-24), **reverted to 🟡 on 2026-08-09** because when asked cold, 15 months after
+> the project ended, he said he could not tell whether he wrote it. The hold was correct at the time:
+> the evidence column proves the code exists and does those things, it does not prove authorship.
 >
-> **To close it:** read `project-knowledge-base/cloudforestx/` kb 04 §5 + `cv-truth-table.md` with
-> the evidence in front of him, then re-grade — 🟢 if he recognises the work as his, or reword the
-> bullet from *"Built"* if not. **Due before 15 Sept**, when wave 2 starts costing real companies.
+> **Closed 2026-08-16 by the documented procedure** — kb `04` §5 taught with the evidence in front of
+> him, authorship declared, both stacks. `cv-truth-table.md` row 2 already read 🟢, so all three files
+> now agree. The 15 Sept due date is spent.
 >
-> **Until then, in the room:** never volunteer *"I built"*. Describe the architecture, let the
-> follow-up define scope, and say what he actually remembers. The boundary paragraph in
-> `cv-truth-table.md` lines 54-59 is already written and is a strong senior answer — **it does not
-> require him to be a backend engineer**, only to say it and survive two follow-ups. At 16-26 LPA a
-> clean boundary reads as *more* senior than an inflated claim.
+> **What actually changes in the room:** he *does* volunteer *"I built the ingestion pipeline and the
+> APIs."* The hedging instruction from 08-09 is dead — do not reinstate it.
 >
-> Forgetting is not the same as not having done it. This is a grading question, not an integrity
-> failure — and this same truth table has already deleted four DentScribe claims and three
-> CloudForestX ones. Striking or downgrading a line here is routine maintenance.
+> **What does NOT change, and it is the whole reason the claim survives:** the bullet says *ingestion
+> and REST APIs*. It has never claimed the **recommendation algorithms** — thresholds, sizing rules,
+> reservation picks. That single handback (`cv-truth-table.md` lines 54-59, kb `04` §5 last block) is
+> what makes the rest land as senior instead of vague. **A 🟢 grade raises the follow-up bar, it does
+> not remove the boundary.** Claiming authorship means surviving *"walk me through assume-role"* cold.
+>
+> The standing rule that produced the 08-09 hold stays live for every other line: a claim he cannot
+> defend cold gets downgraded, and this same truth table has already deleted four DentScribe claims and
+> three CloudForestX ones. Grading a line up or down here is routine maintenance, not an integrity event.
 
 _The two 🔴-adjacent UI bullets each need their boundary sentence ready: **"I built the surface that
 shows the recommendation; I didn't write the analysis that produces it."** That sentence is the whole
@@ -192,17 +195,62 @@ years of judgment apart. **Don't go deep here; move the conversation to CloudFor
 |---|:--:|---|:--:|
 | GradeJar — local-first gradebook, zero backend | 🟢 | `MyProjects/GradeJar` (astro.config, localStorage, SSG) | D40 |
 | JsonBeam — fast, ad-free JSON formatter | 🟢 | `MyProjects/Jsonbeam` (Astro, Cloudflare Workers) | D41 |
-| **Section lead-in: "research, build, deploy, and operate end to end — domain, edge infrastructure, SEO, and analytics"** | 🟢 | Cloudflare Workers deploys, owned domains, GSC onboarding (`scripts/gsc-onboard.mjs`), `scripts/report.mjs` | D40/D41 |
-| **Section lead-in: "an agentic AI development workflow (Claude Code, Model Context Protocol) that I built and orchestrate myself"** | 🟢 | TARUN-OS itself — skills, subagents, `references/mcp/` | D32 |
+> ### ⚠ Two rows deleted here on 2026-08-15 — read this before re-adding them
+>
+> This table carried two **"Section lead-in"** rows from 2026-07-24, both graded 🟢:
+> *"research, build, deploy, and operate end to end — domain, edge infrastructure, SEO, and analytics"*
+> and *"an agentic AI development workflow (Claude Code, Model Context Protocol) that I built and
+> orchestrate myself."*
+>
+> **Neither sentence has ever existed in `master.tex`.** The Projects section is, and has always been,
+> GradeJar and JsonBeam with no lead-in. The edit was planned on 2026-07-24 and never landed, and for
+> three weeks this table believed the AI cluster was anchored in body text while it was in fact
+> Skills-list-only — the exact weakness the note claimed to have fixed.
+>
+> **The rule that would have caught it, now standing: a row here is only valid if its quoted sentence
+> greps clean against `master.tex`.** Grep before trusting any row on this page.
+>
+> Rows deleted rather than fulfilled, because on 2026-08-15 Tarun decided the AI/agentic material stays
+> **spoken, not printed** (see below and `fact-bank.md`).
 
-_The lead-in added 2026-07-24 does two jobs. It states the **end-to-end ownership** no employer
-bullet on this CV can show, because at ThinkSys he owns a slice of someone else's platform. And it
-**anchors the AI & GenAI cluster in body text**, which until now appeared only in the Skills list —
-where the fact-bank's own ATS rule says keywords carry least weight. **Expect it to be probed:
-"what does orchestrating an agentic workflow actually mean?"** Answer from TARUN-OS concretely
-(skills, subagents, MCP servers, the study-and-test loop in `project-knowledge-base/`), not
-abstractly. **Do not let this drift into implying AI agent work at ThinkSys** — it is his own
-system, and DentScribe's LLM work stays 🟡 integration._
+### devflow — spoken only, never on the CV
+
+`github.com/AhirwarTarun27/ai-dev-workflow`. **Deliberately not in `master.tex`** (decided 2026-08-15).
+There is therefore **no CV line to defend** — but it is the most likely thing he volunteers in an
+interview, and the repo is public, so it gets the same rigour.
+
+| Claim (spoken) | Color | Grounding | Drill |
+|---|:--:|---|:--:|
+| devflow — a portable agentic dev workflow he designed | 🟢 | the repo, cited `file:line` → **`answers/devflow/`** | D32 |
+| ↳ the **single approval gate at the plan**, not the code | 🟢 | `README.md:22-34`, `skills/plan/SKILL.md:10-11` | D32 |
+| ↳ guardrails as **hooks, not instructions** — exit 2 blocks | 🟢 | `hooks/hooks.json`, `scripts/verify-gate.mjs` | D32 |
+| ↳ **model-tiered subagents**, fan-out-to-read / single-thread-to-write | 🟢 | `agents/*.md` frontmatter, `README.md:107-111` | D32 |
+| ↳ `devloop.json` contract + `testMode: tdd\|evidence` | 🟢 | `templates/devloop.json.tmpl` | D32 |
+| ↳ **the practice** — ~1 yr working this way, several repos, per-project setups before the plugin | 🟢 | his own history; `ATTRIBUTION.md:37-43` (the .NET/React lineage). **Concrete before-stories still unwritten** — `answers/devflow/04-the-contract.md` §lineage | D32 |
+| ↳ **the package** — extracted 08-11, 5 commits in 38 min | 🟡 | `.agent/` on the live project: dossier ✓, tuned contract ✓, browser evidence ✓; **`specs/ plans/ learnings/` empty** | D32 |
+
+> **⛔ Do not let `/cv-tailor` promote this onto the CV**, however well it matches an AI-heavy JD. The
+> reasoning is in `fact-bank.md`: the interesting fact is that the *practice* predates the *package* by
+> about a year, and that distinction fits in a conversation but not in a CV bullet. Printed, a reader
+> supplies the commit dates themselves and draws the wrong conclusion unchallenged. He is trading ATS
+> weight for narrative control, knowingly.
+>
+> **The two facts that must never merge.** Practice: ~a year, several repos — say it, it's the real
+> credential. Package: days old, 5 commits inside 38 minutes on 2026-08-11 — *"that's the day I wrote
+> it down, not the day I worked it out."* **Claiming the repo itself is old is an instant fail**; it is
+> one click to disprove and it discounts everything true he said before it.
+>
+> Authorship: *"I designed it and directed it; the prose was AI-written; I own it"*, backed by a
+> 16-source attribution file. **Never "AI generated it" and never "I hand-wrote it."**
+>
+> **The employer project it runs on is never named or described.** Not its domain, users, or purpose.
+> *"My current project"* is the entire permitted sentence.
+
+_**The AI & GenAI cluster is Skills-list-only, and that is now a deliberate choice rather than an
+oversight.** Expect the probe anyway: **"what does orchestrating an agentic workflow actually mean?"**
+Answer concretely — tool allow-lists, model tiering, context isolation — from
+`answers/devflow/03-the-agents.md`, never abstractly. **Do not let this drift into implying AI agent work
+at ThinkSys**; it is his own system, and DentScribe's LLM work stays 🟡 integration._
 
 ## Skills clusters (defend what a keyword-scan will probe)
 

@@ -25,7 +25,7 @@ Status: ☐ not started · ⏳ in progress · ✅ covered · ⚠ thin — logged
 | 9 | **D40/D41** Personal projects + AI lead-in | ☐ | — | — | — | — | — |
 | 10 | **D30/D31** Skills — Next.js · Vue | ☐ | — | — | — | — | — |
 | 11 | **D33/D35** Skills — Node/PG/ORM · Cloud | ☐ | — | — | — | — | — |
-| 12 | **D32/D34** Skills — AI/GenAI · Edge & Quality | ☐ | — | — | — | — | — |
+| 12 | **D32/D34** Skills — AI/GenAI · Edge & Quality | ☐ | — | — | — | — | **D32 is the exam for the `ai-fluency` track (16-22 Aug). Sit it after Day 7.** Two new auto-fails in that drill's grading key |
 | 13 | **D50** Behavioral / STAR | ☐ | — | — | — | — | — |
 | 14 | **D60** Exit gate — whole-CV random mock | ☐ | — | — | — | — | — |
 

@@ -3,6 +3,37 @@
 **Phase 1, sitting 12 (with D34).** Status in `../skills-defense.md`: mostly **anchored**, OpenAI API is
 **quick-learn**.
 
+> ### 📌 D32 is now the exam for the AI-fluency track (set 2026-08-15)
+>
+> A 7-sitting taught track runs 16–22 Aug in `../../ai-fluency/` — the terminology, plus `devflow` (the
+> agentic workflow he built on 2026-08-11 and runs on his current project). **This drill is the
+> closed-book test he sits after Day 7.** No second scoreboard was created.
+>
+> **The teaching is NOT duplicated here.** Depth lives in exactly one place each:
+> | Need | File |
+> |---|---|
+> | Every AI term, plain, + the sentence he says | `../../ai-fluency/survival-sheet.md` |
+> | The concept taught properly | `../../ai-fluency/lessons/` |
+> | What he says about **his own workflow** | `../answers/devflow/` |
+>
+> **The third half.** This drill was written around two halves — employer (DentScribe 🟡) and personal
+> (TARUN-OS 🟢). There is now a third: **devflow, a public repo an interviewer can open and read.** The
+> split in §1 still holds; devflow sits on the personal side and is the strongest thing on it.
+>
+> **Two additions to the grading key**, both non-negotiable:
+> - **Q5 now also fails if he cannot name a mechanism from devflow** — the single approval gate at the
+>   plan, hooks vs instructions, or model-tiered subagents. Abstraction was already a deduction; with a
+>   repo of his own it is a fail.
+> - **A new automatic fail: collapsing practice into package.** The way of working is ~a year old; the
+>   published plugin is days old. He must say both and keep them distinct — *"I've worked this way for
+>   about a year; the plugin is the extraction"* — plus the authorship line, *"I designed it and directed
+>   it, the prose was AI-written, I own it."* Claiming the **repo** is old is an instant fail (checkable
+>   in one click). So is describing it as a fresh experiment, which undersells a year of real practice.
+>   See `../answers/devflow/05-the-flaws.md`.
+>
+> **devflow is NOT on the CV** (decided 2026-08-15) — it is spoken only. That does not soften this drill:
+> the repo is public and he intends to raise it.
+
 **The honest position:** this line is unusual — it's the one place where your *side* work is stronger
 than your employer work. The employer half (DentScribe) is 🟡 integration. The personal half (TARUN-OS:
 agents, MCP, context engineering, Claude Code) is 🟢 and genuinely differentiating. **The failure mode
@@ -79,7 +110,8 @@ than enthusiasm for them. It's true, it's specific, and almost nobody says it.
 
 ### 6. If they ask about RAG, fine-tuning, or evals
 
-**Don't bluff.** Honest positions:
+**Don't bluff.** Honest positions — the fuller versions, with the trap follow-ups, are in
+`../../ai-fluency/survival-sheet.md` §8, §11 and §12:
 - **RAG** — you understand the shape (retrieve relevant context, put it in the prompt) and you've done
   the non-vector version: the DentScribe pipeline injects chart data. **You haven't run a vector store
   in production.**

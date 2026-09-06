@@ -72,16 +72,30 @@ which is the best available cure for November panic.
 
 | Phase | Window | Office | Backend slot | Tracks |
 |---|---|---|---|---|
-| **A1** | Mon 10 Aug → Mon 31 Aug | full days, bench | **.NET** (employer's ask) | cv-defense · mc/iqa alternating · apply |
-| **A2** | Tue 1 Sept → Mon 21 Sept | full days, bench | **Node** (8 concepts + Build B) | + backend |
-| **B** | Tue 22 Sept → Sun 15 Nov | released | Node | all daily + DSA · wave-2 targets |
+| **A1** | Mon 10 Aug → Mon 31 Aug | full days, bench | **Node + PostgreSQL** (1 hr/day) | cv-defense · mc/iqa alternating · apply · backend |
+| **A2** | Tue 1 Sept → Mon 21 Sept | full days, bench | Node + PostgreSQL | + backend |
+| **B** | Tue 22 Sept → Sun 15 Nov | released | Node + PostgreSQL, still 1 hr | all daily + DSA · wave-2 targets |
 
-**August's .NET is not wasted, if you frame it right.** `learning/backend/drill-board.md` is built
-around **concept pairs** with a Node column and a .NET column. Dependency injection, middleware
-pipeline, EF Core, async/await and REST controllers map almost 1:1 onto Express middleware,
-Sequelize, async/await and Express routes. Run August's .NET as the **`X` (explain)** half of each
-pair, and September's Node becomes the **`W` (write)** half of concepts you already understand,
-not new material. That is the only thing making a 1 Sept → 15 Nov Node window realistic.
+**.NET was cut entirely on 2026-08-15, and the Node window got 17 days longer.** The .NET half bought
+exactly one thing: internal shortlisting for a .NET project at ThinkSys. He resigns 7 Sept, so it buys
+nothing. The backend slot became Node + PostgreSQL immediately instead of on 1 Sept.
+
+> **The argument that died with it, recorded so it does not get quietly restored.** This section used
+> to argue that August's .NET was not wasted, because `drill-board.md` was built around **concept
+> pairs** and .NET could run as the `X` (explain) half of pairs whose `W` (write) half would be Node in
+> September. That was a good argument **for salvaging a block already committed to the employer.** It
+> was never an argument for spending new hours on .NET, and once the block was reclaimed the premise
+> went with it. Full reasoning: `archives/learning/backend-dotnet/NOTE.md`.
+
+**The new premise, which is stronger.** `cv-defense/skills-defense.md` grades Node, Express, REST,
+PostgreSQL and Sequelize **🟢 anchored** and TypeScript 🟢 (CloudForestX is 470 `.ts` / 0 `.js`). The CV
+already sells this stack. So the backend track is not "learn a new thing in 14 weeks" — it is **close
+the gap between what the résumé claims and what the hands can do, before someone tests it.** That is a
+far more achievable target than the one this plan was originally built around, and it is why a 1-hour
+daily block is now enough. Syllabus: `learning/backend/CURRICULUM.md`.
+
+**The forfeit, stated so it is a decision and not a drift:** if anyone at work asks about .NET progress
+before 7 Sept, the answer is "nothing". Accepted knowingly on 2026-08-15.
 
 ---
 
@@ -92,7 +106,7 @@ not new material. That is the only thing making a 1 Sept → 15 Nov Node window 
 | **cv-defense** | 14 drills closed | 1 started (D20, conf 3/5), 13 untouched |
 | **machine-coding** | 10 R0 builds (Phase 1 exit) | **0 ever.** Counter stuck `Building` since 07-17 |
 | **interview-qa** | all mapped lessons drilled | 5 lessons built, 3 records banked, 0004 in progress |
-| **backend** | 8 concepts at W≥4 / X≥4 | 1 row at W2/X2, T2 overdue since 07-31 |
+| **backend** | 8 concepts at W≥4 / X≥4 | 1 row at W2/X2, T2 overdue since 07-31. **Track rebuilt to Node + PostgreSQL 08-15**; 32 one-hour sessions, S1 on Mon 17 Aug. Interview-safe checkpoint at S20 (~11 Sept). |
 | **apply** | ongoing, 1 hr | dark since 07-29 |
 
 **Front-load these drills:** D21 + D33 (they *are* the Node credential recovery) and D40 + D41
@@ -106,7 +120,8 @@ not new material. That is the only thing making a 1 Sept → 15 Nov Node window 
 - **AI fluency as a study track** — you've done agentic development daily for a year and built this
   OS. It is a story you tell, not a subject you study.
 - **Astro as a track** — one afternoon inside D40/D41.
-- **.NET as *prep*** — office hours only, and it stops 31 August.
+- **.NET, entirely** — cut 2026-08-15, not merely time-boxed. It only ever bought internal
+  shortlisting, and you resign 7 Sept. Archived at `archives/learning/backend-dotnet/`.
 - **DSA** — deferred to Phase B, then capped at ~20 problems across 6 patterns for screens. **Do not
   restore the "DSA is the gate" line from `week.md`.** Your own 07-29 triage already demoted it.
 

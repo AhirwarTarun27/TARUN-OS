@@ -1,72 +1,144 @@
-# Mission: Backend — Node.js and .NET, taught together
+# Mission: Backend — Node.js and PostgreSQL
 
-_Revised 2026-07-29. Supersedes the .NET-only mission of 2026-07-18, which ran this track on employer
-hours as a pure translation course._
+_Revised 2026-08-15. Supersedes the Node-and-.NET two-stack mission of 2026-07-29, which itself
+superseded the .NET-only mission of 2026-07-18._
 
-## Why
+## Why .NET is gone
 
-Two real pressures, one curriculum.
+The .NET half existed for exactly one reason: management wanted him .NET-ready so they could shortlist
+him internally for a new .NET project.
 
-**Management** told Tarun to get .NET-ready so they can shortlist him internally for a new .NET project.
-He has no C# background. The code will largely be AI-assisted; what he actually has to do is *explain
-it, defend it in review, and not get fired for approving something broken*.
+**He resigns 7 September.** Internal shortlisting is worth nothing to someone leaving in three weeks,
+and every hour it costs is an hour taken from a 15 November offer floor. So it is cut, and the whole
+block goes to the stack he is actually interviewed on.
 
-**The job switch** (active, frontend-heavy full-stack, declared 2026-07-07) is interviewed on
-**Node.js**. That is where he must write code live and answer follow-ups without hedging.
+**Cutting it gains 17 days.** `mission/plan.md` had Node starting 1 September as the A2 phase. It
+starts **Monday 17 August** instead.
 
-These are different skills and this course treats them differently.
+**The forfeit, stated plainly so it is a decision and not a drift:** if anyone at work asks about .NET
+progress before 7 Sept, the answer is "nothing". That is the trade and it is the right one.
 
-| | Node.js | C# / .NET |
+---
+
+## The real job of this course
+
+**"Assume I don't have backend skills" is true of his hands and false of his CV.**
+
+`references/cv/master.tex` already sells all of this, and `learning/cv-defense/skills-defense.md`
+grades it:
+
+| Token | Flag | Anchor |
+|---|:--:|---|
+| Node.js | 🟢 anchored | CloudForestX ingestion + Express APIs; DentScribe CRUD tier |
+| Express | 🟢 anchored | CloudForestX |
+| REST APIs | 🟢 anchored | all four projects |
+| PostgreSQL | 🟢 anchored | CloudForestX, DentScribe |
+| Sequelize | 🟢 anchored | CloudForestX models |
+| TypeORM | 🟢 **quick-learn** | DentScribe `staff-contacts`, one module deep |
+| TypeScript | 🟢 anchored | CloudForestX 470 `.ts` / 0 `.js` · DentScribe 317 / 0 |
+
+The summary line on the CV says *"building data-heavy enterprise SaaS end to end, from PostgreSQL and
+Node APIs to fast, typed React interfaces."*
+
+So this is not a course that teaches backend from zero into a vacuum. It is a course that **closes the
+gap between what the CV claims and what the hands can do, before someone tests it.**
+
+That inverts the syllabus. It is reverse-engineered from the CV, not from a generic Node roadmap.
+Every session is chosen because a specific claim on that résumé invites a specific follow-up.
+
+**The rule that governs this, same as `learning/cv-defense/`: never claim authorship you can't defend.**
+The course does not make claims true. It makes him able to answer for them.
+
+---
+
+## The two performances, now inside one stack
+
+The old mission split the performances across two languages. They still exist, but they are now two
+halves of the same skill.
+
+| | `W` — write | `X` — explain |
 |---|---|---|
-| Goal | Clear a backend interview | Get shortlisted internally, then hold the job |
-| Performance | **Write and speak** | **Read and explain** |
-| Starting point | Knows JS, Express, the ecosystem well | Zero C#, unfamiliar conventions |
-| Hands-on | **Composes** from a blank file | **Transcribes** a shown pattern, then **reviews** it |
-| Failure looks like | Freezing on a blank file in an interview | Approving a PR he cannot audit |
+| What it is | Produce it from a blank file, unaided | Say it cold in 90 seconds, including the *why* |
+| Tested by | He types it. No reference, no AI help. | Spoken, no notes, two follow-ups deep. |
+| Where it happens | The office hour and the next-day gate | **The commute.** No screen. |
+| Failure looks like | Freezing on a blank file in an interview | An answer that dies on the second follow-up |
 
-**This asymmetry is the architecture.** Typing equal amounts in both languages overspends the block on
-the half that does not need composition.
+**Both are required. `< 4` is not yet his.** An interview answer at 3/5 is an answer that collapses on
+the follow-up.
 
-## The honest framing about AI writing the code
-
-Tarun's plan is to have AI write the high-level C#. Fine. But the firing risk was never that he cannot
-*write* it. It is that he **approves** what he cannot *read*. Three examples that ship silently:
-
-- `.Result` on a Web API 2 controller — **deadlocks** on .NET Framework, and modern .NET advice will
-  never warn him because the bug disappeared in .NET Core.
-- A `static` field on a controller — a race condition under a thread pool, and a complete non-issue in
-  Node, which is exactly why a Node dev writes it without flinching.
-- A lazy-loaded navigation property inside a loop — an N+1 nobody notices until the table grows.
-
-None are visible without reading fluency. So the .NET skill that protects him is **code review, not
-composition**, and it costs less block time than writing. **Every .NET session ends with a planted-bug
-snippet he has to find and explain.**
+---
 
 ## Success looks like
 
-**Node (write and speak):**
-- Build a small HTTP API from a blank file, live, while talking.
-- Answer "what does `await` actually do" down to the microtask queue, not just "it waits".
-- Say what blocks the event loop, what does not, and why that is an architectural constraint.
-- Write and reason about a SQL query, and say why it is slow.
+**By S13 (~2 Sept) — survives a screen:**
+- Explain what the event loop actually does, and what blocks it, without saying "single-threaded" as
+  the whole answer.
+- Write a real `JOIN` and a real `GROUP BY` against a live database, from memory.
+- Say what a parameterised query prevents, and why string concatenation is the bug.
 
-**.NET (read and explain):**
-- Open any file in a Framework codebase and know what every block is doing.
-- Trace a request end to end: route → controller → service → repository → EF → SQL.
-- Name the four places .NET behaves differently from Node, and the *machine-level reason* for each:
-  threading model, `Task` vs `Promise`, service lifetimes, deferred LINQ execution.
-- Review AI-written C# and catch the three bugs above cold.
-- Hold a 10-minute conversation with management about the pipeline without bluffing.
+**By S20 (~11 Sept) — interview-safe on the backend half:**
+- Build a small REST API from a blank file, live, while talking.
+- Model a schema with the right keys and constraints, and defend the choices.
+- Stop one tenant reading another tenant's rows, **with the ownership condition inside the `WHERE`
+  clause**, and say why that beats checking after the fetch.
+- Explain a transaction, an index, and an N+1, each in 90 seconds.
 
-## Sequence
+**By S26 (~21 Sept) — the CV is defensible:**
+- Answer the whole D33 ladder from `learning/cv-defense/drills/33-node-data.md` with hands-on evidence
+  rather than recall.
+- Sequelize versus TypeORM, and why `synchronize: true` is a footgun, from having run a migration.
 
-**C# the language comes first, and fast** — two sessions, taught purely by correlation to JavaScript,
-because reading .NET is impossible without it. Then straight into .NET, which is the part that pays.
+**By S32 (~30 Sept) — takes a backend-weighted round:**
+- Design an API out loud: resources, endpoints, status codes, schema, indexes.
+- Read code and find the missing `await`, the pool leak, the un-rolled-back transaction, the IDOR.
+- Read an `EXPLAIN ANALYZE` and say why the query is slow.
 
-Days 1-6 produce the internal-shortlisting outcome. Days 7-10 make the interview solid. Node is written
-**every single day** throughout, never deferred.
+---
 
-Full sequence in `reference/course-map.html`.
+## The build
+
+**One project, grown across all 32 sessions.** A multi-tenant cloud-cost API:
+
+```
+scheduled ingestion  →  PostgreSQL  →  Express REST  →  ownership-scoped queries
+```
+
+Deliberately the same **shape** as CloudForestX. That is the whole point: the session where he learns
+multi-tenant row scoping is the same hour that makes D33's *"how do you stop one tenant reading
+another tenant's rows"* a memory instead of a recall.
+
+It grows in one direction and never restarts: a bare `node:http` server (S1) → a real schema (S8) →
+real queries (S9-S13) → a layered API with auth (S14-S20) → ingestion, tests, logging (S21-S24) →
+Dockerised (S27).
+
+**Employer boundary holds inside this.** The domain is generic cloud-cost modelling. No ThinkSys code,
+repo names, client names or work specifics enter the lab or any lesson, ever.
+
+---
+
+## The block
+
+**One hour, office time.** That is the constraint he set, and the design falls out of it.
+
+`daily/schedule.md` states two things this collides with: office hours are interruptible and can vanish
+without notice, and *"reading for a rep you never perform is not a rep."* Writing code cold is the
+interview skill and it is exactly what dies on interruption.
+
+Resolved using only hours that already exist:
+
+| Surface | Gets | Why it survives there |
+|---|---|---|
+| **Office, 1 hr** | read the concept, type today's build | an interruption costs minutes, not the rep |
+| **Commute** (already carved out, unscored) | the 90-second spoken `X` rep on yesterday | no screen, which is the commute's stated design |
+| **Next session, first 10 min** | cold-write yesterday's concept, unaided | short enough to survive a bad day |
+
+**The protected 9pm-12am block and THE FLOOR are untouched.** No part of the floor may depend on office
+hours. That law holds unchanged.
+
+**In Phase B the session stays one hour.** Freed hours go to machine-coding, which `mission/plan.md`
+names as the gate, and to DSA.
+
+---
 
 ## Where the code lives
 
@@ -76,33 +148,40 @@ Full sequence in `reference/course-map.html`.
 C:\Users\ahirwar.tarun\Documents\Learning\MyProjects\backend-lab\
 ```
 
-Its own repo, outside the AIOS. `node_modules` plus `bin/obj/packages` would bury this workspace and
-slow every search in it. The lab is registered as an additional working directory, so a session running
-from TARUN-OS can **read** the code without owning it.
+Its own repo, outside the AIOS. `node_modules` would bury this workspace and slow every search in it.
+The lab is a registered additional working directory, so a session running from TARUN-OS can **read**
+the code without owning it.
 
-**The lab never holds learning state.** Ratings, records and the drill board live here, in
+**The lab never holds learning state.** Ratings, records and the drill board live here in
 `learning/backend/`. If they leak into the lab, the spaced-rep board splits in two and neither half is
 true.
 
+---
+
 ## Constraints
 
-- **C# 7.3 is the hard ceiling.** .NET Framework 4.8 cannot compile records, top-level statements,
-  `init` setters, nullable reference types, file-scoped namespaces, or switch expressions. Most C#
-  written after 2020 targets .NET 5+ and **will not build for him**. Every lesson stays in dialect, and
-  says so when the modern idiom would otherwise be the obvious answer — he *will* meet it on Stack
-  Overflow and needs to recognise it as the wrong .NET.
-- **Visual Studio 2022, not VS Code, for C#.** `dotnet new` does not scaffold Framework web projects;
-  the old `.csproj` format and designer files need real VS. Node is written in VS Code.
-- **Verified environment (2026-07-18):** VS 2022 Community + VS 2019, .NET Framework 4.8 targeting
-  pack, SQL Server LocalDB, SSMS 22 all present. Node v24.13.0 (verified 2026-07-29). No setup gate.
-- **Employer boundary holds.** No thinksys code, repo names, client names or work specifics enter this
-  workspace. Lessons teach patterns on the lab; he maps them to the real codebase in his own head.
-- Sessions are 2 hours, 3:00-5:00pm, on the sprint schedule declared 2026-07-29.
+- **TypeScript throughout.** Not a compromise, the correct call: TS is 🟢 anchored at 470 files on
+  CloudForestX and 317 on DentScribe. Plain JS would have been the artificial choice. But TS is
+  **annotations in service of the backend concept**, never a subject of its own. No generic gymnastics,
+  no conditional types, no decorators before S26.
+- **Raw SQL is the core.** ORMs arrive at S25-S26 and not before. An interviewer can test SQL; ORM
+  syntax is a lookup. A developer who reaches for an ORM before understanding the query it writes
+  cannot answer "why is this slow", and that question ends rounds.
+- **PostgreSQL runs in Docker.** Docker Desktop is present; `psql` is not installed. One compose file
+  is a five-minute setup, resets by deleting a volume, and doubles as the S27 deploy artifact.
+- **Verified environment (2026-08-15):** Node v20.20.0 · Docker Desktop present · `psql` **not
+  installed**, which is the day-1 setup gate.
+- **Employer boundary holds.** No ThinkSys code, repo names, client names or work specifics enter this
+  workspace. Lessons teach patterns on the lab.
+- **Session 1 is Monday 17 August.** Today is Saturday.
 
 ## Out of scope
 
-- .NET Core / .NET 8-10 specifics, beyond one-line "this is different in modern .NET" markers so he is
-  not confused when googling. If work moves to Core, this mission gets revised.
-- Desktop .NET (WinForms, WPF), Blazor, MAUI.
-- Deep C# language theory — reflection, expression trees, `Span<T>`, unsafe code, custom attributes.
-- Becoming a .NET specialist. The Node half is the career; the .NET half is the job.
+Cut to protect a one-hour block, and not to be re-added without a real interview punishing him for it:
+
+- Microservices, Kubernetes, gRPC, GraphQL.
+- Message brokers beyond one conceptual session on why background work leaves the request.
+- Distributed-systems theory. `mission/plan.md` already cut Xu Vol 1 for the same reason.
+- **Prisma beyond name recognition.** It is not on his CV. Sequelize and TypeORM are.
+- Becoming a backend specialist. The target is **frontend-heavy full-stack**. The bar is "does not
+  freeze on the backend half, and can defend the CV" — not "backend engineer".

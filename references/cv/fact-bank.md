@@ -147,9 +147,49 @@ MongoDB 🟡 (MERN / education — **not** production)
 > alone exposes GET/POST/PATCH/DELETE), never "modules" or a count.
 
 **AI & GenAI** — LLM Integration 🟡 (DentScribe portal consumed the pipeline) · OpenAI API 🟡 ·
-speech-to-text / Whisper 🟡 (integrated) · AI Agents & Agentic Workflows 🟢 (his AIOS) · MCP 🟢 ·
+speech-to-text / Whisper 🟡 (integrated) · AI Agents & Agentic Workflows 🟢 (his AIOS **+ devflow**) · MCP 🟢 ·
 Prompt Engineering 🟢 · Subagent orchestration 🟢 · Context engineering 🟢 ·
 AI-Assisted Development 🟢 · Claude Code 🟢 · GitHub Copilot 🟢 (certified)
+
+> **devflow — SPOKEN ONLY. Deliberately NOT on the CV (decided 2026-08-15).**
+> `github.com/AhirwarTarun27/ai-dev-workflow`. **The practice is ~1 year old** across several repos
+> (personal + work); **the plugin is the extraction of it, published 2026-08-11.** Running on his current
+> employer project since, and on his own projects before that. **Do not add it to `master.tex` and do not
+> let `/cv-tailor` add it**, however well it matches an AI-heavy JD. He raises it verbally and shares the
+> link if the conversation goes there.
+>
+> **Why this is a defensible call, not a missed opportunity:** the load-bearing fact is that practice
+> preceded package by about a year — that fits in a conversation and does not fit in a CV bullet. Printed,
+> the reader supplies the commit dates themselves and concludes "recent side project" with nothing to
+> contradict it. Spoken, he leads with the distinction and the commit history becomes a footnote.
+>
+> **The cost of the choice, stated honestly:** the AI & GenAI cluster therefore stays **Skills-list-only**,
+> which is where the ATS rule below says keywords carry least weight. He is trading ATS weight for
+> narrative control. If applications stall on AI-heavy JDs specifically, that trade is the first thing to
+> revisit.
+>
+> **Allow-list — say freely, out loud:** portable/stack-agnostic workflow 🟢 · research → plan → **single approval
+> gate** → implement → verify → review → ship 🟢 · guardrails as deterministic **hooks** (PreToolUse,
+> PostToolUse, Stop, SessionStart) rather than instructions 🟢 · **model-tiered subagents** (haiku locate /
+> sonnet verify / opus plan+review) 🟢 · the `devloop.json` per-project contract 🟢 · `testMode: tdd |
+> evidence` 🟢 · browser-verified evidence, incl. a real HTTP 500 caught on a live project 🟢 ·
+> adversarial review in fresh context 🟢 · 16-source attribution 🟢
+>
+> **🟢 Say freely, it is the real credential:** *"I've been working this way for about a year, across my
+> own projects and my work one. The plugin is the extraction — the day I wrote it down, not the day I
+> worked it out."* Per-project setups came first; `verifier` and `impact-mapper` were generalised out of
+> an earlier .NET/React setup (`ATTRIBUTION.md:37-43`).
+>
+> **🔴 NEVER claim:** that **the repo** is a year old — the practice is, the commits are not, and one
+> click disproves it · that tickets have shipped through the full `kickoff → ship` loop (`.agent/specs/`,
+> `plans/` and `learnings/` are all empty on the live project) · that a team uses it or it has adopters ·
+> **anything at all about the employer project it runs on** — not its name, domain, users or purpose.
+> *"My current project"* is the entire permitted sentence.
+>
+> **🟡 The framing, and it must be exact:** *"I designed it and directed it; the prose was written with AI
+> assistance; I own it."* Not *"AI generated it"* (reads as no ownership) and not *"I hand-wrote it"* (the
+> diff is 5 commits in 38 minutes on one day, and they will look). Using the tool to write the tool is the
+> point, not the embarrassment. Full defence: `learning/cv-defense/answers/devflow/`.
 
 **Cloud & Deployment** — AWS: Lambda, S3, EFS, EC2 🟡 (integrated/UI; **did not build the cost/analysis
 engine** 🔴) · Cloudflare Workers 🟢 · Docker 🟡 (light)

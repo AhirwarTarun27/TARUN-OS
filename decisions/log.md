@@ -891,3 +891,168 @@ ceiling and half the trap material stop applying and the mission gets revised ag
 **Not decided here:** his actual monthly burn (never stated — it is what makes "4 months of runway" real or fiction) and whether a **bonus clawback clause** exists (worth ₹2.5L; if leaving within N months of a payout triggers repayment, the September plan breaks). Both are his to verify before 7 September, and both are on the `week.md` parking lot.
 
 **Owner:** Tarun.
+
+---
+
+## 2026-08-15 — AI fluency: the cut reversed, inside a box. And devflow stays off the CV.
+
+**Decision:** Three things, taken together.
+
+1. **`learning/ai-fluency/` is built as a 7-sitting taught track, 16–22 Aug, 1 hour/day from office
+   bench time.** Day 1 is a survival sheet (every Tier-1 term, plain, plus the sentence he says); Days
+   2–7 interleave the concepts with `devflow`, the agentic workflow he designed on 2026-08-11 and runs
+   on his current project. **Unscored, not in `state.json`, not on the floor, hard end date.**
+   **D32 is the exam** — no second scoreboard was created.
+2. **`devflow` gets a full defence layer** at `learning/cv-defense/answers/devflow/` (6 files), including
+   a maintenance log and an improvement roadmap.
+3. **devflow is NOT added to the CV.** Spoken only.
+
+**Why reverse the 08-09 cut at all.** That cut said AI fluency is *"a story you tell, not a subject you
+study"* and it was right about the topic. What changed two days later is that he **built and published an
+artifact he could not explain**, and is running it daily on a live codebase. That is not a study track,
+it is an undefended surface on a public repo he intends to show interviewers — which is what `cv-defense`
+exists for. The restore condition was *"an interview punishing you for it"*; the honest reading is that
+the punishment here is pre-scheduled rather than hypothetical.
+
+**Why the box is the whole decision.** July's recorded failure was *"shipped SYSTEMS, not REPS."* So: the
+hour comes from the 4:00–6:30pm bench block, which is adherence-only and costs nothing that scores; there
+is no new counter, no new block, no floor change; and **the tripwire is written into the track README —
+if the protected 9pm–12am block ever slips to make room for this, the track is wrong and gets cut that
+day.** Machine coding is still the round that rejects him.
+
+**Why devflow stays off the CV** *(Tarun's call, reversing an earlier choice in the same session)*. A
+printed line is a claim the reader audits against the repo, and that repo's history is **5 commits inside
+38 minutes on one day**. Spoken, he frames that history *before* they open it. Printed, they read it first
+and his framing arrives second. **The cost, stated so it can be revisited:** the AI & GenAI cluster stays
+Skills-list-only, where ATS keywords carry least weight. If applications stall specifically on AI-heavy
+JDs, that trade is the first thing to reconsider.
+
+**A live defect found and fixed on the way.** `defend-map.md` carried two "Section lead-in" rows graded 🟢
+since 2026-07-24 for sentences that **were never in `master.tex`** — the edit was planned and never
+landed. For three weeks the board believed the AI cluster was anchored in body text while it was
+Skills-list-only. Rows deleted, and a standing rule added: **a defend-map row is only valid if its quoted
+sentence greps clean against `master.tex`.**
+
+**The framing rule, because it is the thing most likely to be got wrong under pressure:**
+*"I designed it and directed it; the prose was written with AI assistance; I own it."* Not *"AI generated
+it"* (reads as no ownership), not *"I wrote it"* (the diff contradicts it). The architecture and the
+16-source research in `ATTRIBUTION.md` are genuinely his.
+
+**Alternatives considered.** *Leave the cut in place* — rejected: it leaves a public repo undefended and
+the CV's AI claims un-drilled. *Build it as a full `/teach` track with its own ladder and counters* —
+rejected: that is the July failure mode, and the ladder already exists at D32. *Put devflow on the CV as a
+third Projects entry* — chosen, then reversed by Tarun the same session; reverted cleanly, `master.tex`
+verified byte-clean. *Ship a small streaming LLM app with ~20 eval cases instead of more theory* — the
+research names this as the strongest available differentiator and it would close three honest gaps
+(OpenAI API, RAG, evals) in one artifact; **deferred, not rejected — revisit at Day 7.**
+
+**What would change my mind:** if an interview punishes him on RAG/evals depth rather than on the
+workflow story, the theory-over-build choice was wrong and the extension to 7 Sept becomes the build.
+If the 9pm block slips even once for this, the track is cut regardless of progress.
+
+**Owner:** Tarun.
+
+---
+
+## 2026-08-15 — .NET cut entirely. The backend track becomes Node.js + PostgreSQL, reverse-engineered from the CV.
+
+**Decision.** Delete .NET from `learning/backend/` and rebuild the track as **Node.js + PostgreSQL,
+TypeScript throughout** — 32 one-hour sessions, one growing project, aimed at clearing a full-stack
+interview. Tarun's call, stated directly: *"I don't want to learn the .net framework."*
+
+**Why it is right, and it is not close.** The .NET half bought exactly one thing: internal shortlisting
+for a .NET project at ThinkSys. **He resigns 7 September.** Shortlisting is worthless to someone leaving
+in 23 days, and every hour it cost came out of a 15 November offer floor. Cutting it also **moved the
+Node start from 1 Sept to 17 Aug — a 17-day gain** on the one track the interviews actually test.
+
+**Four research findings changed the shape of the rebuild, and three of them contradicted the first
+draft.**
+
+1. **"Assume I have no backend skills" is true of his hands and false of his CV.** `master.tex` already
+   sells Node, Express, REST, PostgreSQL, Sequelize and TypeORM, and `cv-defense/skills-defense.md`
+   grades them all 🟢 **anchored**. So the track's job is not "learn backend" — it is **close the gap
+   between the claim and the hand before someone tests it.** The syllabus is reverse-engineered from
+   the résumé, not from a generic Node roadmap. This is a *stronger* premise than the one the mission
+   was built on: closing a gap in 14 weeks is achievable where learning a stack cold was not.
+2. **TypeScript-throughout was the right call and the AI's objection was wrong.** It was argued against
+   on "one hard thing at a time" grounds. Then the evidence: CloudForestX is **470 `.ts` / 0 `.js`**,
+   DentScribe 317 / 0. He is a TypeScript developer. Plain JS would have been the artificial choice.
+3. **Prisma was the wrong ORM and got swapped.** Tarun picked it; his CV names **Sequelize** and
+   **TypeORM** and Prisma appears nowhere. Teaching it would have added an undefendable token while
+   leaving the two he must defend untested. Now S25 Sequelize + S26 TypeORM, and **S26 closes
+   `cv-defense` D33 queue item #3** (one entity + one migration + one ownership-scoped query), pending
+   since 29 July. Prisma gets one paragraph of name recognition.
+4. **The build mirrors CloudForestX** — scheduled ingestion → Postgres → Express REST → ownership-scoped
+   queries. So S18 (ownership inside the `WHERE` clause) is simultaneously the best security answer he
+   owns and the thing D33 has been asking him to be able to say. Learning hour and CV-defense hour are
+   the same hour.
+
+**The contradiction that had to be resolved.** He offered 1 hour of *office* time. `daily/schedule.md`
+says office hours are interruptible and can vanish, and that *"reading for a rep you never perform is
+not a rep."* **Writing code cold is the interview skill and it is exactly what dies on interruption.**
+Resolved without spending a new hour: the office hour holds reading and typing (an interruption costs
+minutes), **the commute carries the 90-second spoken explain rep** (no screen — its stated design), and
+the cold write rep is the first 10 minutes of the next session. **The protected 9pm-12am block and THE
+FLOOR are untouched.**
+
+**A live defect found on the way.** `scripts/console.mjs` binds the backend counter to a table header
+containing **`concept pair`** — a name that only made sense while the board paired Node against .NET.
+Renaming the column would have made the board silently report `??` for Node concepts. Parser retargeted
+to `Concept` + `Next due`, and a **format contract** written into `drill-board.md` so a future bank
+cannot break it by accident. Verified: `node scripts/console.mjs --debug` reports `Node concepts 0/8`,
+a real number.
+
+**Alternatives considered.** *Keep .NET time-boxed to 31 Aug* — rejected, that was the existing plan and
+it spends 11 more days on a credential he will never use. *Raw SQL only, no ORM* — rejected, two ORMs
+are on the CV. *ORM-first* — rejected, it hides joins, indexes and N+1, which are the questions that
+actually get asked. *Prisma as well, all three* — rejected, it trades SQL time for ORM syntax.
+*Claim Saturday's fresh block for the cold rep* — rejected, Saturday belongs to machine-coding, which
+`plan.md` names as the gate.
+
+**The forfeit, recorded so it is a decision and not a drift.** Management asked him to get .NET-ready.
+If anyone at work asks about progress before 7 Sept, the answer is "nothing". Accepted knowingly.
+
+**What would change my mind:** if a wave-1 interview punishes him on something this curriculum cut
+(system design, message queues, GraphQL), the out-of-scope list is wrong and gets revisited. If S1-S5
+show the TypeScript assumption is unfounded, `profile.md`'s "assume TS fluency" line is the first thing
+to rewrite. **If the backend block ever needs the 9pm block to finish, the session was too big** — split
+it, never borrow the protected hours.
+
+**Owner:** Tarun.
+
+---
+
+## 2026-08-16 — devflow calibration: the practice is a year old, the package is not
+
+**Decision.** Every devflow artifact is re-framed around one distinction Tarun corrected: **he has been
+working this way for roughly a year, across several repos (personal + work). The plugin published on
+2026-08-11 is the *extraction* of that practice, not an experiment he started four days ago.**
+
+**Why this needed correcting.** The 08-15 build inferred maturity from the git history — 5 commits
+inside 38 minutes on one day — and wrote every artifact as "a designed system that hasn't been through
+much weather yet." That inference was wrong, and it was wrong in the expensive direction: it produced
+interview material that *apologised* for a year of real practice.
+
+**What changed, in every file:** the pitch now opens with the year and closes on *"every rule exists
+because something bit me first."* The "honest-state sentence" is gone as a confession and returns as a
+calibration. `05-the-flaws.md` reframes the commit history from liability to distinction — *"that's the
+day I wrote it down, not the day I worked it out."* `06-the-roadmap.md` Part 1 becomes "the habits,
+sharpened" rather than a starter kit, since he already runs most of it.
+
+**The one guardrail kept, deliberately.** *"I've worked this way for a year"* is true and unfalsifiable.
+*"This repo has been running a year"* is false and takes one click to check. The two facts must never
+merge into a single sentence, and claiming the repo is old is an **auto-fail** in D32. The reason is not
+modesty: one caught contradiction retroactively discounts every true claim made before it, and the true
+claims here are strong enough to carry the answer on their own.
+
+**Consequence for `04-the-contract.md`.** Its lineage section is now the highest-value unwritten thing
+in the folder — two or three concrete "this broke, so it became a rule" stories from the pre-plugin year
+are what turn *practice preceded package* from asserted into demonstrated. Still his to write, in his
+words, per `drills/01` §1.
+
+**Unchanged:** devflow stays SPOKEN ONLY and off `master.tex`; the employer project is never named.
+
+**What would change my mind:** if he can't produce concrete before-stories at the Day 2 sitting, the
+year is real but unevidenced, and the pitch should lean on mechanism rather than history.
+
+**Owner:** Tarun.

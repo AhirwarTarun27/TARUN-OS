@@ -2,6 +2,14 @@
 
 **Date:** 2026-07-29 · **Type:** protocol change · **Trigger:** session 1, Build A
 
+> **Still live as of 2026-08-15**, and the only record from the old two-stack course kept in the track —
+> 0001 and 0002 were archived with the .NET material because their framing died with it. **This one got
+> more important, not less.** Its C#/.NET references below are historical; the finding is not. In plain
+> JS a bad submission throws loudly on line 1, which is how this was caught. **In SQL a wrong query
+> returns rows, with a 200 and no stack trace.** There is no compiler and no exception to save him, so
+> the run-gate is now the only feedback loop the track has. Make him state the row count he expected
+> *before* he reads the one he got.
+
 ## What happened
 
 Build A was submitted three times in one session. Twice it was reported as done or fixed without

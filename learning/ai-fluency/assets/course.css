@@ -1,0 +1,173 @@
+/* course.css — shared stylesheet for the Interview Q&A course.
+   Dark theme (light hurts the reader's eyes). Tufte-ish: quiet chrome, loud content.
+   Every lesson and reference doc links this so the course reads as one book. */
+
+:root {
+  --bg:        #12141a;
+  --bg-raise:  #1a1d26;
+  --bg-sink:   #0d0f14;
+  --ink:       #e6e8ee;
+  --ink-soft:  #a9afbe;
+  --ink-faint: #6b7280;
+  --rule:      #2a2e3a;
+  --accent:    #7cc4ff;   /* links, focus */
+  --accent-2:  #f0b866;   /* concept / "why" */
+  --good:      #5bd6a0;
+  --bad:       #ff8a8a;
+  --code-bg:   #0d0f14;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --mono: "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, "Courier New", monospace;
+  --measure: 42rem;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.62;
+  padding: 3.2rem 1.4rem 6rem;
+}
+
+.wrap { max-width: var(--measure); margin: 0 auto; }
+.wrap.wide { max-width: 60rem; }
+
+/* --- Masthead --- */
+.masthead { margin-bottom: 2.4rem; border-bottom: 1px solid var(--rule); padding-bottom: 1.2rem; }
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-faint); margin: 0 0 0.5rem;
+}
+h1 { font-size: 2.05rem; line-height: 1.15; margin: 0 0 0.3rem; font-weight: 600; letter-spacing: -0.01em; }
+.subtitle { font-family: var(--sans); color: var(--ink-soft); font-size: 0.98rem; margin: 0.3rem 0 0; }
+
+/* --- Headings --- */
+h2 {
+  font-family: var(--sans); font-weight: 600; font-size: 1.28rem;
+  margin: 2.6rem 0 0.8rem; padding-top: 0.4rem; letter-spacing: -0.01em;
+}
+h3 { font-family: var(--sans); font-weight: 600; font-size: 1.02rem; margin: 1.8rem 0 0.5rem; color: var(--ink); }
+p { margin: 0 0 1rem; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+a:hover { border-bottom-color: var(--accent); }
+strong { color: #fff; font-weight: 600; }
+em { color: var(--accent-2); font-style: italic; }
+
+ul, ol { padding-left: 1.3rem; margin: 0 0 1rem; }
+li { margin: 0.3rem 0; }
+
+/* --- Callouts --- */
+.why, .note, .tip {
+  font-family: var(--sans); font-size: 0.94rem; line-height: 1.55;
+  border-left: 3px solid var(--accent-2);
+  background: var(--bg-raise);
+  padding: 0.85rem 1.1rem; margin: 1.4rem 0; border-radius: 0 6px 6px 0;
+}
+.note { border-left-color: var(--accent); }
+.tip  { border-left-color: var(--good); }
+.callout-label {
+  display: block; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint); margin-bottom: 0.3rem;
+}
+
+/* --- Code --- */
+code {
+  font-family: var(--mono); font-size: 0.86em;
+  background: var(--code-bg); border: 1px solid var(--rule);
+  padding: 0.08em 0.38em; border-radius: 4px; color: #d7dae3;
+}
+pre {
+  font-family: var(--mono); font-size: 0.82rem; line-height: 1.5;
+  background: var(--code-bg); border: 1px solid var(--rule);
+  padding: 1rem 1.1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0;
+}
+pre code { background: none; border: none; padding: 0; font-size: 1em; }
+.tok-com { color: var(--ink-faint); font-style: italic; }
+.tok-out { color: var(--good); }
+
+/* --- Comparison tables --- */
+.tbl-scroll { overflow-x: auto; margin: 1.2rem 0; }
+.tbl {
+  font-family: var(--sans); font-size: 0.86rem; line-height: 1.45;
+  width: 100%; border-collapse: collapse; margin: 1.2rem 0;
+  background: var(--bg-raise); border: 1px solid var(--rule); border-radius: 8px;
+}
+.tbl-scroll .tbl { margin: 0; min-width: 34rem; }
+.tbl th, .tbl td { text-align: left; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.tbl thead th {
+  font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-faint); background: var(--bg-sink); font-weight: 600;
+}
+.tbl tbody tr:last-child td { border-bottom: none; }
+.tbl tbody td:first-child { color: var(--ink); }
+.tbl code { font-size: 0.82em; }
+
+/* --- Q&A blocks --- */
+.qa { border: 1px solid var(--rule); background: var(--bg-raise); border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.3rem 0; }
+.qa .q { font-family: var(--sans); font-weight: 600; font-size: 1rem; margin: 0 0 0.6rem; color: #fff; }
+.qa .q::before { content: "Q"; display: inline-block; margin-right: 0.55rem; color: var(--accent); font-weight: 700; }
+
+/* --- Interactive quiz widget (see assets/quiz.js) --- */
+.quiz { border: 1px solid var(--rule); background: var(--bg-sink); border-radius: 10px; padding: 1.2rem 1.3rem; margin: 1.6rem 0; }
+.quiz-q { font-family: var(--sans); font-weight: 600; font-size: 1rem; margin: 0 0 0.8rem; }
+.quiz-opts { list-style: none; padding: 0; margin: 0; }
+.quiz-opts li { margin: 0.5rem 0; }
+.quiz-opts button {
+  width: 100%; text-align: left; font-family: var(--mono); font-size: 0.85rem;
+  background: var(--bg-raise); color: var(--ink); border: 1px solid var(--rule);
+  padding: 0.6rem 0.8rem; border-radius: 7px; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.quiz-opts button:hover { border-color: var(--accent); }
+.quiz-opts button.correct { border-color: var(--good); background: color-mix(in srgb, var(--good) 14%, var(--bg-raise)); color: #fff; }
+.quiz-opts button.wrong   { border-color: var(--bad);  background: color-mix(in srgb, var(--bad) 12%, var(--bg-raise)); }
+.quiz-explain {
+  font-family: var(--sans); font-size: 0.88rem; line-height: 1.55; color: var(--ink-soft);
+  margin-top: 0.9rem; padding-top: 0.8rem; border-top: 1px dashed var(--rule); display: none;
+}
+.quiz-explain.show { display: block; }
+.quiz-explain strong { color: var(--good); }
+
+/* --- Reveal (self-test: predict, then reveal) --- */
+details.reveal { border: 1px solid var(--rule); background: var(--bg-sink); border-radius: 8px; padding: 0.4rem 1rem; margin: 1rem 0; }
+details.reveal summary { font-family: var(--sans); font-weight: 600; cursor: pointer; padding: 0.5rem 0; color: var(--accent); }
+details.reveal[open] summary { margin-bottom: 0.5rem; border-bottom: 1px dashed var(--rule); }
+
+/* --- Footer nav --- */
+.lesson-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); font-family: var(--sans); font-size: 0.9rem; }
+.lesson-nav a { display: inline-block; }
+.ask-teacher { font-family: var(--sans); font-size: 0.92rem; background: var(--bg-raise); border: 1px dashed var(--rule); border-radius: 8px; padding: 0.9rem 1.1rem; margin-top: 2rem; color: var(--ink-soft); }
+.ask-teacher strong { color: var(--accent-2); }
+
+/* --- Progress pips (course map) --- */
+.pip { display: inline-block; width: 0.62rem; height: 0.62rem; border-radius: 50%; background: var(--rule); margin-right: 0.15rem; }
+.pip.done { background: var(--good); }
+.pip.now  { background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+
+/* --- Course map module cards --- */
+.module { border: 1px solid var(--rule); border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1rem 0; background: var(--bg-raise); }
+.module h3 { margin-top: 0; display: flex; align-items: baseline; gap: 0.6rem; }
+.module .modnum { font-family: var(--mono); color: var(--accent); font-size: 0.85rem; }
+.module .status { font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.15rem 0.5rem; border-radius: 20px; margin-left: auto; }
+.status.done { color: var(--good); border: 1px solid var(--good); }
+.status.now  { color: var(--accent); border: 1px solid var(--accent); }
+.status.next { color: var(--ink-faint); border: 1px solid var(--rule); }
+.module ul { font-family: var(--sans); font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 0; }
+.part-label { font-family: var(--sans); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-2); margin: 2.6rem 0 0.4rem; }
+
+@media (max-width: 600px) {
+  body { font-size: 17px; padding: 2rem 1rem 4rem; }
+  h1 { font-size: 1.7rem; }
+}
+
+@media print {
+  :root { --bg:#fff; --bg-raise:#fff; --bg-sink:#fff; --ink:#111; --ink-soft:#333; --rule:#ccc; --code-bg:#f5f5f5; }
+  body { color:#111; }
+  .quiz-explain { display:block; }
+}

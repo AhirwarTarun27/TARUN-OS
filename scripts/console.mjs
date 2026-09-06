@@ -139,7 +139,11 @@ function parseMachineCoding(text) {
 }
 
 function parseBackend(text) {
-  const t = table(text, h => has(h, 'concept pair'), 'backend: | Concept pair | ... |');
+  // Matches on 'concept' + 'next due' so it binds to the Active table only. The header was
+  // "Concept pair" while the track paired Node against .NET; it became "Concept" on 2026-08-15
+  // when .NET was cut. Requiring 'next due' also stops this matching the Graduated table below it,
+  // whose W/X columns are named "Final W"/"Final X" and would fail the strict === 'W' lookup.
+  const t = table(text, h => has(h, 'concept', 'next due'), 'backend: | Concept | ... | Next due |');
   if (!t.ok) return t;
   const wi = t.header.findIndex(h => h.trim() === 'W');
   const xi = t.header.findIndex(h => h.trim() === 'X');
@@ -291,7 +295,9 @@ const gateEnd = S.milestones.phaseGate;
 const wdGate = workDaysBetween(today, gateEnd);
 const wdFloor = workDaysBetween(today, S.milestones.offerFloor);
 
-// Node's window opens when the backend track does (1 Sept, after .NET stops), not today.
+// Node's window opens when the backend track does. That used to be 1 Sept, because A1's backend slot
+// was .NET. .NET was cut on 2026-08-15 and A1 now carries the backend track, so this resolves to a
+// past date and the window is measured from today — a 17-day gain, not a special case.
 const nodeStart = S.phases.find(p => p.tracks.includes('backend')).start;
 const nodeWindow = workDaysBetween(today > nodeStart ? today : nodeStart, gateEnd);
 

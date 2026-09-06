@@ -16,9 +16,13 @@ Driven by `mission/state.json`. `/console` prints which one is live.
 
 | Phase | Window | Office | Backend slot | Scored blocks |
 |---|---|---|---|---|
-| **A1** | Mon 10 Aug → Mon 31 Aug | full day, bench | **.NET** (employer's ask) | cv-defense · mc/iqa · apply |
-| **A2** | Tue 1 Sept → Mon 21 Sept | full day, bench | **Node** | + backend |
-| **B** | Tue 22 Sept → Sun 15 Nov | **released** | Node | + dsa, all daily |
+| **A1** | Mon 10 Aug → Mon 31 Aug | full day, bench | **Node + PostgreSQL** (1 hr) | cv-defense · mc/iqa · apply · **backend** |
+| **A2** | Tue 1 Sept → Mon 21 Sept | full day, bench | Node + PostgreSQL | + backend |
+| **B** | Tue 22 Sept → Sun 15 Nov | **released** | Node + PostgreSQL, still 1 hr | + dsa, all daily |
+
+> **.NET was cut 2026-08-15.** It only ever bought internal shortlisting, and he resigns 7 Sept. The
+> backend slot became Node + PostgreSQL immediately, which moved the Node start from 1 Sept to
+> **17 Aug — a 17-day gain.** Curriculum: `learning/backend/CURRICULUM.md`.
 
 ---
 
@@ -31,7 +35,8 @@ Driven by `mission/state.json`. `/console` prints which one is live.
 | 8:30–9:30 am | Commute out — **spoken reps** | `commute` | **unscored bonus.** Out loud, no screen. |
 | 9:30–9:45 am | Console + today's plan | `plan` | **ritual** — `/console` then `/daily-log plan` |
 | 9:45–10:15 am | **Job applications** | `apply` | you — submitted count gets logged |
-| 10:15 am–1:00 pm | Office — backend slot | `backend` | .NET to 31 Aug, **Node from 1 Sept** |
+| 10:15–11:15 am | Office — **backend, 1 hr** | `backend` | **Node + PostgreSQL.** `/backend`. One session/day. |
+| 11:15 am–1:00 pm | Office — bench | `office` | adherence only. |
 | 1:00–2:00 pm | Lunch | — | unscored |
 | 2:00–4:00 pm | Office — **load tonight's rep** | `office` | unscored prep. See "load / fire" below. |
 | 4:00–6:30 pm | Office — bench | `office` | adherence only. |
@@ -42,7 +47,8 @@ Driven by `mission/state.json`. `/console` prints which one is live.
 | 11:30 pm–12:00 am | Wrap | `wrap` | **ritual** — `/daily-log wrap` |
 
 **5 scored blocks:** `apply`, `backend`, `machineCoding`, `interviewQa`, `cvDefense`.
-`backend` only scores from **1 Sept** (in A1 it is .NET, which is the employer's, not the mission's).
+**`backend` scores from 2026-08-15.** It used to score only from 1 Sept, because in A1 it was .NET —
+the employer's ask, not the mission's. .NET is gone, so the block is mission work from day one.
 
 ## Two kinds of time — this is the whole design
 
@@ -79,7 +85,7 @@ opposite requirements, and only the left column belongs in interruptible time:
 |---|---|---|
 | CV defense | read the kb section for tonight's bullet | the closed-book drill, spoken |
 | Interview Q&A | read the lesson, work the snippets | speak-it → predict-it → "so why?" |
-| Node / backend | read the concept, read the .NET side (`X`) | write it cold (`W`) |
+| Node / backend | the 1-hr session: read the concept, **type the build** | **the commute** — say today's sentence out loud (`X`), then next morning's 10-min cold gate (`W`) |
 | Machine coding | read tonight's primitive / problem | the **timed** round |
 
 **Why this rule and not just "study more in office".** Three tracks loose in office hours is **eight
@@ -97,8 +103,11 @@ bottom:
 
 1. **`apply`** (9:45, 30 min) — scored, and has a fallback into the 11:30 wrap slot.
 2. **Load** (2:00-4:00) — unscored. Cheapest to lose, but it is what makes tonight cheap.
-3. **`backend`** (10:15-1:00) — scored from 1 Sept, **no fallback.** On a day the office eats it you
-   lose the block. **You never lose the floor** — the floor lives entirely in 9pm-12am.
+3. **`backend`** (10:15-11:15, 1 hr) — scored, **no fallback.** On a day the office eats it you lose
+   the block. **You never lose the floor** — the floor lives entirely in 9pm-12am.
+   > The backend session is built to survive this: the hour holds reading and typing, which cost
+   > minutes when interrupted. The two reps that die on interruption were moved out — the spoken `X`
+   > rep rides the commute, and the cold `W` rep is the first 10 minutes of the next session.
 
 **No part of the floor may ever depend on office hours.** If a future edit makes it, that edit is wrong.
 
@@ -120,8 +129,14 @@ Unscored on purpose. A sixth scored block right after building a five-block floo
 stops meaning anything. Treat it as free upside, not an obligation.
 
 Only one kind of work fits: **out loud, no screen.** CV answers spoken end to end, interview-qa
-recall, "so why?" follow-ups. That happens to be exactly the muscle interviews test and the one
-reading can't build — you have never once been asked to *write* your CV answers.
+recall, "so why?" follow-ups, and **today's backend sentence, twice.** That happens to be exactly the
+muscle interviews test and the one reading can't build — you have never once been asked to *write*
+your CV answers.
+
+> **The evening commute now has a named job.** Every backend session ends with one sentence you can
+> say in an interview (`learning/backend/` law #1). Saying it out loud on the way home **is** the `X`
+> rep on the drill board. It costs nothing, it needs no screen, and it is the half of the rating that
+> the office hour structurally cannot produce.
 
 **Nothing that needs a screen goes here.** If it needs a keyboard, it belongs in the protected block.
 
@@ -175,10 +190,11 @@ deliberate. **Do not "fix" it to a stricter bar.**
   code during that block** — that is the entire point of it.
 - **`interview-qa` runs through `/teach`.** Drills are speak-it **then** predict-it, wording free,
   must-hit keywords strict, with a mandatory "so why?" follow-up.
-- **`backend` runs through `/backend`.** In A1 it is .NET **read and explained** — run it as the `X`
-  half of each concept pair on `drill-board.md`, so September's Node is the `W` half of concepts you
-  already understand rather than new material. **That framing is the only thing making the
-  compressed Node window realistic.** The employer boundary holds inside it: no ThinkSys code, repo
+- **`backend` runs through `/backend`.** **Node + PostgreSQL, TypeScript throughout, 32 one-hour
+  sessions** — syllabus in `learning/backend/CURRICULUM.md`. The hour is 10 min cold gate → 40 min
+  lesson + build → 10 min bank, and **the commute carries the spoken `X` rep.** The premise: the CV
+  already sells this stack 🟢, so the course closes the gap between the claim and the hand. **The AI
+  never writes the build or the SQL.** The employer boundary holds inside it: no ThinkSys code, repo
   names, client names or work specifics, ever.
 - **`apply` output is submitted applications**, logged with `/console log`. Researching companies is
   not applying. Tailoring a CV is `/cv-tailor`, not this block. **A block that produced zero
@@ -190,7 +206,8 @@ deliberate. **Do not "fix" it to a stricter bar.**
 ### What was cut, and why — do not restore without a real interview punishing you for it
 
 `sysdesign` (Xu Vol 1) · `reading` · `workout` · `project` · `ai-fluency` · `dsa` (until Phase B) ·
-**.NET as prep** (office hours only, ends 31 Aug).
+**.NET entirely** (cut 2026-08-15 — it only bought internal shortlisting, and he resigns 7 Sept;
+archived at `archives/learning/backend-dotnet/`).
 
 These were not cut for being unimportant. They were cut because **14 weeks and 8 tracks is
 arithmetic that produces nothing**, which is exactly what the 26 days to 2026-08-09 demonstrated.

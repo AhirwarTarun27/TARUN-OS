@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 2 · The loop, and agent vs workflow — AI Fluency</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Day 2 · AI Fluency — anchored in devflow</p>
+    <h1>The loop, and agent vs&nbsp;workflow</h1>
+    <p class="subtitle">A workflow is when <em>you</em> decide the steps. An agent is when the
+    <em>model</em> decides the steps. Everything else today hangs off that one sentence.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Where this sits</span>
+    Day 1 gave you the survival sheet — every term with the sentence you say. Today is the first of six
+    days that make one cluster of those terms <strong>yours</strong>, by teaching it through code you
+    already own. Today's cluster is <strong>agent vs workflow</strong>, <strong>the agentic loop</strong>,
+    and <strong>stopping conditions</strong>. The anchor is <code>devflow</code>. By the end you should be
+    able to draw your own loop on a whiteboard without notes and defend where the gate sits.
+  </div>
+
+  <h2>0 · Gate check — carried from Day 1</h2>
+  <p>Two from the survival sheet. Answer <strong>out loud, cold</strong>, before you scroll. If you can't,
+  that's the finding, not a failure — write it in the learning record.</p>
+
+  <details class="reveal">
+    <summary>Does the model execute the function in tool calling?</summary>
+    <p><strong>No.</strong> The model returns a <em>structured request</em> — "call this function with
+    these arguments" — as JSON matching a schema you gave it. <strong>Your code decides whether to run
+    it, runs it, and passes the result back</strong> into the conversation.</p>
+    <p>That gap is the entire security model. <strong>The model proposes, your code disposes.</strong>
+    People who have only read about tool calling get this wrong. People who have built it never do, which
+    is exactly why interviewers use it as a filter. Volunteer the distinction before they ask.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>Why not paste the whole repo into a 200k context window?</summary>
+    <p>Two reasons, and <strong>you must give both</strong>. Cost is the obvious one and it's the answer
+    that marks you as having read about this. The other is <strong>context rot</strong>: accuracy degrades
+    as input grows, well before you hit the limit. There is published work testing 18 frontier models
+    where every one got worse as input length grew, on tasks as simple as retrieval.</p>
+    <p>So a 200k window is not 200k of usable attention. Related term worth dropping:
+    <strong>"lost in the middle"</strong> — material buried mid-context gets attended to worse than
+    material at either end.</p>
+  </details>
+
+  <h2>1 · The distinction that generates everything else</h2>
+
+  <p>Use these definitions. They are Anthropic's, they are the cleanest available, and citing the source
+  by name in an interview is free credibility.</p>
+
+  <pre><code>WORKFLOW   LLMs and tools orchestrated through <strong>predefined code paths</strong>.
+           <span class="tok-com">// you wrote the steps. the model fills them in.</span>
+
+AGENT      the LLM <strong>dynamically directs its own process</strong> and tool usage.
+           <span class="tok-com">// the model decides what to do next, and when to stop.</span></code></pre>
+
+  <p>Almost everything marketed as an "AI agent" in 2026 is a workflow with one agentic step inside it.
+  That is not a criticism — it's usually the right design.</p>
+
+  <div class="why">
+    <span class="callout-label">The answer that reads senior</span>
+    <strong>"Most things don't need an agent."</strong> Anthropic's own guidance is that optimising a
+    single call with good retrieval and examples is usually enough. Saying this out loud separates you
+    instantly, because the default candidate is an agent-maximalist. Agents cost more, are harder to
+    debug, and fail in stranger ways.
+  </div>
+
+  <h2>2 · Your own loop</h2>
+
+  <p><code>devflow</code> is <strong>mostly a workflow, on purpose</strong>. The order is fixed. The
+  agentic behaviour lives <em>inside</em> each stage, not across them.</p>
+
+  <pre><code>PHASE 0 · joining a repo (once)
+  onboard    survey it → dossier + contract
+  setup      make it run on this machine
+  orient     teach ME the project, in tiers
+
+PHASE 1 · the front half
+  kickoff ABC-123
+    ├─ spec       vague request → written spec     <span class="tok-com">(skippable)</span>
+    ├─ research   read the code → file:line facts  <span class="tok-com">(REQUIRED)</span>
+    └─ plan       facts         → phased plan      <span class="tok-com">(the artifact)</span>
+
+        ══════════════════════════
+          I APPROVE          <span class="tok-com">← the ONLY gate</span>
+        ══════════════════════════
+
+PHASE 2 · the build half
+  implement   one phase at a time, committed per phase
+  verify      build + lint + drive the real app in a browser
+  review      critic ∥ impact-mapper, in fresh context
+  ship        branch, commit, PR — <strong>never merges</strong>
+
+PHASE 3
+  compound    capture the ONE thing this cycle taught</code></pre>
+
+  <p>Eight stages. <strong>One gate.</strong> If you can't say that number instantly you don't know your
+  own system, and that is the first thing an interviewer will find out.</p>
+
+  <h2>3 · Why the gate is at the plan</h2>
+
+  <p>This is the best answer you have about the repo. It is a <em>leverage</em> argument, not a taste
+  argument.</p>
+
+  <pre><code>gate at the CODE                    gate at the PLAN
+────────────────                    ────────────────
+decision already made               reviewing the decision itself
+↓                                   ↓
+you review its consequences         changing it costs one paragraph
+↓
+reversing costs hours
+
+<strong>a bad line of code  = one bad line
+a bad line of plan  = hundreds</strong></code></pre>
+
+  <p>There is a second argument and it is about human behaviour, not software:</p>
+
+  <div class="why">
+    <span class="callout-label">Say this</span>
+    "One gate is honest. If I put a gate at every stage I'd start rubber-stamping them, because nobody
+    reads the fourth confirmation dialog. <strong>One gate I genuinely read is worth more than five I
+    click through.</strong>"
+  </div>
+
+  <p>The skill enforces this in prose — it instructs the model not to ask in a way that invites a
+  reflexive yes, because the gate's whole value is that a human actually reads the plan. Note what that
+  means: <strong>you designed against your own laziness.</strong> That is a mature thing to have done and
+  it is worth saying out loud.</p>
+
+  <h2>4 · Stopping conditions — the follow-up nobody prepares for</h2>
+
+  <p>Once you say the word "agent", a good interviewer asks how it stops. Agents that don't terminate are
+  the single most common production failure in this space.</p>
+
+  <pre><code>THE FOUR STOPS
+
+1. iteration limit     "max N tool calls"      <span class="tok-com">crude, always needed</span>
+2. budget cap          "max N tokens / $"      <span class="tok-com">the one people forget</span>
+3. success condition   the build passes        <span class="tok-com">the good one</span>
+4. human checkpoint    it asks                 <span class="tok-com">the expensive one</span></code></pre>
+
+  <p><strong>Yours, concretely:</strong> the approval gate at the plan is a #4. The Stop hook is a #3 — it
+  refuses to end the turn until the verify chain passes. And the platform force-ends after 8 consecutive
+  blocks, which is a #1 acting as a backstop so a genuinely broken build can't trap the session.</p>
+
+  <details class="reveal">
+    <summary>Why is a budget cap the one people forget?</summary>
+    <p>Because it only bites when something has already gone wrong. Iteration limits catch loops;
+    success conditions catch completion. A budget cap catches the case where the agent is
+    <em>making progress</em> in a direction that isn't worth what it costs — which feels fine from
+    inside the loop and is obvious only on the invoice.</p>
+    <p>This is also the honest link to <strong>cost as a first-class concern</strong>, which is Day 7.
+    Bring a rough number to an interview and you're ahead of nearly everyone.</p>
+  </details>
+
+  <h2>5 · Research before planning, and why it isn't optional</h2>
+
+  <p>In your loop, <code>spec</code> is skippable and <code>research</code> is <strong>required</strong>.
+  That asymmetry is deliberate and it is worth being able to defend.</p>
+
+  <pre><code>plan WITHOUT research          plan WITH research
+─────────────────────          ──────────────────
+model recalls how projects     scouts read THIS repo
+"usually" look                 ↓
+↓                              plan cites real file:line
+plan references files that     ↓
+don't exist, patterns this     every phase points at
+repo doesn't use               something that exists</code></pre>
+
+  <div class="why">
+    <span class="callout-label">Say this</span>
+    "Never plan from assumption. The plan's file paths come from research having read the actual code.
+    Otherwise the plan is fiction that happens to be well-formatted — and well-formatted fiction is
+    <em>harder</em> to catch than obvious nonsense."
+  </div>
+
+  <h2>6 · The calibration</h2>
+
+  <p>You have been working this way for about a year. The <em>plugin</em> is recent — it is the
+  extraction, not the experiment. Keep those two facts separate and never merge them: <strong>"I've
+  worked this way for a year"</strong> is true and is your real credential; <strong>"this repo is a year
+  old"</strong> is false and takes one click to disprove.</p>
+
+  <p>The stages therefore have <strong>different mileage</strong>. Onboarding and verification you run
+  daily. The full kickoff-to-PR chain exactly as written, less — because on the live project you
+  <strong>adapted</strong> the artifact layout rather than following your own pipeline.</p>
+
+  <div class="why">
+    <span class="callout-label">The adaptation is a strength — say it that way</span>
+    "I designed it to write specs, research and plans as separate documents. On the real project I
+    collapsed that into one working document plus a run log, because the ceremony wasn't paying for
+    itself at the size of changes I was making. <strong>A workflow you follow rigidly when it isn't
+    earning its keep is just process.</strong>"
+  </div>
+
+  <p>That answer is better than claiming you follow it perfectly, because it demonstrates you evaluate
+  your own system instead of defending it.</p>
+
+  <h2>7 · Retrieval quiz</h2>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">What separates a workflow from an agent?</p>
+    <ul class="quiz-opts">
+      <li><button>whether it uses tools</button></li>
+      <li><button>who decides the steps</button></li>
+      <li><button>how many models are involved</button></li>
+      <li><button>whether it runs in a loop</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Who decides the steps.</strong> Workflow = predefined code paths
+    you wrote. Agent = the model dynamically directs its own process. Tools, loops and model count are
+    all irrelevant to the distinction.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">Where is the single approval gate in devflow?</p>
+    <ul class="quiz-opts">
+      <li><button>before the PR is merged</button></li>
+      <li><button>after each implementation phase</button></li>
+      <li><button>at the plan, before any code exists</button></li>
+      <li><button>after verify passes</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>At the plan.</strong> Leverage: a bad line of code is one bad line;
+    a bad line of a plan becomes hundreds. Saying "at the PR" describes an ordinary git workflow and
+    throws away the whole idea.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">Which stage is required, not skippable?</p>
+    <ul class="quiz-opts">
+      <li><button>research</button></li>
+      <li><button>spec</button></li>
+      <li><button>compound</button></li>
+      <li><button>orient</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Research.</strong> Spec is skippable when the request is already
+    unambiguous. Research is not, because the plan's real file paths come from it. Planning from
+    assumption produces well-formatted fiction.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">Interviewer: "When would you NOT use an agent?"</p>
+    <ul class="quiz-opts">
+      <li><button>when the task is too small to matter</button></li>
+      <li><button>when you don't have tool calling available</button></li>
+      <li><button>when latency matters</button></li>
+      <li><button>most of the time — a single well-contexted call is usually enough</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Most of the time.</strong> This is the answer that reads senior,
+    because the default candidate is an agent-maximalist. Agents cost more, debug worse, and fail in
+    stranger ways. Reach for one when the path genuinely can't be predetermined.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">Which is <strong>not</strong> a stopping condition?</p>
+    <ul class="quiz-opts">
+      <li><button>a token or cost budget cap</button></li>
+      <li><button>a lower temperature setting</button></li>
+      <li><button>a human approval checkpoint</button></li>
+      <li><button>the verify chain passing</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Temperature.</strong> That controls sampling randomness, not
+    termination. The four real stops are iteration limit, budget cap, success condition, human
+    checkpoint.</div>
+  </div>
+
+  <h2>8 · Tonight's rep</h2>
+
+  <p><strong>On the commute tomorrow morning, out loud, no notes:</strong></p>
+
+  <div class="why">
+    <span class="callout-label">Say it twice</span>
+    <strong>"Why is the gate at the plan and not at the code?"</strong> — the full answer, including the
+    second argument about rubber-stamping. Then draw the loop from memory on paper when you get in.
+    If you can't produce all eight stages and the one gate cold, re-read §2 before Day 3.
+  </div>
+
+  <p>Then log what you got wrong in <code>../learning-records/0002-the-loop-and-agents.md</code>. Not what
+  you learned — <strong>what you got wrong</strong>. That file is read once more, at D32, and never again.</p>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

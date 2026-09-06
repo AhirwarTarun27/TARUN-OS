@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Node + PostgreSQL — the living sheet</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Backend track · the living cheat sheet</p>
+  <h1>Node + PostgreSQL, compressed</h1>
+  <p class="subtitle">Appended every session. This is the artifact he keeps.</p>
+</header>
+
+<div class="note">
+  <span class="callout-label">how to use this</span>
+  <strong>This is the compression of every lesson.</strong> When a session needs history, the coach
+  reads this sheet — never the <code>lessons/</code> folder. That rule is what keeps a session in month
+  six costing the same as a session on day one.
+  <br><br>
+  It is <strong>appended</strong>, one section per session, newest at the bottom. Nothing is ever
+  deleted from it. Started 2026-08-15; replaces <code>node-to-dotnet.html</code>, archived with the
+  rest of the .NET material.
+</div>
+
+<h2>The sentences, all in one place</h2>
+
+<p>Every session adds one. This list is the fastest revision pass before an interview — read it out
+loud on the commute and you have covered the whole course.</p>
+
+<div class="say">
+  <span class="callout-label">nothing banked yet</span>
+  <blockquote>Session 1 runs Monday 17 August. The first sentence lands then.</blockquote>
+</div>
+
+<h2>Setup, once</h2>
+
+<p>Verified on this machine 2026-08-15: Node <code>v20.20.0</code>, Docker Desktop present,
+<code>psql</code> <strong>not installed</strong>.</p>
+
+<pre><code><span class="tok-com"># in backend-lab/ — start the database</span>
+docker compose up -d
+
+<span class="tok-com"># a psql shell, without installing psql on Windows</span>
+docker compose exec db psql -U postgres -d costlab
+
+<span class="tok-com"># wipe it and start clean (this is why we use Docker)</span>
+docker compose down -v && docker compose up -d</code></pre>
+
+<div class="trap">
+  <span class="callout-label">the one that will bite</span>
+  <strong>A wrong SQL query looks exactly like a right one.</strong> It returns rows, with a 200, and no
+  stack trace. There is no compiler here. The only feedback loop is <strong>predicting the output
+  before you look at it</strong> — which is precisely the habit <code>profile.md</code> has open against
+  him from session 1. Run it, predict it, then read it.
+</div>
+
+<h2>Carried forward — the open item from 29 July</h2>
+
+<p>Still owed, still the first thing session 1 tests.</p>
+
+<div class="xlate">
+  <div class="xlate-row xlate-head">
+    <div>what it means</div><div></div><div>what you write</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-plain">Never given a value</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-term">undefined</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-plain">Deliberately set to "nothing"</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-term">null</div>
+  </div>
+  <div class="xlate-row">
+    <div class="xlate-plain">The key is not on the object at all</div>
+    <div class="xlate-arrow">→</div>
+    <div class="xlate-term">!('k' in obj)</div>
+  </div>
+  <div class="xlate-row">
+    <div class="catch"><code>!x</code> is not a null check. <code>0</code>, <code>''</code> and
+    <code>false</code> are all falsy and all valid values. Use <code>== null</code>, which catches
+    <code>null</code> and <code>undefined</code> and nothing else.</div>
+  </div>
+</div>
+
+<p>The SQL half of this lands at <strong>S8</strong>, and it is a better pairing than the one it
+replaced: in SQL, <code>NULL</code> is not equal to anything, <em>including itself</em>. So
+<code>WHERE col = NULL</code> is never true and never errors — it silently returns zero rows. You write
+<code>IS NULL</code>.</p>
+
+<hr style="border:none;border-top:1px solid var(--rule);margin:3rem 0">
+
+<p style="color:var(--ink-faint);font-family:var(--sans);font-size:.88rem">
+Sections S1 onward get appended below, one per session, by <code>/backend bank</code>.
+</p>
+
+<nav class="lesson-nav">
+  <a href="course-map.html">← Course map</a>
+  <a href="../CURRICULUM.md">The curriculum →</a>
+</nav>
+
+</div>
+</body>
+</html>

@@ -22,6 +22,15 @@ Read `references/3ms-framework.md` once. It's how Tarun thinks about AI work. Mi
 - `/machine-coding` — **The 12:45pm block. DSA is the gate; machine coding is the offer.** Coaches the round: reviews your design **before** you write code, grades the finished session against the rubric, and rewrites a compounding performance profile (failure modes, freeze signature, primitive mastery, the hint ledger). You code in the **lab** (`learning/machine-coding/lab/index.html`) — a local page with gated phases, a clock, and **no autocomplete in `app.jsx`, ever**, which locks the editor until you submit a design. **The skill NEVER writes code**; every line it writes for you is a rep you don't get. The lab **translates errors into lessons but never hides a real mistake**, and the one autocomplete exception is deliberate: `styles.css` gets a CSS dropdown **only once P0 is green** — styling isn't the muscle, law #2 says you shouldn't be in that file before P0, and the gate turns the feature into a reward for law #1. **Don't make it always-on; the gate is the feature.** Phase-gated 0→3 (steal the process → guided solo → interviewer → full rounds) — it will refuse to interview you early. Built 2026-07-14 because AI-assisted coding ate the blank-file-to-structure muscle.
 
 **Job hunt:**
+- `/backend` — **The backend interview track. The 1-hour office block (10:15-11:15am).** Teaches
+  **Node.js + PostgreSQL**, TypeScript throughout, across 32 one-hour sessions that grow **one**
+  project — a multi-tenant cost API shaped deliberately like CloudForestX, so every hour doubles as CV
+  defense. Authors the lessons, fires the cold drills and planted-bug reviews, and banks `W`/`X`
+  ratings to the spaced-rep board. **It NEVER writes the build or the SQL** — same law as
+  `/machine-coding`; every line written for him is a rep he doesn't get. The hour is *10 min cold gate
+  → 40 min lesson + build → 10 min bank*, and **the commute carries the spoken explain rep**, because
+  office hours are interruptible and a spoken rep needs no screen. Rebuilt 2026-08-15 when .NET was
+  cut. Syllabus: `learning/backend/CURRICULUM.md`.
 - `/cv-tailor` — **The JD-to-CV tailor.** Feed it a job description; it re-weights, reorders and re-words your *real* experience to that JD's keywords so ATS shortlists it, saves the tailored LaTeX plus an honest gap list under `references/cv/tailored/`, and prints the paste-ready `.tex`. The master CV + fact-bank in `references/cv/` are the source of truth; it never invents a skill, changes a metric, or claims past what you can defend. Compile the output in Overleaf. Built 2026-07-24.
 
 **Shipping:**
@@ -58,6 +67,19 @@ The paid side-business: end-to-end websites for local businesses around Gandhidh
 - `learning/reading/` — **the book track** (run by `/reading`): `rules.md` (**the artifact** — cross-book, bounded at 20 live, *rewritten* not appended: the rules you tested against reality, with a `Killed` section that keeps the epitaph of every one reality broke), `books/<slug>.md` (one file per book — aim, captures, drilled, close). **Tracked and interrogated, not taught** — `/teach` authors lessons; here the source is the book. **The read budget: a drill reads `rules.md` + the one book file. Never glob `books/`.**
 - `learning/machine-coding/` — **the machine-coding round system** (run by `/machine-coding`): `lab/` (where the code actually gets written — open `index.html`), `rubric.md` (how the round is really scored), `primitives.md` (the 27 building blocks every question composes), `queue.md` (the R0→R3→R10 cold-rebuild ladder + the Phase marker), **`profile.md`** (the compounding model of how Tarun codes), `problems/` (the Phase 1 bank), `builds/` (one folder per session). **The read budget: a review reads `profile.md` + today's `session.md` + today's code. Never glob `builds/`.** `profile.md` is *rewritten*, never appended — that's why it costs the same in month six as on day one.
 - `learning/cv-defense/` — **the CV interview-defense drill** (say **"drill me"** — a two-way teach + closed-book-quiz loop, no skill drives it): `defend-map.md` (every résumé line → its grounding → 🟢 yours / 🟡 fluency / 🔴 must-learn → drill id), `roadmap.md` (the tiers; **Dwellworks + CloudForestX are full deep-drill — every bullet to explanation level, not just the 🔴 ones**), `progress.md` (Score/10 + Confidence/5 + gate, *rewritten* not appended), `drills/NN-*.md` (`00-opener.md` seeded, the rest authored on demand), **`answers/`** (added 2026-08-12 — `answers/<project>/NN-*.md` = **the sentence he says** per CV bullet + its follow-up table; `answers/concepts/*.md` = **what the technology is** — Razor, SignalR, IE11, error boundaries). Depth is pulled from `learning/project-knowledge-base/` (the per-project study-module library that grounds the four work projects) and the real repos. **Three layers, three jobs, no duplication:** the kb says what the *code does*, `answers/` says what *he says*, `concepts/` covers generic tech the kb assumes he already knows — that last gap is why the 08-12 sitting stalled. **The rule that governs it: never claim authorship you can't defend.** **A sitting is `teach` → closed-book quiz → gate** (`roadmap.md` §Session unit) — running the quiz on untaught material is the documented failure. Read budget: `defend-map.md` + `progress.md` + **one** answer file and the concepts it links. Never glob `drills/` or `answers/`.
+- `learning/backend/` — **the backend interview track** (run by `/backend`, the 1-hour office block):
+  **Node.js + PostgreSQL, TypeScript throughout, 32 one-hour sessions.** `CURRICULUM.md` (**start
+  here** — every session in plain English: learn / build / **the sentence you say**), `MISSION.md`,
+  `drill-board.md` (the T0→T2→T7→T21 board, separate `W`/`X` ratings), `profile.md` (*rewritten*, never
+  appended, 150-line cap), `reference/node-postgres-sheet.html` (the living cheat sheet he keeps).
+  **.NET was cut 2026-08-15** — it only bought internal shortlisting and he resigns 7 Sept; archived at
+  `archives/learning/backend-dotnet/`. **The premise:** `cv-defense/skills-defense.md` already grades
+  Node/Express/REST/Postgres/Sequelize 🟢 **anchored**, so the track closes the gap between what the CV
+  claims and what the hands can do — it is reverse-engineered from the résumé, not from a generic
+  roadmap. **Three laws: every session ends with a sayable interview sentence · the AI NEVER writes the
+  build or the SQL · every concept lands on the one running build.** Code lives outside the repo in
+  `backend-lab/`; **read it, never edit it.** Read budget: `profile.md` + the due rows + today's lesson.
+  Never glob `lessons/`.
 - `shipped.md` — the done-log + streak counter. Everything you've shipped. Never delete from it.
 - `clients/` — **the web-solutions engagement registry.** One folder per client (`engagement.md` = source of truth, `findability.md` = the Phase 3 board, `handover.md`, `retainer.md`, `reports/`). Business data lives here; the client's *code* stays in its own repo. `_template/` gets copied for each new client. Driven by the `/client-*` skills — don't hand-edit in normal work.
 - `context/` — about you, your business, your priorities (filled by `/onboard`)
@@ -103,7 +125,9 @@ gate, not DSA** — top product tier is off the table this cycle on arithmetic.
 **What this changed, and do not silently revert any of it:** DSA is **parked** until 22 Sept then
 capped at ~20 problems (the old "DSA is the gate" line is dead, and it had been contradicting his own
 07-29 triage for three weeks). **Cut to zero:** system design / Xu Vol 1, AI-fluency as a study
-track, `reading`, `workout`, the 8pm `project` block, and .NET as *prep*. Everything non-mission —
+track, `reading`, `workout`, the 8pm `project` block, and **.NET entirely** (cut 2026-08-15 — it only
+bought internal shortlisting and he resigns 7 Sept; the backend block is now **Node + PostgreSQL**,
+1 hr/day, see `learning/backend/CURRICULUM.md`). Everything non-mission —
 GradeJar, JsonBeam, AccentWallPlanner, Kesri — stays on autopilot via `/marketing` and does **not**
 compete for hours before 15 Nov. LinkedIn is fair game for the job hunt only.
 

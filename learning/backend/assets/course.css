@@ -1,7 +1,10 @@
-/* course.css — shared stylesheet for the .NET Framework backend course.
+/* course.css — shared stylesheet for the Node.js + PostgreSQL backend course.
    Dark theme (light hurts the reader's eyes). Tufte-ish: quiet chrome, loud content.
    Palette matches the sibling system-design-interview and interview-qa courses so
-   all three read as one bookshelf. Every lesson and reference doc links this. */
+   all three read as one bookshelf. Every lesson and reference doc links this.
+
+   Rebuilt 2026-08-15 when .NET was cut: .xlate repurposed from JS-to-C# into
+   plain-English-to-the-term-they-use, and .say added as the signature component. */
 
 :root {
   --bg:        #12141a;
@@ -205,18 +208,52 @@ details.reveal[open] summary { margin-bottom: 0.5rem; border-bottom: 1px dashed 
 .part-label { font-family: var(--sans); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-2); margin: 2.6rem 0 0.4rem; }
 
 /* ===================================================================
-   .NET-course components. Everything below is specific to this course.
+   Backend-course components. Everything below is specific to this course.
    =================================================================== */
 
-/* --- .xlate: the translation table. The signature component.
-       Node/JS on the left, C#/.NET on the right, the catch underneath.
-       This is how nearly every concept in this course gets introduced. --- */
+/* --- .say: THE SIGNATURE COMPONENT. Law #1 of this course.
+       Every session closes with the sentence he can say in an interview,
+       plus the two follow-ups it invites. Not a summary — a sentence he
+       can spend in a room. A session with no .say did not happen. --- */
+.say {
+  border: 1px solid var(--accent-2);
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--accent-2) 11%, var(--bg-sink)) 0%,
+              var(--bg-sink) 100%);
+  border-radius: 12px; padding: 1.2rem 1.4rem; margin: 2.2rem 0;
+  font-family: var(--sans);
+}
+.say .callout-label { color: var(--accent-2); }
+.say .callout-label::before { content: "🗣 "; }
+.say blockquote {
+  margin: 0.4rem 0 0; padding: 0 0 0 0.9rem;
+  border-left: 3px solid color-mix(in srgb, var(--accent-2) 55%, transparent);
+  font-family: var(--serif); font-size: 1.06rem; line-height: 1.55; color: #fff;
+}
+.say .followups {
+  margin: 1rem 0 0; padding-top: 0.8rem; border-top: 1px dashed var(--rule);
+  font-size: 0.88rem; color: var(--ink-soft);
+}
+.say .followups::before {
+  content: "and they will ask";
+  display: block; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint); margin-bottom: 0.4rem;
+}
+.say .followups ul { margin: 0; padding-left: 1.1rem; }
+
+/* --- .xlate: the translation table. Repurposed 2026-08-15.
+       PLAIN ENGLISH on the left, THE TERM THEY'LL USE on the right,
+       the catch underneath. An .xlate row whose left column is also
+       jargon is a bug in the lesson. --- */
 .xlate { margin: 1.5rem 0; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
 .xlate-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; border-bottom: 1px solid var(--rule); }
 .xlate-row:last-child { border-bottom: none; }
 .xlate-row > div { padding: 0.75rem 0.95rem; font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; }
-.xlate-node { background: color-mix(in srgb, var(--good) 7%, var(--bg-sink)); color: var(--ink-soft); }
-.xlate-net  { background: color-mix(in srgb, var(--accent) 7%, var(--bg-raise)); color: var(--ink); }
+/* .xlate-plain / .xlate-term are the current names. .xlate-node / .xlate-net
+   are kept as aliases so the archived .NET material still renders if opened. */
+.xlate-plain, .xlate-node { background: color-mix(in srgb, var(--good) 7%, var(--bg-sink)); color: var(--ink-soft); }
+.xlate-term,  .xlate-net  { background: color-mix(in srgb, var(--accent) 7%, var(--bg-raise)); color: var(--ink); }
+.xlate-plain { font-family: var(--sans); }
 .xlate-arrow { display: flex; align-items: center; padding: 0 0.6rem; color: var(--ink-faint); background: var(--bg-sink); font-family: var(--sans); }
 .xlate-head { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ink-faint); background: var(--bg-sink); }
 .xlate-head > div { padding: 0.5rem 0.95rem; font-family: var(--sans); }
@@ -275,9 +312,11 @@ details.reveal[open] summary { margin-bottom: 0.5rem; border-bottom: 1px dashed 
 /* An .xlate directly after an .internals belongs to it: pull them together. */
 .internals + .xlate { margin-top: 0; }
 
-/* --- .review: the planted-bug drill. Closes every .NET session.
-       He is the reviewer. The bug is real production material, not a typo.
-       This is the rep that protects him when AI writes the code. --- */
+/* --- .review: the planted-bug drill. He is the reviewer.
+       The bug is real production material, not a typo: a missing await, a
+       floating promise, a pooled client never released, a catch that never
+       rolls back, an N+1, a concatenated query, an ownership check done
+       after the fetch. Retargeted from C# to Node/Postgres 2026-08-15. --- */
 .review {
   border: 1px solid var(--review);
   background: color-mix(in srgb, var(--review) 6%, var(--bg-sink));
