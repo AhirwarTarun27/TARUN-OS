@@ -4,9 +4,10 @@
   "lockedOn": "2026-08-09",
 
   "milestones": {
-    "resign": "2026-09-07",
+    "resign": "2026-09-09",
     "released": "2026-09-21",
-    "phaseGate": "2026-09-15",
+    "_phaseGateMeans": "RE-CUT 2026-09-11. Was 2026-09-15 (the wave-1 end), which had already expired with 0 applications and made every counter divide by 4 working days — which is why the board showed six CUTs and told him to cut interviews to 0. It is now the APPLY WINDOW CLOSE: the last date an application can realistically convert to a signed offer by 15 Nov (screen ~1wk + rounds ~2-3wks + offer ~1wk). After this date an application is a lottery ticket for a January first-salary, which the plan already rejects.",
+    "phaseGate": "2026-10-20",
     "offerFloor": "2026-11-15",
     "dry": "2026-12-31"
   },
@@ -52,7 +53,7 @@
   "interviews": [],
 
   "waves": {
-    "sacrificial": { "start": "2026-08-10", "end": "2026-09-14" },
-    "target": { "start": "2026-09-15", "end": "2026-11-15" }
+    "sacrificial": { "start": "2026-08-10", "end": "2026-09-27" },
+    "target": { "start": "2026-09-28", "end": "2026-11-15" }
   }
 }

@@ -179,6 +179,71 @@ deliberate. **Do not "fix" it to a stricter bar.**
 
 ---
 
+# Phase B — the released day (live from Tue 22 Sept)
+
+> **Written 2026-09-11.** Release confirmed 21-22 Sept. Income stops. From here the constraint is no
+> longer *hours*. It is the funnel, and the funnel only moves during business hours.
+
+## The two kinds of time, re-derived
+
+In Phase A the split was interruptible office vs. the protected 9pm block. That split dies with the
+job. The new one is:
+
+| | **Market hours** | **Dark hours** |
+|---|---|---|
+| When | 9:30 am - 6:30 pm | 7:30 pm - 11:30 pm |
+| Only works here | recruiter calls, applications, `/cv-tailor`, follow-ups, referral asks, same-day interview slots | every learning rep |
+| Why | nobody answers a mail at 10 pm | a timed round runs fine at 8 pm |
+
+**So the schedule barely changes.** The office block is replaced by funnel work. The evening learning
+block stays exactly where it already is. This is a swapped column, not a new system. Building a new
+system instead of doing reps is the documented July failure.
+
+| Time | Block | Code | Owner |
+|------|-------|------|-------|
+| 9:30-9:45 am | Console + today's plan | `plan` | **ritual** |
+| 9:45-11:45 am | **Applications — 5/day, submitted before anything else starts** | `apply` | this is the job now |
+| 11:45 am-1:00 pm | `/cv-tailor`, follow-ups, recruiter replies, referral asks | `funnel` | interruption-tolerant by design |
+| 1:00-2:00 pm | Lunch | — | unscored |
+| 2:00-3:00 pm | **Backend — Node + PostgreSQL, 1 hr** | `backend` | unchanged. `/backend` |
+| 3:00-4:00 pm | Load tonight's rep | — | unscored |
+| 4:00-5:00 pm | **Walk / gym** | `workout` | comes back first when the schedule loosens. Twelve-hour desk days were a July failure mode |
+| 5:00-7:30 pm | Off | — | **genuinely off** |
+| 7:30-9:00 pm | Machine coding **/** Interview Q&A | `machineCoding` `interviewQa` | **both go daily now** |
+| 9:00-10:00 pm | CV interview-defense | `cvDefense` | say **"drill me"** |
+| 10:00-11:00 pm | Second coding rep, or DSA | `dsa` | DSA resumes 22 Sept, capped at ~20 problems |
+| 11:00-11:30 pm | Wrap | `wrap` | **ritual** |
+
+> **The dashboard `SCHED` array in `daily/dashboard/template.html` still holds the Phase A day.**
+> Swap it on 22 Sept, not before, or the now-bar lies for the next ten days.
+
+## THE PHASE B FLOOR
+
+> ## 5 applications + 1 CV drill + 1 timed coding rep
+> **~4 hours. Still a WIN, whatever else happened.**
+
+The application half rises from 3 to 5, because the office no longer takes nine hours. **The learning
+half does not rise at all, and neither does the floor above 4 hours.**
+
+**Hours were never the constraint.** July had them and shipped systems instead of reps. 10 Aug to
+11 Sept had bench days and shipped nothing at all: one floor day in 31. A board that fills every
+released hour is the same binary-collapse machine with a bigger number written on it.
+
+## The learning cap — the one new rule in Phase B
+
+**Learning is capped at 4 hours a day until 2 interviews have been sat.** A ceiling, not a target.
+
+The instinct after release is to pour the whole day into practice. It is the wrong trade while the
+funnel is at zero, because a released weekday is the one asset most candidates do not have: a
+recruiter call at 11 am, a same-day interview slot, a quiet application chased the week it goes
+quiet. That beats the third hour of a machine-coding round, which loses nothing by happening at 8 pm.
+
+**The learning-heavy phase is real and it starts 21 October**, when the apply window closes and a new
+application can no longer convert by the floor. From then the funnel is closing itself, every live
+company is already in process, and the hours belong to the rounds in flight. Go all in then.
+
+---
+
 ## Handoffs and boundaries
 
 - **`/console` runs FIRST, every session.** It names the one next action. `week.md` is no longer the

@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 5b · Getters, setters &amp; what <code>=</code> really does — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 5b · Module 5 — gap drill, not a new module</p>
+    <h1>Getters, setters &amp; what <code>=</code> really does</h1>
+    <p class="subtitle">Lesson 5 said spread and <code>Object.assign</code> are both shallow copies of
+    own enumerable properties. That is true and it is not the whole truth. The difference between them
+    is <strong>one mechanism you have never been taught</strong>, and it is the same mechanism behind
+    <code>el.innerHTML = x</code>, Vue reactivity, and a real security bug.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Why this page exists — read it, it changes how you drill</span>
+    This page was written on <strong>2026-09-20</strong> because of an honest sentence:
+    <em>"To be honest, I don't know anything about getters and setters, and I don't imagine their exact
+    use case, because I haven't used this kind of thing in real production code."</em>
+    <br><br>
+    That is the correct thing to have said, and it located the gap in one line. Lesson 5 §4 and §8 both
+    <em>assume</em> accessor properties exist — the freeze/seal section, the spread section and the
+    descriptor table are all written on top of a concept that was never taught. This page is the
+    missing floor. <strong>It is not new material to get through. It is the floor under material you
+    already read.</strong>
+    <br><br>
+    Also banked here: the interview answer he could not reach without it — the
+    <strong>spread vs <code>Object.assign</code> discriminator</strong>, which almost no candidate can
+    name at all.
+  </div>
+
+  <h2>1 · <code>=</code> does not always mean "store a value"</h2>
+
+  <p>Start here, because you already know this and have never had it named. You have written this
+  thousands of times:</p>
+
+  <pre><code>el.innerHTML = "&lt;p&gt;hi&lt;/p&gt;";</code></pre>
+
+  <p>Ask the question nobody asks: did that <em>store a string</em> in a box called
+  <code>innerHTML</code>? No. It parsed HTML, destroyed the existing child nodes, built new ones, and
+  scheduled a repaint. One character — <code>=</code> — ran a pile of C++.</p>
+
+  <p>That is a <strong>setter</strong>. You have been using them daily:</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>You wrote</th><th>What it looks like</th><th>What actually happened</th></tr></thead>
+    <tbody>
+      <tr><td><code>el.innerHTML = "…"</code></td><td>storing a string</td><td>parse HTML, rebuild the DOM subtree</td></tr>
+      <tr><td><code>location.href = "/login"</code></td><td>storing a string</td><td><strong>the browser navigates away</strong></td></tr>
+      <tr><td><code>input.value = ""</code></td><td>storing a string</td><td>the visible input is redrawn</td></tr>
+      <tr><td><code>el.className = "active"</code></td><td>storing a string</td><td>the <code>class</code> attribute is rewritten, styles recalc</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">The whole lesson in one sentence</span>
+    <strong>A property is either a box or a pair of functions wearing an <code>=</code> costume.</strong>
+    You cannot tell which from the call site. That is deliberate, and it is the entire point of the
+    feature.
+  </div>
+
+  <h2>2 · The real dichotomy: data property vs accessor property</h2>
+
+  <p>Every property in JavaScript is exactly one of two kinds. Lesson 5's descriptor table showed you
+  one of them. Here is the pair, printed by
+  <code>Object.getOwnPropertyDescriptor</code>:</p>
+
+  <pre><code>const data = { a: 1 };
+Object.getOwnPropertyDescriptor(data, "a");
+<span class="tok-out">// { value: 1, writable: true, enumerable: true, configurable: true }</span>
+
+const acc = { get a() { return 1; }, set a(v) {} };
+Object.getOwnPropertyDescriptor(acc, "a");
+<span class="tok-out">// { get: [Function], set: [Function], enumerable: true, configurable: true }</span></code></pre>
+
+  <p>Look at what is <em>missing</em> from the second one: there is <strong>no <code>value</code> and
+  no <code>writable</code></strong>. Nothing is stored. There is no box. The property is two functions
+  and nothing else.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th>Data property</th><th>Accessor property</th></tr></thead>
+    <tbody>
+      <tr><td>Descriptor holds</td><td><code>value</code>, <code>writable</code></td><td><code>get</code>, <code>set</code></td></tr>
+      <tr><td>Reading it</td><td>hands back the stored value</td><td><strong>runs the getter</strong></td></tr>
+      <tr><td>Writing it</td><td>replaces the stored value</td><td><strong>runs the setter</strong></td></tr>
+      <tr><td>Storage</td><td>yes, one slot</td><td><strong>none</strong> — it stores nothing</td></tr>
+      <tr><td>How you make one</td><td><code>{ a: 1 }</code></td><td><code>get</code>/<code>set</code>, or <code>defineProperty</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="module"><strong>Say "accessor property," not "getter."</strong> The interviewer's follow-up
+  is "so what does the descriptor look like?" — and the answer is <em>no value, no writable, just get
+  and set</em>. That single sentence is worth more than any amount of syntax recall.</p>
+
+  <h2>3 · The syntax, in three places</h2>
+
+  <p><strong>In an object literal</strong> — the form you will read most:</p>
+
+  <pre><code>const user = {
+  firstName: "Tarun",
+  lastName: "Ahirwar",
+
+  get fullName() {                 <span class="tok-com">// runs on READ:  user.fullName</span>
+    return this.firstName + " " + this.lastName;
+  },
+  set fullName(v) {                <span class="tok-com">// runs on WRITE: user.fullName = "…"</span>
+    [this.firstName, this.lastName] = v.split(" ");
+  }
+};
+
+user.fullName;                     <span class="tok-out">// "Tarun Ahirwar"   — the getter ran</span>
+user.fullName = "Asha Roy";        <span class="tok-com">// the setter ran</span>
+user.firstName;                    <span class="tok-out">// "Asha"</span>
+Object.keys(user);                 <span class="tok-out">// ["firstName", "lastName", "fullName"]</span></code></pre>
+
+  <p>Three things to notice, all of them interview-grade:</p>
+  <ul>
+    <li><strong>No parentheses.</strong> <code>user.fullName</code>, not <code>user.fullName()</code>.
+    It is disguised as data on purpose.</li>
+    <li><strong>Nothing named <code>fullName</code> is stored anywhere.</strong> It is computed on every
+    read.</li>
+    <li><strong>It still shows up in <code>Object.keys</code>.</strong> Accessors are enumerable when
+    declared this way — which is exactly why the copying question in §6 is a real question.</li>
+  </ul>
+
+  <p><strong>In a class</strong> — where the accessor lands on the <em>prototype</em>, not the instance
+  (Lesson 5 §5 territory):</p>
+
+  <pre><code>class C { get v() { return 1; } }
+const c = new C();
+
+Object.keys(c);                          <span class="tok-out">// []            — nothing own</span>
+Object.getOwnPropertyNames(C.prototype); <span class="tok-out">// ["constructor", "v"]</span>
+{ ...c };                                <span class="tok-out">// {}            — spread copies OWN props. there are none.</span></code></pre>
+
+  <p><strong>With <code>defineProperty</code></strong> — the long form, and the one that reveals the
+  defaults:</p>
+
+  <pre><code>const dp = {};
+Object.defineProperty(dp, "k", { value: 9 });
+
+Object.keys(dp);                            <span class="tok-out">// []   ← invisible!</span>
+Object.getOwnPropertyDescriptor(dp, "k");
+<span class="tok-out">// { value: 9, writable: false, enumerable: false, configurable: false }</span></code></pre>
+
+  <div class="note">
+    <span class="callout-label">Remember this default</span>
+    <code>defineProperty</code> defaults every flag to <strong><code>false</code></strong>, while an
+    object literal defaults every flag to <strong><code>true</code></strong>. A property added with
+    <code>defineProperty</code> and no flags is read-only and invisible to <code>Object.keys</code>,
+    <code>for...in</code>, <code>JSON.stringify</code> and both copy operations. This is a favourite
+    "why doesn't my key show up" trick question.
+  </div>
+
+  <h2>4 · Why anyone writes one (the use case you asked for)</h2>
+
+  <p>You said you have never written one in production. That is normal and it is not a gap in your
+  engineering. Here is where they actually live, ranked by how likely you are to meet them:</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Use case</th><th>What it buys</th><th>Where you have met it</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Reactivity</strong></td><td>the framework learns you wrote, so it can re-render</td><td><strong>Vue 2 was built entirely on this.</strong> <code>this.count = 5</code> re-renders because <code>count</code> is a setter. MobX, older Angular digest work the same way</td></tr>
+      <tr><td><strong>Host objects</strong></td><td>an <code>=</code> that drives a real machine</td><td><code>innerHTML</code>, <code>location.href</code>, <code>value</code> — <em>every day</em></td></tr>
+      <tr><td><strong>Computed value</strong></td><td>never store what you can derive; no stale copy</td><td><code>fullName</code>, <code>total</code>, <code>isValid</code></td></tr>
+      <tr><td><strong>Validation on write</strong></td><td>reject or normalise before it lands</td><td>form models, config objects</td></tr>
+      <tr><td><strong>Backward compatibility</strong></td><td>rename a field without breaking callers</td><td><code>get oldName() { return this.newName }</code> + a deprecation warn</td></tr>
+      <tr><td><strong>Lazy compute</strong></td><td>expensive value built on first read, then cached</td><td>getter that overwrites itself with a data property</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="module"><strong>The one to say out loud:</strong> <em>"Vue 2's reactivity was accessor
+  properties — it walked your data object and replaced every field with a getter/setter pair so it
+  could track reads and intercept writes. Vue 3 swapped that for <code>Proxy</code> because accessors
+  can't see new keys being added or array index writes."</em> That answer is a whole level above
+  "getters compute values," and it connects to a framework you actually use.</p>
+
+  <h2>5 · The mechanism: there are TWO ways to put a property on an object</h2>
+
+  <p>This is the concept the whole page exists for. Nobody teaches it, and everything downstream is
+  unreachable without it.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th>Way 1 — assignment</th><th>Way 2 — definition</th></tr></thead>
+    <tbody>
+      <tr><td>Written as</td><td><code>obj.x = 5</code></td><td><code>Object.defineProperty(obj, "x", {…})</code></td></tr>
+      <tr><td>Spec name</td><td><code>[[Set]]</code></td><td><code>[[DefineOwnProperty]]</code></td></tr>
+      <tr><td>Walks the prototype chain?</td><td><strong>yes</strong></td><td>no</td></tr>
+      <tr><td>Triggers an existing setter?</td><td><strong>yes</strong></td><td>no</td></tr>
+      <tr><td>Read-only property in the way?</td><td><strong>throws</strong> (strict) / silent no-op</td><td>overwrites it, if configurable</td></tr>
+      <tr><td>Result</td><td>whatever the setter decided</td><td><strong>always a plain data property</strong></td></tr>
+      <tr><td>Analogy</td><td>knock on the front door — the doorman decides</td><td>crane it in through the roof — nobody is consulted</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Assignment is <em>polite</em>: it asks the object (and its whole prototype chain) whether anyone
+  wants to handle this key. Definition is <em>brute force</em>: it installs a data property and
+  bulldozes whatever was there.</p>
+
+  <pre><code>const target = {
+  set price(v) { console.log("setter ran"); this._price = v * 2; }
+};
+
+target.price = 100;               <span class="tok-out">// "setter ran"</span>
+target._price;                    <span class="tok-out">// 200   — the 100 never landed anywhere</span>
+Object.keys(target);              <span class="tok-out">// ["price", "_price"]</span></code></pre>
+
+  <p>And the prototype chain matters — an inherited setter fires just the same, which is the case that
+  bites in class code:</p>
+
+  <pre><code>class Base { set price(v) { console.log("proto setter ran"); this._price = v * 2; } }
+const inst = new Base();
+
+inst.price = 50;                  <span class="tok-out">// "proto setter ran"</span>
+inst._price;                      <span class="tok-out">// 100</span>
+Object.keys(inst);                <span class="tok-out">// ["_price"]  ← no own `price`. it lives on the prototype.</span></code></pre>
+
+  <h2>6 · Now the discriminator: spread vs <code>Object.assign</code></h2>
+
+  <p>Everything above collapses into one row.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th><code>Object.assign(t, src)</code></th><th><code>{ ...src }</code></th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mechanism</strong></td><td><strong>assignment</strong> <code>[[Set]]</code></td><td><strong>definition</strong> <code>[[CreateDataProperty]]</code></td></tr>
+      <tr><td><strong>Setter on the target fires?</strong></td><td><strong>yes</strong></td><td><strong>never</strong></td></tr>
+      <tr><td>Read-only property on target</td><td><strong>TypeError</strong> in strict mode</td><td>cannot happen — target is fresh</td></tr>
+      <tr><td>Target</td><td>an existing object — <strong>mutates it</strong></td><td>a brand new object</td></tr>
+      <tr><td>Returns</td><td>the target (same reference)</td><td>a new reference</td></tr>
+      <tr><td>Shallow?</td><td>yes</td><td>yes</td></tr>
+      <tr><td>Copies</td><td>own enumerable, string + symbol</td><td>own enumerable, string + symbol</td></tr>
+      <tr><td>Getters on the <em>source</em></td><td><strong>invoked</strong>, value copied flat</td><td><strong>invoked</strong>, value copied flat</td></tr>
+      <tr><td>Prototype carried?</td><td>no</td><td>no</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">Why you have never seen the difference bite</span>
+    <strong>Spread has no target.</strong> <code>{ ...src }</code> always builds a fresh empty object,
+    so there is never a pre-existing setter for it to trigger. The difference is only observable when
+    the <em>target</em> already has an accessor or a read-only property — and only
+    <code>Object.assign</code> can have a target at all. That is why this is a discriminator question
+    and not a daily concern. <strong>In your own code: use spread, and move on.</strong>
+  </div>
+
+  <p>Both operations <em>read</em> the source the same way. A getter on the source is invoked by both,
+  and what lands in the copy is a flat, dumb value — the accessor is not carried:</p>
+
+  <pre><code>const src = { get n() { console.log("get"); return 7; } };
+
+const viaSpread = { ...src };            <span class="tok-out">// "get"</span>
+const viaAssign = Object.assign({}, src); <span class="tok-out">// "get"</span>
+
+Object.getOwnPropertyDescriptor(viaSpread, "n");
+<span class="tok-out">// { value: 7, writable: true, enumerable: true, configurable: true }</span>
+<span class="tok-com">// the getter is GONE. both copies froze it into the value it happened to return.</span></code></pre>
+
+  <p class="module"><strong>That is the practical bug, and it is worth more than the setter trivia:</strong>
+  copying an object with a getter <em>silently converts a live computed value into a stale snapshot</em>.
+  Both operators do it. <code>Object.getOwnPropertyDescriptors</code> +
+  <code>Object.defineProperties</code> is the copy that preserves accessors.</p>
+
+  <h2>7 · The one time it bites in production: <code>__proto__</code></h2>
+
+  <p><code>__proto__</code> is an <strong>accessor property living on <code>Object.prototype</code></strong>
+  whose setter changes the object's prototype. Every object inherits it. So an assignment to a key named
+  <code>__proto__</code> does not store a key — it runs a setter that rewires inheritance.</p>
+
+  <pre><code>const evil = JSON.parse('{"__proto__": {"isAdmin": true}}');
+Object.keys(evil);                        <span class="tok-out">// ["__proto__"]  — JSON.parse makes a real OWN data key</span>
+
+<span class="tok-com">// assignment → knocks on the door → hits the __proto__ SETTER</span>
+const a = Object.assign({}, evil);
+Object.getPrototypeOf(a) === Object.prototype;  <span class="tok-out">// false  ← prototype was swapped</span>
+a.isAdmin;                                      <span class="tok-out">// true   ← inherited from the injected prototype</span>
+Object.keys(a);                                 <span class="tok-out">// []     ← and it is INVISIBLE</span>
+
+<span class="tok-com">// definition → through the roof → no setter consulted</span>
+const b = { ...evil };
+Object.getPrototypeOf(b) === Object.prototype;  <span class="tok-out">// true   ← untouched</span>
+b.isAdmin;                                      <span class="tok-out">// undefined</span>
+Object.keys(b);                                 <span class="tok-out">// ["__proto__"]  — just an inert key</span></code></pre>
+
+  <p>Same input, same-looking operation, and <code>Object.assign</code> got hijacked while spread did
+  not. Read line 6 again: <strong><code>Object.keys(a)</code> is empty.</strong> The attack leaves no
+  own property behind, which is exactly why prototype pollution survives naive logging and validation.</p>
+
+  <div class="note">
+    <span class="callout-label">The realistic shape</span>
+    <code>Object.assign(currentUser, JSON.parse(req.body))</code> — merging user-controlled JSON into
+    an existing object. This is a whole CVE class (lodash <code>merge</code>, jQuery
+    <code>extend</code>, <code>minimist</code>, and others all shipped it). It is not an exotic
+    hypothetical, and <strong>it exists entirely because of assignment-vs-definition.</strong>
+  </div>
+
+  <h2>8 · The remaining edge cases, verified</h2>
+
+  <pre><code><span class="tok-com">// a setter with no getter: writes work, reads give undefined</span>
+const wo = { set x(v) { this._x = v; } };
+wo.x = 5;
+wo.x;                             <span class="tok-out">// undefined  ← there is no getter. nothing to read.</span>
+wo._x;                            <span class="tok-out">// 5</span>
+
+<span class="tok-com">// read-only property on the target</span>
+const ro = {};
+Object.defineProperty(ro, "id", { value: 1, writable: false, enumerable: true });
+Object.assign(ro, { id: 2 });     <span class="tok-out">// TypeError (strict mode / modules)</span>
+({ ...ro });                      <span class="tok-out">// { id: 1 }   — copying OUT is always fine</span>
+
+<span class="tok-com">// frozen target</span>
+const fz = Object.freeze({ q: 1 });
+Object.assign(fz, { q: 2 });      <span class="tok-out">// TypeError</span>
+({ ...fz });                      <span class="tok-out">// { q: 1 }    — the copy is NOT frozen</span>
+
+<span class="tok-com">// assign returns the target itself; spread returns a new reference</span>
+const tgt = { a: 1 };
+Object.assign(tgt, { b: 2 }) === tgt;  <span class="tok-out">// true</span></code></pre>
+
+  <h2>9 · Quick checks</h2>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">Which descriptor field does an <strong>accessor</strong> property NOT have?</p>
+    <ul class="quiz-opts">
+      <li><button>enumerable</button></li>
+      <li><button>configurable</button></li>
+      <li><button>writable</button></li>
+      <li><button>set</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>writable</code> — and <code>value</code> with it.</strong>
+    An accessor stores nothing, so there is no slot to describe as writable. It has exactly
+    <code>get</code>, <code>set</code>, <code>enumerable</code>, <code>configurable</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q"><code>const o = { set x(v) { this._x = v } }; o.x = 5;</code> — what is <code>o.x</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>5</button></li>
+      <li><button>undefined</button></li>
+      <li><button>a TypeError</button></li>
+      <li><button>the setter function</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>undefined</code>.</strong> The write ran the setter and
+    stored 5 on <code>_x</code>. Reading <code>x</code> looks for a <em>getter</em>, finds none, and
+    returns <code>undefined</code>. Set and get are independent halves.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">The real difference between spread and <code>Object.assign</code>, beyond mutation, is:</p>
+    <ul class="quiz-opts">
+      <li><button>assign is deep, spread is shallow</button></li>
+      <li><button>spread copies inherited properties too</button></li>
+      <li><button>assign copies symbols, spread doesn't</button></li>
+      <li><button>assign uses =, so setters on the target run</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Assign uses assignment, so a setter already on the target
+    fires.</strong> Spread <em>defines</em> properties and never triggers one. The other three are all
+    false — both are shallow, both copy own enumerable only, and both copy symbol keys.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">After <code>const c = { ...objWithGetter }</code>, what is the getter in <code>c</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>gone — a plain value remains</button></li>
+      <li><button>copied and still live</button></li>
+      <li><button>copied but non-enumerable</button></li>
+      <li><button>skipped entirely, no key</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Gone.</strong> The getter is invoked once during the copy and the
+    returned value is frozen into a plain data property. A live computed value becomes a stale
+    snapshot. <code>Object.assign</code> does exactly the same. To preserve accessors you need
+    <code>defineProperties</code> + <code>getOwnPropertyDescriptors</code>.</div>
+  </div>
+
+  <h2>10 · Cold drills — predict the output</h2>
+  <p>Cover the answers. Say the output <em>and the mechanism word</em> (assignment or definition) out
+  loud before you open each one. All outputs below were run on Node 20, not written from memory.</p>
+
+  <details class="reveal">
+    <summary>D1 — <code>const o = { get a() { return this.b * 2 }, b: 3 }; const c = { ...o }; o.b = 10; console.log(c.a, o.a);</code></summary>
+    <p><strong><code>6 20</code></strong></p>
+    <p>The spread invoked the getter <em>once</em>, when <code>b</code> was still 3, and froze
+    <code>6</code> into <code>c</code> as a data property. <code>c.a</code> is now a dead number and
+    will never update again. <code>o.a</code> is still a live getter and recomputes to 20.
+    <strong>This is the copy bug that actually costs people time</strong> — far more than the setter
+    trivia.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 — <code>class U { set name(v){ this._n = v.trim() } }<br>const u = new U(); Object.assign(u, { name: "  Tarun  " }); console.log(u._n, Object.keys(u));</code></summary>
+    <p><strong><code>"Tarun" [ '_n' ]</code></strong></p>
+    <p>Two things at once. The setter lives on <code>U.prototype</code>, and assignment walks the
+    prototype chain, so it <strong>still fires</strong> — an inherited setter is as good as an own one.
+    And the instance ends up with no own <code>name</code> key at all, because the setter chose to
+    store <code>_n</code> instead. Assignment means <em>the target decides what happens</em>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 — <code>const src = JSON.parse('{"__proto__":{"x":1}}'); const a = Object.assign({}, src); console.log(Object.keys(a), a.x);</code></summary>
+    <p><strong><code>[] 1</code></strong></p>
+    <p>Prototype pollution in two lines. <code>Object.keys</code> is empty because nothing was ever
+    stored as an own property — the <code>__proto__</code> setter on <code>Object.prototype</code>
+    intercepted the write and swapped <code>a</code>'s prototype instead. <code>a.x</code> then
+    resolves up the chain. <strong>An invisible property that still answers.</strong> Swap
+    <code>Object.assign</code> for <code>{ ...src }</code> and you get <code>['__proto__'] undefined</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 — <code>const o = {}; Object.defineProperty(o, "k", { value: 1 }); console.log(Object.keys(o), JSON.stringify(o), { ...o });</code></summary>
+    <p><strong><code>[] '{}' {}</code></strong></p>
+    <p><code>defineProperty</code> defaults everything to <code>false</code>, so <code>k</code> is
+    non-enumerable. It exists — <code>o.k</code> is <code>1</code> and
+    <code>"k" in o</code> is <code>true</code> — but it is invisible to <code>Object.keys</code>,
+    <code>for...in</code>, <code>JSON.stringify</code>, spread and <code>Object.assign</code>, because
+    <em>every one of those is defined in terms of own <strong>enumerable</strong> properties.</em></p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 — <code>const t = {}; Object.defineProperty(t, "id", { value: 1, enumerable: true }); Object.assign(t, { id: 2 });</code></summary>
+    <p><strong><code>TypeError: Cannot assign to read only property 'id'</code></strong></p>
+    <p><code>writable</code> defaulted to <code>false</code>, and <code>Object.assign</code> uses
+    assignment, which respects that. In a module or any strict-mode code it throws; in sloppy mode it
+    fails silently, which is worse. Spread cannot hit this — its target is always a fresh object.
+    Second half of the discriminator, after setters.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 — <code>class C { get v(){ return 1 } }<br>console.log({ ...new C() }, Object.keys(new C()));</code></summary>
+    <p><strong><code>{} []</code></strong></p>
+    <p>Fuses this page with Lesson 5 §5. Class accessors and methods live on
+    <code>C.prototype</code>, and every copy operation takes <strong>own</strong> properties only. So
+    spreading a class instance gives you a plain object that has lost its methods, its getters
+    <em>and</em> its prototype. The standard follow-up: <em>"so how do you copy an instance?"</em> —
+    <code>Object.create(Object.getPrototypeOf(c))</code> plus
+    <code>Object.defineProperties(…, Object.getOwnPropertyDescriptors(c))</code>, or
+    <code>structuredClone</code> if you accept that it also drops the prototype.</p>
+  </details>
+
+  <h2>11 · Label-only round</h2>
+  <p>The locked 08-07 method: no outputs, no explanations. For each line, say only
+  <strong>"assignment"</strong> or <strong>"definition"</strong>, and whether a setter on the target
+  <em>could</em> fire. 60 seconds. Bar is 7/8.</p>
+
+  <ol>
+    <li><code>obj.x = 5</code></li>
+    <li><code>{ ...src }</code></li>
+    <li><code>Object.assign(t, src)</code></li>
+    <li><code>Object.defineProperty(o, "k", { value: 1 })</code></li>
+    <li><code>const { a, ...rest } = src</code></li>
+    <li><code>o["dynamic" + i] = v</code></li>
+    <li><code>Object.defineProperties(o, descriptors)</code></li>
+    <li><code>arr.push(v)</code></li>
+  </ol>
+
+  <details class="reveal">
+    <summary>Answers</summary>
+    <p>1 assignment (setter can fire) · 2 definition (never) · 3 assignment (can fire) ·
+    4 definition (never) · 5 definition — <strong>rest in destructuring builds a fresh object, same
+    mechanism as spread</strong> (never) · 6 assignment — <em>computed key changes nothing</em>, the
+    mechanism is the <code>=</code> (can fire) · 7 definition (never) · 8 <strong>assignment</strong> —
+    <code>push</code> is specified as a <code>[[Set]]</code> of an index plus a <code>[[Set]]</code> of
+    <code>length</code>, which is why it throws on a frozen array (can fire).</p>
+    <p class="module"><strong>The trap is 6 and 8.</strong> Both are surface shapes that look like
+    "something else" — a computed key and a method call — but the mechanism underneath is plain
+    assignment. This is <strong>surface-shape matching</strong>, the course's most durable failure mode,
+    dressed for a new module. The discriminator: <em>ignore what it looks like, ask whether an
+    <code>=</code> happens.</em></p>
+  </details>
+
+  <h2>12 · The sentences you say</h2>
+
+  <div class="qa">
+    <p><strong>"What's a getter and setter?"</strong></p>
+    <p>"An accessor property. Instead of storing a value it stores two functions — one that runs on
+    read, one on write — so the descriptor has <code>get</code> and <code>set</code> instead of
+    <code>value</code> and <code>writable</code>. You use them every day without noticing:
+    <code>el.innerHTML = x</code> is a setter, which is why one <code>=</code> can rebuild the DOM.
+    Vue 2's entire reactivity system was accessor properties."</p>
+  </div>
+
+  <div class="qa">
+    <p><strong>"Spread vs <code>Object.assign</code>?"</strong></p>
+    <p>"Both are shallow, both copy own enumerable string and symbol properties, and both invoke
+    getters on the source and flatten them to values. The obvious difference is that
+    <code>Object.assign</code> mutates its target. The real difference is the mechanism:
+    <code>Object.assign</code> uses assignment, so it walks the prototype chain and triggers any setter
+    already on the target, and throws on a read-only property. Spread <em>defines</em> properties, so
+    it never triggers a setter and always produces plain data properties. The famous consequence is
+    <code>__proto__</code> — <code>Object.assign</code> hits that setter and you get prototype
+    pollution, spread just stores an inert key."</p>
+  </div>
+
+  <div class="tip">
+    <span class="callout-label">Keep your honest line</span>
+    If asked whether you have used accessors in production, say no and say what you <em>have</em> used:
+    <em>"Not directly — the ones I work with are the DOM's and the framework's. Where it has mattered to
+    me is knowing that copying an object with a getter turns a live value into a stale one."</em>
+    <strong>Never claim authorship you can't defend.</strong> Naming the copy bug proves the
+    understanding without the claim.
+  </div>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/property-accessors">javascript.info — Property getters and setters</a>
+    (short, and the "smarter getters/setters" section is the validation use case), then
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty">MDN
+    — <code>Object.defineProperty</code></a> for the descriptor defaults in §3.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Not drilled yet.</strong> This page was written from a gap you named out loud, which means
+    reading it is not the rep. Say <strong>"drill me on 5b"</strong> and it runs the sequence:
+    the speak half, the mandatory "so why" follow-ups, fresh snippets you have not read here, and the
+    §11 label-only round.
+    <br><br>
+    <strong>This page is a prerequisite for the Lesson 5 gate, not a replacement for it.</strong>
+    L5 §4 and §8 both assume accessor properties — drill 5b first, then L5.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0005-objects-and-prototypes.html">← Lesson 5: Objects &amp; prototypes</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

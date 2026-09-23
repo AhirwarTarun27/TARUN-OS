@@ -536,6 +536,20 @@ changes nothing else.
 > exist and no-ops if they don't."* **Reversible + fails safe** is what makes this senior rather than a
 > hack.
 
+> 🔴 **STORY 2 IS UNVERIFIED — DO NOT TELL IT IN AN INTERVIEW UNTIL TARUN CONFIRMS IT. Flagged 2026-09-10.**
+> Odin contains exactly **one** AI chat feature: the `chatbot` bundle, branded **"Dwellton"**. Git says
+> none of it is his. `git log --author="avnit"` returns **zero** files matching chatbot, bot, assistant or
+> dwellton — including `Content/styles/css/chatbot/` and `xref_scss/22_chatbot/`, so not even the CSS.
+> Every commit on `Scripts/react/src/components/chatbot/` and all **19** on the C# side
+> (`ChatBotController.cs`, `Integration/ChatBotApi/`, `ChatBotRepository.cs`, the EF migrations) is **Dave
+> Gottl's**, dated **Dec 2024 – May 2025**, which also **predates Tarun's June 2025 start**. There is no
+> `draggable` or `resizable` anywhere in the React source either.
+>
+> His real Orders-area mobile work is `MP-1992` and the 2026-06-05 orders-page responsiveness commit,
+> neither of which touches the chat panel. **Most likely this story was mis-attributed when the file was
+> written.** Telling it invites "walk me through how you built the AI assistant", which he cannot answer.
+> See the Dwellton block in `references/cv/fact-bank.md`. **No AI claim goes on the Dwellworks CV entry.**
+
 **2. The mobile AI-assistant keyboard bug.** The Orders AI assistant chat sat in a floating panel. On
 mobile the on-screen keyboard pushed the input off-screen, so the user couldn't see what they typed.
 Fix was to make the chat full-screen on mobile so the layout reflows above the keyboard instead of being

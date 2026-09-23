@@ -3,8 +3,8 @@
 % ====== PREAMBLE =====
 \usepackage[
     ignoreheadfoot,
-    top=1.2 cm,
-    bottom=1.2 cm,
+    top=1.4 cm,
+    bottom=1.4 cm,
     left=1.2 cm,
     right=1.2 cm,
     footskip=0.5 cm,
@@ -57,20 +57,20 @@
 \titlespacing{\section}{
     -1pt
 }{
-    0.2 cm
+    0.32 cm
 }{
-    0.20 cm
+    0.26 cm
 }
 
 \renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$}
 \newenvironment{highlights}{
     \begin{itemize}[
-        topsep=0.08 cm,
+        topsep=0.12 cm,
         leftsep=0.20cm,
-        parsep=0.08 cm,
+        parsep=0.12 cm,
         partopsep=0pt,
         parindent=4pt,
-        itemsep=2pt,
+        itemsep=4pt,
         leftmargin=0 cm + 20pt
     ]
 }{
@@ -78,10 +78,10 @@
 }
 \newenvironment{highlightsforbulletentries}{
     \begin{itemize}[
-        topsep=0.08 cm,
-        parsep=0.08 cm,
+        topsep=0.12 cm,
+        parsep=0.12 cm,
         partopsep=0pt,
-        itemsep=2pt,
+        itemsep=4pt,
         leftmargin=10pt
     ]
 }{
@@ -137,7 +137,13 @@
     \begin{header}
         \fontsize{25 pt}{25 pt}\selectfont Tarun Ahirwar
 
-        \vspace{5 pt}
+        \vspace{4 pt}
+
+        % --- Professional headline. TAILOR THIS PER JD: mirror the posting's exact job title. ---
+        \normalsize
+        \mbox{Senior Software Developer | React, TypeScript, Node.js, AI Integration}
+
+        \vspace{4 pt}
 
         \normalsize
         \mbox{Noida, India}%
@@ -168,17 +174,17 @@
     % ================= SUMMARY =======================
     \section{Summary}
 \begin{onecolentry}
-    Senior Full-Stack Developer with \textbf{4+ years} in the JavaScript ecosystem (React, Next.js, Vue, TypeScript, Node.js), building data-heavy enterprise SaaS end to end, from PostgreSQL and Node APIs to fast, typed React interfaces. Experienced with AI-powered products, Large Language Model (LLM) integration, context engineering, and AI-assisted development.
+    Senior Software Developer with \textbf{4.5+ years} in the JavaScript ecosystem (React, Next.js, Vue, TypeScript, Node.js), building data-heavy enterprise SaaS end to end, from PostgreSQL and Node APIs to fast, typed React interfaces. Experienced with AI-powered products, Large Language Model (LLM) integration, context engineering, and AI-assisted development.
 \end{onecolentry}
 
     % ================= SKILLS =======================
     \section{Skills}
     \begin{onecolentry}
-        \textbf{Frontend:} React.js, Next.js, Vue.js, TypeScript, JavaScript (ES6+), Redux Toolkit, Context API, React Hooks, Astro, HTML5/CSS3\\[2pt]
-        \textbf{UI \& Visualization:} Material-UI (MUI), Tailwind CSS, SASS/SCSS, ECharts, Recharts\\[2pt]
-        \textbf{Backend \& Data:} Node.js, Express, REST APIs, PostgreSQL, Sequelize, TypeORM, Real-time (SignalR, Socket.IO)\\[2pt]
-        \textbf{AI \& GenAI:} Large Language Model (LLM) Integration, OpenAI API, AI Agents \& Agentic Workflows, Model Context Protocol (MCP), Context Engineering, Prompt Engineering, AI-Assisted Development (Claude Code, GitHub Copilot)\\[2pt]
-        \textbf{Cloud, Tooling \& Practices:} AWS (EC2, S3, EBS, EFS, Lambda, CloudWatch, STS), Cloudflare Workers, Docker, Webpack, Vite, Git, Agile Methodologies\\[2pt]
+        \textbf{Frontend:} React.js, Next.js, Vue.js, TypeScript, JavaScript (ES6+), Redux Toolkit, Context API, React Hooks, Astro, HTML5/CSS3\\[4pt]
+        \textbf{AI \& GenAI:} Large Language Model (LLM) Integration, OpenAI API, AI Agents \& Agentic Workflows, Model Context Protocol (MCP), Context Engineering, Prompt Engineering, Subagent Orchestration, AI-Assisted Development (Claude Code, GitHub Copilot)\\[4pt]
+        \textbf{Backend \& Data:} Node.js, Express, REST APIs, PostgreSQL, Sequelize, TypeORM, Real-time (SignalR, Socket.IO)\\[4pt]
+        \textbf{UI \& Visualization:} Material-UI (MUI), Tailwind CSS, SASS/SCSS, ECharts, Recharts\\[4pt]
+        \textbf{Cloud, Tooling \& Practices:} AWS (EC2, S3, EBS, EFS, Lambda, CloudWatch, STS), Cloudflare Workers, Docker, Webpack, Vite, Git, Agile Methodologies\\[4pt]
         \textbf{Quality \& Performance:} Vitest, Core Web Vitals, Bundle Optimization, WCAG / ARIA, SEO
     \end{onecolentry}
 
@@ -188,83 +194,67 @@
     \begin{twocolentry}{Apr 2022 -- Present}
         \textbf{Senior Software Developer}, ThinkSys Inc, Noida
     \end{twocolentry}
-    \vspace{0.10 cm}
 
-    \begin{twocolentry}{Jun 2025 -- Present}
+    \vspace{0.20 cm}
+
+    \begin{onecolentry}
         \textbf{Dwellworks (Corporate Relocation \& Destination Services)} | \textit{Team Size:} \textbf{\textit{12}}
-    \end{twocolentry}
-    \vspace{0.08 cm}
+    \end{onecolentry}
+    \vspace{0.10 cm}
     \begin{onecolentry}
         \textit{A US-based enterprise corporate-relocation platform that manages an employee's entire international move, from home and school finding through lease, visa, tenancy, and departure.}
         \begin{highlights}
-            \item Ship React features across 20 independently-mounted SPA bundles embedded in a legacy .NET Razor monolith, holding IE11 support.
-            \item Built a real-time operations dashboard on Redux and SignalR with auto-reconnect and state recovery, tracking every active relocation.
-            \item Built the shared component library -- form fields, virtualized selects, advanced data grid, Google Maps views -- reused across all 20 bundles.
-            \item Hardened the UI with layered React error boundaries and a stack-trace logger, containing failures to one cell instead of the whole page.
-            \item Instrumented React surfaces with Google Analytics 4 virtual pageview tracking, giving product per-page visibility into user drop-off.
-            \item Work directly with the US client in an Agile environment: requirements, design sessions, feature demos, sprint ceremonies and release coordination.
+            \item Ship React features across 20 independent SPA bundles in a server-rendered .NET Razor app.
+            \item Built the operations dashboard: Redux, SignalR, auto-reconnect, state recovery.
+            \item Form fields, virtualized selects, data grid and Maps views in the 78-file shared library.
+            \item 7 layered React error boundaries and a stack-trace logger. One bad cell no longer kills the page.
+            \item Google Analytics 4 virtual pageview tracking across the React surfaces.
+            \item Work directly with the US client in an Agile environment: demos, sprint ceremonies, releases.
+            \item AI-assisted development day to day: self-built Claude Code agents, prompt and context engineering.
         \end{highlights}
-        \vspace{0.08 cm}
+        \vspace{0.10 cm}
         \textbf{Tech Stack: React, Redux, Redux Thunk, Vue.js, JavaScript (ES6+), Webpack, SignalR, Google Maps API, Google Analytics 4, REST APIs}
     \end{onecolentry}
 
-    \vspace{0.25 cm}
+    \vspace{0.34 cm}
 
-    \begin{twocolentry}{Jul 2023 -- May 2025}
+    \begin{onecolentry}
         \textbf{CloudForestX (Cloud Cost Optimization Platform)} | \textit{Team Size:} \textbf{\textit{6}}
-    \end{twocolentry}
-    \vspace{0.08 cm}
+    \end{onecolentry}
+    \vspace{0.10 cm}
     \begin{onecolentry}
         \textit{A multi-tenant cloud cost optimization platform for AWS, managing 200+ enterprise accounts with cost visualization, idle and unused resource detection, rightsizing, and reservation recommendations.}
         \begin{highlights}
-            \item Built the React and TypeScript SPA behind 40 cost dashboards spanning waste detection, rightsizing, reservations and power scheduling.
-            \item Built the Node.js ingestion service pulling EC2, EBS, S3 and CloudWatch data via STS cross-account roles across 200+ AWS accounts.
-            \item Modeled the ingested cost data in PostgreSQL with Sequelize and served it to the dashboards through Express REST endpoints.
-            \item Built the data-visualization layer -- charts, gauges, geo maps -- on ECharts and Recharts behind a reusable chart hook.
-            \item Built a typed API layer and a generic fetch hook with request-id guards, eliminating stale-response races across 36 service modules.
+            \item Built the React and TypeScript SPA behind 40 cost dashboards, in 470 typed source files.
+            \item Architected global account and month filters in Redux Toolkit: one selection, 40 dashboards.
+            \item Node.js ingestion pulling EC2, EBS, S3 and CloudWatch across 200+ accounts via STS roles.
+            \item 18 scheduled jobs normalize it into PostgreSQL with Sequelize, served over Express.
+            \item Charts, gauges and geo maps on ECharts and Recharts, behind one chart hook.
+            \item A typed API layer over 36 service modules, with request-id guards against stale-response races.
         \end{highlights}
-        \vspace{0.08 cm}
+        \vspace{0.10 cm}
         \textbf{Tech Stack: React, TypeScript, Redux Toolkit, Context API, Axios, ECharts, Recharts, Material-UI (MUI), Socket.IO, Node.js, Express, PostgreSQL, Sequelize, AWS SDK}
     \end{onecolentry}
 
-    \vspace{0.25 cm}
+    \vspace{0.34 cm}
 
-    \begin{twocolentry}{Oct 2022 -- Jun 2023}
+    \begin{onecolentry}
         \textbf{DentScribe (AI-Powered Dental Documentation Platform)} | \textit{Team Size:} \textbf{\textit{10}}
-    \end{twocolentry}
-    \vspace{0.08 cm}
+    \end{onecolentry}
+    \vspace{0.10 cm}
     \begin{onecolentry}
         \textit{A US-based AI-powered healthcare SaaS for dental practices that converts patient visits into signed SOAP notes and writes them back into the practice management software, saving 40-50 minutes per visit.}
         \begin{highlights}
-            \item Built the React and TypeScript portal for a multi-tenant clinical product: 19 surfaces spanning clinical review, billing and admin across four user roles.
-            \item Built the report review surface for AI-generated clinical notes -- tabbed note, transcript, aftercare and coordinator sections with per-section editing.
-            \item Built Node.js and TypeScript REST endpoints behind the portal -- ownership-scoped TypeORM queries, validated DTOs, sanitized inputs and paginated list responses.
-            \item Integrated the portal against a queue-backed AI generation pipeline, surfacing report state and triggering writeback into the practice's management software.
-            \item Worked directly with the US client on requirements, demos and release cycles, coordinating API contracts across the backend and mobile teams.
+            \item Built the review surface for AI-generated clinical notes, with per-section editing.
+            \item Integrated the portal against a queue-backed AI generation pipeline and its writeback.
+            \item AI cost dashboards that track Large Language Model (LLM) token spend per practice.
+            \item 19 surfaces, four user roles, multi-tenant: the React and TypeScript portal.
+            \item Node.js and TypeScript REST endpoints. Ownership-scoped queries, validated DTOs, pagination.
+            \item Worked with the US client on requirements, demos, releases and cross-team API contracts.
         \end{highlights}
-        \vspace{0.08 cm}
+        \vspace{0.10 cm}
         \textbf{Tech Stack: React, TypeScript, Redux Toolkit, Material-UI (MUI), MUI X Data Grid, Stripe, Axios, Node.js, TypeORM, REST APIs, PostgreSQL, AWS S3, OpenAI API}
     \end{onecolentry}
-
-    \vspace{0.25 cm}
-
-    \begin{twocolentry}{Apr 2022 -- Sep 2022}
-        \textbf{MyWorkMyDay (HR Management System)} | \textit{Team Size:} \textbf{\textit{7}}
-    \end{twocolentry}
-    \vspace{0.08 cm}
-    \begin{onecolentry}
-        \textit{An HR management SaaS serving 20+ business clients with employee management, payroll processing, and performance analytics.}
-        \begin{highlights}
-            \item Built the platform's core surfaces: employee management, payroll processing and performance analytics dashboards.
-            \item Created reusable, typed React components and custom hooks for form validation and data fetching, adopted across the platform.
-            \item Implemented role-based access control (RBAC) across user roles, gating both route access and in-page actions.
-            \item Cut redundant search API calls 50\% with request debouncing, and reduced re-render cost with React.memo and useMemo.
-        \end{highlights}
-        \vspace{0.08 cm}
-        \textbf{Tech Stack: React, React Hooks, Redux, TypeScript, Material-UI (MUI), Tailwind CSS, REST APIs}
-    \end{onecolentry}
-
-    \vspace{0.25 cm}
 
     % ================= PROJECTS =======================
     \section{Projects}
@@ -272,28 +262,26 @@
     \begin{twocolentry}{\hrefWithoutArrow{https://gradejar.com}{gradejar.com}}
         \textbf{GradeJar}
     \end{twocolentry}
-    \vspace{0.05 cm}
+    \vspace{0.06 cm}
     \begin{onecolentry}
-        \textit{Local-first gradebook web app for teachers.} A no-login, browser-persisted gradebook with rosters, assignments, and custom grading scales, running entirely client-side with zero backend.
-        \vspace{0.05 cm}
+        \textit{Local-first gradebook for teachers.} No login, no backend, everything persists in the browser.
+        \vspace{0.06 cm}
 
         \textbf{Tech Stack: Astro, TypeScript, Cloudflare Workers}
     \end{onecolentry}
 
-    \vspace{0.18 cm}
+    \vspace{0.24 cm}
 
     \begin{twocolentry}{\hrefWithoutArrow{https://jsonbeam.com}{jsonbeam.com}}
         \textbf{JsonBeam}
     \end{twocolentry}
-    \vspace{0.05 cm}
+    \vspace{0.06 cm}
     \begin{onecolentry}
-        \textit{Fast, ad-free JSON formatter and validator.} Built static-first for sub-second loads and search visibility, deployed on the edge.
-        \vspace{0.05 cm}
+        \textit{Fast, ad-free JSON formatter and validator.} Static-first and deployed on the edge.
+        \vspace{0.06 cm}
 
         \textbf{Tech Stack: Astro, TypeScript, Cloudflare Workers}
     \end{onecolentry}
-
-    \vspace{0.25 cm}
 
     % ================= EDUCATION =======================
     \section{Education}
@@ -301,28 +289,25 @@
     \begin{twocolentry}{Jul 2021 -- Apr 2022}
         \textbf{Full Stack Web Development}, Masai School
     \end{twocolentry}
-    \vspace{0.08 cm}
+    \vspace{0.10 cm}
     \begin{onecolentry}
         \begin{highlights}
-            \item Specialized in MERN Stack and JavaScript ES6+ with hands-on experience in 11+ major and minor projects.
-            \item Developed end-to-end solutions across frontend, backend, databases, and deployment.
-            \item Demonstrated strong proficiency in React, React Hooks, Node.js, Express, MongoDB, REST APIs, Git, and Agile workflows.
+            \item MERN stack and JavaScript ES6+, across 11+ major and minor projects.
+            \item End-to-end builds: frontend, backend, databases, deployment.
         \end{highlights}
     \end{onecolentry}
 
-    \vspace{0.25 cm}
+    \vspace{0.30 cm}
 
     \begin{twocolentry}{Aug 2013 -- Jul 2017}
         \textbf{Bachelor of Technology (B.Tech), Mechanical Engineering}, Marwadi University, Rajkot
     \end{twocolentry}
 
-    \vspace{0.25 cm}
-
     % ================= CERTIFICATIONS =======================
     \section{Certifications}
 
     \begin{onecolentry}
-        \textbf{\hrefWithoutArrow{https://www.udemy.com/certificate/UC-4d935bc7-5184-4be5-8d5c-2b3e0b28234c/}{GitHub Copilot Beginner to Pro}} -- Udemy (Aug 2025)\\
+        \textbf{\hrefWithoutArrow{https://www.udemy.com/certificate/UC-4d935bc7-5184-4be5-8d5c-2b3e0b28234c/}{GitHub Copilot Beginner to Pro}} -- Udemy (Aug 2025)\\[3pt]
         \textbf{\hrefWithoutArrow{https://www.credly.com/badges/7f477dfd-f09a-48e3-b867-777bd44cde19/linked_in_profile}{Edchart Certified React JS Developer (SME)}} -- Credly (Jul 2025)
     \end{onecolentry}
 

@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 5c · The prototype chain, from the floor up — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 5c · Module 5 — gap drill. Read before L5 §5.</p>
+    <h1>The prototype chain, from the floor up</h1>
+    <p class="subtitle">Lesson 5 §5 opens with <em>"every object has a hidden link to another
+    object."</em> That sentence is true, and it is unreadable — because <strong>nothing has ever shown
+    you that link being created</strong>. This page shows you. Then §5 becomes revision.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Why this page exists</span>
+    Written <strong>2026-09-20</strong>, after a re-read of §5 landed as <em>"most of the things is
+    hitting differently, I do not get the exact terms."</em> Four gaps were named, and all four were
+    real: the <code>prototype</code> / <code>__proto__</code> collision, <em>why any of this exists</em>,
+    the three code shapes looking unrelated, and shadowing.
+    <br><br>
+    But the answer to a fifth question was the actual diagnosis. <em>"What does
+    <code>new Student('A')</code> do, step by step?"</em> → <strong>"No real idea."</strong>
+    <br><br>
+    <strong><code>new</code> is the operation that installs the prototype link.</strong> A section about
+    <em>following</em> a link, read by someone who has never watched one being <em>made</em>, cannot
+    land however well it is written. That is the same shape as the getters/setters gap found this
+    morning: the spread-vs-assign answer was unreachable because accessor properties had never been
+    taught. Same failure, one module later, found the same way — <strong>by asking, not by drilling.</strong>
+  </div>
+
+  <h2>1 · Why prototypes exist at all</h2>
+
+  <p>Start with the problem, because the solution is otherwise arbitrary trivia.</p>
+
+  <p>You have 1000 dogs. Every dog needs to bark. The naive object approach gives each dog its own
+  copy of the function:</p>
+
+  <pre><code>function makeDog(name) {
+  return {
+    name: name,
+    bark() { return name + " says woof"; }   <span class="tok-com">// a NEW function object, every single time</span>
+  };
+}</code></pre>
+
+  <p>1000 dogs, 1000 identical <code>bark</code> functions sitting in memory. That is pure waste. The
+  behaviour is the same for every dog — only the <em>data</em> differs.</p>
+
+  <p><strong>The fix: store <code>bark</code> in exactly one place, and give every dog a pointer to
+  that place.</strong></p>
+
+  <pre><code>                  ┌────────────────────────┐
+                  │   one shared object    │
+                  │   { bark: function }   │
+                  └────────────────────────┘
+                     ▲        ▲        ▲
+                     │        │        │      ← every dog points here
+              ┌──────┘        │        └──────┐
+       { name:"Rex" }  { name:"Fido" }  { name:"Bo" }
+       1000 of these, each holding only its own DATA</code></pre>
+
+  <p>That pointer is called the <strong>prototype</strong>. Following it is the
+  <strong>prototype chain</strong>. And that is the whole idea.</p>
+
+  <div class="tip">
+    <span class="callout-label">The honest framing, and it makes everything downstream inevitable</span>
+    <strong>Prototypal inheritance began as a memory optimisation and became the object model.</strong>
+    It is not a theory of classification borrowed from Java. It is "don't store the same function a
+    thousand times," followed to its conclusion. Every strange thing in §5 is a consequence of that
+    one decision.
+  </div>
+
+  <p>Proof that the sharing is real, not a metaphor:</p>
+
+  <pre><code>class Dog {
+  constructor(name) { this.name = name; }
+  bark() { return this.name + " says woof"; }
+}
+const rex = new Dog("Rex"), fido = new Dog("Fido");
+
+Object.keys(rex);                   <span class="tok-out">// ["name"]   ← only DATA lives on the dog</span>
+Object.hasOwn(rex, "bark");         <span class="tok-out">// false      ← bark is NOT on rex</span>
+Object.hasOwn(Dog.prototype, "bark"); <span class="tok-out">// true     ← it is over there</span>
+
+rex.bark === fido.bark;             <span class="tok-out">// true       ← ONE function. not a copy each.</span></code></pre>
+
+  <p>Read that last line again. <code>rex.bark</code> and <code>fido.bark</code> are not two equal
+  functions. They are <strong>the same function object</strong>, reached through two different
+  pointers. That is the optimisation working.</p>
+
+  <h2>2 · What <code>new</code> actually does — the missing floor</h2>
+
+  <p>Everything above depends on the pointer existing. <strong><code>new</code> is what creates
+  it.</strong> Four steps, in order:</p>
+
+  <pre><code>const rex = new Dog("Rex");
+
+  1.  create a fresh empty object                     →  {}
+  2.  LINK it:  that object's prototype = Dog.prototype   ← THE STEP THAT MATTERS
+  3.  run Dog's constructor body with `this` = that object →  { name: "Rex" }
+  4.  return it</code></pre>
+
+  <p><strong>Step 2 is the answer to everything on this page.</strong> The "hidden link" §5 talks about
+  is not hidden and not magic — it is step 2 of an operation you type every day.</p>
+
+  <p>Step 3 is Lesson 4 territory: <strong>rule 1, <code>new</code> binding.</strong> That is why
+  <code>this.name = name</code> inside a constructor writes onto the new object. Same rule you already
+  know, now with a name for where the object came from.</p>
+
+  <h3>Write <code>new</code> yourself and it stops being magic</h3>
+
+  <pre><code>function fakeNew(Ctor, ...args) {
+  const obj = Object.create(Ctor.prototype);   <span class="tok-com">// steps 1 + 2: create AND link</span>
+  const ret = Ctor.apply(obj, args);           <span class="tok-com">// step 3: run body with this = obj</span>
+  return (typeof ret === "object" &amp;&amp; ret !== null) ? ret : obj;   <span class="tok-com">// step 4</span>
+}
+
+function Cat(name) { this.name = name; }
+Cat.prototype.meow = function () { return this.name + " meows"; };
+
+const fake = fakeNew(Cat, "A");
+Object.getPrototypeOf(fake) === Cat.prototype;  <span class="tok-out">// true</span>
+fake.meow();                                    <span class="tok-out">// "A meows"</span>
+fake instanceof Cat;                            <span class="tok-out">// true   ← indistinguishable from `new`</span></code></pre>
+
+  <p>Four lines. That is the entire <code>new</code> operator. <code>Object.create(proto)</code> is
+  the primitive that does steps 1 and 2 — <em>make an object whose prototype is this</em>. Remember
+  that; it is the whole of §6.</p>
+
+  <div class="note">
+    <span class="callout-label">One honest limitation of <code>fakeNew</code></span>
+    <code>fakeNew(Dog, "X")</code> on a <strong><code>class</code></strong> throws
+    <code>TypeError</code>. Classes refuse to be invoked without <code>new</code> — that is a deliberate
+    ES6 guard, and <code>.apply</code> is not <code>new</code>. It works on old-style
+    <code>function</code> constructors, which is exactly what it is demonstrating. Say this yourself if
+    you ever write <code>fakeNew</code> on a whiteboard; noticing your own limitation is the senior move.
+  </div>
+
+  <p>The fourth step has a quirk worth one line: <strong>if a constructor returns an object, that
+  object wins and the freshly built one is discarded.</strong> Return a primitive, or nothing, and you
+  get the new object. This is the basis of the "can a constructor return something?" question.</p>
+
+  <h2>3 · <code>Dog.prototype</code> is NOT Dog's prototype</h2>
+
+  <p>This is the worst naming collision in JavaScript, and §5 gives it one table row. It deserves a
+  diagram.</p>
+
+  <p><strong>Two completely different arrows come out of the word <code>Dog</code>:</strong></p>
+
+  <pre><code>                    ┌─────────────────────────┐
+                    │   Dog   (a function)    │
+                    └─────────────────────────┘
+                       │                    │
+     .prototype ───────┘                    └─────── its OWN prototype
+     "the object I will HAND                        "what Dog itself
+      to instances I build"                          inherits from"
+                       │                                    │
+                       ▼                                    ▼
+          ┌────────────────────────┐          ┌──────────────────────┐
+          │    Dog.prototype       │          │  Function.prototype  │
+          │  { bark, constructor } │          │  { call, apply, bind}│
+          └────────────────────────┘          └──────────────────────┘
+                       ▲
+                       │  ← Object.getPrototypeOf(rex)
+                       │
+          ┌────────────────────────┐
+          │   rex  { name: "Rex" } │
+          └────────────────────────┘</code></pre>
+
+  <pre><code>Object.getPrototypeOf(Dog) === Dog.prototype;        <span class="tok-out">// FALSE  ← the trap</span>
+Object.getPrototypeOf(Dog) === Function.prototype;   <span class="tok-out">// true   ← Dog is a function</span>
+Object.getPrototypeOf(rex) === Dog.prototype;        <span class="tok-out">// true   ← rex is what it's FOR</span>
+
+rex.prototype;                                       <span class="tok-out">// undefined ← instances don't have one</span></code></pre>
+
+  <div class="tip">
+    <span class="callout-label">The fix: rename it in your head, permanently</span>
+    Every time you read <code>Dog.prototype</code>, say
+    <strong><code>Dog.protoForMyInstances</code></strong>.
+    <br><br>
+    It is a <em>delivery box</em>, not Dog's own parent. The property is badly named — it should have
+    been <code>Dog.instancePrototype</code> — and once you rename it internally, the collision stops
+    existing. <strong>Only functions have <code>.prototype</code>. Every object has <em>a</em>
+    prototype.</strong> Two different things that unfortunately share a word.
+  </div>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th><code>Dog.prototype</code></th><th><code>Object.getPrototypeOf(rex)</code></th></tr></thead>
+    <tbody>
+      <tr><td>Read it as</td><td>"the box I hand out"</td><td>"who I actually inherit from"</td></tr>
+      <tr><td>Exists on</td><td><strong>functions only</strong></td><td><strong>every object</strong></td></tr>
+      <tr><td>Point of view</td><td>the factory's</td><td>the product's</td></tr>
+      <tr><td>Old spelling</td><td>—</td><td><code>rex.__proto__</code> (deprecated)</td></tr>
+      <tr><td colspan="3"><strong>And they are the same object:</strong> <code>Object.getPrototypeOf(rex) === Dog.prototype</code> → <code>true</code>. One object, two names, two viewpoints.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="module"><strong>Say <code>Object.getPrototypeOf</code> in an interview, never
+  <code>__proto__</code>.</strong> <code>__proto__</code> is a deprecated accessor kept alive for the
+  web — and you already met its setter in <a href="0005b-getters-setters-and-copying.html">5b §7</a>,
+  where it was the prototype-pollution vector. Same property, both pages.</p>
+
+  <h2>4 · One lookup, traced all the way</h2>
+
+  <p>Now the chain is just "follow the arrow until you find it or run out."</p>
+
+  <pre><code>rex.toString()
+
+   rex                { name: "Rex" }                    toString? ✗
+    │
+    ▼   getPrototypeOf
+   Dog.prototype      { bark, constructor }              toString? ✗
+    │
+    ▼
+   Object.prototype   { toString, hasOwnProperty, ... }  toString? ✓  STOP
+    │
+    ▼
+   null                                                  (the end of every chain)</code></pre>
+
+  <pre><code>Object.getPrototypeOf(rex) === Dog.prototype;             <span class="tok-out">// true</span>
+Object.getPrototypeOf(Dog.prototype) === Object.prototype; <span class="tok-out">// true</span>
+Object.getPrototypeOf(Object.prototype);                  <span class="tok-out">// null</span>
+
+rex.toString();       <span class="tok-out">// "[object Object]"  — found at depth 2</span></code></pre>
+
+  <p><strong>And when it runs out:</strong></p>
+
+  <pre><code>rex.fly();     <span class="tok-out">// TypeError: rex.fly is not a function</span></code></pre>
+
+  <p>Read that error message properly, because it is the most common error in JavaScript. It does
+  <em>not</em> mean "fly is broken." It means <strong>the whole chain was walked to <code>null</code>,
+  nothing called <code>fly</code> was found, so <code>rex.fly</code> is <code>undefined</code>, and you
+  tried to call <code>undefined</code>.</strong> <em>"X is not a function"</em> almost always means
+  <em>"X was never found."</em></p>
+
+  <p>This is the same walk §5 shows for arrays, now with the mechanism underneath it:</p>
+
+  <pre><code>const arr = [1, 2, 3];
+arr.map(fn);
+<span class="tok-com">//  arr  →  Array.prototype  (map found here)  →  Object.prototype  →  null</span>
+
+Object.getPrototypeOf([]) === Array.prototype;             <span class="tok-out">// true</span>
+Object.getPrototypeOf(Array.prototype) === Object.prototype; <span class="tok-out">// true</span></code></pre>
+
+  <p><strong>You have used the prototype chain in every line of JavaScript you have ever written.</strong>
+  Every <code>.map</code>, every <code>.length</code>, every <code>.toString</code> was a chain walk.
+  It was never an advanced topic. It was just never named.</p>
+
+  <div class="note">
+    <span class="callout-label">The chain can be cut deliberately</span>
+    <code>Object.create(null)</code> makes an object with <strong>no prototype at all</strong>.
+    <code>Object.getPrototypeOf(bare)</code> is <code>null</code> and <code>bare.toString</code> is
+    <code>undefined</code>. This is the standard safe-dictionary trick: no inherited keys, and immune
+    to the <code>__proto__</code> pollution from 5b §7, because there is no
+    <code>Object.prototype</code> in the chain to hold that setter.
+  </div>
+
+  <h2>5 · Reads walk the chain. Writes never do.</h2>
+
+  <p>§5 states this and moves on. Here is the mechanism, and it is one you already own.</p>
+
+  <pre><code>function Student(name) { this.name = name; }
+Student.prototype.company = "Hexagon";
+
+const s1 = new Student("A"), s2 = new Student("B");
+
+s1.company;                    <span class="tok-out">// "Hexagon"  — not own. found on the prototype.</span>
+Object.hasOwn(s1, "company");  <span class="tok-out">// false</span>
+
+s1.company = "Other";          <span class="tok-com">// ← the write</span>
+
+s1.company;                    <span class="tok-out">// "Other"</span>
+Object.hasOwn(s1, "company");  <span class="tok-out">// true      ← a NEW own property was created</span>
+s2.company;                    <span class="tok-out">// "Hexagon" — untouched</span>
+Student.prototype.company;     <span class="tok-out">// "Hexagon" — untouched</span></code></pre>
+
+  <p>The write did not travel up the chain and overwrite the shared value. It created a fresh own
+  property on <code>s1</code> that sits <em>in front of</em> the inherited one. That is
+  <strong>shadowing</strong>. Proof that the original is still there, unharmed:</p>
+
+  <pre><code>delete s1.company;
+s1.company;                    <span class="tok-out">// "Hexagon"  ← the shadow lifted, the inherited value reappears</span></code></pre>
+
+  <pre><code>   BEFORE                          AFTER s1.company = "Other"
+
+   s1 { name }                     s1 { name, company:"Other" }  ← shadow
+    │  company? ✗                   │  company? ✓ STOP
+    ▼                               ▼
+   Student.prototype               Student.prototype
+   { company:"Hexagon" } ✓         { company:"Hexagon" }  still there, unreached</code></pre>
+
+  <h3>Why writes behave that way — and it is <em>not</em> a new rule</h3>
+
+  <p>Assignment <strong>does</strong> walk the chain. §5's phrasing is a useful simplification, but the
+  precise version is the one you learned this morning in
+  <a href="0005b-getters-setters-and-copying.html">5b §5</a>:</p>
+
+  <div class="tip">
+    <span class="callout-label">One mechanism, two pages</span>
+    <code>[[Set]]</code> walks the prototype chain <strong>looking for a setter</strong>. If it finds
+    one, that setter runs. If it finds a plain <strong>data</strong> property instead, it stops looking
+    and <strong>creates an own property on the object you started from.</strong>
+    <br><br>
+    So "writes don't walk" really means <em>"writes walk, but only accessors can catch them."</em>
+  </div>
+
+  <p>And that is testable. An inherited <em>setter</em> does fire, and creates no own property:</p>
+
+  <pre><code>function P() {}
+Object.defineProperty(P.prototype, "v", { set(x) { console.log("fired"); this._v = x; } });
+
+const p = new P();
+p.v = 1;                       <span class="tok-out">// "fired"   ← an INHERITED setter caught the write</span>
+Object.hasOwn(p, "v");         <span class="tok-out">// false     ← no shadow was created</span>
+p._v;                          <span class="tok-out">// 1</span></code></pre>
+
+  <p class="module">This is why 5b was worth building before this page. <strong>Shadowing and the
+  <code>Object.assign</code> discriminator are the same mechanism seen from two angles.</strong></p>
+
+  <h3>The one case where "it changed all of them" is true</h3>
+
+  <pre><code>function Team() {}
+Team.prototype.tags = [];          <span class="tok-com">// a shared MUTABLE object on the prototype</span>
+
+const t1 = new Team(), t2 = new Team();
+t1.tags.push("x");
+
+t2.tags;                           <span class="tok-out">// ["x"]   ← every team sees it</span>
+t1.tags === t2.tags;               <span class="tok-out">// true    ← one array, always was</span></code></pre>
+
+  <p>No shadowing happened, because <strong>there was no assignment.</strong> <code>t1.tags</code> is a
+  <em>read</em> — which walks the chain, finds the shared array, and hands it over. Then
+  <code>.push</code> mutates the thing everyone is pointing at. This is §3's copy-or-reference rule one
+  level down. <strong>Never put a mutable value on a prototype.</strong> It is why class fields exist.</p>
+
+  <h2>6 · The three shapes are one mechanism</h2>
+
+  <p>§5 calls these "two spellings." They look like three unrelated things. They are one thing:
+  <strong>something sets the link, and everything else is syntax.</strong></p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Shape</th><th>What sets the link</th><th>Linked to</th></tr></thead>
+    <tbody>
+      <tr><td><code>Object.create(proto)</code></td><td><strong>you do, by hand</strong></td><td><code>proto</code></td></tr>
+      <tr><td><code>new Fn()</code></td><td><code>new</code>, step 2</td><td><code>Fn.prototype</code></td></tr>
+      <tr><td><code>class</code> + <code>new</code></td><td><code>new</code>, step 2 — identical</td><td><code>Class.prototype</code></td></tr>
+      <tr><td><code>class B extends A</code></td><td><code>extends</code></td><td>links <code>B.prototype</code> → <code>A.prototype</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <pre><code>const protoA = { hi() { return "hi"; } };
+
+const a = Object.create(protoA);                       <span class="tok-com">// by hand</span>
+Object.getPrototypeOf(a) === protoA;                   <span class="tok-out">// true</span>
+
+function F() {}  F.prototype = protoA;                 <span class="tok-com">// via new</span>
+Object.getPrototypeOf(new F()) === protoA;             <span class="tok-out">// true</span></code></pre>
+
+  <p><strong><code>extends</code> quietly sets two links, not one</strong> — and the second one is the
+  question people miss:</p>
+
+  <pre><code>class Animal { speak() { return "..."; }  static create() { return "made"; } }
+class Puppy extends Animal {}
+
+Object.getPrototypeOf(Puppy.prototype) === Animal.prototype;  <span class="tok-out">// true ← instance methods</span>
+Object.getPrototypeOf(Puppy) === Animal;                      <span class="tok-out">// true ← STATIC methods</span>
+
+Puppy.create();                                               <span class="tok-out">// "made" — statics inherit too</span></code></pre>
+
+  <p>Two parallel chains: one for instances, one for the classes themselves. That second chain is how
+  a subclass inherits <code>static</code> members, and almost nobody can name it.</p>
+
+  <p>Now, and only now, the §5 closing line is earned. Say it:</p>
+
+  <div class="qa">
+    <p><strong>"Explain prototypal inheritance."</strong></p>
+    <p>"JavaScript doesn't have classical inheritance — it has objects linked to other objects. Reading
+    a property walks that chain of links until it finds the key or hits <code>null</code>.
+    <code>class</code> is syntactic sugar over it: <code>new</code> links the instance to
+    <code>Class.prototype</code>, and <code>extends</code> links one prototype to another, which is the
+    same link <code>Object.create</code> sets by hand."</p>
+  </div>
+
+  <h2>7 · Where class members actually land</h2>
+
+  <pre><code>class T {
+  name  = "T";                  <span class="tok-com">// field  → the INSTANCE</span>
+  reg()   { return this.name; } <span class="tok-com">// method → T.prototype, shared</span>
+  arrow = () =&gt; this.name;      <span class="tok-com">// field  → the INSTANCE, one per object</span>
+}
+const t = new T(), t2 = new T();
+
+Object.hasOwn(t, "reg");        <span class="tok-out">// false  — on the prototype</span>
+Object.hasOwn(t, "arrow");      <span class="tok-out">// true   — own, per instance</span>
+Object.hasOwn(t, "name");       <span class="tok-out">// true   — own, per instance</span>
+
+t.reg   === t2.reg;             <span class="tok-out">// true   — ONE shared function</span>
+t.arrow === t2.arrow;           <span class="tok-out">// false  — a separate function each. memory cost.</span></code></pre>
+
+  <p><strong>Methods go on the prototype. Fields go on the instance.</strong> That one line is the
+  whole rule, and it explains the carry item in §5.</p>
+
+  <p>It also explains the copying result — and note that the popular version of this fact is
+  <em>wrong</em>:</p>
+
+  <pre><code>{ ...t };     <span class="tok-out">// { name: "T", arrow: [Function] }</span></code></pre>
+
+  <p>Not <code>{}</code>. <strong>Fields survive the spread, methods do not.</strong> Two independent
+  reasons, and you should say both:</p>
+
+  <ul>
+    <li><code>reg</code> is <strong>not own</strong> — it lives on <code>T.prototype</code>, and spread
+    takes own properties only.</li>
+    <li><code>reg</code> is also <strong>not enumerable</strong> — class methods are deliberately
+    non-enumerable, like built-ins. Either reason alone would have excluded it.</li>
+  </ul>
+
+  <pre><code>Object.getOwnPropertyDescriptor(T.prototype, "reg").enumerable;  <span class="tok-out">// false</span></code></pre>
+
+  <p>A class with only methods and no fields spreads to <code>{}</code>. A class with fields does not.
+  <strong>"Own <em>and</em> enumerable" — the phrase from 5b, deciding an outcome again.</strong></p>
+
+  <h3>Why arrow fields survive extraction, and methods don't</h3>
+
+  <pre><code>const pulled = t.reg;
+pulled();            <span class="tok-out">// TypeError — lost the dot (rule 4), and class bodies are strict,</span>
+                     <span class="tok-com">//             so `this` is undefined rather than globalThis</span>
+
+const a = t.arrow;
+a();                 <span class="tok-out">// "T" — the constructor enclosed the arrow. permanent.</span></code></pre>
+
+  <p>The follow-up, and it is asked: <em>"so why not always use arrow fields?"</em> →
+  <strong>they cost one function object per instance, a subclass can't override them through the
+  prototype chain, and prototype-level tooling like spies can't see them.</strong> Hooks made most of
+  the argument moot — a function component has no <code>this</code> to lose.</p>
+
+  <h2>8 · Quick checks</h2>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">Is <code>Object.getPrototypeOf(Dog) === Dog.prototype</code> true?</p>
+    <ul class="quiz-opts">
+      <li><button>yes, that's the definition</button></li>
+      <li><button>no, those are different objects</button></li>
+      <li><button>only for classes</button></li>
+      <li><button>only for function constructors</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>No, and this is the central trap.</strong>
+    <code>Dog.prototype</code> is the box Dog hands to <em>its instances</em>. Dog's own prototype is
+    <code>Function.prototype</code>, because Dog is a function. The true identity is
+    <code>Object.getPrototypeOf(rex) === Dog.prototype</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">Which step of <code>new</code> creates the prototype link?</p>
+    <ul class="quiz-opts">
+      <li><button>running the constructor body</button></li>
+      <li><button>returning the built object</button></li>
+      <li><button>right after the empty object</button></li>
+      <li><button>when a method is first read</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Step 2, immediately after the empty object is made.</strong>
+    Create, <em>link</em>, run the body with <code>this</code> bound, return.
+    <code>Object.create(Ctor.prototype)</code> does steps 1 and 2 in one call.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q"><code>s1.company = "Other"</code> where <code>company</code> is on the prototype:</p>
+    <ul class="quiz-opts">
+      <li><button>overwrites the prototype's value</button></li>
+      <li><button>throws, prototypes are read-only</button></li>
+      <li><button>updates every instance at once</button></li>
+      <li><button>creates an own property that shadows it</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Creates an own property on <code>s1</code>.</strong> The
+    prototype and every other instance are untouched. <code>delete s1.company</code> lifts the shadow
+    and the inherited value reappears — which proves nothing was overwritten.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">What does <code>rex.fly is not a function</code> actually tell you?</p>
+    <ul class="quiz-opts">
+      <li><button>the chain was walked and fly was never found</button></li>
+      <li><button>fly exists but was called wrongly</button></li>
+      <li><button>fly is defined further up the chain</button></li>
+      <li><button>rex has no prototype linked to it</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The whole chain was walked to <code>null</code> and nothing was
+    found</strong>, so <code>rex.fly</code> is <code>undefined</code> and you called
+    <code>undefined</code>. "X is not a function" nearly always means "X was never found."</div>
+  </div>
+
+  <h2>9 · Cold drills — predict the output</h2>
+  <p>Cover the answers. Say the output <em>and</em> which link produced it. All outputs run on Node 20.</p>
+
+  <details class="reveal">
+    <summary>D1 — <code>class A { m(){} }<br>const a1 = new A(), a2 = new A();<br>console.log(a1.m === a2.m, Object.hasOwn(a1, "m"));</code></summary>
+    <p><strong><code>true false</code></strong></p>
+    <p>One shared function, reached through two pointers, owned by neither instance. This is §1's
+    optimisation stated as an assertion. If you said <code>false true</code>, you are still imagining
+    methods being copied into each object — that is the model this page exists to replace.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 — <code>function F(){}<br>console.log(Object.getPrototypeOf(F) === F.prototype, Object.getPrototypeOf(new F()) === F.prototype);</code></summary>
+    <p><strong><code>false true</code></strong></p>
+    <p>The collision, as a one-liner. <code>F</code>'s own prototype is
+    <code>Function.prototype</code> — F is a function. <code>F.prototype</code> is the box F hands to
+    <em>instances</em>, which is why the second one is true. Read <code>F.prototype</code> as
+    <code>F.protoForMyInstances</code> and this stops being a trick.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 — <code>function T(){}<br>T.prototype.tags = [];<br>const x = new T(), y = new T();<br>x.tags.push(1); x.count = 1;<br>console.log(y.tags, y.count);</code></summary>
+    <p><strong><code>[ 1 ] undefined</code></strong></p>
+    <p>The line that separates the two halves of §5. <code>x.tags.push(1)</code> is a <strong>read</strong>
+    followed by a mutation — it walks the chain, finds the one shared array, and mutates it, so
+    <code>y</code> sees it. <code>x.count = 1</code> is a <strong>write</strong> — it creates an own
+    property on <code>x</code> and never touches the prototype, so <code>y.count</code> is
+    <code>undefined</code>. Same object, two lines, opposite outcomes.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 — <code>class B extends A {}</code> where <code>A</code> has <code>static make(){}</code>. Is <code>B.make</code> available, and which link provides it?</summary>
+    <p><strong>Yes — via <code>Object.getPrototypeOf(B) === A</code></strong></p>
+    <p><code>extends</code> sets <em>two</em> links: <code>B.prototype → A.prototype</code> for instance
+    methods, and <code>B → A</code> for statics. Most candidates know the first and have never thought
+    about the second. Naming the static chain out loud is a genuine differentiator.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 — <code>const o = Object.create(null);<br>console.log(o.toString, "toString" in o);</code></summary>
+    <p><strong><code>undefined false</code></strong></p>
+    <p>No prototype means no chain to walk, so none of <code>Object.prototype</code>'s methods exist on
+    it. This is the safe-dictionary idiom, and it is immune to the <code>__proto__</code> pollution from
+    5b §7 — there is no <code>Object.prototype</code> in the chain to hold that setter. Trade-off: you
+    lose <code>toString</code>, <code>hasOwnProperty</code>, and friends, which is why
+    <code>Object.hasOwn(o, k)</code> exists as a standalone.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 — <code>class T { f = 1; m(){} }<br>console.log({ ...new T() });</code></summary>
+    <p><strong><code>{ f: 1 }</code></strong></p>
+    <p>Not <code>{}</code>, and not <code>{ f: 1, m: [Function] }</code>. The <em>field</em> is own and
+    enumerable so it survives; the <em>method</em> fails on both counts — it is on the prototype
+    <strong>and</strong> non-enumerable. Say both reasons. A class with methods only would spread to
+    <code>{}</code>, which is where the common half-memory of this fact comes from.</p>
+  </details>
+
+  <h2>10 · Label-only round</h2>
+  <p>The locked 08-07 method: no outputs, no explanations. For each, say <strong>own</strong> or
+  <strong>inherited</strong>, and <strong>what set the link</strong>. 60 seconds. Bar is 7/8.</p>
+
+  <ol>
+    <li><code>rex.name</code> after <code>constructor(n){ this.name = n }</code></li>
+    <li><code>rex.bark</code> where <code>bark(){}</code> is a class method</li>
+    <li><code>[].map</code></li>
+    <li><code>rex.toString</code></li>
+    <li><code>t.arrow</code> where <code>arrow = () =&gt; {}</code> is a class field</li>
+    <li><code>Object.create(p).x</code> where <code>p = { x: 1 }</code></li>
+    <li><code>Puppy.make</code> where <code>make</code> is <code>static</code> on <code>Animal</code></li>
+    <li><code>s1.company</code> after <code>s1.company = "Other"</code> shadowed the prototype</li>
+  </ol>
+
+  <details class="reveal">
+    <summary>Answers</summary>
+    <p>1 <strong>own</strong> — constructor assignment · 2 <strong>inherited</strong> from
+    <code>Dog.prototype</code>, link set by <code>new</code> step 2 · 3 <strong>inherited</strong> from
+    <code>Array.prototype</code>, link set by the array literal · 4 <strong>inherited</strong> from
+    <code>Object.prototype</code>, two hops up · 5 <strong>own</strong> — class fields land on the
+    instance · 6 <strong>inherited</strong>, link set by <code>Object.create</code> by hand ·
+    7 <strong>inherited</strong> via the <strong>static</strong> chain <code>Puppy → Animal</code>, set
+    by <code>extends</code> · 8 <strong>own</strong> — the write created a shadow.</p>
+    <p class="module"><strong>The traps are 5 and 8.</strong> Both <em>look</em> inherited — 5 is
+    declared inside a class body next to the methods, and 8 is a name that genuinely exists on the
+    prototype. Both are own. The discriminator: <em>ignore where it was written, ask what
+    <code>Object.hasOwn</code> would say.</em> This is <strong>surface-shape matching</strong>, the
+    course's most durable failure mode, in its fifth costume.</p>
+  </details>
+
+  <h2>11 · The sentences you say</h2>
+
+  <div class="qa">
+    <p><strong>"What does <code>new</code> do?"</strong></p>
+    <p>"Four things: creates an empty object, links its prototype to the constructor's
+    <code>.prototype</code>, runs the constructor body with <code>this</code> bound to that object, and
+    returns it — unless the constructor explicitly returns an object, which wins. The linking step is
+    the one that matters, because that is what makes the prototype chain exist."</p>
+  </div>
+
+  <div class="qa">
+    <p><strong>"<code>prototype</code> vs <code>__proto__</code>?"</strong></p>
+    <p>"<code>.prototype</code> only exists on functions, and it's the object that function will hand to
+    the instances it constructs. <code>__proto__</code> — properly
+    <code>Object.getPrototypeOf</code> — exists on every object and is what that object actually
+    inherits from right now. They meet in one identity:
+    <code>Object.getPrototypeOf(new Dog()) === Dog.prototype</code>. Same object, seen from the factory
+    and from the product."</p>
+  </div>
+
+  <div class="qa">
+    <p><strong>"Why does the prototype chain exist?"</strong></p>
+    <p>"So behaviour is stored once instead of copied into every object. A thousand instances share one
+    <code>bark</code> function. Reads walk the chain to find it; writes always create an own property on
+    the object in front of you, which is why assigning to an inherited key shadows it instead of
+    changing it for everyone."</p>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/prototype-inheritance">javascript.info — Prototypal inheritance</a>,
+    then the <em>F.prototype</em> chapter that follows it, which is §3 of this page done slowly. Then
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain">MDN
+    — Inheritance and the prototype chain</a> for the <code>prototype</code> vs <code>__proto__</code>
+    section.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Not drilled yet.</strong> Say <strong>"drill me on 5c"</strong> and it runs the sequence:
+    the speak half, the mandatory "so why" follow-ups, fresh snippets you have not read here, and the
+    §10 label-only round.
+    <br><br>
+    <strong>Order: 5b → 5c → the L5 gate.</strong> Both are floors under Lesson 5, not replacements for
+    it. Once 5c is drilled, re-read L5 §5 — it should read as revision. If it doesn't, that is a finding
+    and it belongs in the record.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0005b-getters-setters-and-copying.html">← Lesson 5b: Getters, setters &amp; <code>=</code></a>
+    <a href="0005-objects-and-prototypes.html">Lesson 5 §5 →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

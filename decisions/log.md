@@ -1056,3 +1056,62 @@ words, per `drills/01` §1.
 year is real but unevidenced, and the pitch should lean on mechanism rather than history.
 
 **Owner:** Tarun.
+
+---
+
+## 2026-09-10 — The CV rebuild: devflow goes ON the CV, the Dwellworks chatbot is not his, MyWorkMyDay is cut
+
+**Trigger.** Two pieces of feedback in one session. An AI-content detector scored `master.tex` around
+76%, and an HR contact told Tarun his projects show no AI-related work. He is not clearing first-round
+screening and both of these are plausible contributors.
+
+**On the 76%.** The number is noisy on a document that short and is **not** a target to chase. The
+patterns behind it were real though, and they were also flattening the CV for human readers: every
+CloudForestX bullet opened with "Built the", six bullets ended in a trailing "-ing" result clause, four
+used the same `--` appositive, and nearly every bullet sat between 18 and 24 words. Fixing that is worth
+doing for the human reason; the score drops as a side effect. Six style rules and a one-line character
+budget are now recorded in `references/cv/fact-bank.md` and bind `/cv-tailor`.
+
+**The finding that decided the session.** Tarun asked to claim the Dwellworks AI chat feature end to end,
+setting his own test: *"does it contain C# code? because I don't claim C# knowledge."* It does,
+extensively — `ChatBotController.cs`, the whole `Integration/ChatBotApi/` Flurl client, the `ChatSession`
+/ `ChatMessage` / `ChatCitation` entities, `ChatBotRepository.cs` and three EF migrations. The model
+itself is an external service over HTTP. And authorship is not ambiguous: **every** frontend commit and
+all **19** C# commits are Dave Gottl's, Dec 2024 – May 2025, predating Tarun's June 2025 start.
+`git log --author="avnit"` returns **zero** chatbot files, CSS included. His own test answered itself, so
+no AI claim goes on Dwellworks. **Empty beats invented**, and this is the bullet most likely to be probed
+in an AI-focused interview.
+
+**The reversal: devflow is now on the CV, with the repo link.** The 2026-08-15 spoken-only decision
+carried its own exit condition in writing — *"if applications stall on AI-heavy JDs specifically, that
+trade is the first thing to revisit."* HR saying the projects show no AI work **is** that condition. With
+Dwellworks ruled out, devflow is the densest true AI vocabulary he owns, and keeping it off the page was
+costing first rounds. The stated cost is unchanged and stays a **verbal** problem: 6 commits from August
+2026 are one click away, so in the room he leads with *practice preceded package* and never claims the
+repo is old. **MCP was deliberately kept off the devflow line** — it appears once in that repo's README as
+a Claude Code convention, not as something devflow implements.
+
+**The AI keywords now live in exactly three places**, all grounded: a role-level line under ThinkSys that
+names no client project, the devflow Projects entry, and DentScribe reframed AI-first with its **AI cost
+dashboards** surfaced instead of buried inside "billing and admin".
+
+**MyWorkMyDay was cut from the CV entirely.** It was the only project with no repo on this machine, so it
+was the one block he could not defend by file. **Its bullets did not migrate to CloudForestX** — the
+fact-bank forbids moving a bullet between projects. The same edit removed **every per-project date range**
+from Experience, so there is no visible gap left to fill. `Apr 2022 – Present` on the ThinkSys entry is
+now the only date there. **Extending CloudForestX backwards over the Apr–Sep 2022 window was rejected**:
+it would overlap DentScribe, contradict the immutable date table, and is checkable against LinkedIn.
+
+**Also removed at his instruction:** "legacy", "monolith" and "IE11" from the Dwellworks bullet. All three
+signalled an old codebase. This was a presentation call, not a fact deletion — IE11 stays 🟢 in the
+allow-list for interview use.
+
+**A knowledge-base story was flagged, not deleted.** `dwellworks/03-frontend-architecture.md` story 2
+claims he fixed a mobile keyboard bug on the Orders AI assistant. Git contradicts it at every layer, and
+there is no `draggable` or `resizable` in the React source. It is marked unverified pending his
+confirmation, because telling it invites a question he cannot answer.
+
+**What would change my mind:** if Tarun can show chatbot work from a branch or clone not on this machine,
+the Dwellworks AI bullet becomes available and the story stands. Nothing else here depends on it.
+
+**Owner:** Tarun. Compile in Overleaf to confirm no bullet wraps.

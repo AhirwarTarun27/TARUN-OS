@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-08-15T17:32:22.539Z",
-  "today": "2026-08-15",
-  "day": "Sat",
-  "phase": "A1",
+  "generatedAt": "2026-09-11T16:06:28.362Z",
+  "today": "2026-09-11",
+  "day": "Fri",
+  "phase": "A2",
   "wave": "sacrificial",
   "countdown": {
-    "resign": 23,
-    "phaseGate": 31,
-    "offerFloor": 92,
-    "offerFloorWorkDays": 79
+    "resign": -2,
+    "phaseGate": 39,
+    "offerFloor": 65,
+    "offerFloorWorkDays": 56
   },
   "counters": [
     {
@@ -16,8 +16,8 @@
       "done": 0,
       "target": 14,
       "remaining": 14,
-      "workDays": 27,
-      "pace": 0.52,
+      "workDays": 34,
+      "pace": 0.41,
       "sustainable": 1,
       "reachable": 14,
       "status": "on-track"
@@ -27,8 +27,8 @@
       "done": 1,
       "target": 10,
       "remaining": 9,
-      "workDays": 27,
-      "pace": 0.33,
+      "workDays": 34,
+      "pace": 0.26,
       "sustainable": 0.75,
       "reachable": 10,
       "status": "on-track"
@@ -38,8 +38,8 @@
       "done": 3,
       "target": 5,
       "remaining": 2,
-      "workDays": 27,
-      "pace": 0.07,
+      "workDays": 34,
+      "pace": 0.06,
       "sustainable": 0.5,
       "reachable": 5,
       "status": "on-track"
@@ -49,8 +49,8 @@
       "done": 0,
       "target": 8,
       "remaining": 8,
-      "workDays": 27,
-      "pace": 0.3,
+      "workDays": 34,
+      "pace": 0.24,
       "sustainable": 0.75,
       "reachable": 8,
       "status": "on-track"
@@ -60,8 +60,8 @@
       "done": 0,
       "target": 60,
       "remaining": 60,
-      "workDays": 27,
-      "pace": 2.22,
+      "workDays": 34,
+      "pace": 1.76,
       "sustainable": 3,
       "reachable": 60,
       "status": "on-track"
@@ -71,8 +71,8 @@
       "done": 0,
       "target": 4,
       "remaining": 4,
-      "workDays": 27,
-      "pace": 0.15,
+      "workDays": 56,
+      "pace": 0.07,
       "sustainable": 0.2,
       "reachable": 4,
       "status": "on-track"
@@ -84,24 +84,25 @@
       "due": "2026-07-31",
       "rung": "T2",
       "tag": "backend",
-      "lateBy": 15
+      "lateBy": 42
     },
     {
       "name": "Counter",
       "due": "2026-08-14",
       "rung": "R3",
       "tag": "machine-coding",
-      "lateBy": 1
+      "lateBy": 28
     }
   ],
   "dueToday": [],
   "stale": [
-    "daily log DARK 4 days (last 2026-08-11)",
-    "dashboard not ingested 4 days (last 2026-08-11)"
+    "daily log DARK 31 days (last 2026-08-11)",
+    "week.md STALE 32 days (updated 2026-08-10)",
+    "dashboard not ingested 31 days (last 2026-08-11)"
   ],
   "parseErrors": [],
   "action": {
-    "do": "Clear the overdue backend rung: absence of a value (T2, 15d late)",
+    "do": "Clear the overdue backend rung: absence of a value (T2, 42d late)",
     "why": "Overdue rungs beat everything. A missed revision decays a pattern you half-own."
   },
   "floor": {
@@ -110,7 +111,7 @@
     "codingRep": 1,
     "applications": 3
   },
-  "codingTrack": "behind",
+  "codingTrack": "machineCoding",
   "funnel": {
     "applications": 0,
     "interviews": 0

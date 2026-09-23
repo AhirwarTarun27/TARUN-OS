@@ -181,3 +181,85 @@
 - Teaching note: after round 1 he asked to be taught ("my confidence is not that much"). He asked
   *after* attempting, not instead of attempting — that is the right instinct. Answer it generously
   and don't pre-empt it by front-loading explanation before the attempt.
+- 2026-09-20: **Lesson 0005b built — Getters, setters & what `=` really does.** Not a new module; a
+  **gap page underneath M5**, written from an honest self-report: *"I don't know anything about getters
+  and setters, and I haven't used this kind of thing in real production code."* L5 §4 (freeze/seal),
+  §8 (spread) and the descriptor table all **assume accessor properties**, which were never taught —
+  so the L5 gate was standing on a floor that didn't exist. 5b is that floor.
+  Structure: `=` is not always storage (`innerHTML`, `location.href` — setters he has used daily and
+  never had named) → **data property vs accessor property** via `getOwnPropertyDescriptor` (the
+  accessor has *no* `value`/`writable` — that is the sentence) → syntax in literal / class / 
+  `defineProperty` (+ the all-`false` defaults trap) → **the use-case table he asked for**, led by Vue 2
+  reactivity → **the two ways to install a property: `[[Set]]` vs `[[DefineOwnProperty]]`** → the
+  spread/assign discriminator → `__proto__` pollution → edge cases → 4 quizzes → 6 cold drills →
+  **§11 label-only round** (locked 08-07 method) → the two sayable sentences.
+  **All asserted outputs verified on Node 20, not written from memory** — including the empty
+  `Object.keys(a)` after pollution and the `TypeError` on a read-only assign target.
+  Three deliberate choices: (1) the discriminator is taught as a **mechanism**, not a fact to memorise,
+  because the mechanism also explains `defineProperty`, frozen arrays and `Array.prototype.push`;
+  (2) **D1 leads with the getter-flattening copy bug, not the setter trivia** — it is the only part of
+  this page likely to cost him real time, and both operators do it; (3) §11's traps are a **computed
+  key** (`o["dynamic"+i] = v`) and **`arr.push(v)`** — both are surface shapes hiding a plain `[[Set]]`,
+  aimed at **surface-shape matching**, the course's most durable failure mode, now in its fourth costume.
+  **Not drilled yet. Drill 5b BEFORE the L5 gate**, not after.
+- 2026-09-20 — **method consequence, act on this: the `f.call.bind(f, ctx)` item in L5's §0 gate is
+  burned.** He asked about it cold in open conversation today and was taught it to the floor over four
+  rounds (the ground concept he was missing was not `bind` — it was that **`call` is an ordinary method
+  whose own `this` is set by the dot**, plus the fact that the two `f`s in the expression are *not the
+  same `f`*: the first is only where `Function.prototype.call` was found). It can no longer be used as a
+  cold gate question. **Replace it in the L5 §0 gate with a fresh uncurry shape** —
+  `Function.prototype.call.bind(Array.prototype.slice)` — and ask for the *use case*, not the trace.
+- 2026-09-20 — **teaching note, generalise this one.** Four consecutive "still not simple" replies on
+  pass-by-value, and each of my attempts had been *longer and more elaborate* than the last (memory
+  diagrams, address boxes). The unlock was **stopping and asking him to pick which of four specific
+  things was confusing.** He picked #3 — *"why call it pass-by-value if a reference is involved"* —
+  which was a **terminology** question, not a mechanics question. He had understood the mechanics for
+  three explanations running. **When "simplify" is asked twice, stop simplifying and locate the gap
+  instead; offer numbered candidate gaps rather than another explanation.** The second unlock was the
+  same shape: the assign/spread answer was unreachable not because it was hard but because
+  **getters/setters had never been taught**. Both times the real move was *going down a layer, not
+  rewording the current one.*
+- 2026-09-20: **Lesson 0005c built — The prototype chain, from the floor up.** Second gap page of the
+  same day, same shape as 5b. He re-read L5 §5 and reported *"most of the things is hitting
+  differently, I do not get the exact terms."* Asked him four candidate gaps and a fifth prerequisite
+  question; **all four gaps came back true** (`Fn.prototype` vs `__proto__` · why prototypes exist ·
+  the three code shapes looking unrelated · shadowing) and the prerequisite came back
+  **"no real idea": what `new` does.**
+  → **That fifth answer was the whole diagnosis. `new` step 2 IS the prototype link.** §5 asks him to
+  *follow* a link he has never watched being *made*. No amount of rewriting §5 fixes that.
+  Structure (order is the deliverable): **why prototypes exist at all** — 1000 dogs, one `bark`,
+  framed honestly as *a memory optimisation that became the object model*, because "why does this
+  exist" was a named gap → **`new` in 4 steps + a hand-written `fakeNew`** so the link is something he
+  watched get installed → **the naming collision with a two-arrows-out-of-`Dog` diagram** and the fix
+  *read `Dog.prototype` as `Dog.protoForMyInstances`* → **one lookup traced to `null`**, plus
+  `rex.fly()` falling off the end (and the reframe: *"X is not a function" means "X was never found"*)
+  → **reads walk / writes don't, with the mechanism §5 omits** → three shapes, one mechanism, incl.
+  **`extends` setting TWO links** (the static chain nobody names) → class fields vs methods → 4
+  quizzes → 6 cold drills → §10 label-only round.
+  **All 50 asserted outputs run on Node 20, and running them corrected the plan twice:**
+  (1) `{ ...instance }` is **not** always `{}` — class *fields* are own+enumerable and survive, only
+  *methods* are lost (`class T { f=1; m(){} }` spreads to `{ f: 1 }`); the popular version of this
+  fact is wrong and the page says so. (2) `fakeNew` **throws on a `class`** — classes refuse
+  invocation without `new` — so the page states that limitation instead of hiding it.
+  Two deliberate connective choices: (1) **§5's "writes don't walk" is corrected to the 5b
+  mechanism** — `[[Set]]` *does* walk, looking for a setter, and only creates an own property when it
+  finds a data property instead; proved with an inherited setter that fires and creates no shadow.
+  **Shadowing and the `Object.assign` discriminator are one mechanism from two angles**, which is what
+  makes 5b pay off twice. (2) §10's traps are the **arrow class field** and a **shadowed property** —
+  both *look* inherited, both are own — aiming at **surface-shape matching**, now in its fifth costume.
+  §5 keeps its terseness and gets a `div.note` routing him to 5c first. **Order is 5b → 5c → the L5
+  gate.** Not drilled yet.
+- 2026-09-20 — **method note, the most important one of the day. Two prerequisite gaps found in one
+  session, both by ASKING, neither by drilling.** Getters/setters (under §4/§8) and `new` (under §5).
+  Both were invisible to every drill because a drill tests the layer you *think* he is on. The pattern
+  in both: he could not answer a question, I re-explained the *same layer* more elaborately, and it
+  failed — until I stopped and offered **numbered candidate gaps** and let him pick. He picked
+  accurately both times, immediately.
+  → **Standing rule: when "I still don't understand" arrives twice on the same point, stop explaining
+  and start locating. Offer 3-4 specific candidate gaps, including one prerequisite a layer BELOW the
+  current topic, and let him choose.** The failure mode to avoid is the one I ran four times this
+  morning — each re-explanation longer and more elaborate than the last, all of them aimed at a layer
+  he had already understood.
+  → **Corollary for the remaining modules: before teaching M6+, ask the prerequisite question first.**
+  L5 assumed accessor properties and `new`; both were absent. Assume the same is true elsewhere and
+  probe for it rather than discovering it after a failed gate.

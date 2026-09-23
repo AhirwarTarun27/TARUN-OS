@@ -307,7 +307,7 @@ const counters = [
   recut('IQA lessons', iqa.ok ? iqa.records : null, iqa.ok ? iqa.lessons : 0, wdGate, S.sustainablePace.iqaLessons),
   recut('Node concepts', be.ok ? be.mastered : null, S.targets.nodeConcepts, nodeWindow, S.sustainablePace.nodeConcepts),
   recut('Applications', S.applications.length, S.targets.applications, wdGate, 3),
-  recut('Interviews sat', S.interviews.length, S.targets.interviews, wdGate, 0.2),
+  recut('Interviews sat', S.interviews.length, S.targets.interviews, wdFloor, 0.2),
 ];
 // A counter whose track this phase has not opened yet is "starts <date>", never a pace or a verdict.
 if (today < nodeStart) counters[3] = { ...counters[3], status: 'not-yet', startsOn: nodeStart };
