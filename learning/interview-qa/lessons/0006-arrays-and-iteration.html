@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 6 · Arrays &amp; iteration — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 6 · Module 6 — JavaScript Foundations</p>
+    <h1>Arrays &amp; iteration</h1>
+    <p class="subtitle">Lesson 5 asked <em>is this the same object or a new one</em>. Every array method
+    asks it again, out loud: <strong>does it return something, and did the original change?</strong></p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Where this sits, and what the 10-03 probe found</span>
+    Arrays are objects, so everything from Lesson 5 applies: <code>arr2 = arr</code> is the same array,
+    <code>slice</code> is a shallow copy, and <code>.map</code> is found by walking the prototype chain.
+    This lesson is the toolkit on top of that.
+    <br><br>
+    It was built from your six-question probe, not from the ebook's order. The probe showed the
+    mechanism is mostly there and the <strong>labels are loose</strong>: <code>map</code> and
+    <code>filter</code> were close but not exact (<code>filter</code> was described inverted), the
+    callback's third argument came out as <code>this</code>, <code>sort</code> was only half
+    described, and <code>for...in</code> vs <code>for...of</code> was a clean "no idea". So the lesson
+    spends its time on <strong>exactly what each method returns</strong> and on the two loops.
+    <br><br>
+    <strong>Not in this lesson:</strong> <code>Map</code>, <code>Set</code>, <code>WeakMap</code>,
+    <code>WeakSet</code>. They get their own page next, because "Map vs a plain object" was also a
+    clean "no idea" and deserves its own floor.
+  </div>
+
+  <h2>0 · Gate check — carried from Lesson 5</h2>
+  <p>Two items from the 10-03 drill. Both were missed on the surface word, not on the mechanism. Answer
+  both <strong>before you scroll</strong>.</p>
+
+  <details class="reveal">
+    <summary><code>freeze</code> is shallow — what does each line do?</summary>
+    <pre><code>const fa = Object.freeze([{ n: 1 }]);
+fa[0].n = 2;
+fa.push(3);
+console.log(fa[0].n, fa.length);</code></pre>
+    <p><strong><code>fa[0].n = 2</code> works.</strong> It follows <code>fa[0]</code> to the inner
+    object, which was never frozen. Freeze locked the <em>array</em>, one level only.</p>
+    <p><strong><code>fa.push(3)</code> throws <code>TypeError</code> — even without
+    <code>"use strict"</code>.</strong> This is the part that corrects the L5 rule of thumb. Plain
+    assignment (<code>fa[1] = 3</code>) on a frozen array is silently ignored in sloppy mode, but the
+    built-in <em>methods</em> (<code>push</code>, <code>pop</code>, <code>sort</code>) are specified to
+    throw regardless of mode. So <code>console.log</code> is never reached. Verified on Node.</p>
+    <p>Say it as: <em>"Freeze is shallow. And mutating methods on a frozen array throw
+    <code>TypeError</code> in any mode, while a bare <code>=</code> only throws in strict mode."</em></p>
+  </details>
+
+  <details class="reveal">
+    <summary><code>slice</code> — deep or shallow, and what does that mean for the objects inside?</summary>
+    <pre><code>const a = [{ n: 1 }];
+const b = a.slice();
+b[0].n = 2;
+console.log(a[0].n, a === b, a[0] === b[0]);</code></pre>
+    <p><strong><code>2 false true</code></strong>. A new array (<code>a === b</code> is
+    <code>false</code>), but the elements are the same objects (<code>a[0] === b[0]</code> is
+    <code>true</code>). <code>slice()</code> is a shallow copy, the same as <code>[...a]</code>. It only
+    <em>looks</em> deep on an array of numbers, because there is nothing nested to share.</p>
+  </details>
+
+  <h2>1 · The one question every array method answers</h2>
+  <p>Before the individual methods, learn the question. For any array method, ask two things in this
+  order:</p>
+  <ol>
+    <li><strong>What does it return?</strong> A new array, the same array, a single value, a boolean,
+    or <code>undefined</code>.</li>
+    <li><strong>Did the original change?</strong></li>
+  </ol>
+  <p>Almost every array bug, and almost every array interview question, is a wrong answer to one of
+  those two. The methods fall into three groups. Memorise the groups, not the list.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Group</th><th>Methods</th><th>Returns</th><th>Original changes?</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Changes the original</strong></td>
+        <td><code>push</code> <code>pop</code> <code>shift</code> <code>unshift</code> <code>splice</code> <code>fill</code> <code>reverse</code> <code>sort</code></td>
+        <td>varies: new length, removed item, removed items, or the <strong>same array</strong></td><td><strong>yes</strong></td></tr>
+      <tr><td><strong>Returns a new array</strong></td>
+        <td><code>map</code> <code>filter</code> <code>slice</code> <code>concat</code> <code>flat</code> <code>[...arr]</code></td>
+        <td>a new array</td><td>no</td></tr>
+      <tr><td><strong>Returns one answer</strong></td>
+        <td><code>find</code> <code>findIndex</code> <code>indexOf</code> <code>includes</code> <code>some</code> <code>every</code> <code>reduce</code> <code>join</code> <code>at</code></td>
+        <td>an element, an index, a boolean, a string or one reduced value</td><td>no</td></tr>
+      <tr><td><strong>Returns nothing</strong></td>
+        <td><code>forEach</code></td>
+        <td><code>undefined</code></td><td>only if your callback mutates</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">The two that fool people</span>
+    <code>sort</code> and <code>reverse</code> <strong>change the original and also return it</strong>.
+    Because they return an array, they look like the "new array" group, and they are not. The returned
+    value and the original are the <em>same</em> array: <code>arr.sort() === arr</code> is
+    <code>true</code>. Your probe answer on <code>sort</code> said "it mutates, it doesn't return a new
+    array", which is correct about the first half. The second half is that it does return something, and
+    that something is the original.
+    <br><br>
+    Modern fix: <code>toSorted()</code>, <code>toReversed()</code>, <code>toSpliced()</code> are the
+    non-mutating twins (Node 20+, current browsers). They return a new array and leave the original alone.
+  </div>
+
+  <h3>What each mutator returns (added after the 10-04 drill)</h3>
+  <p>"Changes the original" says nothing about what comes back. In the drill, <code>push</code> and
+  <code>pop</code> were labelled SAME <em>because</em> they mutate, and <code>sort</code> was called "a new
+  array" three times. Ask <strong>"what did it return?"</strong> as its own question, first. Do not let the
+  answer to question 2 fill in question 1.</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Mutator</th><th>Returns</th></tr></thead>
+    <tbody>
+      <tr><td><code>push</code> <code>unshift</code></td><td>the <strong>new length</strong></td></tr>
+      <tr><td><code>pop</code> <code>shift</code></td><td>the <strong>removed element</strong></td></tr>
+      <tr><td><code>splice</code></td><td>an <strong>array of the removed elements</strong></td></tr>
+      <tr><td><code>sort</code> <code>reverse</code> <code>fill</code></td><td>the <strong>same array</strong> (<code>arr.sort() === arr</code>)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><code>concat</code> sounds like "add", but it is the add that <strong>does not</strong> mutate: it
+  returns a new array.</p>
+
+  <h2>2 · The callback contract</h2>
+  <p>Every iteration method calls your function with the <strong>same three arguments</strong>, in this
+  order:</p>
+  <pre><code>arr.map((value, index, array) =&gt; ...)
+<span class="tok-com">//        1      2      3</span></code></pre>
+  <p>The third one is <strong>the array itself</strong>, not <code>this</code>. Your probe said "value,
+  index, this". That is the label to fix, and it is an easy one to mix up for a reason: there <em>is</em>
+  a <code>this</code> involved, but it is a different thing.</p>
+  <ul>
+    <li><code>this</code> inside the callback is decided by the <strong>L4 rules</strong>. A plain
+    function callback is called bare by <code>map</code>'s code, so it gets the default binding. An arrow
+    callback inherits from its enclosing function.</li>
+    <li>The method has an optional <strong>second argument</strong>, <code>thisArg</code>:
+    <code>arr.map(fn, thisArg)</code>. That is how you set <code>this</code> for a non-arrow callback. It
+    is an argument to <code>map</code>, not to your callback.</li>
+  </ul>
+
+  <h3>The trap that proves you know the contract</h3>
+  <pre><code>["1", "2", "3"].map(parseInt)
+<span class="tok-out">// [1, NaN, NaN]</span></code></pre>
+  <p>It looks like it should be <code>[1, 2, 3]</code>. It is not, because <code>map</code> calls
+  <code>parseInt("1", 0, arr)</code>, then <code>parseInt("2", 1, arr)</code>, then
+  <code>parseInt("3", 2, arr)</code>. <code>parseInt</code> takes <strong>(string, radix)</strong>, so the
+  <em>index</em> became the radix. Radix 0 means "default to 10" so the first one works. Radix 1 is
+  invalid and radix 2 has no digit <code>3</code>, so you get <code>NaN</code>. The fix is to pass only
+  what you mean: <code>.map(s =&gt; parseInt(s, 10))</code> or <code>.map(Number)</code>.</p>
+  <p>Say it as: <strong>"<code>map</code> passes three arguments, so a function that takes optional
+  second and third parameters gets the index and array as well."</strong></p>
+
+  <h2>2b · Who actually calls your callback</h2>
+  <p>Added after the 10-04 drill, where two misses had one root: the callback was read as the
+  <em>body of a loop</em>. It is not. It is a separate function, and the method's own code calls it, once
+  per element. Roughly, this is inside <code>forEach</code> and <code>map</code>:</p>
+  <pre><code>for (let i = 0; i &lt; arr.length; i++) {
+  cb(arr[i], i, arr);   <span class="tok-com">// YOUR function is called here, fresh, every time</span>
+}</code></pre>
+  <p>Three facts fall straight out of that one line:</p>
+  <ul>
+    <li><strong><code>return</code> ends that one call</strong>, not the loop. The loop is in
+    <code>forEach</code>'s code, and you cannot reach it. <code>[1, 2, 3, 4].forEach</code> with
+    <code>if (x === 2) return;</code> still runs for 3 and 4.</li>
+    <li><strong><code>map</code> stores whatever comes back</strong>, including <code>undefined</code>.
+    A bare <code>return;</code> does not mean "keep the original":
+    <code>[1, 2, 3].map(x =&gt; { if (x === 2) return; return x * 10; })</code> is
+    <code>[10, undefined, 30]</code>.</li>
+    <li><strong>A function passed by name gets all three arguments.</strong> That is the whole
+    <code>parseInt</code> trap above: <code>["10", "10", "10"].map(parseInt)</code> is
+    <code>[10, NaN, 2]</code>.</li>
+  </ul>
+  <p>This is the L4 call-point rule in an array costume: <strong>find the <code>(</code> that actually
+  runs the function.</strong> Drill A (<code>myMap</code>) is writing that loop yourself, which is why it
+  is the fix.</p>
+
+  <h2>3 ·<code>map</code>, <code>filter</code>, <code>forEach</code>, <code>reduce</code></h2>
+  <p>Four methods, one sentence each, with the label that was loose in your probe.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Method</th><th>The callback must return</th><th>The method returns</th></tr></thead>
+    <tbody>
+      <tr><td><code>map</code></td><td>the <strong>new value</strong> for this element</td><td>a new array, <strong>same length</strong></td></tr>
+      <tr><td><code>filter</code></td><td>truthy = <strong>keep</strong>, falsy = drop</td><td>a new array, equal or shorter</td></tr>
+      <tr><td><code>forEach</code></td><td>nothing (the return value is ignored)</td><td><code>undefined</code></td></tr>
+      <tr><td><code>reduce</code></td><td>the next <strong>accumulator</strong></td><td>one value, whatever the accumulator ended as</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Two corrections to the probe, because both were the exact thing an interviewer listens for:</p>
+  <ul>
+    <li><strong><code>map</code>'s callback is not a condition.</strong> It is a transformation: it returns
+    the new element. <code>map</code> always produces one output per input.</li>
+    <li><strong><code>filter</code> keeps the elements the callback is true for.</strong> The probe said
+    "removing the values which is true", which is inverted. <code>filter(x =&gt; x &gt; 2)</code> keeps
+    the ones greater than 2.</li>
+  </ul>
+
+  <pre><code>[1, 2, 3, 4].filter(x =&gt; x % 2)          <span class="tok-com">// [1, 3]  — kept where truthy (1 and 3 give 1)</span>
+["a", "", 0, 1, null, "b"].filter(Boolean)  <span class="tok-com">// ["a", 1, "b"]  — drops every falsy value</span></code></pre>
+
+  <h3>Two things that go wrong</h3>
+  <p><strong>1. A block body with no <code>return</code> gives you an array of <code>undefined</code>.</strong>
+  The probe question "what happens if you ignore the result of <code>map</code>" has two answers, and
+  this is the second:</p>
+  <pre><code>[1, 2, 3].map(x =&gt; { x * 2 })
+<span class="tok-out">// [undefined, undefined, undefined]</span>   <span class="tok-com">// braces = a block, so no implicit return</span>
+[1, 2, 3].map(x =&gt; x * 2)
+<span class="tok-out">// [2, 4, 6]</span></code></pre>
+
+  <p><strong>2. Using <code>map</code> and throwing the result away.</strong> It still builds a whole new
+  array, which is wasted work and, more importantly, tells the reader you wanted a loop. If you do not
+  use the returned array, you wanted <code>forEach</code> (or <code>for...of</code>). Say it:
+  <em>"<code>map</code> when I want the new array, <code>forEach</code> when I want the side effect."</em>
+  <code>forEach</code> cannot be chained, since it returns <code>undefined</code>, which is why
+  <code>.forEach(...).map(...)</code> throws. It also <strong>cannot be stopped</strong>:
+  <code>return</code> inside the callback only skips that one call, and <code>break</code> is a syntax
+  error.</p>
+
+  <div class="note">
+    <span class="callout-label">You wrote this yourself on 10-01</span>
+    <code>ua.some(obj =&gt; obj.name === arr[i].name)</code> in the unique-objects drill. The mistake you
+    fixed there, <code>some</code> with <code>!==</code>, is the whole of §4: <code>some</code> asks
+    "does <em>any</em> element match", so the question you put in the callback has to be the match, and
+    the negation goes <em>outside</em>.
+  </div>
+
+  <h2>4 · <code>find</code>, <code>findIndex</code>, <code>some</code>, <code>every</code></h2>
+  <p>These four stop early and return <strong>one answer</strong>. The decision is: <em>what do I want
+  back?</em></p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>You want</th><th>Use</th><th>Returns if nothing matches</th></tr></thead>
+    <tbody>
+      <tr><td>the element</td><td><code>find</code></td><td><code>undefined</code></td></tr>
+      <tr><td>its position</td><td><code>findIndex</code></td><td><strong><code>-1</code></strong></td></tr>
+      <tr><td>yes/no: is <em>any</em> a match</td><td><code>some</code></td><td><code>false</code></td></tr>
+      <tr><td>yes/no: are <em>all</em> matches</td><td><code>every</code></td><td><code>false</code> (on a non-matching element)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">Two traps, both asked in interviews</span>
+    <strong>1. <code>findIndex</code> returns <code>-1</code> for "not found", and <code>-1</code> is
+    truthy.</strong> <code>if (arr.findIndex(x =&gt; x &gt; 5))</code> is true when nothing matched, and
+    false when the match is at index 0. Compare to <code>-1</code> explicitly, or use <code>some</code> /
+    <code>find</code>.
+    <br><br>
+    <strong>2. Empty arrays.</strong> <code>[].some(...)</code> is <code>false</code>, because no element
+    can match. <code>[].every(...)</code> is <code>true</code> — "all of nothing" is vacuously true. That
+    second one surprises people, and it is why your unique drill worked: on the first pass
+    <code>ua</code> was empty, <code>ua.some(...)</code> was <code>false</code>, and so the first item was
+    pushed with no special case.
+  </div>
+
+  <p>One more fact that matters in React: <code>find</code> returns the <strong>element itself, not a
+  copy</strong>. <code>users.find(u =&gt; u.id === 2).id = 99</code> edits the object that is inside
+  <code>users</code>. That is the L5 identity rule, now inside an array method.</p>
+
+  <h2>5 · <code>slice</code> vs <code>splice</code></h2>
+  <p>The ebook marks this one <em>"most helpful in problem solving"</em>, and it is the one you got
+  half of in the probe (you knew <code>splice</code> mutates).</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th><code>slice(start, end)</code></th><th><code>splice(start, deleteCount, ...items)</code></th></tr></thead>
+    <tbody>
+      <tr><td>Changes the original?</td><td><strong>no</strong></td><td><strong>yes</strong></td></tr>
+      <tr><td>Returns</td><td>a new array of the copied part</td><td>an array of the <strong>removed</strong> items</td></tr>
+      <tr><td><code>end</code> / count</td><td><code>end</code> index, <strong>exclusive</strong></td><td>how many to remove, not an end index</td></tr>
+      <tr><td>Negative numbers</td><td>count from the end (<code>slice(-2)</code> is the last two)</td><td>same for <code>start</code></td></tr>
+      <tr><td>Can insert?</td><td>no</td><td>yes: the extra arguments</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <pre><code>const s = [1, 2, 3, 4, 5];
+s.slice(-2)        <span class="tok-com">// [4, 5]   s is still [1,2,3,4,5]</span>
+s.slice(1, 3)      <span class="tok-com">// [2, 3]   index 3 is excluded</span>
+
+const sp = [1, 2, 3, 4, 5];
+sp.splice(1, 2, "a")   <span class="tok-com">// returns [2, 3]  (the removed items)</span>
+sp                      <span class="tok-com">// [1, "a", 4, 5]  (the original, now changed)</span></code></pre>
+
+  <p>The one that catches people: <code>splice</code>'s return value is <strong>what you removed</strong>,
+  not the array you now have. <code>const result = arr.splice(...)</code> gives you the cut-out pieces,
+  and <code>arr</code> is the one that changed. And <code>slice</code> is shallow, which you proved in
+  §0.</p>
+
+  <h2>6 · <code>sort</code>, the trap with a name</h2>
+  <p>This is the one I want to be careful about, because your probe answer was <em>correct about
+  mutation</em> and you did not give the output, and the output is the whole question.</p>
+
+  <pre><code>[10, 9, 1].sort()
+<span class="tok-out">// [1, 10, 9]</span></code></pre>
+
+  <p><strong>The default <code>sort</code> converts everything to strings and compares them as text.</strong>
+  <code>"10"</code> comes before <code>"9"</code> because <code>"1"</code> is less than <code>"9"</code>
+  character by character. It does not sort numbers by size. That is not a bug in your code, it is the
+  specified default, and it is the most-asked <code>sort</code> question there is.</p>
+
+  <pre><code>[10, 9, 1].sort((a, b) =&gt; a - b)      <span class="tok-com">// [1, 9, 10]  — a comparator fixes it</span></code></pre>
+
+  <p>Three rules for the comparator:</p>
+  <ol>
+    <li>It returns a <strong>number</strong>: negative means "a first", positive means "b first", zero
+    means "keep the order".</li>
+    <li><strong>It must not return a boolean.</strong> <code>(a, b) =&gt; a &gt; b</code> returns
+    <code>true</code> or <code>false</code>, which become <code>1</code> and <code>0</code>, and never a
+    negative. On Node 24, <code>[3, 1, 2].sort((a, b) =&gt; a &gt; b)</code> returns <code>[3, 1, 2]</code>
+    — unchanged. Use subtraction for numbers.</li>
+    <li><code>sort</code> mutates and returns the <strong>same</strong> array (§1). To keep the original,
+    copy first: <code>[...arr].sort(...)</code>, or use <code>toSorted</code>.</li>
+  </ol>
+
+  <p>Two more facts on defaults. <code>undefined</code> always goes <strong>last</strong>:
+  <code>[3, undefined, 1, null, 2].sort()</code> is <code>[1, 2, 3, null, undefined]</code>. And strings
+  sort by character code, so capitals come before lowercase:
+  <code>["b","a","C","B"].sort()</code> is <code>["B","C","a","b"]</code>.</p>
+
+  <div class="tip">
+    <span class="callout-label">Say it like this</span>
+    "The default <code>sort</code> compares as <strong>strings</strong>, so <code>[10, 9, 1]</code> comes
+    out <code>[1, 10, 9]</code>. For numbers I pass <code>(a, b) =&gt; a - b</code>. It sorts <strong>in
+    place</strong> and returns the same array, so in React I copy first."
+  </div>
+
+  <h2>7 · <code>for...in</code> vs <code>for...of</code></h2>
+  <p>This was a clean "no idea" in the probe, and it connects to two things you already know, so it is
+  quicker than it looks.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th><code>for...in</code></th><th><code>for...of</code></th></tr></thead>
+    <tbody>
+      <tr><td>Gives you</td><td>the <strong>keys</strong></td><td>the <strong>values</strong></td></tr>
+      <tr><td>Type of what you get</td><td>always a <strong>string</strong></td><td>whatever the element is</td></tr>
+      <tr><td>Walks the prototype chain?</td><td><strong>yes</strong> — inherited enumerable keys too</td><td>no</td></tr>
+      <tr><td>Works on</td><td>any object</td><td>only <strong>iterables</strong> (arrays, strings, <code>Map</code>, <code>Set</code>, NodeLists)</td></tr>
+      <tr><td><code>break</code> / <code>continue</code> / <code>await</code></td><td>yes</td><td>yes</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <pre><code>for (const i in [10, 20]) console.log(typeof i, i + 1);
+<span class="tok-out">// string 01      string 11</span>      <span class="tok-com">// i is "0", so "0" + 1 is "01"</span>
+
+for (const v of "hi") console.log(v);
+<span class="tok-out">// h      i</span></code></pre>
+
+  <p><strong>Why <code>for...in</code> on an array is a trap.</strong> It is the L5 §6 fact again: it
+  walks the chain and returns every <em>enumerable</em> key. If anyone adds to
+  <code>Array.prototype</code>, or you put an extra property on the array
+  (<code>a.foo = "bar"</code>), <code>for...in</code> returns it too, while <code>for...of</code> only
+  walks the real elements (<code>[1, 2, 3, foo]</code> gives <code>for...in</code> four keys and
+  <code>for...of</code> three values; <code>length</code> stays 3). And because the key is a
+  <strong>string</strong>, <code>i + 1</code> concatenates.</p>
+
+  <p><strong>Why <code>for...of</code> on a plain object throws.</strong> A plain object has no
+  <code>Symbol.iterator</code>, so <code>for (const x of { a: 1 }) {}</code> throws
+  <strong><code>TypeError</code></strong> ("... is not iterable"). Same label as L2 and L5. To loop an
+  object's values, go through an array first:</p>
+  <pre><code>for (const [key, value] of Object.entries({ a: 1 })) console.log(key, value);
+<span class="tok-out">// a 1</span></code></pre>
+  <p>You used <code>Object.entries</code> in <code>deepClone</code>. That is why.</p>
+
+  <p>The rule of thumb: <strong><code>for...in</code> is for object keys, <code>for...of</code> is for
+  array values.</strong> On an array you almost never want <code>for...in</code>.</p>
+
+  <h2>8 · The procedure — the seventh question</h2>
+  <p>Six questions so far. This module adds the seventh, and it is the array version of Q6:</p>
+  <ol>
+    <li><strong>Which keyword declares it?</strong></li>
+    <li><strong>What state is the binding in at this exact line?</strong></li>
+    <li><strong>What are you doing to it?</strong></li>
+    <li><strong>When does this actually run — and what is the binding at that moment?</strong></li>
+    <li><strong>How was this function called — and is it an arrow?</strong></li>
+    <li><strong>Is this the same object or a new one — and is the property own or inherited?</strong></li>
+    <li><strong>What does this method return — and did the original change?</strong></li>
+  </ol>
+  <p>Say it once per method call on the page and you will not need to memorise the table.</p>
+
+  <h2>9 · Retrieval quiz</h2>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q"><code>[10, 9, 1].sort()</code> returns…</p>
+    <ul class="quiz-opts">
+      <li><button>[1, 9, 10]</button></li>
+      <li><button>[10, 9, 1]</button></li>
+      <li><button>[1, 10, 9]</button></li>
+      <li><button>it throws</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>[1, 10, 9]</code></strong>. The default sort compares as
+    strings, character by character. The array is also changed in place, and the value returned
+    <em>is</em> the original array.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">What does <code>filter(x =&gt; x &gt; 2)</code> do with the elements the callback is <em>true</em> for?</p>
+    <ul class="quiz-opts">
+      <li><button>removes them</button></li>
+      <li><button>keeps them</button></li>
+      <li><button>transforms them</button></li>
+      <li><button>returns the first one</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Keeps them.</strong> Truthy means keep, falsy means drop. The
+    result is a new array, equal in length or shorter.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">Which one returns the <strong>removed</strong> items instead of the array you now have?</p>
+    <ul class="quiz-opts">
+      <li><button>slice</button></li>
+      <li><button>filter</button></li>
+      <li><button>concat</button></li>
+      <li><button>splice</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>splice</code></strong>. It changes the original and hands
+    back what it cut out. <code>slice</code> leaves the original alone and returns a copied part.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">The third argument a <code>map</code> callback receives is…</p>
+    <ul class="quiz-opts">
+      <li><button>the array being mapped</button></li>
+      <li><button>this</button></li>
+      <li><button>the previous result</button></li>
+      <li><button>nothing, there are only two</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The array itself.</strong> <code>(value, index, array)</code>.
+    <code>this</code> is set separately, by the L4 rules or by the method's own <code>thisArg</code>
+    second argument.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q"><code>[].every(x =&gt; false)</code> returns…</p>
+    <ul class="quiz-opts">
+      <li><button>false</button></li>
+      <li><button>undefined</button></li>
+      <li><button>true</button></li>
+      <li><button>throws</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>true</code></strong>. "Every element passes" is vacuously true
+    when there are no elements. <code>[].some(...)</code> is <code>false</code>. The pair is worth
+    remembering as a pair.</div>
+  </div>
+
+  <h2>10 · Output drills</h2>
+  <p>Cold. Fresh snippets. For each, run <strong>question 7</strong> before you answer: <em>what does it
+  return, and did the original change?</em> Give the value <strong>and the label</strong>.</p>
+
+  <details class="reveal">
+    <summary>D1 · map returns a new array</summary>
+    <pre><code>const d1 = [1, 2, 3];
+const d1r = d1.map(x =&gt; x * 2);
+d1r.push(9);
+console.log(d1, d1r);</code></pre>
+    <p><strong><code>[1,2,3] [2,4,6,9]</code></strong>. <code>map</code> returned a new array, so pushing
+    to it does not touch <code>d1</code>. Compare D2.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 · sort returns the same array</summary>
+    <pre><code>const d2 = [3, 1, 2];
+const d2r = d2.sort();
+d2r.push(0);
+console.log(d2, d2.length);</code></pre>
+    <p><strong><code>[1,2,3,0] 4</code></strong>. <code>d2r</code> and <code>d2</code> are the <em>same
+    array</em>, so the <code>push</code> shows up in <code>d2</code>. D1 and D2 look identical and are
+    opposite. That is the whole point of §1.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 · splice returns the removed</summary>
+    <pre><code>const d3 = [1, 2, 3, 4, 5];
+const d3r = d3.splice(1, 2);
+console.log(d3, d3r);</code></pre>
+    <p><strong><code>[1,4,5] [2,3]</code></strong>. <code>d3</code> lost the two items. <code>d3r</code>
+    is the two that were cut out, not the array you now have.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 · forEach returns nothing</summary>
+    <pre><code>const d4 = [1, 2, 3].forEach(x =&gt; x * 2);
+console.log(d4);</code></pre>
+    <p><strong><code>undefined</code></strong>. <code>forEach</code> ignores the callback's return value
+    and returns <code>undefined</code> itself. Both halves are the question.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 · for...in gives strings</summary>
+    <pre><code>const d5 = ["a", "b"];
+for (const i in d5) console.log(i + 1);</code></pre>
+    <p><strong><code>"01"</code> then <code>"11"</code></strong>. <code>i</code> is the string
+    <code>"0"</code>, so <code>+ 1</code> concatenates. Not <code>1</code> and <code>2</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 · the copy that wasn't there</summary>
+    <pre><code>const d6 = [5, 1, 10];
+const d6s = [...d6].sort();
+console.log(d6, d6s);</code></pre>
+    <p><strong><code>[5,1,10] [1,10,5]</code></strong>. The spread made a copy, so the original is
+    untouched. The sorted copy is lexicographic, so <code>10</code> comes before <code>5</code>. Two
+    facts at once: the copy protects the original (§1), and the default sort is string order (§6).</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D7 · find returns the element, not a copy</summary>
+    <pre><code>const users = [{ id: 1 }, { id: 2 }];
+const found = users.find(u =&gt; u.id === 2);
+found.id = 99;
+console.log(users);</code></pre>
+    <p><strong><code>[{id:1},{id:99}]</code></strong>. <code>find</code> hands you the element itself.
+    Editing <code>found</code> edits the object inside <code>users</code>. L5 identity, inside an array
+    method.</p>
+  </details>
+
+  <h2>11 · Label-only round</h2>
+  <p>No outputs, no explanations. For each call, pick <strong>one</strong> label. The bar is
+  <strong>7/8</strong>, and the planted trap is one that looks like it returns a new array.</p>
+  <ul>
+    <li><strong>NEW</strong> — returns a new array, original unchanged</li>
+    <li><strong>SAME</strong> — changes the original and returns that same array</li>
+    <li><strong>REMOVED</strong> — changes the original and returns what it removed</li>
+    <li><strong>NOTHING</strong> — returns <code>undefined</code></li>
+    <li><strong>ONE</strong> — returns a single value, original unchanged</li>
+  </ul>
+  <ol>
+    <li><code>arr.map(f)</code></li>
+    <li><code>arr.sort()</code></li>
+    <li><code>arr.splice(1, 1)</code></li>
+    <li><code>arr.forEach(f)</code></li>
+    <li><code>arr.slice(1)</code></li>
+    <li><code>arr.find(f)</code></li>
+    <li><code>arr.reverse()</code></li>
+    <li><code>arr.filter(f)</code></li>
+  </ol>
+
+  <details class="reveal">
+    <summary>Answers</summary>
+    <ol>
+      <li><code>map</code> — <strong>NEW</strong></li>
+      <li><code>sort</code> — <strong>SAME</strong></li>
+      <li><code>splice</code> — <strong>REMOVED</strong></li>
+      <li><code>forEach</code> — <strong>NOTHING</strong></li>
+      <li><code>slice</code> — <strong>NEW</strong> (and shallow)</li>
+      <li><code>find</code> — <strong>ONE</strong> (the element itself, not a copy)</li>
+      <li><code>reverse</code> — <strong>SAME</strong></li>
+      <li><code>filter</code> — <strong>NEW</strong></li>
+    </ol>
+    <p><strong>#2 and #7 are the planted traps.</strong> They return an array, so they pattern-match to
+    "NEW". They are <strong>SAME</strong>: <code>arr.sort() === arr</code>. This is surface-shape matching
+    in its seventh costume: "it returns an array, so it must be a copy."</p>
+  </details>
+
+  <h2>12 · Coding drills</h2>
+
+  <h3>Drill A — write <code>myMap</code></h3>
+  <p>Write <code>Array.prototype.myMap(callback, thisArg)</code> so that
+  <code>[1, 2, 3].myMap((v, i) =&gt; v * i)</code> returns <code>[0, 2, 6]</code>. Attempt it before
+  opening anything. Start with the three lines you can say out loud: <em>make an output array, loop over
+  the indexes, call the callback with value, index, array.</em></p>
+
+  <details class="reveal">
+    <summary>Hint ladder, then the answer</summary>
+    <p><strong>Hint 1.</strong> Inside a method, <code>this</code> is the array you called it on. You are
+    using L4's rule 3: left of the dot. <em>That is also why this cannot be an arrow function.</em> An
+    arrow would not get the array as <code>this</code>.</p>
+    <p><strong>Hint 2.</strong> The callback needs <code>thisArg</code> as its own <code>this</code>.
+    Which L4 method sets <code>this</code> for one call?</p>
+    <pre><code>Array.prototype.myMap = function (cb, thisArg) {
+  const out = [];
+  for (let i = 0; i &lt; this.length; i++) {
+    if (i in this) out[i] = cb.call(thisArg, this[i], i, this);
+  }
+  return out;
+};</code></pre>
+    <p>What it proves at once: <strong>L5</strong> (you are adding a method to
+    <code>Array.prototype</code>, so every array finds it by walking the chain), <strong>L4</strong>
+    (<code>this</code> is the array because of the dot; <code>cb.call(thisArg, ...)</code> is rule 2;
+    it must be a regular <code>function</code>, not an arrow) and <strong>§2</strong> (the callback gets
+    value, index, array). The <code>i in this</code> check skips holes in a sparse array, which is what
+    the real <code>map</code> does: <code>[1,,3].myMap(x =&gt; x)</code> keeps the hole, same as
+    <code>[1,,3].map(x =&gt; x)</code>.</p>
+    <p>Limitation to say yourself: it does not validate that <code>cb</code> is a function, and it
+    <strong>adds an enumerable property to <code>Array.prototype</code></strong>, which shows up in
+    <code>for...in</code> on every array. That is the §7 trap, now caused by you. Real code would use
+    <code>Object.defineProperty</code> with <code>enumerable: false</code> (the descriptor from 5b).</p>
+  </details>
+
+  <h3>Drill B — the second largest element</h3>
+  <p>The ebook's problem 25. Return the second-largest number in an array. Then say what you return for
+  <code>[5, 5, 3]</code>, <code>[2, 2]</code>, <code>[1]</code> and <code>[]</code>. Attempt it before
+  opening anything.</p>
+
+  <details class="reveal">
+    <summary>Two edge cases decide this question</summary>
+    <p><strong>Duplicates.</strong> "Second largest" means the second-largest <em>distinct</em> value in
+    the usual reading, so <code>[5, 5, 3]</code> returns <code>3</code>, not <code>5</code>. Ask the
+    interviewer. <strong>Asking is the senior move.</strong></p>
+    <p><strong>Too few values.</strong> <code>[2, 2]</code>, <code>[1]</code> and <code>[]</code> have no
+    second-largest. Return <code>undefined</code>, and say so.</p>
+    <pre><code>function secondLargest(arr) {
+  let first = -Infinity, second = -Infinity;
+  for (const n of arr) {
+    if (n &gt; first) { second = first; first = n; }
+    else if (n &lt; first &amp;&amp; n &gt; second) second = n;
+  }
+  return second === -Infinity ? undefined : second;
+}</code></pre>
+    <p>One pass, O(n), no sorting. The brute-force version sorts with
+    <code>(a, b) =&gt; b - a</code> and takes index 1, which is O(n log n) and also needs the
+    comparator from §6. <code>n &lt; first</code> is the line that handles duplicates: a repeat of the
+    maximum must not become the second. Outputs: <code>[5,5,3]</code> gives <code>3</code>;
+    <code>[2,2]</code>, <code>[1]</code> and <code>[]</code> give <code>undefined</code>;
+    <code>[1,9,9,4]</code> gives <code>4</code> (all verified).</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/array-methods">javascript.info — Array methods</a> (the section on
+    <code>sort</code> and the one on <code>splice</code> vs <code>slice</code>), and
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">MDN
+    — Array</a>, specifically the table at the top that lists which methods <strong>mutate</strong>.
+    Read MDN's "Copying methods and mutating methods" section — it is §1 of this lesson, from the
+    people who wrote the spec.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Drilled 2026-10-04. Gate not passed yet.</strong> The label-only round scored 4/8 against
+    the 7/8 bar, and predict scored 3/7. Two findings, both now shipped on this page: the callback is a
+    call the method makes (§2b), and "what did it return?" was being guessed from "did it change?" (§1).
+    Next session opens with a fresh label-only round, cold. Then do Drill A. Full record:
+    <code>learning-records/0006-arrays-and-iteration.md</code>.
+    <br><br>
+    <strong>Next page:</strong> <a href="0006b-map-and-set.html">Lesson 6b: Map, Set &amp; the weak ones</a>,
+    and the "Map vs a plain object" question the probe could not answer.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0005-objects-and-prototypes.html">← Lesson 5: Objects &amp; prototypes</a>
+    <a href="0006b-map-and-set.html">Lesson 6b: Map &amp; Set →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

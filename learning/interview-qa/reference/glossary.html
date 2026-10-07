@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Must-Say Terms · M1-M4 revision — Interview Q&amp;A</title>
+<title>Must-Say Terms · M1-M6 revision — Interview Q&amp;A</title>
 <link rel="stylesheet" href="../assets/course.css">
 <style>
   /* glossary-only: the keyword chip and the script blocks */
@@ -35,7 +35,7 @@
 <div class="wrap wide">
 
   <header class="masthead">
-    <p class="eyebrow">Reference · Modules 1-4 · revised 2026-08-07</p>
+    <p class="eyebrow">Reference · Modules 1-6 · revised 2026-10-07</p>
     <h1>Must-Say Terms</h1>
     <p class="subtitle">Not a summary. The exact words that have to leave your mouth for the
     answer to count — plus the follow-up each one invites.</p>
@@ -51,32 +51,54 @@
     loud.</strong> Reading this silently is not the exercise.
   </div>
 
-  <h2>0 · Your three tells — check these first</h2>
-  <p>Found across the L2, L3 and L4 drills. They are not knowledge gaps. Every one of them is a
-  correct mechanism that came out of your mouth attached to the wrong word.</p>
+  <h2>0 · Where you slipped — read this before every drill</h2>
 
+  <h3>Three habits behind most of the misses</h3>
   <div class="script tell">
-    <span class="who">Tell 1 — surface-shape matching</span>
-    You fire the first rule the snippet's <em>shape</em> resembles, and stop. It produced the L2
-    misses, the L3 read-point misses, and three "rule 3" answers for <code>.call</code>/<code>.bind</code>
-    in L4. <strong>The cure is one beat of doubt: run the rule you just fired and check its answer
-    isn't absurd.</strong> <code>inner.call(this)</code> under rule 3 would make <code>this</code>
-    a function. That absurdity is the signal.
+    <strong>1. You answer from what the code <em>looks like</em>.</strong> "It has a dot, so it's implicit
+    binding." "It returns an array, so it's a copy." Before you answer, ask: <em>does my answer actually
+    make sense?</em>
+    <br><br>
+    <strong>2. You say the rule right, then give a value that breaks it.</strong> You said "object keys
+    become strings", then answered as if the object remembered which object it was. Work the value out
+    <em>from your own sentence</em>.
+    <br><br>
+    <strong>3. You skip the half you're unsure of.</strong> In an interview a skip looks like dodging.
+    Say <em>"I'm not sure, but my guess is…"</em>. It costs nothing.
   </div>
 
-  <div class="script tell">
-    <span class="who">Tell 2 — the label is one step behind the mechanism</span>
-    You explain <em>how</em> it works correctly and then produce the wrong name for it. Confirmed
-    on <code>TypeError</code>, <code>n++</code>, <code>===</code>, HOF, and explicit binding.
-    <strong>Say the label first, then the mechanism</strong> — not the other way round.
-  </div>
-
-  <div class="script tell">
-    <span class="who">Tell 3 — the source-location anchor</span>
-    Under pressure you describe runtime things using authoring-time words: "<em>surrounding</em>",
-    "<em>where it is defined</em>". Those words are correct for <strong>closures</strong> and wrong
-    for <strong><code>this</code></strong>. If one of them is about to come out while you're
-    answering a <code>this</code> question, stop and say <span class="kw">call site</span> instead.
+  <h3>The concepts you got wrong, and what's actually true</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>You said</th><th>What's actually true</th></tr></thead>
+    <tbody>
+      <tr><td>"the error"</td><td><strong><code>TypeError</code></strong> = found it, but the operation is illegal (calling <code>undefined</code>, writing a frozen property in strict mode). <strong><code>ReferenceError</code></strong> = can't find the name.</td></tr>
+      <tr><td><code>n++</code> returns the new value</td><td><code>n++</code> returns the <strong>old</strong> value. <code>++n</code> returns the <strong>new</strong> one.</td></tr>
+      <tr><td>HOF = a function inside a function</td><td>A HOF <strong>takes or returns a function</strong>. Nesting has nothing to do with it.</td></tr>
+      <tr><td><code>fn.call(obj)</code> is implicit binding</td><td>It's <strong>explicit</strong>. Implicit reads the object <strong>left of the dot</strong>; explicit reads the object <strong>inside the parentheses</strong>.</td></tr>
+      <tr><td><code>this</code> in a callback comes from where it's written</td><td><code>this</code> comes from <strong>how the function is called</strong>. <code>forEach</code> and <code>setTimeout</code> call it bare, so the object is lost.</td></tr>
+      <tr><td>An arrow inside a method can't see the object</td><td>An arrow takes <code>this</code> from the <strong>nearest real function around it</strong>. If that function was called on an object, the arrow has that object.</td></tr>
+      <tr><td>Pass by reference</td><td>Always <strong>pass by value</strong>. For objects, the value is a reference: mutation shows outside, reassignment doesn't. That's <strong>call by sharing</strong>.</td></tr>
+      <tr><td><code>freeze</code> / <code>slice</code> are deep</td><td>Both are <strong>shallow</strong>, one level only. Nested objects are still shared, and still editable.</td></tr>
+      <tr><td><code>sort</code> returns a new array; <code>push</code>/<code>pop</code> return the array</td><td><code>sort</code>/<code>reverse</code>/<code>fill</code> return the <strong>same</strong> array. <code>push</code> → <strong>new length</strong>. <code>pop</code> → <strong>removed item</strong>. <code>splice</code> → <strong>array of removed items</strong>, always (even <code>[]</code>).</td></tr>
+      <tr><td><code>(a, b) =&gt; a &gt; b</code> compares as strings</td><td>A comparator gets the real values. It must return a <strong>number</strong> (its sign decides the order). <code>a &gt; b</code> returns a boolean, which is never negative, so nothing sorts. Use <code>a - b</code>.</td></tr>
+      <tr><td><code>return</code> in <code>forEach</code> stops the loop</td><td>Your callback is a separate call, made once per element. <code>return</code> ends <strong>that one call</strong> only. And <code>map</code> stores whatever comes back, <code>undefined</code> included.</td></tr>
+      <tr><td><code>["10","10","10"].map(parseInt)</code> → all 10</td><td><code>map</code> passes <strong>(value, index, array)</strong>, so the index becomes <code>parseInt</code>'s radix: <code>[10, NaN, 2]</code>.</td></tr>
+      <tr><td><code>filter</code> removes the true ones</td><td><code>filter</code> <strong>keeps</strong> the elements whose callback is truthy. No match → <code>[]</code>.</td></tr>
+      <tr><td><code>for...in</code> on an array gives 1, 2…</td><td>It gives <strong>keys as strings, starting at <code>"0"</code></strong>, plus any extra named property. <code>length</code> only counts the elements.</td></tr>
+      <tr><td><code>o[a]</code> and <code>o[b]</code> are separate keys</td><td>Every object key becomes <code>"[object Object]"</code>, so they <strong>collide</strong>. Only a <code>Map</code> keeps them apart.</td></tr>
+      <tr><td><code>m.get({ id: 1 })</code> finds the key that looks like this</td><td>The <code>{ }</code> builds a <strong>new</strong> object before <code>get</code> runs. Map lookup is by <strong>identity</strong>, so you need the original reference.</td></tr>
+      <tr><td>After <code>k = { id: 1 }</code>, <code>wm.has(k)</code> is still true</td><td>Reassigning moves <code>k</code> to a <strong>new</strong> object. The old one is still the key.</td></tr>
+      <tr><td><code>new Set("banana")</code> has 6 items</td><td>A string is iterable, so the Set gets its letters, <strong>deduplicated</strong>: <code>b a n</code>, size 3.</td></tr>
+      <tr><td><code>delete</code> / <code>= null</code> frees memory</td><td>Memory is freed when the object is <strong>no longer reachable</strong>. A leak is memory you don't need that's <strong>still reachable</strong>.</td></tr>
+      <tr><td>Class fields (<code>x = 1</code>) aren't on the instance</td><td>Fields are <strong>own</strong>: every instance gets its own copy. Methods and getters live once on <code>Class.prototype</code> and are <strong>inherited</strong>.</td></tr>
+      <tr><td><code>toString</code> isn't found on my object</td><td>Every chain ends at <code>Object.prototype</code>, so <code>toString</code>/<code>hasOwnProperty</code> are <strong>inherited</strong> by every object. <code>constructor</code> lives on <code>Class.prototype</code>.</td></tr>
+      <tr><td>Spreading an object drops its getter (<code>undefined</code>)</td><td>Depends where the getter lives. In an <strong>object literal</strong> (own): spread <strong>runs</strong> it once and stores the result, a <strong>frozen snapshot</strong>. In a <strong>class</strong> (on the prototype): spread copies own properties only, so the getter <strong>isn't copied at all</strong>: <code>undefined</code>.</td></tr>
+      <tr><td><code>a.wheels = 3</code> changes every instance</td><td>It creates an <strong>own</strong> <code>wheels</code> on <code>a</code> that hides the shared one (<strong>shadowing</strong>). Others still read the prototype's value.</td></tr>
+      <tr><td><code>"eat" in c</code> gives the function</td><td><code>in</code> returns a <strong>boolean</strong>: is the key anywhere on the chain?</td></tr>
+      <tr><td><code>new WeakSet().add(1)</code> works</td><td>Weak collections take <strong>objects only</strong>. <code>add</code>/<code>set</code> with a primitive throws <code>TypeError</code>; <code>get</code>/<code>has</code> just return <code>undefined</code>/<code>false</code>.</td></tr>
+    </tbody>
+  </table>
   </div>
 
   <h2 class="mod-head">M1 · Types &amp; Coercion <span class="pill">done</span></h2>
@@ -302,15 +324,131 @@
     no <code>this</code> of their own, so it resolves <strong>lexically</strong>."
   </div>
 
-  <h2>5 · The procedure — all five questions, one list</h2>
-  <p>Built across three drills. Q1-Q3 came from M2, Q4 from M3, Q5 from M4. Run them in order on
-  every identifier and never skip to the answer.</p>
+  <h2 class="mod-head">M5 · Objects &amp; prototypes <span class="pill warn">done · open items</span></h2>
+  <p class="kwlist">
+    <span class="kw">call by sharing</span>
+    <span class="kw">reference identity</span>
+    <span class="kw">shallow</span>
+    <span class="kw">structuredClone</span>
+    <span class="kw">accessor property</span>
+    <span class="kw">assigns vs defines</span>
+    <span class="kw">prototype chain</span>
+    <span class="kw">until null</span>
+    <span class="kw">objects linked to objects</span>
+    <span class="kw">syntactic sugar</span>
+    <span class="kw">shadowing</span>
+    <span class="kw">own vs inherited</span>
+    <span class="kw">non-enumerable</span>
+  </p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Asked as</th><th>Must contain</th><th>The follow-up it invites</th></tr></thead>
+    <tbody>
+      <tr><td>Ways to create an object</td><td>literal · constructor + <code>new</code> · <code>class</code> · <code>Object.create</code> · <code>Object.assign</code> · factory function · <code>new Object()</code></td><td>The two that mark you out: <strong><code>Object.create</code></strong> ("the only one where I pick the prototype") and the <strong>factory</strong> ("private state through a closure, no <code>this</code> to lose")</td></tr>
+      <tr><td>Pass by value or by reference?</td><td><strong>Always pass-by-value</strong>; for objects the value <em>is</em> a reference, so <strong>mutation is visible to the caller, reassignment is not</strong> → <span class="kw">call by sharing</span></td><td>The React line: <code>push</code> keeps the same reference, so <code>prev === next</code> and React skips the re-render. <strong>Replace, don't mutate.</strong></td></tr>
+      <tr><td><code>===</code> on two objects</td><td><span class="kw">reference identity</span>. It never looks inside. <code>{a:1} === {a:1}</code> is <code>false</code></td><td>The same rule decides every Map/Set key lookup (M6)</td></tr>
+      <tr><td>Shallow vs deep copy</td><td><span class="kw">shallow</span> = new top level, <strong>nested values still shared</strong>: spread, <code>Object.assign</code>, <code>slice</code>, <code>Array.from</code>. Deep = <span class="kw">structuredClone</span> or a recursive walk</td><td>"And <code>JSON.parse(JSON.stringify())</code>?" → deep, but <strong>loses functions and <code>undefined</code>, Dates become strings, Map/Set become <code>{}</code>, throws on circular</strong></td></tr>
+      <tr><td>Spread vs <code>Object.assign</code></td><td>both shallow, both copy own enumerable props. <code>Object.assign</code> <strong>mutates its target</strong> and <span class="kw">assigns</span>, so target setters fire; spread <strong>defines</strong>, so no setter ever runs</td><td>The consequence: a JSON key named <code>__proto__</code> makes <code>Object.assign</code> <strong>swap the target's prototype</strong>; spread stores a harmless key. A naive deep merge goes further and <strong>pollutes <code>Object.prototype</code></strong> for every object (<strong>prototype pollution</strong>)</td></tr>
+      <tr><td>Getter / setter</td><td>an <span class="kw">accessor property</span>: the descriptor has <code>get</code>/<code>set</code> <strong>instead of</strong> <code>value</code>/<code>writable</code>. <code>el.innerHTML = x</code> is a setter</td><td>"Used them in production?" → honest no, plus: <strong>copying an object with a getter turns a live value into a stale one</strong></td></tr>
+      <tr><td>Prototypal inheritance</td><td>every object has a hidden link to another; reading a property walks the <span class="kw">prototype chain</span> <span class="kw">until null</span>. <span class="kw">objects linked to objects</span>, not classes</td><td>"And <code>class</code>?" → <span class="kw">syntactic sugar</span> over the same chain. <code>extends</code> sets the link that <code>Object.create</code> sets by hand</td></tr>
+      <tr><td><code>prototype</code> vs <code>__proto__</code></td><td><code>Fn.prototype</code>: on <strong>functions only</strong>, what instances <em>will</em> inherit. <code>__proto__</code> (say <code>Object.getPrototypeOf</code>): on <strong>every object</strong>, what it inherits from <em>now</em></td><td>The identity that ties them: <code>Object.getPrototypeOf(new Dog()) === Dog.prototype</code></td></tr>
+      <tr><td>What does <code>new</code> do?</td><td><strong>4 steps:</strong> create an empty object · <strong>link its prototype to <code>Fn.prototype</code></strong> · run the body with <code>this</code> = that object · return it (unless the body returns an object)</td><td>"Which step makes the chain exist?" → <strong>step 2</strong></td></tr>
+      <tr><td>Assigning an inherited key</td><td><span class="kw">shadowing</span>: it creates an <strong>own</strong> property on that object, and the prototype is untouched. (Unless a <strong>setter</strong> on the chain catches the write.)</td><td>"Then how does one change hit all instances?" → <strong>mutating</strong> a shared object on the prototype (<code>s1.tags.push(x)</code>)</td></tr>
+      <tr><td><span class="kw">own vs inherited</span></td><td><code>Object.hasOwn</code> / <code>Object.keys</code> = own only · <code>"k" in o</code> / <code>for...in</code> = walk the chain</td><td>"Why doesn't <code>for...in</code> list <code>toString</code>?" → it's <span class="kw">non-enumerable</span>. Enumerability is the filter, the chain is the path</td></tr>
+      <tr><td>freeze vs seal vs preventExtensions</td><td>freeze = read-only · seal = fixed shape, editable values · preventExtensions = no new keys</td><td><strong>All shallow.</strong> Silent in sloppy mode, <strong><code>TypeError</code> in strict</strong> (modules and classes are strict). Mutating <em>methods</em> like <code>push</code> throw in any mode</td></tr>
+      <tr><td>Spread vs rest</td><td>same three dots, opposite direction: <strong>right of <code>=</code> expands (spread), left of <code>=</code> or in params collects (rest)</strong></td><td><code>const { password, ...safe } = user</code> = omit a key without mutating</td></tr>
+      <tr><td>Arrow class field vs method</td><td>method: <strong>one, shared</strong>, on the prototype · arrow field: <strong>one per instance</strong>, survives extraction</td><td>"Why not always arrows?" → per-instance memory, and they can't be overridden through the chain</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="script tell">
+    <span class="who">Trap C — "shallow" read as "locked" or "copied"</span>
+    <code>Object.freeze</code> and <code>slice()</code> both <em>sound</em> total. Both are <strong>one level
+    deep</strong>. Before answering, ask: <strong>which object does this write actually land on, and what
+    inside the new one is still shared?</strong>
+  </div>
+
+  <div class="script">
+    <span class="who">Say it like this</span>
+    "Technically JavaScript is always <strong>pass-by-value</strong>, but for objects the value is a
+    reference. So mutation is visible to the caller and reassignment isn't. The precise name for that
+    is <strong>call by sharing</strong>."
+    <br><br>
+    "JavaScript doesn't have classical inheritance. It has <strong>objects linked to other
+    objects</strong>, and reading a property walks that chain until it finds the key or hits
+    <code>null</code>. <code>class</code> is <strong>syntactic sugar</strong> over it."
+  </div>
+
+  <h2 class="mod-head">M6 · Arrays, iteration, Map &amp; Set <span class="pill warn">done · open items</span></h2>
+  <p class="kwlist">
+    <span class="kw">what does it return?</span>
+    <span class="kw">did the original change?</span>
+    <span class="kw">the same array</span>
+    <span class="kw">value, index, array</span>
+    <span class="kw">truthy = keep</span>
+    <span class="kw">compares as strings</span>
+    <span class="kw">a number, its sign</span>
+    <span class="kw">keys vs values</span>
+    <span class="kw">iterable</span>
+    <span class="kw">insertion order</span>
+    <span class="kw">O(1) lookup</span>
+    <span class="kw">held weakly</span>
+    <span class="kw">reachable</span>
+  </p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Asked as</th><th>Must contain</th><th>The follow-up it invites</th></tr></thead>
+    <tbody>
+      <tr><td><code>map</code> vs <code>forEach</code></td><td><code>map</code> <strong>transforms</strong> into a <strong>new array, same length</strong>. <code>forEach</code> returns <strong><code>undefined</code></strong>, for <strong>side effects</strong></td><td>"Can you <code>break</code> a <code>forEach</code>?" → no. <code>return</code> only ends that one callback call</td></tr>
+      <tr><td><code>filter</code></td><td><span class="kw">truthy = keep</span>, falsy = drop. New array, equal or shorter. No match → <strong><code>[]</code></strong></td><td>The probe had it inverted ("removes the true ones"). It keeps them</td></tr>
+      <tr><td>find / findIndex / some / every</td><td>element or <code>undefined</code> · index or <strong><code>-1</code></strong> · boolean · boolean</td><td><code>if (arr.findIndex(f))</code> is a bug: <strong><code>-1</code> is truthy, <code>0</code> is falsy</strong>. And <code>[].every(f)</code> is <code>true</code></td></tr>
+      <tr><td>The callback contract</td><td>called <strong>by the method</strong>, once per element, with <span class="kw">value, index, array</span>. The third is the array, not <code>this</code></td><td><code>["1","2","3"].map(parseInt)</code> → <code>[1, NaN, NaN]</code>: the index became the radix</td></tr>
+      <tr><td><code>slice</code> vs <code>splice</code></td><td><code>slice</code>: copy, no mutation, end exclusive. <code>splice</code>: <strong>mutates</strong> and <strong>always returns an array of what it removed</strong>, even <code>[]</code></td><td><code>splice(start, deleteCount, ...items)</code> also inserts</td></tr>
+      <tr><td>What each mutator returns</td><td><code>push</code>/<code>unshift</code> → <strong>new length</strong> · <code>pop</code>/<code>shift</code> → <strong>removed element</strong> · <code>splice</code> → <strong>removed array</strong> · <code>sort</code>/<code>reverse</code>/<code>fill</code> → <span class="kw">the same array</span></td><td>Non-mutating twins: <code>toSorted</code>, <code>toReversed</code>, <code>toSpliced</code>, and <code>concat</code> (the add that doesn't mutate)</td></tr>
+      <tr><td><code>[10, 9, 1].sort()</code></td><td><strong><code>[1, 10, 9]</code></strong>: the default <span class="kw">compares as strings</span>. Fix: <code>(a, b) =&gt; a - b</code>. Sorts <strong>in place and returns the same array</strong></td><td>"Why not <code>a &gt; b</code>?" → the comparator must return <span class="kw">a number, its sign</span> decides; a boolean is never negative. In React: copy first, or <code>toSorted</code></td></tr>
+      <tr><td><code>for...in</code> vs <code>for...of</code></td><td><span class="kw">keys vs values</span>: <code>in</code> gives <strong>keys, as strings</strong>, and <strong>walks the chain</strong>. <code>of</code> gives <strong>values</strong>, <span class="kw">iterable</span>s only</td><td><code>for...of</code> on a plain object → <strong><code>TypeError</code>: not iterable</strong>. Never <code>for...in</code> on an array</td></tr>
+      <tr><td>Map vs object</td><td>Map keys are <strong>any type, never converted to strings</strong> · no inherited keys · <span class="kw">insertion order</span> · <code>.size</code> · iterable. <strong>Object = a record, Map = a dictionary</strong></td><td>"<code>Object.create(null)</code>?" → fixes inherited keys only. And <code>JSON.stringify(map)</code> → <strong><code>"{}"</code></strong></td></tr>
+      <tr><td>Map/Set key lookup</td><td>by <strong>identity</strong>, like <code>===</code>. <code>{ id: 1 }</code> written twice = two objects. <strong>Arguments are evaluated before the call</strong>, so <code>get({ id: 1 })</code> receives a brand-new object</td><td>Keep the reference: <code>const key = {...}; m.set(key, v); m.get(key)</code></td></tr>
+      <tr><td>Set vs array</td><td><strong>unique values</strong>, and <code>has</code> is an <span class="kw">O(1) lookup</span> (hash) where <code>includes</code> is O(n)</td><td>Inside a loop that's <strong>O(n²) → O(n)</strong> (<code>findPairs</code>). Dedupe: <code>[...new Set(arr)]</code>, first-appearance order</td></tr>
+      <tr><td>When is memory freed?</td><td>when the object is no longer <span class="kw">reachable</span> from a root (globals, running functions, live closures). <code>delete</code> / <code>= null</code> cut <strong>one</strong> path</td><td>"A leak?" → memory you don't need but is <strong>still reachable</strong>: forgotten listeners, uncleared intervals, a cache that only grows</td></tr>
+      <tr><td>WeakMap vs Map</td><td>keys are <span class="kw">held weakly</span>, so an entry <strong>doesn't keep its key alive</strong>. Keys must be <strong>objects</strong> (<code>set</code>/<code>add</code> throws <code>TypeError</code> otherwise). <strong>No size, not iterable</strong>, because entries vanish whenever GC runs</td><td>Use: a per-object cache, data on objects you don't own, the <code>seen</code> map in <code>deepClone</code>. <code>get</code>/<code>has</code> never throw; they return <code>undefined</code>/<code>false</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="script tell">
+    <span class="who">Trap D — "returns what?" is its own question</span>
+    You answered "did it change?" and then guessed the return from it: <code>push</code>/<code>pop</code> →
+    "same array", <code>sort</code> → "new array" (three times), <code>splice(0, 0, "x")</code> → "same array".
+    <strong>Ask "what did it return?" first, separately.</strong>
+  </div>
+
+  <div class="script">
+    <span class="who">Say it like this</span>
+    "The default sort <strong>compares as strings</strong>, so <code>[10, 9, 1]</code> comes out
+    <code>[1, 10, 9]</code>. For numbers I pass <code>(a, b) =&gt; a - b</code>. It sorts <strong>in place and
+    returns the same array</strong>, so in React I copy first."
+    <br><br>
+    "An object is for a <strong>record</strong>, where I know the shape. A Map is for a
+    <strong>dictionary</strong>: keys of any type, never turned into strings, kept in insertion order, with
+    <code>size</code>, and iterable. A WeakMap <strong>holds its keys weakly</strong>, so it doesn't stop an
+    object from being garbage-collected. That's why its keys must be objects and why it has no size."
+  </div>
+
+  <h2>The procedure — all seven questions, one list</h2>
+  <p>Built across the drills. Q1-Q3 came from M2, Q4 from M3, Q5 from M4, Q6 from M5, Q7 from M6.
+  Run them in order on every identifier and never skip to the answer.</p>
   <ol>
     <li><strong>Which keyword declares it?</strong> function · var · let · const · class · parameter · nothing</li>
     <li><strong>What state is the binding in <em>at this exact line</em>?</strong> undeclared · TDZ · holds <code>undefined</code> · holds a real value</li>
     <li><strong>What are you doing to it?</strong> reading · calling · assigning · <code>typeof</code></li>
     <li><strong>When does this actually run — and what is the binding at <em>that</em> moment?</strong> <em>(closures move the read into the future)</em></li>
     <li><strong>How was this function called — and is it an arrow?</strong> Arrow → skip the table, walk the scope chain. Not an arrow → new · explicit · left of the dot · bare</li>
+    <li><strong>Is this the same object or a new one — and is the property own or inherited?</strong> <em>(identity, copies, the chain; also every Map/Set lookup)</em></li>
+    <li><strong>What does this method return — and did the original change?</strong> <em>Ask the first half on its own.</em></li>
   </ol>
 
   <div class="tbl-scroll">
@@ -325,7 +463,7 @@
   </table>
   </div>
 
-  <h2>6 · The 60-second self-test</h2>
+  <h2>The 60-second self-test</h2>
   <p>Cover the right column. Say each answer out loud. Any hesitation is a re-read, not a pass.</p>
   <div class="tbl-scroll">
   <table class="tbl">
@@ -351,19 +489,32 @@
       <tr><td>Pure function</td><td>same input same output <em>and</em> no side effects</td></tr>
       <tr><td>Two counters from one factory</td><td>per invocation, not per definition</td></tr>
       <tr><td>"prints 6" — both fixes</td><td>fresh binding per iteration · a new scope per call</td></tr>
+      <tr><td>Pass by value or reference?</td><td>always by value · the value is a reference · call by sharing</td></tr>
+      <tr><td>Shallow copy</td><td>new top level · nested still shared · freeze and slice are shallow too</td></tr>
+      <tr><td>Spread vs <code>Object.assign</code></td><td>assign mutates the target and assigns (setters fire) · spread defines</td></tr>
+      <tr><td>Prototypal inheritance</td><td>objects linked to objects · walks until null · class is syntactic sugar</td></tr>
+      <tr><td>What <code>new</code> does</td><td>create · link the prototype · run with this · return</td></tr>
+      <tr><td><code>map</code> vs <code>forEach</code></td><td>new array, same length · returns undefined, side effects</td></tr>
+      <tr><td>What <code>push</code> / <code>splice</code> / <code>sort</code> return</td><td>new length · removed array (always) · the same array</td></tr>
+      <tr><td><code>[10, 9, 1].sort()</code></td><td>[1, 10, 9] · compares as strings · a - b · a number, its sign</td></tr>
+      <tr><td><code>for...in</code> vs <code>for...of</code></td><td>keys as strings, walks the chain · values, iterables only</td></tr>
+      <tr><td>Map vs object</td><td>any key type, not converted · insertion order · size · record vs dictionary</td></tr>
+      <tr><td>Set vs array</td><td>unique values · has is O(1), includes is O(n)</td></tr>
+      <tr><td>When is memory freed?</td><td>no longer reachable · a leak is unneeded but still reachable</td></tr>
+      <tr><td>WeakMap</td><td>keys held weakly · objects only · no size, not iterable</td></tr>
     </tbody>
   </table>
   </div>
 
   <div class="note">
     <span class="callout-label">Not in here yet</span>
-    M5 objects &amp; prototypes, M6 arrays, M7 async &amp; the event loop. Update this page at the
-    close of every module — it is the file to re-read the morning of an interview, not the lessons.
+    M7 async &amp; the event loop onward. This is the file to re-read the morning of an interview,
+    not the lessons. Start with section 0.
   </div>
 
   <div class="lesson-nav">
     <a href="course-map.html">← Course map</a>
-    <a href="../lessons/0004-this-and-binding.html">Lesson 4 →</a>
+    <a href="../lessons/0006b-map-and-set.html">Lesson 6b →</a>
   </div>
 
 </div>

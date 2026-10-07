@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-11T16:06:28.362Z",
-  "today": "2026-09-11",
-  "day": "Fri",
-  "phase": "A2",
-  "wave": "sacrificial",
+  "generatedAt": "2026-09-30T14:28:16.334Z",
+  "today": "2026-09-30",
+  "day": "Wed",
+  "phase": "B",
+  "wave": "target",
   "countdown": {
-    "resign": -2,
-    "phaseGate": 39,
-    "offerFloor": 65,
-    "offerFloorWorkDays": 56
+    "resign": -21,
+    "phaseGate": 20,
+    "offerFloor": 46,
+    "offerFloorWorkDays": 40
   },
   "counters": [
     {
@@ -16,8 +16,8 @@
       "done": 0,
       "target": 14,
       "remaining": 14,
-      "workDays": 34,
-      "pace": 0.41,
+      "workDays": 18,
+      "pace": 0.78,
       "sustainable": 1,
       "reachable": 14,
       "status": "on-track"
@@ -27,8 +27,8 @@
       "done": 1,
       "target": 10,
       "remaining": 9,
-      "workDays": 34,
-      "pace": 0.26,
+      "workDays": 18,
+      "pace": 0.5,
       "sustainable": 0.75,
       "reachable": 10,
       "status": "on-track"
@@ -36,12 +36,12 @@
     {
       "label": "IQA lessons",
       "done": 3,
-      "target": 5,
-      "remaining": 2,
-      "workDays": 34,
-      "pace": 0.06,
+      "target": 7,
+      "remaining": 4,
+      "workDays": 18,
+      "pace": 0.22,
       "sustainable": 0.5,
-      "reachable": 5,
+      "reachable": 7,
       "status": "on-track"
     },
     {
@@ -49,30 +49,30 @@
       "done": 0,
       "target": 8,
       "remaining": 8,
-      "workDays": 34,
-      "pace": 0.24,
+      "workDays": 18,
+      "pace": 0.44,
       "sustainable": 0.75,
       "reachable": 8,
       "status": "on-track"
     },
     {
       "label": "Applications",
-      "done": 0,
+      "done": 1,
       "target": 60,
-      "remaining": 60,
-      "workDays": 34,
-      "pace": 1.76,
+      "remaining": 59,
+      "workDays": 18,
+      "pace": 3.28,
       "sustainable": 3,
-      "reachable": 60,
-      "status": "on-track"
+      "reachable": 55,
+      "status": "cut"
     },
     {
       "label": "Interviews sat",
-      "done": 0,
+      "done": 1,
       "target": 4,
-      "remaining": 4,
-      "workDays": 56,
-      "pace": 0.07,
+      "remaining": 3,
+      "workDays": 40,
+      "pace": 0.08,
       "sustainable": 0.2,
       "reachable": 4,
       "status": "on-track"
@@ -80,29 +80,43 @@
   ],
   "overdue": [
     {
+      "name": "Best Time to Buy & Sell Stock",
+      "due": "2026-07-19",
+      "rung": "D5",
+      "tag": "dsa",
+      "lateBy": 73
+    },
+    {
+      "name": "Merge Sorted Arrays",
+      "due": "2026-07-19",
+      "rung": "D5",
+      "tag": "dsa",
+      "lateBy": 73
+    },
+    {
       "name": "absence of a value",
       "due": "2026-07-31",
       "rung": "T2",
       "tag": "backend",
-      "lateBy": 42
+      "lateBy": 61
     },
     {
       "name": "Counter",
       "due": "2026-08-14",
       "rung": "R3",
       "tag": "machine-coding",
-      "lateBy": 28
+      "lateBy": 47
     }
   ],
   "dueToday": [],
   "stale": [
-    "daily log DARK 31 days (last 2026-08-11)",
-    "week.md STALE 32 days (updated 2026-08-10)",
-    "dashboard not ingested 31 days (last 2026-08-11)"
+    "daily log DARK 50 days (last 2026-08-11)",
+    "week.md STALE 51 days (updated 2026-08-10)",
+    "dashboard not ingested 50 days (last 2026-08-11)"
   ],
   "parseErrors": [],
   "action": {
-    "do": "Clear the overdue backend rung: absence of a value (T2, 42d late)",
+    "do": "Clear the overdue dsa rung: Best Time to Buy & Sell Stock (D5, 73d late)",
     "why": "Overdue rungs beat everything. A missed revision decays a pattern you half-own."
   },
   "floor": {
@@ -113,7 +127,7 @@
   },
   "codingTrack": "machineCoding",
   "funnel": {
-    "applications": 0,
-    "interviews": 0
+    "applications": 1,
+    "interviews": 1
   }
 }

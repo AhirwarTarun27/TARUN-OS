@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JS to Python · Python for a JS Developer</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap wide">
+
+  <header class="masthead">
+    <p class="eyebrow">Python for a JS developer · Reference</p>
+    <h1>JS → Python cheat sheet</h1>
+    <p class="subtitle">"I know how to do this in JS. What's the Python?" One section per lesson.
+    It grows as the course does. Every Python output here was run on Python 3.14.</p>
+  </header>
+
+  <h2 id="l1">Lesson 1 · Basics <a href="../lessons/0001-basics.html" style="font-size:0.8rem">(lesson)</a></h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>Run a file</td><td><code>node app.js</code></td><td><code>python app.py</code></td><td></td></tr>
+      <tr><td>Print</td><td><code>console.log("a", 3)</code></td><td><code>print("a", 3)</code></td><td>prints <code>a 3</code></td></tr>
+      <tr><td>Statement end</td><td><code>;</code></td><td>end of line</td><td></td></tr>
+      <tr><td>Create a variable</td><td><code>let total = 0;</code></td><td><code>total = 0</code></td><td>no keyword</td></tr>
+      <tr><td>Constant</td><td><code>const MAX = 5;</code></td><td><code>MAX = 5</code></td><td>not enforced, only a convention</td></tr>
+      <tr><td>Naming</td><td><code>bakeTime</code></td><td><code>bake_time</code></td><td>PEP 8</td></tr>
+      <tr><td>Concatenate number</td><td><code>"n=" + 3</code> → <code>"n=3"</code></td><td><code>"n=" + str(3)</code></td><td><code>"n=" + 3</code> is a <code>TypeError</code></td></tr>
+      <tr><td>Repeat a string</td><td><code>"ha".repeat(3)</code></td><td><code>"ha" * 3</code></td><td><code>'hahaha'</code></td></tr>
+      <tr><td>Unknown name</td><td><code>ReferenceError</code></td><td><code>NameError</code></td><td></td></tr>
+      <tr><td>Define a function</td><td><code>function add(a, b) {<br>&nbsp;&nbsp;return a + b;<br>}</code></td><td><code>def add(a, b):<br>&nbsp;&nbsp;&nbsp;&nbsp;return a + b</code></td><td>colon + 4-space indent, no braces</td></tr>
+      <tr><td>Bad indentation</td><td>doesn't matter</td><td><code>IndentationError</code></td><td>indentation is syntax</td></tr>
+      <tr><td>No return value</td><td><code>undefined</code></td><td><code>None</code></td><td>capital N</td></tr>
+      <tr><td>"No value"</td><td><code>null</code>, <code>undefined</code></td><td><code>None</code></td><td>just one</td></tr>
+      <tr><td>Too few / too many args</td><td>runs (<code>undefined</code> / ignored)</td><td><code>TypeError</code></td><td>the #1 habit to unlearn</td></tr>
+      <tr><td>Method call</td><td><code>"hi".toUpperCase()</code></td><td><code>"hi".upper()</code></td><td>also <code>str.upper("hi")</code></td></tr>
+      <tr><td>Comment</td><td><code>// x</code>, <code>/* x */</code></td><td><code># x</code></td><td>no block comments</td></tr>
+      <tr><td>Function docs</td><td><code>/** JSDoc */</code> above</td><td><code>"""docstring"""</code> first line inside</td><td>read it: <code>f.__doc__</code>, <code>help(f)</code></td></tr>
+      <tr><td>Type of a value</td><td><code>typeof 42</code> → <code>"number"</code></td><td><code>type(42)</code> → <code>&lt;class 'int'&gt;</code></td><td></td></tr>
+      <tr><td>Function as value</td><td><code>const f = add;</code></td><td><code>f = add</code></td><td>same idea</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="l2">Lesson 2 · Bools <a href="../lessons/0002-bools.html" style="font-size:0.8rem">(lesson)</a></h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>The two values</td><td><code>true</code>, <code>false</code></td><td><code>True</code>, <code>False</code></td><td><code>true</code> is a <code>NameError</code></td></tr>
+      <tr><td>Type</td><td><code>typeof x</code> → <code>"boolean"</code></td><td><code>type(x)</code> → <code>&lt;class 'bool'&gt;</code></td><td></td></tr>
+      <tr><td>And</td><td><code>a &amp;&amp; b</code></td><td><code>a and b</code></td><td><code>&amp;&amp;</code> is a <code>SyntaxError</code></td></tr>
+      <tr><td>Or</td><td><code>a || b</code></td><td><code>a or b</code></td><td></td></tr>
+      <tr><td>Not</td><td><code>!a</code></td><td><code>not a</code></td><td><code>!=</code> still exists</td></tr>
+      <tr><td>Not + comparison</td><td><code>!1 == 2</code> → <code>false</code></td><td><code>not 1 == 2</code> → <code>True</code></td><td><code>not</code> runs after comparisons</td></tr>
+      <tr><td>Precedence</td><td><code>!</code> → <code>&amp;&amp;</code> → <code>||</code></td><td>comparisons → <code>not</code> → <code>and</code> → <code>or</code></td><td>unsure? brackets</td></tr>
+      <tr><td>Default value</td><td><code>name || "guest"</code></td><td><code>name or "guest"</code></td><td>returns the value, not a bool</td></tr>
+      <tr><td>Convert</td><td><code>Boolean(x)</code>, <code>!!x</code></td><td><code>bool(x)</code></td><td></td></tr>
+      <tr><td>Empty array / list</td><td>truthy</td><td>falsy</td><td><code>if items:</code> means "not empty"</td></tr>
+      <tr><td>Empty object / dict</td><td>truthy</td><td>falsy</td><td></td></tr>
+      <tr><td><code>NaN</code></td><td>falsy</td><td>truthy</td><td>rare</td></tr>
+      <tr><td>Check a flag</td><td><code>if (flag)</code></td><td><code>if flag:</code></td><td>never <code>== True</code></td></tr>
+      <tr><td>Same object?</td><td><code>===</code> (on objects)</td><td><code>is</code></td><td>use <code>is</code> for <code>None</code>, <code>==</code> for values</td></tr>
+      <tr><td>Type check</td><td><code>x instanceof T</code></td><td><code>isinstance(x, T)</code></td><td></td></tr>
+      <tr><td>Empty body</td><td><code>{ }</code></td><td><code>pass</code></td><td>empty body is an <code>IndentationError</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="l3">Lesson 3 · Numbers <a href="../lessons/0003-numbers.html" style="font-size:0.8rem">(lesson)</a></h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>Number types</td><td><code>number</code>, <code>BigInt</code></td><td><code>int</code>, <code>float</code></td><td><code>3 == 3.0</code> is <code>True</code></td></tr>
+      <tr><td>Big whole numbers</td><td><code>2n ** 100n</code></td><td><code>2 ** 100</code></td><td>ints never overflow</td></tr>
+      <tr><td>Divide</td><td><code>6 / 2</code> → <code>3</code></td><td><code>6 / 2</code> → <code>3.0</code></td><td>always a float</td></tr>
+      <tr><td>Whole-number divide</td><td><code>Math.floor(7 / 2)</code></td><td><code>7 // 2</code> → <code>3</code></td><td>float in → float out: <code>127.5 // 5</code> → <code>25.0</code></td></tr>
+      <tr><td>Remainder</td><td><code>7 % 4</code></td><td><code>7 % 4</code></td><td><code>-7 % 3</code>: JS <code>-1</code>, Python <code>2</code></td></tr>
+      <tr><td>Power</td><td><code>2 ** 3</code></td><td><code>2 ** 3</code></td><td><code>-2 ** 2</code>: JS error, Python <code>-4</code></td></tr>
+      <tr><td>Divide by zero</td><td><code>Infinity</code></td><td><code>ZeroDivisionError</code></td><td></td></tr>
+      <tr><td>Text → int</td><td><code>parseInt("42")</code></td><td><code>int("42")</code></td><td><code>int("4.5")</code> is a <code>ValueError</code></td></tr>
+      <tr><td>Text → float</td><td><code>parseFloat("4.5")</code></td><td><code>float("4.5")</code></td><td></td></tr>
+      <tr><td>Drop decimals</td><td><code>Math.trunc(3.9)</code></td><td><code>int(3.9)</code> → <code>3</code></td><td>doesn't round</td></tr>
+      <tr><td>Round</td><td><code>Math.round(x)</code></td><td><code>round(x)</code>, <code>round(x, 2)</code></td><td>halves go to even: <code>round(2.5)</code> → <code>2</code></td></tr>
+      <tr><td>Float equality</td><td><code>0.1 + 0.2 !== 0.3</code></td><td><code>0.1 + 0.2 != 0.3</code></td><td>never <code>==</code> on floats</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 id="l4">Lesson 4 · Conditionals <a href="../lessons/0004-conditionals.html" style="font-size:0.8rem">(lesson)</a></h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>If / else</td><td><code>if (x &gt; 3) { } else { }</code></td><td><code>if x &gt; 3:</code> … <code>else:</code></td><td>no brackets, colon, 4-space block</td></tr>
+      <tr><td>Else if</td><td><code>else if</code></td><td><code>elif</code></td><td>only the first true branch runs</td></tr>
+      <tr><td>Switch</td><td><code>switch</code></td><td><code>elif</code> chain</td><td><code>match</code> exists (3.10+), taught later</td></tr>
+      <tr><td>Return a test</td><td><code>return x &gt; 0;</code></td><td><code>return x &gt; 0</code></td><td>no <code>if</code> … <code>return True</code> / <code>else: return False</code></td></tr>
+      <tr><td>Is it empty?</td><td><code>if (arr.length &gt; 0)</code></td><td><code>if items:</code></td><td><code>[]</code> is falsy in Python, truthy in JS</td></tr>
+      <tr><td>Range check</td><td><code>a &lt; x &amp;&amp; x &lt; b</code></td><td><code>a &lt; x &lt; b</code></td><td>JS <code>3 &gt; 2 &gt; 1</code> is <code>false</code>, Python <code>True</code></td></tr>
+      <tr><td>One-line if</td><td><code>test ? a : b</code></td><td><code>a if test else b</code></td><td>value first, then the test</td></tr>
+      <tr><td>Throw</td><td><code>throw new Error("msg")</code></td><td><code>raise ValueError("msg")</code></td><td>no <code>new</code>; pick the error type</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="lesson-nav">
+    <a href="course-map.html">← Course map</a>
+    <a href="glossary.html">Glossary →</a>
+  </div>
+
+</div>
+</body>
+</html>

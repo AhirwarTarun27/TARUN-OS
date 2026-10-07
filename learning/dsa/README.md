@@ -6,8 +6,11 @@
 
 ## Why
 
-DSA is the **gate** for the active 2–3 month job switch (declared 2026-07-07). Highest-leverage
-interview prep block. See `context/priorities.md`.
+DSA is **not the gate**. Machine coding is. DSA was parked until 22 Sept, and from Phase B it is
+capped at **~20 problems across 6 patterns**, enough to clear screens. See `mission/plan.md`.
+
+**Fresh start 2026-10-02.** The queue was wiped. The July problems are deliberately not stored,
+because they get re-solved from zero.
 
 ## Level
 

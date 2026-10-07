@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 1 · Basics · Python for a JS Developer</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 1 · Exercism concept 1 of 17 · Basics</p>
+    <h1>Basics: names, functions, comments, docstrings</h1>
+    <p class="subtitle">You already know how to program. This lesson shows the <strong>8 places Python
+    does things differently from JavaScript</strong>. Most of them are places where JS is relaxed and
+    Python is strict. About 20 minutes.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">How this course works</span>
+    You follow <a href="https://exercism.org/tracks/python/concepts/basics">Exercism's Basics chapter</a>.
+    This page teaches the same chapter, but written for someone who already knows JavaScript. Every
+    section puts <span class="lang js">JavaScript</span> next to <span class="lang py">Python</span>,
+    and the red boxes point out a JS habit that will break here. Any new word is explained in a
+    <span style="color:var(--accent-2)">New words in this section</span> box at the end of the section
+    where it first appears, so you never have to scroll away. All of them are also collected in the
+    <a href="../reference/glossary.html">glossary</a>. When you finish, do the Exercism exercise.
+    <br><br>
+    Every output on this page was run on Python 3.14 before it was written down.
+  </div>
+
+  <!-- §0 -->
+  <h2 id="s0">0. How Python runs your code (60 seconds)</h2>
+  <p>Python works like Node. You write a file, <code>lasagna.py</code>, and run it with
+  <code>python lasagna.py</code>. That <code>python</code> program is called the <em>interpreter</em>: it reads
+  your file from top to bottom and runs each line, just like <code>node</code> does for JS. On Exercism you
+  don't even need that, because the website runs your code and its tests for you.</p>
+  <p>What you'll notice at once:</p>
+  <ul>
+    <li><strong>No semicolons.</strong> One line, one statement.</li>
+    <li><strong>No curly braces.</strong> Indentation (the spaces at the start of a line) marks the blocks. More in §3.</li>
+    <li><strong>No <code>let</code>, <code>const</code> or <code>var</code>.</strong> More in §1.</li>
+    <li><strong><code>print()</code> is your <code>console.log()</code>.</strong> Give it several values and it puts a space between them.</li>
+  </ul>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>console.log("a", "b", 3);
+<span class="tok-out">a b 3</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>print("a", "b", 3)
+<span class="tok-out">a b 3</span></code></pre></div>
+  </div>
+  <p>Type <code>python</code> with nothing after it and you get the <strong>REPL</strong>, a prompt that
+  looks like <code>&gt;&gt;&gt;</code>. It's the browser console for Python: type a line, see the result.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Interpreter</dt>
+        <dd>The program that runs your Python code, <code>python</code>. Is Python compiled or interpreted?
+        Both: it quietly compiles your file to an in-between form, then runs that. You never have to care.
+        <span class="js-like">like <code>node</code></span></dd></div>
+      <div class="term"><dt>REPL</dt>
+        <dd>Read, Evaluate, Print, Loop: the <code>&gt;&gt;&gt;</code> prompt you get by typing <code>python</code>.
+        It shows the result of each line, except <code>None</code>, which it doesn't print.
+        <span class="js-like">the browser console, or <code>node</code> with no file</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §1 -->
+  <h2 id="s1">1. A name points at a value</h2>
+  <p>In JS you declare a variable with a keyword. In Python you just write the name and <code>=</code>.
+  The first time you assign to a name, Python creates it.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>let myFirstVariable = 1;
+myFirstVariable = "now a string";</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>my_first_variable = 1
+my_first_variable = "now a string"</code></pre></div>
+  </div>
+  <p>Python people say "variable", but they also say <strong>name</strong>. The idea: a name is a label
+  you stick on a value, not a box that holds it. <code>x = 1</code> sticks the label <code>x</code> on the
+  value <code>1</code>. This is called <em>binding</em> the name. Same idea as a JS variable that holds a
+  reference.</p>
+
+  <h3>Dynamic: a name can point at any type</h3>
+  <p>Above, the same name pointed at a number and then at a string. Python allows that, just like JS.
+  That is what <strong>dynamically typed</strong> means: the type belongs to the value, not to the name.</p>
+
+  <h3>Strong: Python won't quietly convert types for you</h3>
+  <p>This is the first big difference. Remember JS coercion from your
+  <a href="../../interview-qa/lessons/0001-types-and-coercion.html">JS course, Lesson 1</a>?
+  Python refuses to do it.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>"1" + 1
+<span class="tok-out">"11"</span>   <span class="tok-com">// JS turns 1 into "1"</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>"1" + 1
+<span class="tok-err">TypeError: can only concatenate
+str (not "int") to str</span></code></pre></div>
+  </div>
+  <p>That is what <strong>strongly typed</strong> means: mixing types in a way that doesn't make sense is an
+  error, not a guess. If you want <code>"11"</code>, you convert yourself: <code>"1" + str(1)</code>.</p>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    "Dynamic" and "strong" are two different questions. <strong>Dynamic</strong>: can a name change type?
+    Yes, in both languages. <strong>Strong</strong>: will the language convert types behind your back?
+    JS will. Python won't. So Python is <em>dynamic and strong</em>, and JS is <em>dynamic and weak</em>.
+  </div>
+
+  <h3>Using a name before you assign it</h3>
+  <p>Using a name Python has never seen gives <code>NameError: name 'y' is not defined</code>. This is
+  JS's <code>ReferenceError</code> under another name. You'll mostly see it when you make a typo.</p>
+
+  <p>Exercism's intro uses two more typing words. You don't need either for the exercise:</p>
+  <ul>
+    <li><em>Duck typing</em>: "if it walks like a duck and quacks like a duck, it's a duck". Python only cares
+    whether a value <strong>has the method you call</strong>, not what its type is called. JS works the same way.</li>
+    <li><em>Type hints</em>: optional labels like <code>def ask(question: str) -&gt; str:</code>. Python doesn't
+    enforce them, but tools and libraries read them. Since you can add them bit by bit, Exercism calls this
+    <em>gradual typing</em>. Think TypeScript annotations that Python runs fine without.</li>
+  </ul>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Name / binding</dt>
+        <dd>A name is Python's word for a variable. Binding means sticking a name on a value with <code>=</code>.
+        <span class="js-like">a variable that holds a reference</span></dd></div>
+      <div class="term"><dt>Dynamically typed</dt>
+        <dd>A name can point at any type, and change type later. Types are checked while the program runs.
+        <span class="js-like">same as JS</span></dd></div>
+      <div class="term"><dt>Strongly typed</dt>
+        <dd>Python won't quietly convert one type into another. <code>"1" + 1</code> is an error.
+        <span class="js-like">the opposite of JS coercion</span></dd></div>
+      <div class="term"><dt><code>TypeError</code></dt>
+        <dd>The value is the wrong kind for what you asked, like adding a number to a string. (In §5 you'll see
+        it also covers calling a function with the wrong number of arguments.)
+        <span class="js-like"><code>TypeError</code>, but Python raises it far more often</span></dd></div>
+      <div class="term"><dt><code>NameError</code></dt>
+        <dd>You used a name that was never assigned. Usually a typo.
+        <span class="js-like"><code>ReferenceError</code></span></dd></div>
+      <div class="term"><dt>Duck typing</dt>
+        <dd>"If it walks like a duck and quacks like a duck, it's a duck." Python cares whether a value
+        <em>has the method you call</em>, not what its type is called.
+        <span class="js-like">how JS works too: if <code>.map</code> exists, you can call it</span></dd></div>
+      <div class="term"><dt>Type hints (gradual typing)</dt>
+        <dd>Optional labels like <code>def ask(question: str) -&gt; str:</code>. Python itself doesn't enforce
+        them. Tools and libraries read them. "Gradual" means you can add them bit by bit.
+        <span class="js-like">like TypeScript annotations, except Python runs fine without checking them</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §2 -->
+  <h2 id="s2">2. Constants are just a naming habit</h2>
+  <p>Python has no <code>const</code>. A <strong>constant</strong> is a name you promise never to change,
+  and you show that promise by writing it in <code>SCREAMING_SNAKE_CASE</code>. You put it at the top of the
+  file, outside any function. That spot is called <em>module level</em>.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>const MAX_TOKENS = 500;
+MAX_TOKENS = 600;
+<span class="tok-err">TypeError: Assignment to
+constant variable.</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>MAX_TOKENS = 500
+MAX_TOKENS = 600
+print(MAX_TOKENS)
+<span class="tok-out">600</span>   <span class="tok-com"># no error at all</span></code></pre></div>
+  </div>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    In JS, <code>const</code> is a rule the engine enforces. In Python, capital letters are only a
+    <strong>message to other programmers</strong>: "don't change this". Python won't stop you. Exercism
+    calls changing one "VERY strongly discouraged". Don't do it.
+  </div>
+
+  <h3>Naming style: snake_case, not camelCase</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>What</th><th>JavaScript</th><th>Python (PEP 8)</th></tr></thead>
+    <tbody>
+      <tr><td>Variables, functions</td><td><code>bakeTimeRemaining</code></td><td><code>bake_time_remaining</code></td></tr>
+      <tr><td>Constants</td><td><code>MAX_TOKENS</code></td><td><code>MAX_TOKENS</code></td></tr>
+      <tr><td>Classes (later)</td><td><code>ChatClient</code></td><td><code>ChatClient</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The style rules come from <a href="https://peps.python.org/pep-0008/">PEP 8</a>, Python's official
+  style guide. <em>PEP</em> stands for <em>Python Enhancement Proposal</em>: an official, numbered document
+  about Python. You'll see three of them: PEP 8 (style rules), PEP 257 (how to write docstrings, §7) and
+  PEP 20, "The Zen of Python", a list of short sayings like <em>"Explicit is better than implicit."</em> Type
+  <code>import this</code> in the REPL to read it.</p>
+  <p>Also avoid one-letter names like <code>x</code> in real code. Use names that say what the value is.</p>
+  <div class="tip">
+    <span class="callout-label">Why this matters on Exercism</span>
+    Exercism's tests import your names <strong>by their exact spelling</strong>. A constant with the
+    wrong name or wrong case fails the test, even if the value is right.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Module / module level</dt>
+        <dd>A module is a <code>.py</code> file. "Module level" means the top of the file, outside any function.
+        Constants live there.<span class="js-like">a JS module file, and its top-level scope</span></dd></div>
+      <div class="term"><dt>snake_case / SCREAMING_SNAKE_CASE</dt>
+        <dd>Words in lowercase, joined by underscores: <code>bake_time</code>. In capitals for constants:
+        <code>EXPECTED_BAKE_TIME</code>.<span class="js-like">camelCase is the JS habit to drop</span></dd></div>
+      <div class="term"><dt>PEP (8, 257, 20)</dt>
+        <dd>Python Enhancement Proposal: an official numbered document about Python. PEP 8 = style rules.
+        PEP 257 = how to write docstrings. PEP 20 = "The Zen of Python", short sayings like <em>"Explicit is
+        better than implicit."</em> Type <code>import this</code> in the REPL to read them.
+        <span class="js-like">roughly TC39 proposals plus a style guide like Airbnb's</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §3 -->
+  <h2 id="s3">3. Functions: <code>def</code>, a colon, and indentation</h2>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>function addTwoNumbers(a, b) {
+  const total = a + b;
+  return total;
+}</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>def add_two_numbers(number_one, number_two):
+    total = number_one + number_two
+    return total</code></pre></div>
+  </div>
+  <p>Read the Python version piece by piece:</p>
+  <ul>
+    <li><code>def</code> is Python's <code>function</code> keyword. It's short for "define".</li>
+    <li>The <strong>parameters</strong> go in brackets, like JS. Parameters are the names in the
+    <code>def</code> line (<code>number_one</code>, <code>number_two</code>). The values you pass in when you call
+    it, like <code>add_two_numbers(2, 3)</code>, are the <strong>arguments</strong>. Same meaning as in JS.</li>
+    <li>The line ends with a <strong>colon <code>:</code></strong>. The colon means "a block starts on the next line".</li>
+    <li>The body is <strong>indented</strong>. PEP 8 says 4 spaces. The body ends where the indentation ends. There is no closing brace.</li>
+    <li><code>return</code> sends a value back, same as JS.</li>
+  </ul>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    In JS, indentation is only for looks. The braces decide what's inside the function. In Python,
+    <strong>indentation is the syntax</strong>. Python people call this <em>significant indentation</em>: the
+    spaces change what the code means. Get it wrong and the code doesn't run at all:
+<pre><code>def f():
+return 1
+<span class="tok-err">IndentationError: expected an indented block after
+function definition on line 1</span></code></pre>
+    Same if one line is indented more than the lines around it: <code>IndentationError: unexpected indent</code>.
+    The Exercism editor indents for you, so mostly just keep lines lined up.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Block / significant indentation</dt>
+        <dd>A block is a group of lines that belong together, like a function body. Python marks blocks with a colon
+        and indentation. "Significant" means the indentation changes what the code does.
+        <span class="js-like">what <code>{ }</code> do</span></dd></div>
+      <div class="term"><dt>Argument vs parameter</dt>
+        <dd>The parameter is the name in the <code>def</code> line (<code>number_one</code>). The argument is the
+        value you pass when you call it (<code>5</code>).<span class="js-like">same meaning as in JS</span></dd></div>
+      <div class="term"><dt><code>IndentationError</code></dt>
+        <dd>The spaces at the start of a line are wrong, so Python can't tell where a block starts or ends.
+        The file doesn't run at all.<span class="js-like">no equivalent, JS ignores indentation</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §4 -->
+  <h2 id="s4">4. No <code>return</code> gives you <code>None</code></h2>
+  <p>A JS function without <code>return</code> gives back <code>undefined</code>. A Python function
+  without <code>return</code> gives back <strong><code>None</code></strong>. Same for a bare
+  <code>return</code> with nothing after it.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>function square(n) {
+  const sq = n * n;    <span class="tok-com">// forgot return</span>
+}
+console.log(square(4));
+<span class="tok-out">undefined</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>def square(n):
+    sq = n * n         <span class="tok-com"># forgot return</span>
+
+print(square(4))
+<span class="tok-out">None</span></code></pre></div>
+  </div>
+  <p><code>None</code> is Python's single "nothing here" value. There is no separate <code>null</code> and
+  <code>undefined</code>. Python has one, <code>None</code>, with a capital N.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt><code>None</code></dt>
+        <dd>Python's one "no value" value. Functions without <code>return</code> give it back.
+        <span class="js-like"><code>null</code> and <code>undefined</code>, merged into one</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §5 -->
+  <h2 id="s5">5. Wrong number of arguments is an error</h2>
+  <p>This is the most important habit to unlearn. JS lets you pass too many or too few arguments and
+  quietly carries on. Python stops you.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>function add(a, b) { return a + b; }
+
+add(1)        <span class="tok-out">NaN</span>  <span class="tok-com">// b is undefined</span>
+add(1, 2, 3)  <span class="tok-out">3</span>    <span class="tok-com">// 3 is ignored</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>def add(a, b):
+    return a + b
+
+add(1)
+<span class="tok-err">TypeError: add() missing 1 required
+positional argument: 'b'</span>
+add(1, 2, 3)
+<span class="tok-err">TypeError: add() takes 2 positional
+arguments but 3 were given</span></code></pre></div>
+  </div>
+  <p>Both are a <code>TypeError</code>. Read the message: it tells you the function name, how many
+  arguments it wanted, and which one is missing. Python error messages are worth reading in full.</p>
+  <p>Both messages say <em>positional argument</em>. That's an argument matched to a parameter by its
+  <strong>position</strong>: the first value goes to the first parameter, the second to the second. In
+  <code>add(1, 2)</code>, <code>1</code> goes to <code>a</code> and <code>2</code> goes to <code>b</code>. Every JS
+  argument works this way.</p>
+  <div class="note">
+    <span class="callout-label">Coming later</span>
+    Python can make an argument optional by giving it a default value, and you can pass arguments by
+    name, like <code>create(model="...", messages=[...])</code>. Every AI library call looks like that.
+    It has its own bridge lesson after the Exercism chapters it needs.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Positional argument</dt>
+        <dd>The word in both error messages. An argument matched to a parameter by its <em>position</em>:
+        the first value goes to the first parameter, the second to the second. In <code>add(1, 2)</code>,
+        <code>1</code> goes to <code>a</code> and <code>2</code> goes to <code>b</code>. (The other kind,
+        passing by name, is the "Coming later" note above.)
+        <span class="js-like">every JS argument is positional</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §6 -->
+  <h2 id="s6">6. Dot notation: methods live on the type</h2>
+  <p>You call methods with a dot, like JS. Strings have <code>.upper()</code> where JS has
+  <code>.toUpperCase()</code>.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>"hi".toUpperCase()
+<span class="tok-out">"HI"</span>
+String.prototype.toUpperCase.call("hi")
+<span class="tok-out">"HI"</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>"hi".upper()
+<span class="tok-out">'HI'</span>
+str.upper("hi")
+<span class="tok-out">'HI'</span></code></pre></div>
+  </div>
+  <p>Exercism shows both forms. The second one is the same idea as the prototype lesson in your JS
+  course: the method doesn't live on the string <code>"hi"</code>. It lives on the string type,
+  <code>str</code>. <code>"hi".upper()</code> is a shortcut for <code>str.upper("hi")</code>. You will
+  almost always write the first form.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt><code>str</code></dt>
+        <dd>Python's name for the string type. You'll also use it to convert: <code>str(1)</code> gives
+        <code>"1"</code>.<span class="js-like">the <code>String</code> type, and <code>String(1)</code></span></dd></div>
+      <div class="term"><dt>Method</dt>
+        <dd>A function that belongs to a type and is called with a dot, like <code>.upper()</code>.
+        <span class="js-like">same as JS methods</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §7 -->
+  <h2 id="s7">7. Comments and docstrings</h2>
+  <h3>Comments</h3>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>// one line
+const x = "foo"; // inline
+/* many
+   lines */</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code># one line
+x = "foo"  # inline
+# many lines?
+# one # per line</code></pre></div>
+  </div>
+  <p><code>#</code> starts a comment, and the comment ends at the end of the line. Python has
+  <strong>no <code>/* */</code></strong>. For several lines, put a <code>#</code> on each one.</p>
+
+  <h3>Docstrings: documentation that stays with the function</h3>
+  <p>A <strong>docstring</strong> is a string in triple double quotes, <code>"""like this"""</code>, placed
+  as the <strong>first line inside the function body</strong>. A comment disappears when the code runs.
+  A docstring doesn't: Python saves it on the function, and you can read it while the program runs.</p>
+<pre><code>def ask(question):
+    """Send one question to the model and return its answer."""
+    return "42"
+
+print(ask.__doc__)
+<span class="tok-out">Send one question to the model and return its answer.</span>
+
+help(ask)
+<span class="tok-out">Help on function ask in module __main__:
+
+ask(question)
+    Send one question to the model and return its answer.</span></code></pre>
+  <p>Names wrapped in two underscores on each side, like <code>__doc__</code>, are called <em>dunder</em>
+  names (short for "double underscore"). Python uses them for its own special features, and you'll meet more,
+  like <code>__init__</code>.</p>
+  <p>A function without a docstring has <code>__doc__</code> set to <code>None</code>. Longer docstrings
+  can list the parameters and what the function returns. Exercism's chapter shows that format, and the
+  style rules are in <a href="https://peps.python.org/pep-0257/">PEP 257</a>.</p>
+  <div class="vs">
+    <div><span class="lang js">Closest JS thing</span>
+<pre><code>/**
+ * Send one question to the model.
+ */
+function ask(question) { ... }</code></pre></div>
+    <div><span class="lang py">The difference</span>
+<pre><code><span class="tok-com"># JSDoc is a comment. The running
+# program can't see it.
+# A docstring is a real value
+# on the function: ask.__doc__</span></code></pre></div>
+  </div>
+  <div class="why">
+    <span class="callout-label">Why an AI engineer cares</span>
+    In AI apps, a <strong>model</strong> (the AI that reads text and writes a reply, like GPT or Claude) can be
+    given <strong>tools</strong>: ordinary Python functions it's allowed to ask your code to run. The model needs
+    to know what each tool does, and some libraries get that from the docstring. OpenAI's Agents
+    <strong>SDK</strong> (a library a company ships so you can use their service from code, like an npm client
+    package) says it plainly: <em>"Tool description will be taken from the docstring of the
+    function"</em> (<a href="https://openai.github.io/openai-agents-python/tools/">source</a>). So a
+    docstring isn't only for humans. In that case the model reads it too.
+  </div>
+  <div class="tip">
+    <span class="callout-label">Heads up for the exercise</span>
+    Exercism's first exercise <strong>tests that your functions have docstrings</strong>. It checks
+    <code>__doc__</code>. Skip them and a test fails.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Docstring</dt>
+        <dd>A triple-quoted string as the first line of a function. Python keeps it on the function, so you can
+        read it with <code>__doc__</code> or <code>help()</code>.<span class="js-like">JSDoc, but the running program can see it</span></dd></div>
+      <div class="term"><dt>Dunder (<code>__doc__</code>)</dt>
+        <dd>"Double underscore". Names wrapped in two underscores on each side are special names Python
+        uses itself. You'll meet more (<code>__init__</code>, <code>__name__</code>).
+        <span class="js-like">a bit like <code>__proto__</code></span></dd></div>
+      <div class="term"><dt>Model / tool / SDK <span class="seen">AI words from the box above</span></dt>
+        <dd><strong>Model</strong>: the AI that reads text and writes a reply, like GPT or Claude.
+        <strong>Tool</strong>: a function you let the model ask to run. <strong>SDK</strong>: a library a company
+        ships so you can call their service from code.<span class="js-like">an SDK is like an npm client package, e.g. the Stripe SDK</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §8 -->
+  <h2 id="s8">8. Everything is an object</h2>
+  <p>Exercism says "everything in Python is an object". In practice it means every value has a type,
+  and you can ask for it with <code>type()</code>. That includes functions and even <code>None</code>.</p>
+<pre><code>type(42)       <span class="tok-out">&lt;class 'int'&gt;</span>
+type("hi")     <span class="tok-out">&lt;class 'str'&gt;</span>
+type(None)     <span class="tok-out">&lt;class 'NoneType'&gt;</span>
+type(add)      <span class="tok-out">&lt;class 'function'&gt;</span>
+
+f = add        <span class="tok-com"># a function is a value, just like in JS</span>
+f(2, 3)        <span class="tok-out">5</span></code></pre>
+  <p>Two new type names in that output: <code>int</code> is the whole-number type (Lesson 3 covers it), and
+  <code>NoneType</code> is the type of <code>None</code>, which is its only value.</p>
+  <p>You already know this idea from JS: functions are values you can store in a variable and pass around.
+  Python goes all the way, and numbers, strings and <code>None</code> are objects with methods too. Anything
+  you can call with <code>()</code>, like a function, is called a <em>callable</em>.</p>
+  <p>Exercism's intro also says Python supports <em>imperative, functional and object-oriented</em>
+  styles. <em>Imperative</em> = step-by-step instructions. <em>Functional</em> = building results by passing
+  data through functions. <em>Object-oriented</em> = grouping data and its methods into classes. You already
+  mix all three in JS and React. It's a description of Python, not something to learn now.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Object</dt>
+        <dd>Any value in Python: a number, a string, a function, <code>None</code>. Every object has a type
+        and can have methods.<span class="js-like">wider than JS's "object". In Python even <code>42</code> is one</span></dd></div>
+      <div class="term"><dt><code>int</code> / <code>NoneType</code></dt>
+        <dd>Two more type names from the <code>type()</code> output. <code>int</code> = whole numbers.
+        <code>NoneType</code> = the type of <code>None</code>, and <code>None</code> is its only value.
+        <span class="js-like">JS has one <code>number</code> type. Python splits whole numbers from decimals (next chapters)</span></dd></div>
+      <div class="term"><dt>Callable</dt>
+        <dd>Anything you can call with <code>()</code>. Functions are callables. Later, classes and some
+        objects will be too.<span class="js-like">"something you can invoke"</span></dd></div>
+      <div class="term"><dt>Imperative / functional / object-oriented</dt>
+        <dd>Three styles of writing code. Imperative: step-by-step instructions. Functional: build results by
+        passing data through functions. Object-oriented: group data and its methods into classes. Python
+        supports all three.<span class="js-like">same three styles you already mix in JS and React</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- Summary -->
+  <h2 id="summary">The whole lesson in one table</h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th></tr></thead>
+    <tbody>
+      <tr><td>Create a variable</td><td><code>let x = 1;</code></td><td><code>x = 1</code></td></tr>
+      <tr><td>Constant</td><td><code>const MAX = 5;</code> (enforced)</td><td><code>MAX = 5</code> (a promise only)</td></tr>
+      <tr><td>Naming</td><td><code>camelCase</code></td><td><code>snake_case</code></td></tr>
+      <tr><td><code>"1" + 1</code></td><td><code>"11"</code></td><td><code>TypeError</code></td></tr>
+      <tr><td>Unknown name</td><td><code>ReferenceError</code></td><td><code>NameError</code></td></tr>
+      <tr><td>Function</td><td><code>function f(a) { ... }</code></td><td><code>def f(a):</code> + indented body</td></tr>
+      <tr><td>Blocks</td><td><code>{ }</code></td><td>colon + indentation</td></tr>
+      <tr><td>No return value</td><td><code>undefined</code></td><td><code>None</code></td></tr>
+      <tr><td>Wrong argument count</td><td>runs anyway</td><td><code>TypeError</code></td></tr>
+      <tr><td>Print</td><td><code>console.log()</code></td><td><code>print()</code></td></tr>
+      <tr><td>Comment</td><td><code>//</code> and <code>/* */</code></td><td><code>#</code> only</td></tr>
+      <tr><td>Docs on a function</td><td>JSDoc comment</td><td>docstring, read with <code>__doc__</code> / <code>help()</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The same rows live in the <a href="../reference/js-to-python.html">JS → Python cheat sheet</a>,
+  which grows with every lesson.</p>
+
+  <!-- Quizzes -->
+  <h2 id="quiz">Check yourself: 5 questions</h2>
+  <p>Answer from memory before scrolling back up. Getting it wrong here costs nothing.</p>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">1. <code>x = 5</code> then <code>x = "five"</code>. What happens on the second line?</p>
+    <ul class="quiz-opts">
+      <li><button>Raises a TypeError on that line</button></li>
+      <li><button>x now points to the string</button></li>
+      <li><button>x stays 5, the line is skipped</button></li>
+      <li><button>x becomes the number five</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Right.</strong> Python is <em>dynamically</em> typed: a name can be
+    re-bound to a value of any type. Strong typing is about <em>converting</em> types, not about changing
+    what a name points at.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">2. What does <code>"Total: " + 3</code> give in Python?</p>
+    <ul class="quiz-opts">
+      <li><button>'Total: 3'</button></li>
+      <li><button>NameError</button></li>
+      <li><button>TypeError</button></li>
+      <li><button>'Total: '</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>TypeError.</strong> Python is <em>strongly</em> typed and won't turn
+    <code>3</code> into <code>"3"</code> for you. Write <code>"Total: " + str(3)</code>. (A later bridge
+    lesson shows the nicer way, f-strings.)</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">3. <code>def greet(name, greeting):</code> is called as <code>greet("Tarun")</code>. What happens?</p>
+    <ul class="quiz-opts">
+      <li><button>TypeError, an argument is missing</button></li>
+      <li><button>Runs, greeting is set to None</button></li>
+      <li><button>Runs, greeting is left as empty</button></li>
+      <li><button>SyntaxError, file will not start</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Right.</strong> <code>TypeError: greet() missing 1 required positional
+    argument: 'greeting'</code>. JS would run it with <code>greeting</code> as <code>undefined</code>. Python
+    doesn't.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">4. Where does a docstring have to go?</p>
+    <ul class="quiz-opts">
+      <li><button>A # comment just above def</button></li>
+      <li><button>The last line in the function</button></li>
+      <li><button>Any string anywhere in the file</button></li>
+      <li><button>The first line in the function</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Right.</strong> It must be the <em>first statement in the body</em>.
+    Only then does Python save it as <code>__doc__</code>. A <code>#</code> comment is thrown away when the
+    code runs.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">5. <code>MAX_TOKENS = 500</code>, then <code>MAX_TOKENS = 600</code>, then <code>print(MAX_TOKENS)</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>600, nothing stops the reassignment</button></li>
+      <li><button>500, Python ignores the new value</button></li>
+      <li><button>TypeError, constants cannot change</button></li>
+      <li><button>SyntaxError, caught before running</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>600.</strong> Capital letters are a convention, not a lock. That's the
+    difference from JS <code>const</code>. So the rule is on you: never re-assign one.</div>
+  </div>
+
+  <!-- Predict -->
+  <h2 id="predict">Predict the output: 6 snippets</h2>
+  <p>Say the output out loud, <strong>and if it's an error, say the error's name</strong>. Then open the box.
+  Naming the error is half the point.</p>
+
+  <pre><code>def add(a, b):
+    return a + b
+
+print(add(1, 2, 3))</code></pre>
+  <details class="reveal"><summary>P1 answer</summary>
+    <p><code>TypeError: add() takes 2 positional arguments but 3 were given</code>. JS would print <code>3</code>
+    and ignore the extra argument. Python refuses.</p>
+  </details>
+
+  <pre><code>print("ha" * 3)
+print(1 + "1")</code></pre>
+  <details class="reveal"><summary>P2 answer</summary>
+    <p>First line: <code>hahaha</code>. Second line: <code>TypeError: unsupported operand type(s) for +: 'int'
+    and 'str'</code>. Strong typing doesn't mean types can never meet. It means Python only does what's
+    defined. "Repeat a string 3 times" is defined. "Add a number to a string" isn't.</p>
+  </details>
+
+  <pre><code>def square(n):
+    result = n * n
+
+print(square(4))</code></pre>
+  <details class="reveal"><summary>P3 answer</summary>
+    <p><code>None</code>. The function works out <code>16</code> and then throws it away, because there's no
+    <code>return</code>. Not <code>undefined</code>, not <code>16</code>.</p>
+  </details>
+
+  <pre><code>message = "hello"
+print(mesage)</code></pre>
+  <details class="reveal"><summary>P4 answer</summary>
+    <p><code>NameError: name 'mesage' is not defined. Did you mean: 'message'?</code> A typo creates a name
+    Python has never seen. JS would call it a <code>ReferenceError</code>. Notice the last part: Python
+    spots the close match and suggests it. Another reason to read the whole error.</p>
+  </details>
+
+  <pre><code>def ask(question):
+    """Send one question to the model."""
+    return "42"
+
+def shout(text):
+    return text.upper()
+
+print(ask.__doc__)
+print(shout.__doc__)</code></pre>
+  <details class="reveal"><summary>P5 answer</summary>
+    <p><code>Send one question to the model.</code> and then <code>None</code>. <code>shout</code> has no
+    docstring, so its <code>__doc__</code> is <code>None</code>. That's exactly what Exercism's docstring
+    test checks for.</p>
+  </details>
+
+  <pre><code>def bake():
+return 40</code></pre>
+  <details class="reveal"><summary>P6 answer</summary>
+    <p>It doesn't run at all: <code>IndentationError: expected an indented block after function definition on
+    line 1</code>. The body must be indented under the <code>def</code> line.</p>
+  </details>
+
+  <!-- Handoff -->
+  <h2 id="exercise">Now do the Exercism exercise</h2>
+  <p>Go back to Exercism and do <strong>Guido's Gorgeous Lasagna</strong>. Write it by hand, no AI
+  autocomplete. It uses only this lesson:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>What the exercise asks for</th><th>Where it's taught</th></tr></thead>
+    <tbody>
+      <tr><td>A constant with an exact name</td><td><a href="#s2">§2 Constants</a></td></tr>
+      <tr><td>Functions that take arguments and return a number</td><td><a href="#s3">§3 Functions</a>, <a href="#s4">§4 return</a></td></tr>
+      <tr><td>Docstrings on every function (tested)</td><td><a href="#s7">§7 Docstrings</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>If a test fails, read the whole error message first. §5 showed how much it tells you.</p>
+
+  <div class="note">
+    <span class="callout-label">Primary source</span>
+    <a href="https://exercism.org/tracks/python/concepts/basics">Exercism: Python Basics</a>. Your one
+    resource. Read it after this page. It should now feel like a recap.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Stuck on anything?</strong> Ask me. Any line on this page, any word in the Exercism chapter,
+    or any failing test (I'll explain what the error means without writing the solution for you).
+    <br><br>
+    <strong>Done with the exercise?</strong> Say <em>"drill me on Python L1"</em> for a quick cold check,
+    or just send the next chapter link: <a href="https://exercism.org/tracks/python/concepts/bools">bools</a>.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="../reference/course-map.html">← Course map</a>
+    <a href="0002-bools.html">Lesson 2: Bools →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

@@ -61,7 +61,7 @@ The paid side-business: end-to-end websites for local businesses around Gandhidh
 
 ## Where things live
 
-- `mission/` — **the job hunt, and the highest-priority thing in this repo until 15 Nov 2026.** `plan.md` (the locked strategy + every cut and why — read it when he forgets why DSA is parked), `state.json` (the ONLY hand-maintained state: the funnel, phases, targets — track counters are derived, never duplicated here), `interview-sprint.md` (the 3-day protocol he opens cold when an interview is scheduled; **the board does not change**, one hour swaps in for the JD). Driven by `/console`.
+- `mission/` — **the job hunt, and the highest-priority thing in this repo until 15 Nov 2026.** `plan.md` (the locked strategy + every cut and why — read it when he forgets why DSA is parked), `state.json` (the ONLY hand-maintained state: the funnel, phases, targets — track counters are derived, never duplicated here), `interview-sprint.md` (the 3-day protocol he opens cold when an interview is scheduled; **the board does not change**, one hour swaps in for the JD), `interviews/` (**the post-interview loop**, added 2026-09-30: `log/` = one raw file per interview, `question-bank.md` = every question actually asked with its best answer, *rewritten* not appended, 🔴/🟡 read aloud before each interview. When he says "review my interview", verdict each question and update the bank). Driven by `/console`.
 - `week.md` — this week's 3 outcomes + today's one must-ship. Set by `/weekly-review`. **No longer the session entry point** — `/console` is.
 - `daily/` — the weekday execution tracker (run by `/daily-log`): `schedule.md` (the fixed routine), `log.md` (this month's terse daily entries), `summaries/` (compressed monthly records). Granular months age out to `archives/daily/`.
 - `learning/reading/` — **the book track** (run by `/reading`): `rules.md` (**the artifact** — cross-book, bounded at 20 live, *rewritten* not appended: the rules you tested against reality, with a `Killed` section that keeps the epitaph of every one reality broke), `books/<slug>.md` (one file per book — aim, captures, drilled, close). **Tracked and interrogated, not taught** — `/teach` authors lessons; here the source is the book. **The read budget: a drill reads `rules.md` + the one book file. Never glob `books/`.**
@@ -80,6 +80,10 @@ The paid side-business: end-to-end websites for local businesses around Gandhidh
   build or the SQL · every concept lands on the one running build.** Code lives outside the repo in
   `backend-lab/`; **read it, never edit it.** Read budget: `profile.md` + the due rows + today's lesson.
   Never glob `lessons/`.
+- `learning/python/` — **the Python course for the AI-engineer path** (run by `/teach`; Exercism is his only
+  Python resource). **Read `NOTES.md` before any Python lesson OR exercise review**, even without `/teach`: it
+  holds his rules (never solve the exercise, new-words cards are a recap, run `tools/check_words.py`, no
+  Playwright, and during practice write only mistake patterns, never status). His solutions live in `practice/`.
 - `shipped.md` — the done-log + streak counter. Everything you've shipped. Never delete from it.
 - `clients/` — **the web-solutions engagement registry.** One folder per client (`engagement.md` = source of truth, `findability.md` = the Phase 3 board, `handover.md`, `retainer.md`, `reports/`). Business data lives here; the client's *code* stays in its own repo. `_template/` gets copied for each new client. Driven by the `/client-*` skills — don't hand-edit in normal work.
 - `context/` — about you, your business, your priorities (filled by `/onboard`)

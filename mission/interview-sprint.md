@@ -68,11 +68,10 @@ Drill those two to *mechanism → one follow-up → boundary sentence*. Stop.
 
 ## After the interview — the part that actually compounds
 
-**Within one hour, while it's still warm**, write into the Phase 2 gap queue in
-`learning/cv-defense/progress.md`:
-
-| Date | Company / round / JD | What it punished | Where the depth lives |
-|---|---|---|---|
+**Within one hour, while it's still warm**, copy `mission/interviews/_template.md` to
+`mission/interviews/log/YYYY-MM-DD-company-round.md` and dump every question and what you said.
+Then say *"review my interview"*: each question gets a verdict and its best answer goes into
+`mission/interviews/question-bank.md`. Full loop: `mission/interviews/README.md`.
 
 Then run `/console log` to record the interview.
 

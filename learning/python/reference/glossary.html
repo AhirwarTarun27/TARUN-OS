@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary · Python for a JS Developer</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Python for a JS developer · Reference</p>
+    <h1>Glossary</h1>
+    <p class="subtitle">Every new word in the course, in plain English, with the JS equivalent where there
+    is one. The lessons use these exact meanings. Grouped by the lesson that introduced the word.</p>
+  </header>
+
+  <h2 id="l1">From Lesson 1 · Basics</h2>
+  <dl class="terms">
+    <div class="term"><dt>Name / binding</dt>
+      <dd>A name is Python's word for a variable. Binding means sticking a name on a value with <code>=</code>.
+      <span class="js-like">a variable that holds a reference</span></dd></div>
+    <div class="term"><dt>Object</dt>
+      <dd>Any value in Python: a number, a string, a function, <code>None</code>. Every object has a type
+      and can have methods.<span class="js-like">wider than JS's "object". In Python even <code>42</code> is one</span></dd></div>
+    <div class="term"><dt>Dynamically typed</dt>
+      <dd>A name can point at any type, and change type later. Types are checked while the program runs.
+      <span class="js-like">same as JS</span></dd></div>
+    <div class="term"><dt>Strongly typed</dt>
+      <dd>Python won't quietly convert one type into another. <code>"1" + 1</code> is an error.
+      <span class="js-like">the opposite of JS coercion</span></dd></div>
+    <div class="term"><dt>Duck typing</dt>
+      <dd>Python cares whether a value <em>has the method you call</em>, not what its type is called.
+      <span class="js-like">how JS works too: if <code>.map</code> exists, you can call it</span></dd></div>
+    <div class="term"><dt>Type hints (gradual typing)</dt>
+      <dd>Optional labels like <code>def ask(question: str) -&gt; str:</code>. Python itself doesn't enforce
+      them. Tools and libraries read them. You can add them bit by bit.
+      <span class="js-like">like TypeScript annotations, except Python runs fine without checking them</span></dd></div>
+    <div class="term"><dt>Interpreter</dt>
+      <dd>The program that runs your code, <code>python</code>. It compiles your file to an in-between form
+      and runs that, so "compiled or interpreted?" is "both".<span class="js-like">like <code>node</code></span></dd></div>
+    <div class="term"><dt>REPL</dt>
+      <dd>Read, Evaluate, Print, Loop: the <code>&gt;&gt;&gt;</code> prompt. It shows each result, except
+      <code>None</code>.<span class="js-like">the browser console</span></dd></div>
+    <div class="term"><dt>Module / module level</dt>
+      <dd>A module is a <code>.py</code> file. Module level = the top of the file, outside any function.
+      <span class="js-like">a JS module and its top-level scope</span></dd></div>
+    <div class="term"><dt>Block / significant indentation</dt>
+      <dd>A group of lines that belong together. Marked by a colon and indentation, and the indentation
+      changes what the code does.<span class="js-like">what <code>{ }</code> do</span></dd></div>
+    <div class="term"><dt>PEP (8, 257, 20)</dt>
+      <dd>Python Enhancement Proposal, an official numbered document. 8 = style, 257 = docstrings,
+      20 = the Zen of Python (<code>import this</code>).<span class="js-like">roughly TC39 proposals plus a style guide</span></dd></div>
+    <div class="term"><dt>snake_case / SCREAMING_SNAKE_CASE</dt>
+      <dd><code>bake_time</code> for variables and functions. <code>EXPECTED_BAKE_TIME</code> for constants.
+      <span class="js-like">replaces camelCase</span></dd></div>
+    <div class="term"><dt>Docstring</dt>
+      <dd>A triple-quoted string as the first line of a function. Python keeps it as <code>__doc__</code>.
+      <span class="js-like">JSDoc, but the running program can see it</span></dd></div>
+    <div class="term"><dt>Dunder</dt>
+      <dd>"Double underscore". <code>__doc__</code>, <code>__init__</code>: special names Python uses itself.
+      <span class="js-like">a bit like <code>__proto__</code></span></dd></div>
+    <div class="term"><dt><code>None</code></dt>
+      <dd>The one "no value" value. Functions without <code>return</code> give it back.
+      <span class="js-like"><code>null</code> and <code>undefined</code>, merged</span></dd></div>
+    <div class="term"><dt><code>TypeError</code></dt>
+      <dd>Wrong kind of value for an operation, or the wrong number of arguments.
+      <span class="js-like"><code>TypeError</code>, but raised far more often</span></dd></div>
+    <div class="term"><dt><code>NameError</code></dt>
+      <dd>Using a name that was never assigned. Usually a typo.<span class="js-like"><code>ReferenceError</code></span></dd></div>
+    <div class="term"><dt><code>IndentationError</code></dt>
+      <dd>The spaces at the start of a line are wrong. The file won't run.<span class="js-like">no equivalent</span></dd></div>
+    <div class="term"><dt>Argument vs parameter</dt>
+      <dd>Parameter = the name in the <code>def</code> line. Argument = the value passed in the call.
+      <span class="js-like">same as JS</span></dd></div>
+    <div class="term"><dt>Positional argument</dt>
+      <dd>An argument matched to a parameter by its position: first value to first parameter. The other kind,
+      passing by name, comes in a later bridge lesson.<span class="js-like">every JS argument is positional</span></dd></div>
+    <div class="term"><dt><code>str</code></dt>
+      <dd>Python's string type. <code>str(1)</code> converts to <code>"1"</code>.
+      <span class="js-like"><code>String</code>, and <code>String(1)</code></span></dd></div>
+    <div class="term"><dt>Method</dt>
+      <dd>A function that belongs to a type and is called with a dot, like <code>.upper()</code>.
+      <span class="js-like">same as JS</span></dd></div>
+    <div class="term"><dt><code>int</code> / <code>NoneType</code></dt>
+      <dd><code>int</code> = whole numbers. <code>NoneType</code> = the type of <code>None</code>, its only value.
+      <span class="js-like">JS has one <code>number</code> type; Python splits whole numbers from decimals</span></dd></div>
+    <div class="term"><dt>Callable</dt>
+      <dd>Anything you can call with <code>()</code>.<span class="js-like">"something you can invoke"</span></dd></div>
+    <div class="term"><dt>Imperative / functional / object-oriented</dt>
+      <dd>Step-by-step instructions / passing data through functions / grouping data and methods in classes.
+      Python supports all three.<span class="js-like">the same three styles you mix in JS</span></dd></div>
+    <div class="term"><dt>Model / tool / SDK <span class="seen">AI words</span></dt>
+      <dd>Model = the AI that reads text and replies. Tool = a function the model may ask to run.
+      SDK = a company's library for calling their service from code.<span class="js-like">an SDK is like an npm client package</span></dd></div>
+  </dl>
+
+  <h2 id="l2">From Lesson 2 · Bools</h2>
+  <dl class="terms">
+    <div class="term"><dt><code>bool</code> / Boolean</dt>
+      <dd>The type with only <code>True</code> and <code>False</code>.<span class="js-like"><code>boolean</code></span></dd></div>
+    <div class="term"><dt>Operator / operand</dt>
+      <dd>The operator does the work (<code>and</code>, <code>+</code>). The operands are the values it works on.
+      <span class="js-like">same words</span></dd></div>
+    <div class="term"><dt>Keyword</dt>
+      <dd>A word Python reserves for itself (<code>and</code>, <code>def</code>, <code>True</code>, <code>None</code>).
+      You can't use it as a name.<span class="js-like">reserved words</span></dd></div>
+    <div class="term"><dt><code>SyntaxError</code></dt>
+      <dd>Python can't read the line, so nothing in the file runs.<span class="js-like">same name</span></dd></div>
+    <div class="term"><dt>Precedence</dt>
+      <dd>The order operators run in: comparisons, then <code>not</code>, then <code>and</code>, then <code>or</code>.
+      Brackets beat everything.<span class="js-like">same idea; <code>not</code> sits lower than <code>!</code></span></dd></div>
+    <div class="term"><dt>Short-circuit evaluation</dt>
+      <dd>Stopping once the answer is known, so the right side of <code>and</code>/<code>or</code> may never run.
+      <span class="js-like">same as <code>&amp;&amp;</code> / <code>||</code></span></dd></div>
+    <div class="term"><dt>Truthy / falsy</dt>
+      <dd>Falsy = <code>False</code>, <code>None</code>, zero, anything empty. Everything else is truthy.
+      <span class="js-like"><code>[]</code> and <code>{}</code> are truthy in JS, falsy in Python</span></dd></div>
+    <div class="term"><dt><code>bool()</code></dt>
+      <dd>Turns any value into <code>True</code>/<code>False</code> by the truthiness rule.<span class="js-like"><code>Boolean(x)</code></span></dd></div>
+    <div class="term"><dt>List / dict</dt>
+      <dd><code>[1, 2]</code> ordered collection / <code>{"k": "v"}</code> values under keys.<span class="js-like">array / plain object</span></dd></div>
+    <div class="term"><dt>Subclass</dt>
+      <dd>A special version of another type that keeps its behaviour. <code>bool</code> is a subclass of <code>int</code>.
+      <span class="js-like"><code>extends</code></span></dd></div>
+    <div class="term"><dt><code>is</code> (identity)</dt>
+      <dd>Same object, not just equal value. Use it for <code>None</code>; use <code>==</code> for values.
+      <span class="js-like"><code>===</code> on objects</span></dd></div>
+    <div class="term"><dt><code>isinstance()</code></dt>
+      <dd>"Is this value a kind of that type?"<span class="js-like"><code>instanceof</code></span></dd></div>
+    <div class="term"><dt>Warning</dt>
+      <dd>Something looks wrong, but the code still runs. An error stops it.<span class="js-like"><code>console.warn</code> / linter warning</span></dd></div>
+    <div class="term"><dt>Literal</dt>
+      <dd>A value typed straight into the code: <code>1</code>, <code>"hi"</code>, <code>True</code>.<span class="js-like">same word</span></dd></div>
+    <div class="term"><dt><code>pass</code></dt>
+      <dd>A do-nothing statement that fills a body that would otherwise be empty.<span class="js-like">empty <code>{ }</code></span></dd></div>
+    <div class="term"><dt>Stub</dt>
+      <dd>A function with name, parameters and docstring but no real body yet.<span class="js-like">placeholder function</span></dd></div>
+  </dl>
+
+  <h2 id="l3">From Lesson 3 · Numbers</h2>
+  <dl class="terms">
+    <div class="term"><dt><code>int</code> / <code>float</code></dt>
+      <dd>Whole number / number with a decimal point. Mixing them gives a float.<span class="js-like">both are <code>number</code> in JS</span></dd></div>
+    <div class="term"><dt>Arbitrary precision</dt>
+      <dd>No size limit. Python ints stay exact however big they get.<span class="js-like"><code>BigInt</code></span></dd></div>
+    <div class="term"><dt>Widening</dt>
+      <dd>An int meeting a float becomes a float, the "wider" type.<span class="js-like">no equivalent</span></dd></div>
+    <div class="term"><dt><code>complex</code></dt>
+      <dd>A number type for imaginary-number maths (<code>2 + 3j</code>). Not needed for app code.<span class="js-like">no equivalent</span></dd></div>
+    <div class="term"><dt>Floor division (<code>//</code>)</dt>
+      <dd>Divide, then round down. Float in → float out.<span class="js-like"><code>Math.floor(a / b)</code></span></dd></div>
+    <div class="term"><dt>Modulo (<code>%</code>)</dt>
+      <dd>The remainder after dividing.<span class="js-like">same, but differs for negatives</span></dd></div>
+    <div class="term"><dt>Exponentiation (<code>**</code>)</dt>
+      <dd>Raising to a power.<span class="js-like">same <code>**</code></span></dd></div>
+    <div class="term"><dt>Binary / unary operator</dt>
+      <dd>Binary takes two values (<code>a + b</code>). Unary takes one (<code>-2</code>).<span class="js-like">same words</span></dd></div>
+    <div class="term"><dt><code>ZeroDivisionError</code></dt>
+      <dd>Dividing by zero with <code>/</code>, <code>//</code> or <code>%</code>.<span class="js-like">JS returns <code>Infinity</code></span></dd></div>
+    <div class="term"><dt>Type conversion / casting</dt>
+      <dd>Changing a value's type on purpose: <code>int()</code>, <code>float()</code>, <code>str()</code>.<span class="js-like"><code>Number()</code>, <code>String()</code></span></dd></div>
+    <div class="term"><dt><code>ValueError</code></dt>
+      <dd>Right type, wrong value: <code>int("abc")</code>.<span class="js-like">JS gives <code>NaN</code></span></dd></div>
+    <div class="term"><dt>Truncate</dt>
+      <dd>Cut off decimals without rounding.<span class="js-like"><code>Math.trunc()</code></span></dd></div>
+    <div class="term"><dt>Round half to even</dt>
+      <dd>Exact halves round to the even neighbour: <code>round(2.5)</code> → <code>2</code>.<span class="js-like"><code>Math.round</code> rounds .5 up</span></dd></div>
+    <div class="term"><dt>PEMDAS / BODMAS</dt>
+      <dd>Brackets, powers, then <code>* / // %</code>, then <code>+ -</code>. Operators in the same step are a
+      tie: go left to right, not by letter.<span class="js-like">same order</span></dd></div>
+    <div class="term"><dt>Floating-point error</dt>
+      <dd>Tiny inaccuracy because most decimals can't be stored exactly. Don't use <code>==</code> on floats.<span class="js-like">identical in JS</span></dd></div>
+    <div class="term"><dt><code>assertAlmostEqual</code></dt>
+      <dd>A test check that passes when floats match to about 7 decimal places.<span class="js-like">Jest <code>toBeCloseTo</code></span></dd></div>
+    <div class="term"><dt>Standard library / <code>import</code></dt>
+      <dd>Tools that ship with Python, switched on with <code>import</code>.<span class="js-like">Node built-in modules</span></dd></div>
+    <div class="term"><dt><code>Decimal</code> / <code>Fraction</code></dt>
+      <dd>Exact decimal and exact fraction types from the standard library.<span class="js-like">a library in JS</span></dd></div>
+  </dl>
+
+  <h2 id="l4">From Lesson 4 · Conditionals</h2>
+  <dl class="terms">
+    <div class="term"><dt>Conditional / if statement</dt>
+      <dd>Code that only runs when a test is true.<span class="js-like">JS <code>if</code></span></dd></div>
+    <div class="term"><dt>Condition</dt>
+      <dd>The test after <code>if</code>. Ends in <code>True</code> or <code>False</code>.<span class="js-like">the part in <code>( )</code></span></dd></div>
+    <div class="term"><dt>Branch</dt>
+      <dd>One possible path through a conditional.<span class="js-like">same word</span></dd></div>
+    <div class="term"><dt>Control flow</dt>
+      <dd>The order lines run in, and which get skipped.<span class="js-like">same idea</span></dd></div>
+    <div class="term"><dt><code>elif</code></dt>
+      <dd>"Else if". Only the first true branch in a chain runs.<span class="js-like"><code>else if</code></span></dd></div>
+    <div class="term"><dt>Boundary / edge case</dt>
+      <dd>The value where the answer switches, and the values just around it. Test those first.<span class="js-like">same idea</span></dd></div>
+    <div class="term"><dt>switch / <code>match</code></dt>
+      <dd>No <code>switch</code> in Python: use <code>elif</code>. <code>match</code> is a newer tool, taught later.<span class="js-like"><code>switch</code></span></dd></div>
+    <div class="term"><dt>Mutually exclusive</dt>
+      <dd>If one is true, the others can't be. Use one <code>elif</code> chain.<span class="js-like">same idea</span></dd></div>
+    <div class="term"><dt>Early return</dt>
+      <dd>Returning from inside a branch, so later <code>if</code>s act like <code>elif</code>.<span class="js-like">same pattern</span></dd></div>
+    <div class="term"><dt>Linter</dt>
+      <dd>A tool that flags style problems without running the code.<span class="js-like">ESLint</span></dd></div>
+    <div class="term"><dt>Boolean context</dt>
+      <dd>A place that needs True/False, like after <code>if</code>. Other values go through <code>bool()</code>.<span class="js-like">same idea</span></dd></div>
+    <div class="term"><dt>Chained comparison</dt>
+      <dd><code>a &lt; b &lt; c</code> means <code>a &lt; b and b &lt; c</code>.<span class="js-like">JS gives a different answer</span></dd></div>
+    <div class="term"><dt>Nested conditional</dt>
+      <dd>An <code>if</code> inside an <code>if</code>. Often flattened with <code>and</code>.<span class="js-like">same</span></dd></div>
+    <div class="term"><dt>Expression / statement</dt>
+      <dd>An expression is a value (<code>2 + 3</code>). A statement does something (<code>if</code>, <code>return</code>).<span class="js-like">same split</span></dd></div>
+    <div class="term"><dt>Conditional expression / ternary</dt>
+      <dd><code>yes if test else no</code>.<span class="js-like"><code>test ? yes : no</code></span></dd></div>
+    <div class="term"><dt>Exception</dt>
+      <dd>An error object that stops the code and reports what went wrong.<span class="js-like"><code>Error</code></span></dd></div>
+    <div class="term"><dt><code>raise</code></dt>
+      <dd>Creates an exception: <code>raise ValueError("msg")</code>.<span class="js-like"><code>throw</code></span></dd></div>
+    <div class="term"><dt>Traceback</dt>
+      <dd>Python's error report. Read from the bottom.<span class="js-like">stack trace</span></dd></div>
+    <div class="term"><dt>Guard clause</dt>
+      <dd>An <code>if</code> at the top that rejects bad input early.<span class="js-like">same pattern</span></dd></div>
+  </dl>
+
+  <div class="lesson-nav">
+    <a href="js-to-python.html">← JS → Python cheat sheet</a>
+    <a href="course-map.html">Course map →</a>
+  </div>
+
+</div>
+</body>
+</html>

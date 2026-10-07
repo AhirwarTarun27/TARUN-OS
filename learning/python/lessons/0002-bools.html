@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 2 · Bools · Python for a JS Developer</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 2 · Exercism concept 2 of 17 · Bools</p>
+    <h1>Bools: True, False, and/or/not, truthiness</h1>
+    <p class="subtitle">Most of this works the way JS does, so the lesson is short. Your attention goes on
+    the <strong>four places it doesn't</strong>: capital letters, words instead of symbols, a precedence trap,
+    and empty lists and objects counting as <em>false</em>. About 20 minutes.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">How this page works</span>
+    Same as Lesson 1. <span class="lang js">JavaScript</span> next to <span class="lang py">Python</span>,
+    red boxes for JS habits that break, and a
+    <span style="color:var(--accent-2)">New words in this section</span> box at the end of each section.
+    Every output here was run on Python 3.14 (and the JS side on Node) before it was written down.
+  </div>
+
+  <!-- §0 -->
+  <h2 id="s0">0. Warm-up from Lesson 1 (cold, no scrolling back)</h2>
+  <p>Two things you had trouble with yesterday. Answer in your head first, then open the box.</p>
+<pre><code>def is_open():
+    """Tell whether the shop is open."""
+    return True
+
+print(is_open)
+print(is_open())</code></pre>
+  <details class="reveal"><summary>G1: what do the two lines print, and which one runs the function?</summary>
+    <p>Line 1 prints something like <code>&lt;function is_open at 0x0000024BEA6F75E0&gt;</code> (the number
+    changes every run). It's the function itself, not run. Line 2 <strong>runs</strong> it and prints
+    <code>True</code>. Brackets mean "run it now". No brackets means "the function as a value", which is
+    why the docstring is <code>is_open.__doc__</code> and not <code>is_open().__doc__</code>.</p>
+  </details>
+  <details class="reveal"><summary>G2: finish both: "Python is dynamic because ___. Python is strong because ___."</summary>
+    <p><strong>Dynamic:</strong> a name can change its <em>type</em> (<code>x = 1</code>, then
+    <code>x = "one"</code>). <strong>Strong:</strong> Python won't convert types for you behind your back
+    (<code>"1" + 1</code> is a <code>TypeError</code>).</p>
+  </details>
+
+  <!-- §1 -->
+  <h2 id="s1">1. <code>True</code> and <code>False</code>, with capital letters</h2>
+  <p>Python's yes/no type is called <code>bool</code>. It has exactly two values, and they start with a
+  capital letter.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>let done = true;
+typeof done
+<span class="tok-out">"boolean"</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>done = True
+type(done)
+<span class="tok-out">&lt;class 'bool'&gt;</span></code></pre></div>
+  </div>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    Your fingers will type <code>true</code>. To Python that's just a name nobody assigned:
+<pre><code>done = true
+<span class="tok-err">NameError: name 'true' is not defined. Did you mean: 'True'?</span></code></pre>
+    Same for <code>false</code>. Remember from Lesson 1: Python reads the whole error and even suggests the fix.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt><code>bool</code> / Boolean</dt>
+        <dd>The type with only two values, <code>True</code> and <code>False</code>. "Boolean" is the general
+        word, <code>bool</code> is Python's name for the type.<span class="js-like">the <code>boolean</code> type</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §2 -->
+  <h2 id="s2">2. <code>and</code>, <code>or</code>, <code>not</code>: words, not symbols</h2>
+  <p>Python spells the logic operators out in English. In <code>a and b</code>, <code>and</code> is the
+  <em>operator</em> (the thing doing the work) and <code>a</code>, <code>b</code> are its <em>operands</em> (the
+  values it works on). Words like <code>and</code>, <code>or</code> and <code>not</code> are <em>keywords</em>:
+  words Python reserves for itself, so you can't use them as variable names.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>a &amp;&amp; b     <span class="tok-com">// both true</span>
+a || b     <span class="tok-com">// at least one true</span>
+!a         <span class="tok-com">// flip it</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>a and b    <span class="tok-com"># both true</span>
+a or b     <span class="tok-com"># at least one true</span>
+not a      <span class="tok-com"># flip it</span></code></pre></div>
+  </div>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    <code>&amp;&amp;</code>, <code>||</code> and <code>!</code> on their own aren't Python. Each one is a
+    <code>SyntaxError: invalid syntax</code>, and this time there's <strong>no "did you mean"</strong>
+    hint, so you have to spot it yourself. A <code>SyntaxError</code> means Python can't even read the line,
+    like a grammar mistake, so nothing in the file runs. One exception to know: <code>!=</code> (not equal) <em>does</em>
+    exist in Python, same as JS.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Operator / operand</dt>
+        <dd>An operator is the thing that does the work (<code>and</code>, <code>+</code>). The operands are the
+        values it works on. In <code>a and b</code>, <code>and</code> is the operator, <code>a</code> and
+        <code>b</code> are the operands.<span class="js-like">same words in JS</span></dd></div>
+      <div class="term"><dt>Keyword</dt>
+        <dd>A word Python has reserved for itself, so you can't use it as a name. <code>and</code>, <code>or</code>,
+        <code>not</code>, <code>def</code>, <code>return</code>, <code>True</code>, <code>None</code> are all keywords.
+        <span class="js-like">reserved words like <code>function</code>, <code>return</code>, <code>let</code></span></dd></div>
+      <div class="term"><dt><code>SyntaxError</code></dt>
+        <dd>Python can't even read the line, so nothing in the file runs. It's a grammar mistake.
+        <span class="js-like"><code>SyntaxError</code>, same name</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §3 -->
+  <h2 id="s3">3. Mixing them: which one goes first</h2>
+  <p>When one line has several operators, Python does them in a fixed order. This order is called
+  <strong>precedence</strong>. From first to last:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Order</th><th>Python</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>1st</td><td>comparisons: <code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>is</code></td><td><code>1 == 2</code></td></tr>
+      <tr><td>2nd</td><td><code>not</code></td><td><code>not a</code></td></tr>
+      <tr><td>3rd</td><td><code>and</code></td><td><code>a and b</code></td></tr>
+      <tr><td>4th</td><td><code>or</code></td><td><code>a or b</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+<pre><code>not True and True          <span class="tok-out">False</span>   <span class="tok-com"># (not True) and True</span>
+not (True and False)       <span class="tok-out">True</span>    <span class="tok-com"># brackets go first</span>
+True or False and False    <span class="tok-out">True</span>    <span class="tok-com"># True or (False and False)</span></code></pre>
+  <p>The <code>and</code>-before-<code>or</code> part is the same as JS's <code>&amp;&amp;</code> before
+  <code>||</code>. The difference is where <code>not</code> sits.</p>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    In JS, <code>!</code> grabs the value right next to it first. In Python, <code>not</code> comes
+    <em>after</em> comparisons, so it flips the whole comparison:
+    <div class="vs">
+      <div><span class="lang js">JavaScript</span>
+<pre><code>!1 == 2
+<span class="tok-com">// (!1) == 2  →  false == 2</span>
+<span class="tok-out">false</span></code></pre></div>
+      <div><span class="lang py">Python</span>
+<pre><code>not 1 == 2
+<span class="tok-com"># not (1 == 2)  →  not False</span>
+<span class="tok-out">True</span></code></pre></div>
+    </div>
+    The rule that keeps you safe: <strong>when you mix operators and aren't sure, add brackets.</strong>
+    Brackets always go first, and they make the line easier to read.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Precedence</dt>
+        <dd>The order Python does operators in when there are several on one line. Like maths: <code>*</code> before
+        <code>+</code>. Brackets beat everything.<span class="js-like">same idea, slightly different order for <code>not</code></span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §4 -->
+  <h2 id="s4">4. Short-circuit: the right side might never run</h2>
+  <p>Python stops as soon as it knows the answer. This is called <em>short-circuit evaluation</em>. If the left side of <code>and</code> is false, the
+  answer is already false, so the right side is skipped. If the left side of <code>or</code> is true,
+  the answer is already true. Same as JS.</p>
+<pre><code>def boom():
+    print("boom ran")
+    return True
+
+print(False and boom())    <span class="tok-out">False</span>       <span class="tok-com"># boom() never called</span>
+print(True or boom())      <span class="tok-out">True</span>        <span class="tok-com"># boom() never called</span>
+print(True and boom())     <span class="tok-out">boom ran</span>
+                           <span class="tok-out">True</span>        <span class="tok-com"># had to check the right side</span></code></pre>
+  <p>Why it matters: if the right side is a function call (say, a slow API call), short-circuit decides
+  whether it happens at all.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Short-circuit evaluation</dt>
+        <dd>Stopping early once the answer is known, so the right side of <code>and</code>/<code>or</code>
+        may never run.<span class="js-like">exactly how <code>&amp;&amp;</code> and <code>||</code> behave</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §5 -->
+  <h2 id="s5">5. Truthiness: what counts as false</h2>
+  <p>Like JS, Python lets any value stand in where a <code>True</code>/<code>False</code> is expected.
+  <code>bool()</code> tells you which way a value goes. The Python rule fits in one line:</p>
+  <div class="note">
+    <span class="callout-label">The whole rule</span>
+    <strong><code>False</code>, <code>None</code>, zero, and anything empty count as false.
+    Everything else counts as true.</strong>
+  </div>
+  <p>Most of that matches JS. The differences are the rows marked in red:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Value</th><th>JavaScript</th><th>Python</th></tr></thead>
+    <tbody>
+      <tr><td><code>""</code> empty string</td><td>falsy</td><td>falsy</td></tr>
+      <tr><td><code>0</code>, <code>0.0</code></td><td>falsy</td><td>falsy</td></tr>
+      <tr><td><code>null</code> / <code>None</code></td><td>falsy</td><td>falsy</td></tr>
+      <tr><td><code>" "</code> (a space), <code>"0"</code>, <code>"False"</code></td><td>truthy</td><td>truthy</td></tr>
+      <tr><td style="color:var(--bad)"><code>[]</code> empty list</td><td>truthy</td><td><strong>falsy</strong></td></tr>
+      <tr><td style="color:var(--bad)"><code>{}</code> empty dict</td><td>truthy</td><td><strong>falsy</strong></td></tr>
+      <tr><td style="color:var(--bad)"><code>NaN</code></td><td>falsy</td><td><strong>truthy</strong> (rare, just know it)</td></tr>
+    </tbody>
+  </table>
+  </div>
+<pre><code>bool([])         <span class="tok-out">False</span>
+bool({})         <span class="tok-out">False</span>
+bool("False")    <span class="tok-out">True</span>    <span class="tok-com"># a non-empty string, whatever it says</span></code></pre>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    In JS, <code>if (items)</code> is true even when <code>items</code> is an empty array, so you write
+    <code>if (items.length)</code>. In Python, <code>if items:</code> is <strong>already false for an empty
+    list</strong>. That's the normal Python way to say "if there's anything in it". (Lists are
+    <code>[]</code> and dicts are <code>{}</code>. You'll meet them properly in chapters 8 and 12.)
+  </div>
+
+  <h3>Don't compare with <code>== True</code></h3>
+  <p>Exercism calls this out: write <code>if flag:</code>, not <code>if flag == True:</code>. It's shorter,
+  and it uses truthiness the way Python intends. (You'll see <code>if</code> properly in chapter 4. For now,
+  read it like JS's <code>if</code>, with a colon and an indented body instead of braces.)</p>
+  <div class="why">
+    <span class="callout-label">Where you'll see this in AI code</span>
+    A missing setting can be <code>None</code> or an empty string <code>""</code>. Both are falsy, so one
+    check covers both:
+<pre><code>if not api_key:
+    print("missing key")</code></pre>
+    You'll write lines like that when your code loads the key for an AI service.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Truthy / falsy</dt>
+        <dd>Truthy = counts as true when used as a condition. Falsy = counts as false. Python's falsy values:
+        <code>False</code>, <code>None</code>, zero, and anything empty.<span class="js-like">same words, but <code>[]</code> and <code>{}</code> switch sides</span></dd></div>
+      <div class="term"><dt><code>bool()</code></dt>
+        <dd>Turns any value into <code>True</code> or <code>False</code> by the truthiness rule.
+        <span class="js-like"><code>Boolean(x)</code> or <code>!!x</code></span></dd></div>
+      <div class="term"><dt>List / dict <span class="seen">(preview, taught in chapters 8 and 12)</span></dt>
+        <dd>A list, <code>[1, 2]</code>, is an ordered collection. A dict, <code>{"name": "Tarun"}</code>, stores
+        values under keys.<span class="js-like">an array, and a plain object</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §6 -->
+  <h2 id="s6">6. <code>and</code> / <code>or</code> give back one of the values</h2>
+  <p>Same as JS: <code>and</code> and <code>or</code> don't always return <code>True</code> or
+  <code>False</code>. They return <strong>one of the two values you gave them</strong>, the one that
+  decided the answer.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>"" || "guest"     <span class="tok-out">"guest"</span>
+"Tarun" || "guest" <span class="tok-out">"Tarun"</span>
+0 &amp;&amp; 5            <span class="tok-out">0</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>"" or "guest"      <span class="tok-out">'guest'</span>
+"Tarun" or "guest" <span class="tok-out">'Tarun'</span>
+0 and 5            <span class="tok-out">0</span></code></pre></div>
+  </div>
+  <p>That gives you the "default value" pattern you already use in JS:
+  <code>name = user_name or "guest"</code>.</p>
+  <p><code>not</code> is different. It <strong>always</strong> gives back a real <code>True</code> or
+  <code>False</code>: <code>not ""</code> is <code>True</code>, <code>not "hi"</code> is <code>False</code>.</p>
+  <div class="tip">
+    <span class="callout-label">Why this matters for the exercise</span>
+    Exercism's tests for this chapter check that your function returns <strong>exactly</strong>
+    <code>True</code> or <code>False</code>. They use <code>is True</code>, so "something truthy" isn't enough.
+    The good news: when both values going in are real bools, <code>and</code>/<code>or</code> give a real
+    bool back (<code>True and False</code> is <code>False</code>). Just don't mix in other types.
+  </div>
+
+  <!-- §7 -->
+  <h2 id="s7">7. A bool is secretly a number</h2>
+  <p>In Python, <code>bool</code> is a <em>subclass</em> of <code>int</code>: a special version of
+  <code>int</code> that keeps everything an int can do. So <code>True</code> behaves like <code>1</code> and
+  <code>False</code> like <code>0</code>. (Classes and subclasses come properly in chapter 16.)</p>
+<pre><code>True == 1          <span class="tok-out">True</span>
+True + True        <span class="tok-out">2</span>
+isinstance(True, int)   <span class="tok-out">True</span>    <span class="tok-com"># "is True a kind of int?" yes</span></code></pre>
+  <p>JS does something similar (<code>true + true</code> is <code>2</code> there too), so this isn't much of
+  a surprise. Where it shows up later: adding up bools is a quick way to count how many things are true.</p>
+  <p>But <code>True</code> and <code>1</code> are still <strong>not the same object</strong>. Python's
+  <code>is</code> checks <em>identity</em>: "is this the very same object?", not "are the values equal?".
+  It's like <code>===</code> on objects in your JS course, same reference, not same contents:</p>
+<pre><code>1 is True
+<span class="tok-out">False</span>
+<span class="tok-err">SyntaxWarning: "is" with 'int' literal. Did you mean "=="?</span></code></pre>
+  <p>Python answers <code>False</code> and also <strong>warns</strong> you. A warning isn't an error, so the
+  code still runs, but it means "you probably wrote the wrong thing". It says "int <em>literal</em>" because a
+  literal is a value typed straight into the code, like the <code>1</code> here. Use <code>==</code> to compare values.
+  <code>is</code> is mainly for checking <code>None</code>: <code>if result is None:</code>.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Subclass</dt>
+        <dd>A type that is a special version of another type and keeps its behaviour. <code>bool</code> is a
+        subclass of <code>int</code>, so <code>True</code> can do maths. (Classes come in chapter 16.)
+        <span class="js-like"><code>class Bool extends Int</code></span></dd></div>
+      <div class="term"><dt><code>is</code> (identity)</dt>
+        <dd>Checks if two names point at the <em>very same object</em>, not just equal values.
+        <code>==</code> checks equal values.<span class="js-like">like <code>===</code> on objects in your JS course: same reference, not same contents</span></dd></div>
+      <div class="term"><dt><code>isinstance()</code></dt>
+        <dd>Asks "is this value a kind of that type?" <code>isinstance(True, int)</code> is <code>True</code>.
+        <span class="js-like">like <code>instanceof</code></span></dd></div>
+      <div class="term"><dt>Warning</dt>
+        <dd>A message that something looks wrong, but the code still runs. An error stops the code.
+        <span class="js-like">like a <code>console.warn</code> from the engine, or a linter warning</span></dd></div>
+      <div class="term"><dt>Literal</dt>
+        <dd>A value written straight into the code: <code>1</code>, <code>"hi"</code>, <code>True</code>. The
+        warning above says "<code>is</code> with an int literal" because <code>1</code> is typed right there.
+        <span class="js-like">same word in JS (string literal, number literal)</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- Summary -->
+  <h2 id="summary">The whole lesson in one table</h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th></tr></thead>
+    <tbody>
+      <tr><td>The two values</td><td><code>true</code>, <code>false</code></td><td><code>True</code>, <code>False</code></td></tr>
+      <tr><td>Type name</td><td><code>boolean</code></td><td><code>bool</code></td></tr>
+      <tr><td>And / or / not</td><td><code>&amp;&amp;</code> <code>||</code> <code>!</code></td><td><code>and</code> <code>or</code> <code>not</code></td></tr>
+      <tr><td><code>!1 == 2</code> vs <code>not 1 == 2</code></td><td><code>false</code></td><td><code>True</code> (not flips the comparison)</td></tr>
+      <tr><td>Short-circuit</td><td>yes</td><td>yes</td></tr>
+      <tr><td><code>"" || "guest"</code></td><td><code>"guest"</code></td><td><code>"" or "guest"</code> → <code>'guest'</code></td></tr>
+      <tr><td>Empty array / list</td><td>truthy</td><td><strong>falsy</strong></td></tr>
+      <tr><td>Empty object / dict</td><td>truthy</td><td><strong>falsy</strong></td></tr>
+      <tr><td>Convert to bool</td><td><code>Boolean(x)</code></td><td><code>bool(x)</code></td></tr>
+      <tr><td>Check a flag</td><td><code>if (flag)</code></td><td><code>if flag:</code> (never <code>== True</code>)</td></tr>
+      <tr><td><code>true + true</code></td><td><code>2</code></td><td><code>True + True</code> → <code>2</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The same rows are in the <a href="../reference/js-to-python.html#l2">JS → Python cheat sheet</a>.</p>
+
+  <!-- Quizzes -->
+  <h2 id="quiz">Check yourself: 5 questions</h2>
+  <p>From memory. Getting it wrong here costs nothing.</p>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">1. Which line is valid Python?</p>
+    <ul class="quiz-opts">
+      <li><button>if ready &amp;&amp; done:</button></li>
+      <li><button>if ready and done:</button></li>
+      <li><button>if (ready &amp;&amp; done)</button></li>
+      <li><button>if ready AND done:</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Right.</strong> Lowercase English words: <code>and</code>, <code>or</code>,
+    <code>not</code>. <code>&amp;&amp;</code> is a <code>SyntaxError</code>. <code>AND</code> is one too, because
+    Python is case-sensitive, but for that one it even suggests <code>Did you mean 'and'?</code></div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">2. What is <code>bool([])</code> in Python?</p>
+    <ul class="quiz-opts">
+      <li><button>True, same as JavaScript</button></li>
+      <li><button>False, because it is empty</button></li>
+      <li><button>None, a list is not a bool</button></li>
+      <li><button>TypeError, cannot convert it</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>False.</strong> Anything empty is falsy in Python. This is the opposite
+    of JS, where an empty array is truthy.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">3. What does <code>not 1 == 2</code> give in Python?</p>
+    <ul class="quiz-opts">
+      <li><button>False, not applies to 1 first</button></li>
+      <li><button>TypeError, not on a number</button></li>
+      <li><button>SyntaxError, it needs extra brackets</button></li>
+      <li><button>True, not flips the comparison</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>True.</strong> Comparisons go before <code>not</code>, so it's
+    <code>not (1 == 2)</code>, which is <code>not False</code>. JS's <code>!1 == 2</code> gives
+    <code>false</code>, because <code>!</code> grabs the <code>1</code> first.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">4. A test checks <code>result is True</code>. Which <code>result</code> fails it?</p>
+    <ul class="quiz-opts">
+      <li><button>True</button></li>
+      <li><button>1 == 1</button></li>
+      <li><button>1 and 1</button></li>
+      <li><button>not False</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Right.</strong> <code>1 and 1</code> gives back the operand <code>1</code>,
+    which is truthy but isn't <code>True</code>. The other three are all the real <code>True</code>:
+    comparisons and <code>not</code> always return a real bool.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">5. What does <code>True + True</code> give?</p>
+    <ul class="quiz-opts">
+      <li><button>2, True counts as 1</button></li>
+      <li><button>True, it stays a bool</button></li>
+      <li><button>TypeError, can't add bools</button></li>
+      <li><button>'TrueTrue', joined text</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>2.</strong> <code>bool</code> is a subclass of <code>int</code>, so
+    <code>True</code> acts as <code>1</code> in maths.</div>
+  </div>
+
+  <!-- Predict -->
+  <h2 id="predict">Predict the output: 6 snippets</h2>
+  <p>Say the output out loud. <strong>If it's an error, say the error's name.</strong> Then open the box.</p>
+
+<pre><code>is_admin = False
+print(is_admin or "viewer")</code></pre>
+  <details class="reveal"><summary>P1 answer</summary>
+    <p><code>viewer</code>. The left side is falsy, so <code>or</code> gives back the right-hand value. Not
+    <code>True</code>, the actual string.</p>
+  </details>
+
+<pre><code>def check():
+    print("checked")
+    return True
+
+print(True or check())
+print(False or check())</code></pre>
+  <details class="reveal"><summary>P2 answer</summary>
+    <p><code>True</code>, then <code>checked</code>, then <code>True</code>. In the first line,
+    <code>check()</code> never runs (short-circuit: the left side already decided it). In the second, the left
+    side is <code>False</code>, so Python has to run <code>check()</code>.</p>
+  </details>
+
+<pre><code>print(bool("False"), bool(" "), bool(0.0))</code></pre>
+  <details class="reveal"><summary>P3 answer</summary>
+    <p><code>True True False</code>. <code>"False"</code> is a non-empty string, and Python doesn't read
+    what it says. <code>" "</code> isn't empty either, it has a space. <code>0.0</code> is zero.</p>
+  </details>
+
+<pre><code>ready = True
+if ready &amp;&amp; True:
+    print("go")</code></pre>
+  <details class="reveal"><summary>P4 answer</summary>
+    <p><code>SyntaxError: invalid syntax</code>. Nothing prints, because Python can't read the file.
+    It should be <code>and</code>.</p>
+  </details>
+
+<pre><code>done = true</code></pre>
+  <details class="reveal"><summary>P5 answer</summary>
+    <p><code>NameError: name 'true' is not defined. Did you mean: 'True'?</code> Lowercase <code>true</code>
+    is just a name nobody assigned. Note it's a <code>NameError</code>, not a <code>SyntaxError</code>: the
+    line is fine grammar, the name just doesn't exist.</p>
+  </details>
+
+<pre><code>print(not "", not [], True + True)</code></pre>
+  <details class="reveal"><summary>P6 answer</summary>
+    <p><code>True True 2</code>. Empty string and empty list are both falsy, so <code>not</code> flips them
+    to <code>True</code>. And <code>True</code> counts as <code>1</code> in maths.</p>
+  </details>
+
+  <!-- Handoff -->
+  <h2 id="exercise">Now do the Exercism exercise</h2>
+  <p>Go to Exercism and do <strong>Ghost Gobble Arcade Game</strong> (Pac-Man rules). Write it by hand.
+  Each function gets some <code>True</code>/<code>False</code> values and returns one.</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>What the exercise needs</th><th>Where it's taught</th></tr></thead>
+    <tbody>
+      <tr><td>Combine true/false values</td><td><a href="#s2">§2 and / or / not</a></td></tr>
+      <tr><td>Mix <code>not</code> with <code>and</code> correctly</td><td><a href="#s3">§3 precedence</a> (when unsure, brackets)</td></tr>
+      <tr><td>Return exactly <code>True</code> or <code>False</code> (the tests use <code>is</code>)</td><td><a href="#s6">§6</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>This time the starter file is a set of <em>stubs</em>: functions with the name, parameters and docstring
+  already written, but no real body. Each body is just <code>pass</code>, a statement that does nothing. It's
+  there because a function body can't be empty (that's an <code>IndentationError</code>). Replace it with your
+  <code>return</code>.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt><code>pass</code></dt>
+        <dd>A statement that does nothing. Python needs it because a function body can't be empty: an empty body
+        is an <code>IndentationError</code>. So <code>pass</code> holds the place until you write real code.
+        <span class="js-like">an empty <code>{ }</code> body</span></dd></div>
+      <div class="term"><dt>Stub</dt>
+        <dd>A function that has its name, parameters and docstring, but no real body yet. Exercism gives you stubs
+        to fill in.<span class="js-like">same word, a placeholder function</span></dd></div>
+    </dl>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">Primary source</span>
+    <a href="https://exercism.org/tracks/python/concepts/bools">Exercism: Python Bools</a>. Read it after
+    this page. It should feel like a recap.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Stuck on anything?</strong> Ask me about any line here, any word in the Exercism chapter, or a
+    failing test. I'll explain the error, not write the answer.
+    <br><br>
+    <strong>Done with the exercise?</strong> Paste your solution for a quick review, and I'll send a short
+    cold check. Then send the next link: <a href="https://exercism.org/tracks/python/concepts/numbers">numbers</a>.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0001-basics.html">← Lesson 1: Basics</a>
+    <a href="0003-numbers.html">Lesson 3: Numbers →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

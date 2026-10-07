@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 7 · The event loop &amp; Promises — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 7 · Module 7 — JavaScript Foundations</p>
+    <h1>The event loop &amp; Promises</h1>
+    <p class="subtitle">JavaScript does one thing at a time. Everything on this page answers one
+    question: <strong>so how does it wait for anything without freezing?</strong></p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Where this sits, and what the 10-06 probe found</span>
+    M7 is split in two, like M6. <strong>This page:</strong> the event loop and Promises. <strong>Lesson 7b:</strong>
+    <code>async</code>/<code>await</code>, <code>Promise.all</code> and friends, and the hard output questions.
+    The split follows the probe, because <code>await</code> is built on Promises and Promises were a clean
+    "no idea".
+    <ul>
+      <li><strong>Single-threaded, call stack: right.</strong> One stack, functions pushed on and popped off,
+      last in first out. §1-§2 only sharpen it.</li>
+      <li><strong><code>setTimeout(fn, 0)</code>: the mechanism is right, the label isn't.</strong> You said
+      it goes to the "macro <em>stack</em>". It goes to a <strong>queue</strong>, the <strong>task
+      queue</strong>. A stack is last-in-first-out; a queue is first-in-first-out, and that difference
+      decides output order. §3.</li>
+      <li><strong>What a Promise is: "no idea".</strong> That's the biggest gap, and you've been using them
+      through <code>async</code>/<code>await</code> and <code>Promise.all</code> at work without the floor
+      under them. §5 and §6 build that floor.</li>
+      <li><strong><code>await</code>: half.</strong> "It waits, then runs the next line" is true <em>inside the
+      function</em>. The missing half is that it <strong>doesn't block anything else</strong>. Lesson 7b
+      owns it.</li>
+      <li><strong>The 1-4-3-2 snippet: right.</strong> You have the ordering intuition. This page gives you
+      the <em>reason</em>, so it survives harder snippets than that one.</li>
+    </ul>
+  </div>
+
+  <h2>0 · Gate check — carried from M6</h2>
+  <p>Open items from earlier chapters, in new shapes. Answer all four <strong>before you scroll</strong>.</p>
+
+  <details class="reveal">
+    <summary>G1 · What does each one return, or does it throw?</summary>
+    <ol>
+      <li><code>arr.splice(1)</code></li>
+      <li><code>arr.splice(1, 0, "y")</code></li>
+      <li><code>arr.at(-2)</code></li>
+      <li><code>new WeakSet().add("x")</code></li>
+      <li><code>new WeakMap().has("x")</code></li>
+    </ol>
+    <details class="reveal">
+      <summary>Answers</summary>
+      <ol>
+        <li>An <strong>array of the removed items</strong>: everything from index 1 to the end.</li>
+        <li><strong><code>[]</code></strong>. It inserts and removes nothing. <code>splice</code> <em>always</em>
+        returns an array of what it removed.</li>
+        <li>The <strong>second-to-last element</strong>. Negative indexes count from the end.</li>
+        <li><strong>Throws <code>TypeError</code>.</strong> Weak collections only accept objects, and
+        <code>add</code>/<code>set</code> enforce it.</li>
+        <li><strong><code>false</code></strong>, with no throw. Only <code>add</code>/<code>set</code> throw;
+        <code>has</code>/<code>get</code> just answer.</li>
+      </ol>
+    </details>
+  </details>
+
+  <details class="reveal">
+    <summary>G2 · Say it out loud: when does JavaScript free an object, and what is a memory leak?</summary>
+    <p>Freed once it's no longer <strong>reachable</strong> from a root (a global, a running function's
+    variables, a live closure). <code>delete</code> and <code>= null</code> only cut one path. A leak is memory
+    you no longer need that is <strong>still reachable</strong>, so it can never be freed: a forgotten
+    listener, an uncleared interval, a cache that only grows. If you didn't say the word
+    <strong>reachable</strong>, it doesn't count yet.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>G3 · Say it out loud: why does <code>firstUnique</code> work, and what's its complexity?</summary>
+    <p>A Map keeps keys in <strong>insertion order</strong>, so the first key with count 1 is the first such
+    character in the string. <strong>O(n)</strong>: one pass to count, one pass over at most n keys. This one
+    was owed three times on 10-06.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>G4 · OWN, INHERITED or NOT FOUND? (and one value)</summary>
+    <pre><code>class Lamp {
+  watts = 40;
+  on() {}
+  get bright() { return this.watts &gt; 30; }
+}
+const l1 = new Lamp(), l2 = new Lamp();
+l1.on = "x";</code></pre>
+    <p>Say where each is found: <code>l1.watts</code>, <code>l1.bright</code>, <code>l1.on</code>,
+    <code>l2.on</code>, <code>l1.valueOf</code>. Then: what is <code>{ ...l1 }.bright</code>, and is it live?</p>
+    <details class="reveal">
+      <summary>Answers</summary>
+      <p><code>watts</code> <strong>OWN</strong> (a field) · <code>bright</code> <strong>INHERITED</strong> (getters
+      live on the prototype) · <code>l1.on</code> <strong>OWN</strong> (shadowed by the assignment) ·
+      <code>l2.on</code> <strong>INHERITED</strong> (untouched) · <code>valueOf</code> <strong>INHERITED</strong>
+      (from <code>Object.prototype</code>). <code>{ ...l1 }.bright</code> is <strong><code>undefined</code></strong>:
+      spread only copies <em>own</em> properties, and the getter lives on the prototype, so it isn't copied at
+      all. (Spread snapshots a getter only when the getter is an own property, as in an object literal.)</p>
+    </details>
+  </details>
+
+  <h2>1 · Single-threaded, said properly</h2>
+  <p>Your probe answer was right: there is <strong>one call stack</strong>, so JavaScript runs
+  <strong>one thing at a time</strong>. Add one phrase, because it's the one that explains every output
+  question on this page:</p>
+  <div class="note">
+    <span class="callout-label">Run to completion</span>
+    Once a piece of JavaScript starts running, <strong>nothing interrupts it</strong>. Not a timer, not a
+    click, not a finished network request. They all wait until the call stack is <strong>empty</strong>.
+  </div>
+  <p>The cost of that rule is <strong>blocking</strong>. A long loop freezes the page: no clicks, no
+  repaint, no timers. This is the ebook's output question 13, and it's a famous one:</p>
+  <pre><code>let a = true;
+setTimeout(() =&gt; { a = false; }, 2000);
+while (a) { console.log("inside while"); }</code></pre>
+  <p>This <strong>never stops</strong>. The timer callback that would set <code>a = false</code> can only run
+  when the stack is empty, and the stack is never empty, because the loop is waiting for <code>a</code> to
+  become false. Each side is waiting for the other. The bounded version proves the rule:</p>
+  <pre><code>setTimeout(() =&gt; console.log("timer"), 0);
+const end = Date.now() + 100;
+while (Date.now() &lt; end) {}         <span class="tok-com">// block the stack for 100ms</span>
+console.log("loop done");
+<span class="tok-out">// loop done   then   timer   — the "0ms" timer waited the full 100ms</span></code></pre>
+
+  <h2>2 · The call stack (you have this)</h2>
+  <p>Call a function and a <strong>frame</strong> (its local variables and where to return to) is
+  <strong>pushed</strong>. It returns and the frame is <strong>popped</strong>. Last in, first out. Two
+  facts to add:</p>
+  <ul>
+    <li><strong>"The stack is empty"</strong> means all the synchronous code has finished, every last line of
+    it. That's the moment everything else on this page waits for.</li>
+    <li>Recursion with no base case keeps pushing until the engine gives up:
+    <code>RangeError: Maximum call stack size exceeded</code>. That's a <strong>stack overflow</strong>, and
+    it's an interview question of its own.</li>
+  </ul>
+
+  <h2>3 · Who does the waiting: the host, and the task queue</h2>
+  <p>If JavaScript can only do one thing at a time, who counts the 2 seconds? <strong>Not
+  JavaScript.</strong> The <strong>host</strong> does: the browser (through its Web APIs) or Node.
+  <code>setTimeout</code> is a request to the host: <em>"count this time, then give me back this
+  function."</em></p>
+  <ol>
+    <li><code>setTimeout(fn, 1000)</code> hands the timer to the host and <strong>returns
+    immediately</strong>, with an id. (A number in browsers, an object in Node. Pass it to
+    <code>clearTimeout(id)</code> to cancel.)</li>
+    <li>JavaScript keeps running the rest of your code.</li>
+    <li>When the time is up, the host puts <code>fn</code> into the <strong>task queue</strong> (also called
+    the macrotask or callback queue).</li>
+    <li><code>fn</code> runs only when the <strong>call stack is empty</strong>, and only when it reaches the
+    front of the queue.</li>
+  </ol>
+  <p><strong>Your probe's label, fixed: it's a queue, not a stack.</strong> A queue is
+  <strong>first in, first out</strong>, like a line at a counter. Two timers that finish in order run in
+  order. If it were a stack, the later one would jump the line.</p>
+  <p>So <code>setTimeout(fn, 0)</code> doesn't mean "run now". It means <strong>"run as soon as possible,
+  but not before the current code finishes."</strong> The delay is a <em>minimum</em>, never a promise.</p>
+
+  <h3><code>setInterval</code> and stopping it</h3>
+  <pre><code>let n = 0;
+const id = setInterval(() =&gt; {
+  n++;
+  console.log("tick", n);
+  if (n === 3) clearInterval(id);    <span class="tok-com">// without this it runs forever (and leaks, L6b §5)</span>
+}, 100);
+<span class="tok-out">// tick 1   tick 2   tick 3</span></code></pre>
+  <p>Every tick is a new task in the queue. In React, the interval you forgot to clear in the
+  <code>useEffect</code> cleanup is exactly the "uncleared interval" leak from 6b.</p>
+
+  <h2>4 · The event loop</h2>
+  <p>The <strong>event loop</strong> is the part that connects the queue to the stack. Its first version is
+  one sentence:</p>
+  <div class="note">
+    <span class="callout-label">The event loop, version 1</span>
+    When the call stack is empty, take the <strong>first task</strong> from the task queue, run it
+    <strong>to completion</strong>, then repeat. Forever.
+  </div>
+  <p>That's the whole thing for timers. §7 adds the second queue, the one Promises use. You need Promises
+  first.</p>
+
+  <h2>5 · Promises from zero</h2>
+  <p>Before Promises, "give me the result later" meant passing a callback:
+  <code>getUser(id, (err, user) =&gt; { ... })</code>. Two problems: callbacks nested inside callbacks
+  ("callback hell"), and <strong>you hand your function to someone else's code</strong> and trust them to call
+  it once, and with the right arguments. Promises fix both by turning "later" into a thing you can hold.</p>
+
+  <div class="note">
+    <span class="callout-label">What a Promise is</span>
+    A Promise is an <strong>object that stands for a value that isn't ready yet</strong>. It's a receipt. You
+    keep it now, and it tells you later whether you got the value or an error.
+  </div>
+
+  <h3>Three states, and it settles once</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>State</th><th>Means</th></tr></thead>
+    <tbody>
+      <tr><td><strong>pending</strong></td><td>not finished yet. Every Promise starts here</td></tr>
+      <tr><td><strong>fulfilled</strong></td><td>finished, with a <strong>value</strong></td></tr>
+      <tr><td><strong>rejected</strong></td><td>failed, with a <strong>reason</strong> (usually an <code>Error</code>)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p><strong>"Settled"</strong> means fulfilled <em>or</em> rejected, in other words not pending any more. The
+  ebook lists "settled" as a fourth state. It isn't one; it's a word for "done, either way". And a Promise
+  <strong>settles once</strong>: the first <code>resolve</code> or <code>reject</code> wins, and every later
+  call is silently ignored.</p>
+
+  <h3>Making one: the executor runs right now</h3>
+  <pre><code>const p = new Promise((resolve, reject) =&gt; {
+  <span class="tok-com">// this function is the EXECUTOR — it runs immediately, synchronously</span>
+  const ok = true;
+  if (ok) resolve("data");             <span class="tok-com">// → fulfilled with "data"</span>
+  else reject(new Error("failed"));    <span class="tok-com">// → rejected</span>
+});</code></pre>
+  <p><strong>The trap:</strong> the function you pass to <code>new Promise</code> is <strong>not</strong>
+  async. It runs on the spot, during <code>new Promise(...)</code>. Only what you do <em>later</em> with the
+  result is async. This is the ebook's output question 14 (§9), and it's the single most planted trap in
+  async questions.</p>
+  <p>Shortcuts: <code>Promise.resolve(v)</code> gives an already-fulfilled Promise, and
+  <code>Promise.reject(err)</code> gives an already-rejected one.</p>
+
+  <h3>Using one: <code>then</code>, <code>catch</code>, <code>finally</code></h3>
+  <pre><code>p.then(value =&gt; console.log("got", value))     <span class="tok-com">// runs if fulfilled</span>
+ .catch(err =&gt; console.log("failed", err))      <span class="tok-com">// runs if rejected</span>
+ .finally(() =&gt; console.log("either way"));     <span class="tok-com">// runs after either, gets no value</span></code></pre>
+  <p>These are callbacks again, but with the guarantees callbacks never had: each one is called
+  <strong>at most once</strong>, and <strong>always asynchronously</strong>, even if the Promise is already
+  settled when you attach it.</p>
+
+  <h2>6 · <code>then</code> returns a new Promise, and that's chaining</h2>
+  <p>Ask L6's question 7: <em>what does <code>.then</code> return?</em> <strong>A brand-new Promise.</strong>
+  Not the same one (<code>p.then(f) === p</code> is <code>false</code>). That new Promise settles with
+  <strong>whatever your callback did</strong>:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Your <code>then</code> callback…</th><th>The next Promise is…</th></tr></thead>
+    <tbody>
+      <tr><td>returns a value <code>v</code></td><td>fulfilled with <code>v</code></td></tr>
+      <tr><td>returns nothing</td><td>fulfilled with <strong><code>undefined</code></strong></td></tr>
+      <tr><td>returns a Promise</td><td><strong>waits</strong> for it, then takes its result</td></tr>
+      <tr><td>throws</td><td>rejected with what was thrown, so it <strong>skips to the next <code>catch</code></strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Row 2 is L6 §2b again. <code>map</code> stores whatever your callback returns, including
+  <code>undefined</code>. <code>then</code> passes on whatever your callback returns, including
+  <code>undefined</code>. <strong>A forgotten <code>return</code> inside a <code>then</code> is the most common
+  Promise bug there is.</strong></p>
+  <p>And a <code>catch</code> that returns a value <strong>recovers</strong> the chain: the next
+  <code>then</code> runs normally with that value. D5 in §11 tests exactly this.</p>
+
+  <h2>7 · The second queue: microtasks</h2>
+  <p>Promise callbacks (<code>then</code>, <code>catch</code>, <code>finally</code>) do <strong>not</strong>
+  go into the task queue. They go into a separate, higher-priority queue: the <strong>microtask
+  queue</strong>. (<code>queueMicrotask(fn)</code> puts a function there directly, and in 7b, the code after
+  an <code>await</code> goes there too.)</p>
+  <div class="note">
+    <span class="callout-label">The event loop, version 2 (the real one)</span>
+    <ol>
+      <li>Run the current task to completion. (At the start, that's your whole script.)</li>
+      <li>The stack is empty, so run <strong>every</strong> microtask in the microtask queue, including any
+      that get added while you're doing this. Keep going until it's empty.</li>
+      <li>(The browser may repaint here.)</li>
+      <li>Take the <strong>next one task</strong> from the task queue. Go to 1.</li>
+    </ol>
+  </div>
+  <p>That's why your probe answer was <code>1 4 3 2</code>: <code>3</code> is a microtask, so it runs as soon
+  as the script ends. <code>2</code> is a task, so it waits for the next turn of the loop.
+  <strong>Microtasks always drain completely before the next task.</strong></p>
+  <pre><code>setTimeout(() =&gt; console.log("task"), 0);
+Promise.resolve().then(() =&gt; {
+  console.log("m1");
+  Promise.resolve().then(() =&gt; console.log("m2"));   <span class="tok-com">// added DURING the drain</span>
+});
+<span class="tok-out">// m1   m2   task</span></code></pre>
+  <p><code>m2</code> was queued while microtasks were draining, so it runs in the same drain, still before
+  the task. (The flip side: a microtask that keeps queueing more microtasks starves every task, and the page
+  freezes just like the <code>while</code> loop in §1.)</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Goes to</th><th>What</th><th>Runs</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Nowhere: runs now (sync)</strong></td><td>ordinary code · the Promise <strong>executor</strong> · callbacks to <code>map</code>/<code>forEach</code>/<code>sort</code></td><td>immediately, in order</td></tr>
+      <tr><td><strong>Microtask queue</strong></td><td><code>then</code> / <code>catch</code> / <code>finally</code> callbacks · <code>queueMicrotask</code> · code after <code>await</code> (7b)</td><td>as soon as the stack is empty, <strong>all of them</strong></td></tr>
+      <tr><td><strong>Task queue</strong></td><td><code>setTimeout</code> / <code>setInterval</code> callbacks · event handlers (click, keypress) · network callbacks</td><td><strong>one per turn</strong>, after the microtasks drain</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Row 1 has a trap of its own: <strong>"callback" does not mean "async".</strong> The function you pass to
+  <code>map</code> runs synchronously, right there, inside <code>map</code> (L6 §2b). Only callbacks handed to
+  the host or to a Promise wait.</p>
+
+  <h2>8 · The procedure: the eighth question</h2>
+  <ol>
+    <li>Which keyword declares it?</li>
+    <li>What state is the binding in at this exact line?</li>
+    <li>What are you doing to it?</li>
+    <li>When does this actually run, and what is the binding at that moment?</li>
+    <li>How was this function called, and is it an arrow?</li>
+    <li>Is this the same object or a new one, and is the property own or inherited?</li>
+    <li>What does this method return, and did the original change?</li>
+    <li><strong>Is this sync, a microtask, or a task?</strong></li>
+  </ol>
+  <p>Q8 is Q4 made precise for async code. Q4 asked "when does it run?"; Q8 gives the only three possible
+  answers.</p>
+
+  <h2>9 · How to solve any output-order question</h2>
+  <p>Don't simulate it in your head line by line. <strong>Label, then list.</strong></p>
+  <ol>
+    <li>Go through the code once and label every <code>console.log</code>: <strong>S</strong> (sync),
+    <strong>M</strong> (inside a <code>then</code>/<code>catch</code>/<code>finally</code>), or
+    <strong>T</strong> (inside a <code>setTimeout</code>/<code>setInterval</code>).</li>
+    <li>Write all the <strong>S</strong> ones, in source order.</li>
+    <li>Then the <strong>M</strong> ones, in the order they were queued.</li>
+    <li>Then the <strong>T</strong> ones, in queue order (shorter delays first). <strong>After each T, re-check:</strong>
+    did it queue any new M? Those run before the next T.</li>
+  </ol>
+  <p>The ebook's question 14, labelled:</p>
+  <pre><code>setTimeout(() =&gt; console.log(1), 0);       <span class="tok-com">// T</span>
+console.log(2);                             <span class="tok-com">// S</span>
+new Promise(res =&gt; {
+  console.log(3);                           <span class="tok-com">// S  ← inside the executor: sync!</span>
+  res();
+}).then(() =&gt; console.log(4));              <span class="tok-com">// M</span>
+console.log(5);                             <span class="tok-com">// S</span>
+<span class="tok-out">// S: 2 3 5 · M: 4 · T: 1   →   2 3 5 4 1</span></code></pre>
+  <p>Whoever answers <code>2 5 3 4 1</code> fell for the executor. That's the one to watch.</p>
+
+  <h2>10 · Retrieval quiz</h2>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">Where does a <code>setTimeout</code> callback wait until it can run?</p>
+    <ul class="quiz-opts">
+      <li><button>on the call stack</button></li>
+      <li><button>in the microtask queue</button></li>
+      <li><button>in the task queue</button></li>
+      <li><button>inside the timer itself</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The task queue.</strong> The host counts the time, then queues the
+    callback. It runs when the stack is empty and it reaches the front of the queue: first in, first out.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">The function you pass to <code>new Promise(...)</code> runs…</p>
+    <ul class="quiz-opts">
+      <li><button>immediately, synchronously</button></li>
+      <li><button>as a microtask</button></li>
+      <li><button>as a task</button></li>
+      <li><button>when you call then</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Immediately.</strong> The executor runs during
+    <code>new Promise(...)</code>. Only the <code>then</code>/<code>catch</code> callbacks are async.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">Which of these is <strong>not</strong> one of a Promise's states?</p>
+    <ul class="quiz-opts">
+      <li><button>pending</button></li>
+      <li><button>fulfilled</button></li>
+      <li><button>rejected</button></li>
+      <li><button>settled</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Settled</strong> isn't a state. It's a word for "fulfilled or
+    rejected", meaning no longer pending. The ebook gets this wrong.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q"><code>p.then(f)</code> returns…</p>
+    <ul class="quiz-opts">
+      <li><button>p itself</button></li>
+      <li><button>a new Promise</button></li>
+      <li><button>f's return value</button></li>
+      <li><button>undefined</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>A new Promise</strong>, which settles with whatever <code>f</code>
+    returns (or throws). That's what makes chaining work.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">After the script finishes, there are 2 tasks and 3 microtasks queued. What runs next?</p>
+    <ul class="quiz-opts">
+      <li><button>1 task, then 1 microtask</button></li>
+      <li><button>the 2 tasks, then microtasks</button></li>
+      <li><button>all 3 microtasks, then 1 task</button></li>
+      <li><button>whichever was queued first</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>All 3 microtasks, then 1 task.</strong> Microtasks drain completely,
+    then one task runs, then the microtasks drain again.</div>
+  </div>
+
+  <h2>11 · Output drills</h2>
+  <p>Cold. Label first (S / M / T), then list. Give the output <strong>and the label for each line</strong>.</p>
+
+  <details class="reveal">
+    <summary>D1 · the executor</summary>
+    <pre><code>console.log("a");
+new Promise(res =&gt; { console.log("b"); res("c"); }).then(v =&gt; console.log(v));
+console.log("d");</code></pre>
+    <p><strong><code>a b d c</code></strong>. <code>b</code> is in the executor, so it's S. <code>c</code> is a
+    <code>then</code> callback, so it's M.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 · tasks and microtasks queueing each other</summary>
+    <pre><code>setTimeout(() =&gt; {
+  console.log(1);
+  Promise.resolve().then(() =&gt; console.log(2));
+}, 0);
+setTimeout(() =&gt; console.log(3), 0);
+Promise.resolve().then(() =&gt; {
+  console.log(4);
+  setTimeout(() =&gt; console.log(5), 0);
+});</code></pre>
+    <p><strong><code>4 1 2 3 5</code></strong>. The script queues T1, T2 and M1. Microtasks drain first: M1 logs
+    4 and queues T3. Then T1 logs 1 and queues M2, which <strong>runs before T2</strong> because microtasks drain
+    after every task: 2. Then T2: 3. Then T3: 5.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 · two chains</summary>
+    <pre><code>Promise.resolve().then(() =&gt; console.log("A1")).then(() =&gt; console.log("A2"));
+Promise.resolve().then(() =&gt; console.log("B1")).then(() =&gt; console.log("B2"));</code></pre>
+    <p><strong><code>A1 B1 A2 B2</code></strong>, interleaved. <code>A2</code> can't be queued until A1's callback
+    has <em>run</em> (it's waiting on the new Promise that A1's <code>then</code> returned). By then, B1 is
+    already in line ahead of it.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 · the missing return</summary>
+    <pre><code>Promise.resolve(5)
+  .then(x =&gt; { x * 2; })
+  .then(y =&gt; console.log(y));</code></pre>
+    <p><strong><code>undefined</code></strong>. Braces make a block with no <code>return</code>, so the first
+    <code>then</code> passes on <code>undefined</code>. §6 row 2, and L6 §3's <code>map</code> trap in a new
+    costume.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 · throw, catch, recover</summary>
+    <pre><code>Promise.resolve(1)
+  .then(x =&gt; { throw new Error("boom"); })
+  .then(x =&gt; console.log("skipped?", x))
+  .catch(e =&gt; { console.log("caught", e.message); return 7; })
+  .then(v =&gt; console.log("after", v));</code></pre>
+    <p><strong><code>caught boom</code> then <code>after 7</code></strong>. The throw rejects, so the
+    second <code>then</code> is skipped. <code>catch</code> handles it and <strong>returns 7</strong>, which
+    recovers the chain, so the last <code>then</code> runs with 7.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 · settles once</summary>
+    <pre><code>new Promise((res, rej) =&gt; { res("first"); res("second"); rej("third"); })
+  .then(v =&gt; console.log("ok", v), e =&gt; console.log("err", e));</code></pre>
+    <p><strong><code>ok first</code></strong>. The first settle wins and the other two are silently ignored.
+    (<code>then</code> takes an optional second argument, a rejection handler.)</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D7 · two timers and a promise</summary>
+    <pre><code>setTimeout(() =&gt; console.log("t10"), 10);
+setTimeout(() =&gt; console.log("t0"), 0);
+Promise.resolve().then(() =&gt; console.log("p"));
+console.log("s");</code></pre>
+    <p><strong><code>s p t0 t10</code></strong>. S, then M, then the tasks in the order their timers
+    finish. <code>t0</code>'s timer finishes first even though it was set second.</p>
+  </details>
+
+  <h2>12 · Label-only round</h2>
+  <p>No outputs. For each one, say when <strong>the function named</strong> runs: <strong>S</strong> (right
+  now), <strong>MICRO</strong>, or <strong>TASK</strong>. <strong>Bar 7/8.</strong></p>
+  <ol>
+    <li>the function passed to <code>new Promise(...)</code></li>
+    <li>the callback in <code>.then(...)</code></li>
+    <li>the callback in <code>setTimeout(..., 0)</code></li>
+    <li>the callback in <code>[1, 2].map(...)</code></li>
+    <li>the callback in <code>.catch(...)</code></li>
+    <li>a <code>click</code> handler, when the button is clicked</li>
+    <li>the callback in <code>queueMicrotask(...)</code></li>
+    <li>the callback in <code>setInterval(..., 100)</code></li>
+  </ol>
+  <details class="reveal">
+    <summary>Answers</summary>
+    <ol>
+      <li><strong>S</strong>: the executor runs immediately</li>
+      <li><strong>MICRO</strong></li>
+      <li><strong>TASK</strong></li>
+      <li><strong>S</strong>: <code>map</code> calls it right there</li>
+      <li><strong>MICRO</strong></li>
+      <li><strong>TASK</strong></li>
+      <li><strong>MICRO</strong></li>
+      <li><strong>TASK</strong>: one task per tick</li>
+    </ol>
+    <p><strong>#1 and #4 are the planted traps.</strong> Both are "a callback", so both pattern-match to
+    "async". Neither is. Surface-shape matching again: <em>"it's a callback, so it waits."</em></p>
+  </details>
+
+  <h2>13 · Coding drills</h2>
+
+  <h3>Drill A: write <code>sleep(ms)</code></h3>
+  <p>Write a function that returns a Promise which fulfills after <code>ms</code> milliseconds, so that
+  <code>sleep(1000).then(() =&gt; console.log("done"))</code> logs after one second. It's three lines. It's
+  also the most common "wrap a callback API in a Promise" question.</p>
+  <details class="reveal">
+    <summary>Hint, then the answer</summary>
+    <p><strong>Hint.</strong> You need a Promise (so: <code>new Promise</code>), and something that calls
+    <code>resolve</code> later (so: <code>setTimeout</code>). Which function should the timer call?</p>
+    <pre><code>function sleep(ms) {
+  return new Promise(resolve =&gt; setTimeout(resolve, ms));
+}</code></pre>
+    <p><strong>The bug everyone writes once:</strong> <code>setTimeout(resolve(), ms)</code>. The
+    <code>()</code> <em>calls</em> <code>resolve</code> right now and hands its return value
+    (<code>undefined</code>) to the timer, so the Promise fulfills immediately (verified on Node). That's
+    L3's "passing a function vs calling it", and 6b's "arguments are evaluated before the call".</p>
+  </details>
+
+  <h3>Drill B: write <code>promisify(fn)</code></h3>
+  <p>Node-style APIs take an <strong>error-first callback</strong> as their last argument:
+  <code>getUser(id, (err, user) =&gt; ...)</code>. Write <code>promisify(fn)</code>, which returns a new function
+  that takes the same arguments (minus the callback) and returns a Promise instead.</p>
+  <pre><code>function getUser(id, cb) {
+  setTimeout(() =&gt; (id &gt; 0 ? cb(null, { id }) : cb(new Error("bad id"))), 10);
+}
+const getUserP = promisify(getUser);
+getUserP(1).then(u =&gt; console.log(u));             <span class="tok-out">// { id: 1 }</span>
+getUserP(-1).catch(e =&gt; console.log(e.message));   <span class="tok-out">// bad id</span></code></pre>
+  <details class="reveal">
+    <summary>Hint ladder, then the answer</summary>
+    <p><strong>Hint 1.</strong> <code>promisify</code> takes a function and returns a function. That's a HOF
+    (L3).</p>
+    <p><strong>Hint 2.</strong> The returned function collects its arguments with rest
+    (<code>...args</code>), returns a <code>new Promise</code>, and inside the executor calls <code>fn</code>
+    with those arguments <strong>plus one more</strong>: a callback that you write, which turns
+    <code>err</code> into <code>reject</code> and <code>result</code> into <code>resolve</code>.</p>
+    <pre><code>function promisify(fn) {
+  return function (...args) {
+    return new Promise((resolve, reject) =&gt; {
+      fn.call(this, ...args, (err, result) =&gt; {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+  };
+}</code></pre>
+    <p>What it fuses: <strong>L3</strong> (a HOF that returns a function), <strong>L5</strong> (rest
+    parameters), <strong>L4</strong> (<code>fn.call(this, ...)</code> keeps <code>this</code>, so it works on
+    methods. That's why the outer one is a regular <code>function</code>, and the executor is an arrow, so it
+    can see that <code>this</code>.) And this page: the callback converts "called later, by someone else"
+    into a Promise that settles once. It's Node's <code>util.promisify</code>, by hand. All three cases,
+    including a method that uses <code>this</code>, verified on Node.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read or watch this next</span>
+    Watch <strong>Philip Roberts, "What the heck is the event loop anyway?"</strong> (JSConf EU 2014). It's
+    the clearest 25 minutes on §1-§4 anywhere. Then <strong>Jake Archibald, "In The Loop"</strong>
+    (JSConf Asia 2018) for microtasks and rendering. Read
+    <a href="https://javascript.info/promise-basics">javascript.info — Promise basics</a>,
+    <a href="https://javascript.info/promise-chaining">Promise chaining</a> and
+    <a href="https://javascript.info/event-loop">Event loop: microtasks and macrotasks</a>.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Not drilled yet.</strong> Reading this page is not the rep. Say <em>"drill me on L7"</em>. It opens
+    with §0 (the M6 carry items), then the speak half (event loop and Promises out loud), the "so why"
+    follow-ups, fresh output snippets you haven't read, and a fresh label-only round.
+    <br><br>
+    <strong>Next page:</strong> Lesson 7b, <code>async</code>/<code>await</code> (and why it doesn't block),
+    <code>Promise.all</code>/<code>allSettled</code>/<code>any</code>/<code>race</code>, error handling, and the
+    hard output questions.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0006b-map-and-set.html">← Lesson 6b: Map, Set &amp; the weak ones</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

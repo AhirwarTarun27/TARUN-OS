@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 4 · Conditionals · Python for a JS Developer</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 4 · Exercism concept 4 of 17 · Conditionals</p>
+    <h1>Conditionals: <code>if</code>, <code>elif</code>, <code>else</code></h1>
+    <p class="subtitle">You've written <code>if</code> in JS a thousand times. Python's version does the same job
+    with <strong>no brackets, no braces, and one new word</strong>. The real lessons here are the JS habits that
+    still run but read wrong, plus one JS trap that gives a different answer. About 20 minutes.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">How this page works</span>
+    Same as before: <span class="lang js">JavaScript</span> next to <span class="lang py">Python</span>,
+    red boxes for JS habits that break, and a
+    <span style="color:var(--accent-2)">New words in this section</span> box at the end of each section.
+    Every output was run on Python 3.14 (and Node for the JS side) before it was written down.
+  </div>
+
+  <!-- §0 -->
+  <h2 id="s0">0. Warm-up (cold, no scrolling back)</h2>
+  <p>Answer in your head or on paper before opening each one.</p>
+<pre><code>not (raining and cold)</code></pre>
+  <details class="reveal"><summary>G1: write the same thing with no brackets.</summary>
+    <p><code>not raining or not cold</code>. "Not both" means "at least one of them isn't". When you push the
+    <code>not</code> inside, each piece gets its own <code>not</code> <strong>and</strong> the <code>and</code>
+    flips to <code>or</code>. Writing <code>not raining and not cold</code> means "neither", which is a different
+    question. This flip has a name, <em>De Morgan's law</em>, and it comes up in every <code>if</code> you write.</p>
+  </details>
+<pre><code>print(20 - 5 + 3, 12 / 4 * 3)</code></pre>
+  <details class="reveal"><summary>G2: what prints?</summary>
+    <p><code>18 9.0</code>. <code>-</code> and <code>+</code> are a tie, so left to right: <code>20 - 5</code> first.
+    <code>/</code> and <code>*</code> are a tie too: <code>12 / 4</code> is <code>3.0</code>, then
+    <code>* 3</code>. And <code>/</code> always gives a float.</p>
+  </details>
+<pre><code>not year % 4 == 0</code></pre>
+  <details class="reveal"><summary>G3: write this the clearer way.</summary>
+    <p><code>year % 4 != 0</code>. Same meaning, and nobody can misread it as <code>(not year) % 4</code>.</p>
+  </details>
+
+  <!-- §1 -->
+  <h2 id="s1">1. <code>if</code> and <code>else</code>: same idea, less punctuation</h2>
+  <p>A <em>conditional</em> is code that only runs when something is true. The line that starts it is called an
+  <em>if statement</em>, and the test after <code>if</code> is the <em>condition</em>. Each possible path through
+  it is a <em>branch</em>: the <code>if</code> branch or the <code>else</code> branch. Choosing which code runs
+  next is called <em>control flow</em>, and conditionals are the most basic control flow tool.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>if (temperature &gt; 30) {
+  console.log("Hot");
+} else {
+  console.log("Fine");
+}</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>if temperature &gt; 30:
+    print("Hot")
+else:
+    print("Fine")</code></pre></div>
+  </div>
+  <p>Three changes, all from Lesson 1:</p>
+  <ul>
+    <li><strong>No brackets</strong> around the condition.</li>
+    <li><strong>A colon</strong> <code>:</code> ends the condition line, and <code>else</code> gets one too.</li>
+    <li><strong>No braces.</strong> The indented lines under it are the block. Four spaces.</li>
+  </ul>
+  <p>Forget the colon or the indent and Python stops before running anything:</p>
+<pre><code>if temperature &gt; 30
+<span class="tok-err">SyntaxError: expected ':'</span>
+
+if temperature &gt; 30:
+print("Hot")
+<span class="tok-err">IndentationError: expected an indented block after 'if' statement on line 2</span></code></pre>
+  <div class="trap">
+    <span class="callout-label">JS habit: brackets after if</span>
+    <code>if(x &gt; 3):</code> still runs. Python reads the brackets as plain grouping, like <code>(2 + 3)</code>,
+    so nothing breaks. But it's the clearest sign of "a JS developer wrote this", and the style guide (PEP 8)
+    says to leave them out. Write <code>if x &gt; 3:</code>, with one space after <code>if</code>.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Conditional / if statement</dt>
+        <dd>Code that only runs when a test is true. It starts with <code>if</code>.<span class="js-like">same as JS <code>if</code></span></dd></div>
+      <div class="term"><dt>Condition</dt>
+        <dd>The test after <code>if</code>, like <code>temperature &gt; 30</code>. It ends in <code>True</code> or
+        <code>False</code>.<span class="js-like">the part inside <code>( )</code> in JS</span></dd></div>
+      <div class="term"><dt>Branch</dt>
+        <dd>One possible path through a conditional: the <code>if</code> part, the <code>else</code> part, and so on.
+        <span class="js-like">same word in JS</span></dd></div>
+      <div class="term"><dt>Control flow</dt>
+        <dd>The order in which lines run, and which ones get skipped. Conditionals are the most basic tool for it.
+        <span class="js-like">same idea</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §2 -->
+  <h2 id="s2">2. <code>elif</code>: more than two branches</h2>
+  <p>JS writes <code>else if</code>. Python squashes it into one word: <code>elif</code>. You can have as many as you
+  like. Python checks them <strong>top to bottom and runs only the first branch whose condition is true</strong>.
+  The rest are skipped, even if they'd also be true.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>function ticketPrice(age) {
+  if (age &lt; 5) {
+    return 0;
+  } else if (age &lt; 18) {
+    return 50;
+  } else if (age &gt;= 60) {
+    return 70;
+  } else {
+    return 100;
+  }
+}</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>def ticket_price(age):
+    if age &lt; 5:
+        return 0
+    elif age &lt; 18:
+        return 50
+    elif age &gt;= 60:
+        return 70
+    else:
+        return 100</code></pre></div>
+  </div>
+<pre><code>ticket_price(3)     <span class="tok-out">0</span>
+ticket_price(17)    <span class="tok-out">50</span>
+ticket_price(18)    <span class="tok-out">100</span>
+ticket_price(65)    <span class="tok-out">70</span></code></pre>
+
+  <h3>Order matters</h3>
+  <p>A 3-year-old is also under 18. If you swap the first two branches, <code>age &lt; 18</code> catches the
+  3-year-old first, and <code>ticket_price(3)</code> gives <code>50</code>. Same lesson as Leap:
+  <strong>check the narrow, special case before the wide one.</strong></p>
+
+  <h3>Test the boundaries</h3>
+  <p>A <em>boundary</em> is the exact value where the answer switches, like 18 here. Is an 18-year-old a child?
+  That depends on <code>&lt;</code> vs <code>&lt;=</code>, and it's where most bugs hide. When you test, always try
+  the value just below, exactly on, and just above each boundary: 17, 18, 19. Values like these are called
+  <em>edge cases</em>.</p>
+
+  <div class="note">
+    <span class="callout-label">No switch</span>
+    Python has no <code>switch</code> like JS. An <code>if</code> / <code>elif</code> chain does that job. Python 3.10
+    added a newer tool called <code>match</code>, which Exercism teaches later as its own concept.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt><code>elif</code></dt>
+        <dd>Short for "else if". Adds another branch. Only the first true branch runs.<span class="js-like"><code>else if</code></span></dd></div>
+      <div class="term"><dt>Boundary / edge case</dt>
+        <dd>The boundary is the exact value where the answer switches (18 here). Edge cases are the values right
+        around it: just below, exactly on, just above. Test those first.<span class="js-like">same idea</span></dd></div>
+      <div class="term"><dt>switch / <code>match</code> <span class="seen">(match comes later)</span></dt>
+        <dd>Python has no <code>switch</code>. Use an <code>elif</code> chain. <code>match</code> is a newer
+        Python tool, covered in a later Exercism concept.<span class="js-like"><code>switch</code></span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §3 -->
+  <h2 id="s3">3. <code>elif</code> or separate <code>if</code>s?</h2>
+  <p>These two look almost the same. They're not:</p>
+  <div class="vs">
+    <div><span class="lang py">One chain</span>
+<pre><code>n = 15
+if n % 3 == 0:
+    print("three")
+elif n % 5 == 0:
+    print("five")
+<span class="tok-out">three</span></code></pre></div>
+    <div><span class="lang py">Two separate ifs</span>
+<pre><code>n = 15
+if n % 3 == 0:
+    print("three")
+if n % 5 == 0:
+    print("five")
+<span class="tok-out">three
+five</span></code></pre></div>
+  </div>
+  <p>15 is divisible by both. The chain stops after the first true branch. Two separate <code>if</code>s are two
+  separate questions, so both run. Pick by asking: <strong>can more than one of these be true and should they all
+  happen?</strong></p>
+  <ul>
+    <li>Only one can ever apply (a price, a colour band, a status): use one <code>elif</code> chain. Exercism calls
+    these branches <em>mutually exclusive</em>, meaning "if one is true, the others can't be".</li>
+    <li>Each one can apply on its own: use separate <code>if</code>s.</li>
+  </ul>
+
+  <h3>The early return shortcut</h3>
+  <p><code>return</code> ends the function on the spot. So if every branch returns, a plain <code>if</code> after it
+  already behaves like <code>elif</code>. Writing a function this way is called the <em>early return</em> style:</p>
+<pre><code>def size(n):
+    if n &gt; 100:
+        return "big"
+    if n &gt; 10:          <span class="tok-com"># only reached when n &lt;= 100</span>
+        return "medium"
+    return "small"
+
+size(500)     <span class="tok-out">'big'</span>
+size(50)      <span class="tok-out">'medium'</span>
+size(5)       <span class="tok-out">'small'</span></code></pre>
+  <p>Both styles are fine. Exercism's hints mention that a <em>linter</em> may complain about many
+  <code>return</code>s in one function. A linter is a tool that reads your code and flags style problems without
+  running it. It's a style opinion, not an error, so your tests still pass.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Mutually exclusive</dt>
+        <dd>"If one is true, the others can't be." Branches like that belong in one <code>elif</code> chain.
+        <span class="js-like">same idea</span></dd></div>
+      <div class="term"><dt>Early return</dt>
+        <dd>Returning from inside a branch, so the rest of the function is skipped. Each later <code>if</code> then
+        acts like <code>elif</code>.<span class="js-like">same pattern in JS</span></dd></div>
+      <div class="term"><dt>Linter</dt>
+        <dd>A tool that reads your code and flags style problems without running it.
+        <span class="js-like">ESLint</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §4 -->
+  <h2 id="s4">4. When the answer is True or False, skip the <code>if</code></h2>
+  <p>You met this in Leap. A comparison already <strong>is</strong> <code>True</code> or <code>False</code>
+  (Lesson 2), so wrapping it in an <code>if</code> just to return those same values is a step too many:</p>
+  <div class="vs">
+    <div><span class="lang py">Long way</span>
+<pre><code>def is_adult(age):
+    if age &gt;= 18:
+        return True
+    else:
+        return False</code></pre></div>
+    <div><span class="lang py">Python way</span>
+<pre><code>def is_adult(age):
+    return age &gt;= 18
+
+is_adult(20)    <span class="tok-out">True</span>
+type(is_adult(20))
+<span class="tok-out">&lt;class 'bool'&gt;</span></code></pre></div>
+  </div>
+  <p>Rule of thumb: if the function returns <code>True</code>/<code>False</code>, return the condition itself. If it
+  returns something else (a word, a number, a price), that's when you need <code>if</code>/<code>elif</code>.</p>
+
+  <h3>Truthy values work in <code>if</code> too</h3>
+  <p>The spot right after <code>if</code> is a <em>boolean context</em>: a place where Python needs True or False. Give
+  it any other value and Python quietly runs <code>bool()</code> on it, using the truthy/falsy rules from Lesson 2.
+  So you can test "is this empty?" directly:</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>if (items.length &gt; 0) { ... }
+if (isOpen === true) { ... }</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>if items:      <span class="tok-com"># empty list is falsy</span>
+    ...
+if is_open:    <span class="tok-com"># not: if is_open == True</span>
+    ...</code></pre></div>
+  </div>
+  <div class="trap">
+    <span class="callout-label">JS habit: empty list is truthy</span>
+    In JS, <code>if ([])</code> runs, because every array is truthy. In Python, an empty list is <strong>falsy</strong>,
+    so <code>if []:</code> skips. Same for <code>{}</code>, <code>""</code> and <code>0</code>.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Boolean context</dt>
+        <dd>A place where Python needs True or False, like right after <code>if</code>. Any other value gets passed
+        through <code>bool()</code> there.<span class="js-like">same idea, different falsy list</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §5 -->
+  <h2 id="s5">5. Chained comparisons and nesting</h2>
+  <p>Python lets you write a range check the way you'd write it in maths. This is called a <em>chained
+  comparison</em>:</p>
+<pre><code>16 &lt;= age &lt; 18      <span class="tok-com"># means: 16 &lt;= age and age &lt; 18</span></code></pre>
+  <p>Python splits it into two comparisons joined by <code>and</code>. Each value in the middle is used by both
+  sides. That's handy for "is this number inside a range?".</p>
+  <div class="trap">
+    <span class="callout-label">Same code, different answer</span>
+    JS doesn't chain. It does the first comparison, gets <code>true</code> or <code>false</code>, then compares
+    <em>that</em> with the next number, treating <code>true</code> as <code>1</code>.
+    <div class="vs">
+      <div><span class="lang js">JavaScript</span>
+<pre><code>3 &gt; 2 &gt; 1     <span class="tok-out">false</span>
+<span class="tok-com">// (3 &gt; 2) → true → true &gt; 1
+// → 1 &gt; 1 → false</span>
+1 &lt; 3 &lt; 2     <span class="tok-out">true</span></code></pre></div>
+      <div><span class="lang py">Python</span>
+<pre><code>3 &gt; 2 &gt; 1     <span class="tok-out">True</span>
+<span class="tok-com"># 3 &gt; 2 and 2 &gt; 1</span>
+
+1 &lt; 3 &lt; 2     <span class="tok-out">False</span></code></pre></div>
+    </div>
+    Python gives the answer you'd expect from maths.
+  </div>
+
+  <h3>Nesting</h3>
+  <p>An <code>if</code> inside another <code>if</code> is a <em>nested conditional</em>. It works, but every level
+  pushes the code further right. When the inner <code>if</code> has no <code>else</code>, you can usually join the
+  two conditions with <code>and</code> instead:</p>
+  <div class="vs">
+    <div><span class="lang py">Nested</span>
+<pre><code>if age &gt;= 18:
+    if has_licence:
+        print("Can drive")</code></pre></div>
+    <div><span class="lang py">Flat, same result</span>
+<pre><code>if age &gt;= 18 and has_licence:
+    print("Can drive")</code></pre></div>
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Chained comparison</dt>
+        <dd><code>a &lt; b &lt; c</code> means <code>a &lt; b and b &lt; c</code>. Good for range checks.
+        <span class="js-like">doesn't exist: JS gives a different answer</span></dd></div>
+      <div class="term"><dt>Nested conditional</dt>
+        <dd>An <code>if</code> inside another <code>if</code>. Often you can flatten it with <code>and</code>.
+        <span class="js-like">same in JS</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §6 -->
+  <h2 id="s6">6. The one-line version: <code>x if test else y</code></h2>
+  <p>First, two words. An <em>expression</em> is code that produces a value, like <code>2 + 3</code> or
+  <code>age &gt;= 18</code>. A <em>statement</em> is code that does something but isn't a value, like an
+  <code>if</code> block or <code>return</code>. You can put an expression inside <code>print(...)</code>, but not a
+  statement.</p>
+  <p>Sometimes you want an <code>if</code> that <em>is</em> a value. JS has <code>? :</code> for that, called the
+  <em>ternary operator</em>. Python's version is called a <em>conditional expression</em>, and it reads in a
+  different order:</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>const label = n % 2 === 0 ? "even" : "odd";</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>label = "even" if n % 2 == 0 else "odd"</code></pre></div>
+  </div>
+  <div class="trap">
+    <span class="callout-label">JS habit: the order is different</span>
+    JS puts the test first: <em>test ? yes : no</em>. Python puts the "yes" value first: <em>yes</em>
+    <code>if</code> <em>test</em> <code>else</code> <em>no</em>. Read it as an English sentence: "even, if n is
+    divisible by 2, otherwise odd". <code>? :</code> doesn't exist in Python at all.
+  </div>
+  <p>Use it only for short, simple choices. If it doesn't fit comfortably on one line, write a normal
+  <code>if</code>/<code>else</code>.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Expression / statement</dt>
+        <dd>An expression produces a value (<code>2 + 3</code>). A statement does something but isn't a value
+        (<code>if</code>, <code>return</code>). Only expressions fit inside <code>print(...)</code>.
+        <span class="js-like">same split in JS</span></dd></div>
+      <div class="term"><dt>Conditional expression / ternary</dt>
+        <dd><code>yes if test else no</code>. A one-line <code>if</code> that produces a value.
+        <span class="js-like"><code>test ? yes : no</code></span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §7 -->
+  <h2 id="s7">7. Stopping on bad input: <code>raise</code></h2>
+  <p>Sometimes the right answer is "this input is wrong, stop". Python stops a program by creating an
+  <em>exception</em>: an error object that halts the code and reports what went wrong. You've already met some,
+  like <code>TypeError</code> and <code>ValueError</code>. To create one yourself, you <em>raise</em> it, which is
+  Python's word for JS's <code>throw</code>:</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>if (level &lt; 0 || level &gt; 10) {
+  throw new Error("volume must be between 0 and 10");
+}</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>if level &lt; 0 or level &gt; 10:
+    raise ValueError("volume must be between 0 and 10")</code></pre></div>
+  </div>
+  <p>No <code>new</code>, and you pick the error's type. <code>ValueError</code> is the usual one for "right type, bad
+  value". The text in brackets is the message people will read. Like <code>return</code>, <code>raise</code> ends
+  the function at once, so nothing after it runs. Here's the full error report Python prints, called a
+  <em>traceback</em>. Read it from the bottom: the last line is the error type and your message.</p>
+<pre><code>def set_volume(level):
+    if level &lt; 0 or level &gt; 10:
+        raise ValueError("volume must be between 0 and 10")
+    return level
+
+print(set_volume(11))
+<span class="tok-err">Traceback (most recent call last):
+  ...
+ValueError: volume must be between 0 and 10</span></code></pre>
+  <p>An <code>if</code> at the top of a function that rejects bad input before the real work starts is called a
+  <em>guard clause</em>. The rest of the function can then trust its input. Catching exceptions with
+  <code>try</code>/<code>except</code> (JS's <code>try</code>/<code>catch</code>) gets its own bridge lesson later.
+  For now, raising is all you need.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Exception</dt>
+        <dd>An error object that stops the code and reports what went wrong. <code>ValueError</code> and
+        <code>TypeError</code> are exceptions.<span class="js-like">an <code>Error</code> object</span></dd></div>
+      <div class="term"><dt><code>raise</code></dt>
+        <dd>Creates an exception and stops the function: <code>raise ValueError("message")</code>.
+        <span class="js-like"><code>throw new Error("message")</code></span></dd></div>
+      <div class="term"><dt>Traceback</dt>
+        <dd>The error report Python prints. Read it from the bottom: last line = error type + message.
+        <span class="js-like">a stack trace</span></dd></div>
+      <div class="term"><dt>Guard clause</dt>
+        <dd>An <code>if</code> at the top of a function that rejects bad input early, so the rest can trust it.
+        <span class="js-like">same pattern in JS</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- Summary -->
+  <h2 id="summary">The whole lesson in one table</h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th></tr></thead>
+    <tbody>
+      <tr><td>If</td><td><code>if (x &gt; 3) { ... }</code></td><td><code>if x &gt; 3:</code> + indented block</td></tr>
+      <tr><td>Else if</td><td><code>else if</code></td><td><code>elif</code></td></tr>
+      <tr><td>Switch</td><td><code>switch</code></td><td><code>elif</code> chain (<code>match</code> later)</td></tr>
+      <tr><td>Return a test result</td><td><code>return x &gt; 0;</code></td><td><code>return x &gt; 0</code> (no <code>if</code> needed)</td></tr>
+      <tr><td>Is it empty?</td><td><code>if (arr.length &gt; 0)</code></td><td><code>if items:</code></td></tr>
+      <tr><td><code>3 &gt; 2 &gt; 1</code></td><td><code>false</code></td><td><code>True</code> (chained)</td></tr>
+      <tr><td>One-line if</td><td><code>test ? a : b</code></td><td><code>a if test else b</code></td></tr>
+      <tr><td>Throw an error</td><td><code>throw new Error("msg")</code></td><td><code>raise ValueError("msg")</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Also in the <a href="../reference/js-to-python.html#l4">JS → Python cheat sheet</a>.</p>
+
+  <!-- Quizzes -->
+  <h2 id="quiz">Check yourself: 5 questions</h2>
+  <p>From memory. Getting it wrong here costs nothing.</p>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">1. In an <code>if</code> / <code>elif</code> / <code>else</code> chain, which branches run?</p>
+    <ul class="quiz-opts">
+      <li><button>Only the first one whose test is true</button></li>
+      <li><button>Every one whose test is true, in order</button></li>
+      <li><button>Only the last one whose test is true</button></li>
+      <li><button>All of them, then the else at the end</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Only the first true one.</strong> Python stops checking after the first true
+    branch. If you want every true test to run, use separate <code>if</code>s.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">2. What does <code>3 &gt; 2 &gt; 1</code> give in Python?</p>
+    <ul class="quiz-opts">
+      <li><button>False, same as JavaScript</button></li>
+      <li><button>SyntaxError, can't chain them</button></li>
+      <li><button>True, it means 3 &gt; 2 and 2 &gt; 1</button></li>
+      <li><button>TypeError, can't compare a bool</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>True.</strong> Python chains comparisons like maths. JS gives
+    <code>false</code>, because it turns <code>3 &gt; 2</code> into <code>true</code> and then checks
+    <code>true &gt; 1</code>, which is <code>1 &gt; 1</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">3. Which is Python's version of <code>ok ? "yes" : "no"</code>?</p>
+    <ul class="quiz-opts">
+      <li><button><code>ok ? "yes" : "no"</code></button></li>
+      <li><button><code>if ok "yes" else "no"</code></button></li>
+      <li><button><code>ok if "yes" else "no"</code></button></li>
+      <li><button><code>"yes" if ok else "no"</code></button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>"yes" if ok else "no"</code>.</strong> The "yes" value comes first,
+    then the test. <code>? :</code> doesn't exist in Python.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">4. Best way to write this?<br><code>if x &gt; 0: return True</code> / <code>else: return False</code></p>
+    <ul class="quiz-opts">
+      <li><button><code>return True if x &gt; 0 else False</code></button></li>
+      <li><button><code>return x &gt; 0</code></button></li>
+      <li><button><code>return bool(x) == True</code></button></li>
+      <li><button><code>if x &gt; 0: return x</code></button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>return x &gt; 0</code>.</strong> The comparison already is
+    <code>True</code> or <code>False</code>. The first option works too, but it's the same extra step squeezed onto
+    one line.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">5. JS has <code>throw new Error("bad")</code>. What's the Python?</p>
+    <ul class="quiz-opts">
+      <li><button><code>throw ValueError("bad")</code></button></li>
+      <li><button><code>raise ValueError("bad")</code></button></li>
+      <li><button><code>return ValueError("bad")</code></button></li>
+      <li><button><code>raise new Error("bad")</code></button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>raise ValueError("bad")</code>.</strong> No <code>throw</code>, no
+    <code>new</code>. Careful: <code>return ValueError("bad")</code> doesn't stop anything. It just hands back the
+    error object as an ordinary value.</div>
+  </div>
+
+  <!-- Predict -->
+  <h2 id="predict">Predict the output: 6 snippets</h2>
+  <p>Say the exact output out loud. If it's an error, say its name.</p>
+
+<pre><code>x = 0
+if x:
+    print("yes")
+else:
+    print("no")</code></pre>
+  <details class="reveal"><summary>P1 answer</summary>
+    <p><code>no</code>. <code>0</code> is falsy, so the <code>if</code> branch is skipped.</p>
+  </details>
+
+<pre><code>n = 30
+if n % 3 == 0:
+    print("A")
+elif n % 5 == 0:
+    print("B")
+if n % 2 == 0:
+    print("C")</code></pre>
+  <details class="reveal"><summary>P2 answer</summary>
+    <p><code>A</code> then <code>C</code>. 30 divides by 3, so the chain stops at <code>A</code> and skips
+    <code>B</code>. The last <code>if</code> starts a new, separate question, so <code>C</code> runs too.</p>
+  </details>
+
+<pre><code>print(1 &lt; 3 &lt; 2)</code></pre>
+  <details class="reveal"><summary>P3 answer</summary>
+    <p><code>False</code>. It means <code>1 &lt; 3 and 3 &lt; 2</code>, and the second part is false. JS would print
+    <code>true</code>.</p>
+  </details>
+
+<pre><code>age = 20
+print("adult" if age &gt;= 18 else "minor")</code></pre>
+  <details class="reveal"><summary>P4 answer</summary>
+    <p><code>adult</code>. The test is true, so you get the value <em>before</em> <code>if</code>.</p>
+  </details>
+
+<pre><code>def check(n):
+    if n &gt; 10:
+        return "high"
+    if n &gt; 5:
+        return "mid"
+
+print(check(3))</code></pre>
+  <details class="reveal"><summary>P5 answer</summary>
+    <p><code>None</code>. Neither test is true, so no <code>return</code> runs. A function that finishes without
+    returning gives <code>None</code> (Lesson 1). That's a common bug: a branch you forgot.</p>
+  </details>
+
+<pre><code>def check_age(age):
+    if age &lt; 0:
+        raise ValueError("age can't be negative")
+    return age
+
+print(check_age(-1))</code></pre>
+  <details class="reveal"><summary>P6 answer</summary>
+    <p><code>ValueError: age can't be negative</code>, at the bottom of a traceback. The <code>raise</code> stops
+    everything, so <code>return age</code> and the <code>print</code> never run.</p>
+  </details>
+
+  <!-- Handoff -->
+  <h2 id="exercise">Now do the Exercism exercise</h2>
+  <p>Go to Exercism and do <strong>Meltdown Mitigation</strong>. Three functions. Write them by hand.</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Task</th><th>What to watch</th><th>Where it's taught</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Returns <code>True</code>/<code>False</code>. Three conditions that must all hold.</td><td><a href="#s4">§4</a></td></tr>
+      <tr><td>2</td><td>Returns a colour word. Bands, so order and <code>&lt;</code> vs <code>&lt;=</code> matter.</td><td><a href="#s2">§2</a>, <a href="#s3">§3</a></td></tr>
+      <tr><td>3</td><td>Returns a status word. "Within 10%" is a range check.</td><td><a href="#s2">§2</a>, <a href="#s5">§5</a></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Before you code tasks 2 and 3, write each band's boundaries on paper and decide which side of each boundary
+  the exact value belongs to. The instructions say it in words ("80% or more", "less than 80% but at least 60%").
+  Turn each phrase into <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code> or <code>&gt;=</code> before you
+  write a line. The returned words are plain text in quotes, like <code>'green'</code>. Strings are the next-but-one
+  chapter, and quotes are all you need here.</p>
+
+  <h3>Then these practice exercises</h3>
+  <p>Finishing this lesson makes these doable:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Exercise</th><th>Needs</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Triangle</strong></td><td><a href="#s4">§4</a>, and <code>sides[0]</code> to read from a list (works like JS arrays)</td><td>Tests use <code>assertIs</code>, so return real <code>True</code>/<code>False</code></td></tr>
+      <tr><td><strong>Grains</strong></td><td><a href="#s7">§7</a> guard clause + <code>raise</code>, <code>**</code> from Lesson 3</td><td>The error message must match the instructions exactly</td></tr>
+      <tr><td><strong>Raindrops</strong></td><td><a href="#s3">§3</a>, <code>%</code>, joining text with <code>+</code></td><td><code>str(28)</code> turns a number into the text <code>"28"</code>, like JS <code>String(28)</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Raindrops is the best §3 test: read its examples and ask yourself whether its checks are mutually exclusive.</p>
+
+  <div class="note">
+    <span class="callout-label">Primary source</span>
+    <a href="https://exercism.org/tracks/python/concepts/conditionals">Exercism: Python Conditionals</a>. Read it
+    after this page. It should feel like a recap.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Stuck on anything?</strong> Ask me about any line here, any word in the Exercism chapter, or a
+    failing test. I'll trace it with you, not write the answer.
+    <br><br>
+    <strong>Done?</strong> Paste your solution for a review. Then send the
+    <a href="https://exercism.org/tracks/python/concepts/comparisons">comparisons</a> link.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0003-numbers.html">← Lesson 3: Numbers</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

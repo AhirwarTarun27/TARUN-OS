@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Course map · Python for a JS Developer</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Python for a JS developer · Course map</p>
+    <h1>The path: 17 Exercism concepts + 8 bridges</h1>
+    <p class="subtitle">Exercism is your one resource. Each chapter gets a lesson here, written for a JS
+    developer. Bridges cover what the AI path needs and Exercism doesn't teach.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Are you on the right path? Checked 2026-10-03</span>
+    <strong>Yes, for the core language.</strong> The 17 concepts come straight from the track's own
+    config file. They cover every data type, loops, classes and generators, which is the Python you'll read
+    in any AI course.
+    <br><br>
+    <strong>What Exercism leaves out</strong>, and the AI path needs on day one: f-strings (Exercism's
+    exercise for it is unfinished), keyword arguments, comprehensions, <code>try</code>/<code>except</code>,
+    imports and <code>pip</code>, JSON, type hints and <code>async</code>. Those are the
+    <span style="color:var(--accent-2)">bridge</span> lessons below. They're short, they live here, and you
+    don't need a second website for them.
+  </div>
+
+  <p style="font-family:var(--sans);font-size:0.9rem;color:var(--ink-soft)">
+    <span class="pip done"></span> done &nbsp; <span class="pip now"></span> current &nbsp; <span class="pip"></span> not yet
+  </p>
+
+  <p class="part-label">Part 1 · The basics</p>
+  <div class="module"><h3><span class="modnum">01</span> Basics <span class="status done">done</span></h3>
+    <ul><li>Lesson: <a href="../lessons/0001-basics.html">Names, functions, comments, docstrings</a></li>
+    <li>Exercism: <a href="https://exercism.org/tracks/python/concepts/basics">concept</a> · exercise <em>Guido's Gorgeous Lasagna</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">02</span> Bools <span class="status done">done</span></h3>
+    <ul><li>Lesson: <a href="../lessons/0002-bools.html">True, False, and/or/not, truthiness</a></li>
+    <li>Exercism: <a href="https://exercism.org/tracks/python/concepts/bools">concept</a> · exercise <em>Ghost Gobble Arcade Game</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">03</span> Numbers <span class="status done">done</span></h3>
+    <ul><li>Lesson: <a href="../lessons/0003-numbers.html">int, float, and the maths operators</a></li>
+    <li>Exercism: <a href="https://exercism.org/tracks/python/concepts/numbers">concept</a> · exercise <em>Currency Exchange</em> · practice <em>Leap</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">04</span> Conditionals <span class="status now">current</span></h3>
+    <ul><li>Lesson: <a href="../lessons/0004-conditionals.html">if, elif, else, and raise</a></li>
+    <li>Exercism: <a href="https://exercism.org/tracks/python/concepts/conditionals">concept</a> · exercise <em>Meltdown Mitigation</em> · then practice <em>Triangle</em>, <em>Grains</em>, <em>Raindrops</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">05</span> Comparisons <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/comparisons">concept</a> · exercise <em>Black Jack</em></li></ul></div>
+
+  <p class="part-label">Part 2 · Text</p>
+  <div class="module"><h3><span class="modnum">06</span> Strings <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/strings">concept</a> · exercise <em>Little Sister's Vocabulary</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">B1</span> Bridge: f-strings <span class="status next">next</span></h3>
+    <ul><li><code>f"Hello {name}"</code>, Python's template literals. Every prompt template in AI code uses them.</li></ul></div>
+  <div class="module"><h3><span class="modnum">07</span> String methods <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/string-methods">concept</a> · exercise <em>Little Sister's Essay</em> · then practice <em>Bob</em></li></ul></div>
+
+  <p class="part-label">Part 3 · Collections and loops</p>
+  <div class="module"><h3><span class="modnum">08</span> Lists <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/lists">concept</a> · exercise <em>Card Games</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">09</span> List methods <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/list-methods">concept</a> · exercise <em>Chaitana's Colossal Coaster</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">10</span> Loops <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/loops">concept</a> · exercise <em>Making the Grade</em> · then practice <em>Collatz Conjecture</em>, <em>Armstrong Numbers</em>, <em>Perfect Numbers</em>, <em>Pig Latin</em> (unlocked early, but they need loops)</li></ul></div>
+  <div class="module"><h3><span class="modnum">B2</span> Bridge: comprehensions <span class="status next">next</span></h3>
+    <ul><li><code>[x * 2 for x in nums]</code>: Python's one-line <code>.map</code> and <code>.filter</code>.</li></ul></div>
+  <div class="module"><h3><span class="modnum">11</span> Tuples <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/tuples">concept</a> · exercise <em>Tisbury Treasure Hunt</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">12</span> Dicts <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/dicts">concept</a> · exercise <em>Inventory Management</em></li>
+    <li>The most important one for AI work: a chat message is a dict, a conversation is a list of dicts.</li></ul></div>
+  <div class="module"><h3><span class="modnum">13</span> Dict methods <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/dict-methods">concept</a> · exercise <em>Mecha Munch Management</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">14</span> Unpacking &amp; multiple assignment <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/unpacking-and-multiple-assignment">concept</a> · exercise <em>Locomotive Engineer</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">B3</span> Bridge: functions in depth <span class="status next">next</span></h3>
+    <ul><li>Default values, keyword arguments, <code>*args</code> / <code>**kwargs</code>. Every SDK call looks like <code>create(model=..., messages=...)</code>.</li></ul></div>
+  <div class="module"><h3><span class="modnum">15</span> Sets <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/sets">concept</a> · exercise <em>Cater Waiter</em></li></ul></div>
+
+  <p class="part-label">Part 4 · Building things</p>
+  <div class="module"><h3><span class="modnum">16</span> Classes <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/classes">concept</a> · exercise <em>Ellen's Alien Game</em></li></ul></div>
+  <div class="module"><h3><span class="modnum">B4</span> Bridge: exceptions <span class="status next">next</span></h3>
+    <ul><li><code>try</code> / <code>except</code> / <code>raise</code>. API calls fail; your code has to handle it.</li></ul></div>
+  <div class="module"><h3><span class="modnum">17</span> Generators <span class="status next">next</span></h3>
+    <ul><li>Exercism: <a href="https://exercism.org/tracks/python/concepts/generators">concept</a> · exercise <em>Plane Tickets</em></li>
+    <li>Same idea as streaming a model's reply word by word.</li></ul></div>
+
+  <p class="part-label">Part 5 · Ready for AI code</p>
+  <div class="module"><h3><span class="modnum">B5</span> Bridge: modules, pip, virtual envs, .env <span class="status next">next</span></h3>
+    <ul><li><code>import</code>, installing packages (Python's npm), and keeping API keys out of code.</li></ul></div>
+  <div class="module"><h3><span class="modnum">B6</span> Bridge: files, <code>with</code>, JSON <span class="status next">next</span></h3></div>
+  <div class="module"><h3><span class="modnum">B7</span> Bridge: type hints <span class="status next">next</span></h3>
+    <ul><li>FastAPI and Pydantic are built on them.</li></ul></div>
+  <div class="module"><h3><span class="modnum">B8</span> Bridge: async / await <span class="status next">next</span></h3>
+    <ul><li>The JS trap: calling an <code>async def</code> without <code>await</code> doesn't run it.</li></ul></div>
+
+  <div class="note">
+    <span class="callout-label">After the map</span>
+    Ed Donner's AI Engineer Core Track, then the FastAPI tutorial. Bridge order may move if a chapter
+    shows you need one sooner.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="js-to-python.html">JS → Python cheat sheet</a>
+    <a href="glossary.html">Glossary →</a>
+  </div>
+
+</div>
+</body>
+</html>

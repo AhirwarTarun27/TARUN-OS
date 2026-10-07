@@ -53,6 +53,9 @@ Then **D32, closed-book**, in the `cv-defense` block. That is the gate.
 | File | Role | Rewritten or appended |
 |---|---|---|
 | `survival-sheet.md` | **The artifact.** One page. What he opens the night before an interview | **Rewritten** — it gets shorter and sharper, never longer |
+| `alepo-round-1.md` | Interview pack for Alepo's AI-first round (2026-09-30). Has the corrected lineage: the Dwellworks `.claude/` setup came first, devflow was extracted from it | Written once |
+| `alepo-round-1-soft-skills.md` | Alepo HR/behavioural answers + the salary script (13 LPA current, 13 LPA offer in hand, ask 18-20) | Written once |
+| `devflow-repo-tour.md` | One line per folder and file in `ai-dev-workflow`, in screen-share order. Reusable for any interview | Rewritten when the repo changes |
 | `RESOURCES.md` | The 8 verified links. Nothing else gets added without a reason | Appended, rarely |
 | `lessons/NNNN-*.html` | The teaching. Dark theme, inline quizzes, reuses `../interview-qa/assets/` | Written once |
 | `learning-records/NNNN-*.md` | What he got **wrong** in that sitting. Not a summary of the lesson | Appended |

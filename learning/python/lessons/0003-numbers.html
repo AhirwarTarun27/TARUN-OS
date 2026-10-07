@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 3 · Numbers · Python for a JS Developer</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 3 · Exercism concept 3 of 17 · Numbers</p>
+    <h1>Numbers: int, float, and the maths operators</h1>
+    <p class="subtitle">JS has one number type. Python has <strong>two you'll use every day</strong>, and
+    that one change explains most of this chapter. Plus a few spots where Python stops with an error and
+    JS quietly gives you a strange answer. About 20 minutes.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">How this page works</span>
+    Same as before: <span class="lang js">JavaScript</span> next to <span class="lang py">Python</span>,
+    red boxes for JS habits that break, and a
+    <span style="color:var(--accent-2)">New words in this section</span> box at the end of each section.
+    Every output was run on Python 3.14 (and Node for the JS side) before it was written down.
+  </div>
+
+  <!-- §0 -->
+  <h2 id="s0">0. Warm-up (cold, no scrolling back)</h2>
+<pre><code>a = True
+b = False
+print(not (a and b))
+print(not a and not b)</code></pre>
+  <details class="reveal"><summary>G1: what do the two lines print? Then say WHY they differ.</summary>
+    <p><code>True</code>, then <code>False</code>. The first means "not <em>both</em>". Since <code>b</code>
+    is false, they aren't both true, so it's <code>True</code>. The second means "<em>neither</em>", and
+    <code>a</code> is true, so it's <code>False</code>. That's why flipping an <code>and</code> piece by piece
+    also turns it into an <code>or</code>: "not both" means "at least one isn't". It's what your
+    <code>win</code> function needed.</p>
+  </details>
+<pre><code>def total():
+    return 5
+
+print(type(total), type(total()))</code></pre>
+  <details class="reveal"><summary>G2: what are the two types?</summary>
+    <p><code>&lt;class 'function'&gt; &lt;class 'int'&gt;</code>. No brackets means the function itself.
+    Brackets run it, and you get what it returned, the number <code>5</code>. And <code>int</code> is
+    exactly where this lesson starts.</p>
+  </details>
+
+  <!-- §1 -->
+  <h2 id="s1">1. Two kinds of number: <code>int</code> and <code>float</code></h2>
+  <p>In JS, <code>3</code> and <code>3.5</code> are both just <code>number</code>. Python splits them:</p>
+  <ul>
+    <li><strong><code>int</code></strong>, short for <em>integer</em>: whole numbers. <code>3</code>, <code>-12</code>, <code>1234</code>.</li>
+    <li><strong><code>float</code></strong>, short for <em>floating point</em>: numbers with a decimal point. <code>3.5</code>,
+    <code>0.0</code>, and <code>3.0</code> too. "Floating" because the decimal point can sit anywhere among the digits.</li>
+  </ul>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>typeof 3        <span class="tok-out">"number"</span>
+typeof 3.0      <span class="tok-out">"number"</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>type(3)         <span class="tok-out">&lt;class 'int'&gt;</span>
+type(3.0)       <span class="tok-out">&lt;class 'float'&gt;</span>
+3 == 3.0        <span class="tok-out">True</span></code></pre></div>
+  </div>
+  <p>They're different types, but they compare as equal and mix freely in maths. When you mix them, the
+  answer is a <code>float</code>: <code>3 + 4.0</code> is <code>7.0</code>. Exercism calls this
+  <em>widening</em>. It calls the int the <em>narrower</em> type and the float the <em>wider</em> one, because a
+  float can hold everything an int can, plus decimals. So when they meet, the int is widened into a float.</p>
+  <p>Exercism also lists a third type, <code>complex</code>, for maths with imaginary numbers (written like
+  <code>2 + 3j</code>). It's used in science and engineering, not in web or AI apps, so you can skip it.</p>
+
+  <h3>Whole numbers never overflow</h3>
+  <p>Python ints have <em>arbitrary precision</em>: no fixed size limit. An <code>int</code> can be as big as
+  your memory allows, and it stays exact.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>2 ** 100
+<span class="tok-out">1.2676506002282294e+30</span>  <span class="tok-com">// rounded</span>
+2n ** 100n
+<span class="tok-out">1267650600228229401496703205376n</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>2 ** 100
+<span class="tok-out">1267650600228229401496703205376</span>
+<span class="tok-com"># exact, no "n" needed</span></code></pre></div>
+  </div>
+  <p>Python's <code>int</code> behaves like JS's <code>BigInt</code>, but it's the default. You'll see one
+  Exercism test for this chapter expect the answer <code>4017094016600</code>, and Python handles it without
+  any special effort.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt><code>int</code> (integer)</dt>
+        <dd>A whole number, no decimal point. Can be negative.<span class="js-like">a <code>number</code> with no decimals, or a <code>BigInt</code></span></dd></div>
+      <div class="term"><dt><code>float</code> (floating point)</dt>
+        <dd>A number with a decimal point. "Floating" because the point can sit anywhere in the digits.
+        <span class="js-like">every JS <code>number</code> is one of these</span></dd></div>
+      <div class="term"><dt>Arbitrary precision</dt>
+        <dd>"No fixed size limit." A Python int can have as many digits as memory allows, and stays exact.
+        <span class="js-like"><code>BigInt</code></span></dd></div>
+      <div class="term"><dt>Widening (narrow / wide)</dt>
+        <dd>When an int and a float meet, the int is turned into a float, the "wider" type. So the result is a float.
+        <span class="js-like">no equivalent, JS has one type</span></dd></div>
+      <div class="term"><dt><code>complex</code> <span class="seen">Exercism mentions it, you won't need it</span></dt>
+        <dd>A third number type for maths with imaginary numbers, written like <code>2 + 3j</code>. Used in
+        science and engineering, not in web or AI app code.<span class="js-like">no equivalent</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §2 -->
+  <h2 id="s2">2. The maths operators</h2>
+  <p><code>+</code>, <code>-</code> and <code>*</code> work like JS. The interesting ones are about dividing:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Operator</th><th>Does</th><th>Example</th><th>JS way</th></tr></thead>
+    <tbody>
+      <tr><td><code>/</code></td><td>divide, <strong>always gives a float</strong></td><td><code>6 / 2</code> → <code>3.0</code></td><td><code>6 / 2</code> → <code>3</code></td></tr>
+      <tr><td><code>//</code></td><td><em>floor division</em>: divide, then round <strong>down</strong> to a whole number ("floor" = the level below)</td><td><code>7 // 2</code> → <code>3</code></td><td><code>Math.floor(7 / 2)</code></td></tr>
+      <tr><td><code>%</code></td><td><em>modulo</em>: the remainder, what's left over</td><td><code>7 % 4</code> → <code>3</code></td><td><code>7 % 4</code></td></tr>
+      <tr><td><code>**</code></td><td><em>exponentiation</em>: raise to a power</td><td><code>2 ** 3</code> → <code>8</code></td><td><code>2 ** 3</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+<pre><code>6 / 2        <span class="tok-out">3.0</span>     <span class="tok-com"># float, even though it divides evenly</span>
+7 // 2       <span class="tok-out">3</span>       <span class="tok-com"># how many whole 2s fit in 7</span>
+7 % 2        <span class="tok-out">1</span>       <span class="tok-com"># what's left over</span>
+4 ** 0.5     <span class="tok-out">2.0</span>     <span class="tok-com"># square root</span></code></pre>
+  <p>A useful way to see <code>//</code> and <code>%</code>: they're a pair. <code>7 // 2</code> is "how many
+  whole 2s fit" (3), and <code>7 % 2</code> is "what's left" (1).</p>
+  <p>All of these are <em>binary operators</em>: they take two values, one on each side (<code>a // b</code>).
+  "Binary" here just means "two". It has nothing to do with binary numbers. Exercism uses this phrase when it
+  says ints get widened "with the binary arithmetic operators".</p>
+
+  <div class="trap">
+    <span class="callout-label">Catch 1: <code>//</code> with a float gives back a float</span>
+    <code>//</code> rounds down, but it keeps the type. If either number is a float, the answer is a float:
+<pre><code>7 // 2       <span class="tok-out">3</span>
+127.5 // 5   <span class="tok-out">25.0</span>    <span class="tok-com"># not 25</span></code></pre>
+    Exercism's own hint for this chapter warns about exactly this. If you need a real <code>int</code>, §3
+    shows how to convert.
+  </div>
+
+  <div class="trap">
+    <span class="callout-label">Catch 2: dividing by zero is an error</span>
+    JS gives you <code>Infinity</code> and carries on. Python stops:
+    <div class="vs">
+      <div><span class="lang js">JavaScript</span>
+<pre><code>1 / 0
+<span class="tok-out">Infinity</span></code></pre></div>
+      <div><span class="lang py">Python</span>
+<pre><code>1 / 0
+<span class="tok-err">ZeroDivisionError: division by zero</span></code></pre></div>
+    </div>
+    Same for <code>1 // 0</code> and <code>1 % 0</code>. It's the same pattern as Lesson 1: where JS guesses,
+    Python refuses.
+  </div>
+
+  <div class="trap">
+    <span class="callout-label">Catch 3: negative numbers (rare, just know it)</span>
+    <code>//</code> always rounds <em>down</em>, so <code>-7 // 2</code> is <code>-4</code>, not <code>-3</code>.
+    And <code>%</code> follows it: <code>-7 % 3</code> is <code>2</code> in Python but <code>-1</code> in JS.
+    With positive numbers (like money in this exercise), both languages agree.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Floor division (<code>//</code>)</dt>
+        <dd>Divide, then round <em>down</em> to the whole number below. "Floor" = the level below you.
+        <span class="js-like"><code>Math.floor(a / b)</code></span></dd></div>
+      <div class="term"><dt>Modulo / remainder (<code>%</code>)</dt>
+        <dd>What's left over after dividing. <code>7 % 4</code> is <code>3</code>.<span class="js-like">same <code>%</code>, but differs for negatives</span></dd></div>
+      <div class="term"><dt>Exponentiation (<code>**</code>)</dt>
+        <dd>Raising to a power. <code>2 ** 3</code> is 2 × 2 × 2.<span class="js-like">same <code>**</code>, or <code>Math.pow</code></span></dd></div>
+      <div class="term"><dt>Binary operator</dt>
+        <dd>An operator that takes <em>two</em> values, one on each side: <code>a + b</code>, <code>a // b</code>.
+        Nothing to do with binary numbers.<span class="js-like">same meaning</span></dd></div>
+      <div class="term"><dt><code>ZeroDivisionError</code></dt>
+        <dd>You divided by zero with <code>/</code>, <code>//</code> or <code>%</code>.<span class="js-like">no equivalent, JS returns <code>Infinity</code> or <code>NaN</code></span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §3 -->
+  <h2 id="s3">3. Converting: <code>int()</code> and <code>float()</code></h2>
+  <p>Remember "strong typing" from Lesson 1: Python won't convert for you. So you convert yourself. Turning a
+  value into another type on purpose is called <em>type conversion</em>. Exercism's hints call it
+  <em>type casting</em>. Same thing.</p>
+  <p>One detail about <code>int()</code> on a float: it <em>truncates</em>, meaning it cuts off the decimals
+  without rounding. <code>3.99</code> becomes <code>3</code>, not <code>4</code>.</p>
+<pre><code>int(3.99)       <span class="tok-out">3</span>       <span class="tok-com"># cuts off the decimals, does NOT round</span>
+float(3)        <span class="tok-out">3.0</span>
+int(6 / 2)      <span class="tok-out">3</span>       <span class="tok-com"># turns the 3.0 into a real int</span>
+int("42")       <span class="tok-out">42</span>      <span class="tok-com"># text to number</span>
+float("4.5")    <span class="tok-out">4.5</span></code></pre>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    JS's <code>parseInt</code> reads as much as it can and quietly ignores the rest. Python's <code>int()</code>
+    wants the <em>whole</em> text to be a whole number:
+    <div class="vs">
+      <div><span class="lang js">JavaScript</span>
+<pre><code>parseInt("4.5")   <span class="tok-out">4</span>
+Number("abc")     <span class="tok-out">NaN</span></code></pre></div>
+      <div><span class="lang py">Python</span>
+<pre><code>int("4.5")
+<span class="tok-err">ValueError: invalid literal for
+int() with base 10: '4.5'</span>
+int("abc")
+<span class="tok-err">ValueError: invalid literal for
+int() with base 10: 'abc'</span></code></pre></div>
+    </div>
+    There's no <code>NaN</code> surprise later. You get an error on the line that went wrong. It's a
+    <code>ValueError</code>: the <em>type</em> is fine (<code>int()</code> accepts text), but this particular
+    <em>value</em> can't be read as a whole number.
+  </div>
+  <div class="why">
+    <span class="callout-label">Where you'll see this in AI code</span>
+    An AI model always replies with <strong>text</strong>. Ask it for a number and you get back
+    <code>"42"</code>, a string. <code>int("42")</code> turns it into a number, and if the model replied with
+    something that isn't a number, you get a <code>ValueError</code> instead of a silent bug.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Type conversion / casting</dt>
+        <dd>Turning a value into another type on purpose: <code>int(3.9)</code>, <code>float(3)</code>,
+        <code>str(5)</code>. Exercism's hints call it "type casting".<span class="js-like"><code>Number()</code>, <code>String()</code>, <code>parseInt()</code></span></dd></div>
+      <div class="term"><dt><code>ValueError</code></dt>
+        <dd>The <em>type</em> is fine, but the <em>value</em> is wrong. <code>int()</code> accepts text, but
+        not the text <code>"abc"</code>.<span class="js-like">no equivalent, JS gives <code>NaN</code></span></dd></div>
+      <div class="term"><dt>Truncate</dt>
+        <dd>Cut off the decimal part without rounding. <code>int(3.99)</code> is <code>3</code>.
+        <span class="js-like"><code>Math.trunc()</code></span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §4 -->
+  <h2 id="s4">4. Rounding: <code>round()</code></h2>
+<pre><code>round(3.1415926535, 2)   <span class="tok-out">3.14</span>    <span class="tok-com"># 2 decimal places, still a float</span>
+round(3.7)               <span class="tok-out">4</span>       <span class="tok-com"># no places given: you get an int</span></code></pre>
+  <div class="trap">
+    <span class="callout-label">JS habit that breaks here</span>
+    When a number is exactly halfway, Python rounds to the nearest <strong>even</strong> number. This rule is
+    called <strong>round half to even</strong>, or <em>banker's rounding</em>:
+    <div class="vs">
+      <div><span class="lang js">JavaScript</span>
+<pre><code>Math.round(2.5)   <span class="tok-out">3</span>
+Math.round(3.5)   <span class="tok-out">4</span></code></pre></div>
+      <div><span class="lang py">Python</span>
+<pre><code>round(2.5)        <span class="tok-out">2</span>
+round(3.5)        <span class="tok-out">4</span></code></pre></div>
+    </div>
+    It isn't a bug. Always rounding .5 up pushes totals upward over many numbers. Rounding to even balances
+    out, which is why banks use it. Only exact halves are affected: <code>round(2.6)</code> is still <code>3</code>.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Round half to even (banker's rounding)</dt>
+        <dd>When a number is exactly halfway, round to whichever neighbour is even. <code>2.5</code> → <code>2</code>,
+        <code>3.5</code> → <code>4</code>.<span class="js-like"><code>Math.round</code> always rounds .5 up</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §5 -->
+  <h2 id="s5">5. Order of operations</h2>
+  <p>Same as school maths, and the same as JS. You may remember it as <em>PEMDAS</em>, or <em>BODMAS</em> in
+  India:</p>
+  <ol>
+    <li><strong>P</strong>arentheses (brackets) first</li>
+    <li><strong>E</strong>xponents: <code>**</code></li>
+    <li><strong>M</strong>ultiply and <strong>D</strong>ivide: <code>*</code> <code>/</code> <code>//</code> <code>%</code>, left to right</li>
+    <li><strong>A</strong>dd and <strong>S</strong>ubtract: <code>+</code> <code>-</code>, left to right</li>
+  </ol>
+<pre><code>2 + 3 * 4          <span class="tok-out">14</span>
+(2 + 3) * 4        <span class="tok-out">20</span>
+2 + 3 * 4 ** 4     <span class="tok-out">770</span>     <span class="tok-com"># 4 ** 4 = 256, then * 3, then + 2</span></code></pre>
+  <div class="trap">
+    <span class="callout-label">The word lies about M and D</span>
+    PEMDAS has 6 letters but only <strong>4 steps</strong>. M and D are <strong>one step</strong>, a tie. The
+    word puts M before D only because a word needs some order. Inside a tie, you don't pick by letter. You go
+    <strong>left to right</strong>, whichever comes first. The same goes for A and S.
+<pre><code>8 / 2 * 4          <span class="tok-out">16.0</span>    <span class="tok-com"># 8 / 2 = 4.0 first, then * 4</span>
+8 / (2 * 4)        <span class="tok-out">1.0</span>     <span class="tok-com"># what "M before D" would wrongly give</span>
+10 - 2 + 3         <span class="tok-out">11</span>      <span class="tok-com"># 10 - 2 = 8 first, then + 3</span></code></pre>
+    <code>//</code> and <code>%</code> sit in that same tie with <code>*</code> and <code>/</code>. JS works
+    exactly the same way.
+  </div>
+  <div class="trap">
+    <span class="callout-label">One difference</span>
+    A minus sign has two jobs. Between two values, <code>5 - 2</code>, it's the subtract operator from §2, a
+    binary operator. In front of a single value, <code>-2</code>, it means "negative". That second kind is
+    called a <em>unary minus</em> ("unary" means one value). Python runs <code>**</code> <strong>before</strong>
+    a unary minus, so <code>-2 ** 2</code> means <code>-(2 ** 2)</code>:
+    <div class="vs">
+      <div><span class="lang js">JavaScript</span>
+<pre><code>-2 ** 2
+<span class="tok-err">SyntaxError: Unary operator used
+immediately before exponentiation
+expression...</span></code></pre></div>
+      <div><span class="lang py">Python</span>
+<pre><code>-2 ** 2        <span class="tok-out">-4</span>   <span class="tok-com"># -(2 ** 2)</span>
+(-2) ** 2      <span class="tok-out">4</span></code></pre></div>
+    </div>
+    JS refuses to guess and makes you add brackets. Python does the power first, then makes it negative.
+    Same rule as Lesson 2: unsure? Brackets.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>PEMDAS</dt>
+        <dd>The order: Parentheses, Exponents, Multiplication and Division, Addition and Subtraction. (In India
+        you may know it as BODMAS. Same idea.) M and D are a tie, so are A and S: inside a tie, go left to
+        right.<span class="js-like">same order in JS</span></dd></div>
+      <div class="term"><dt>Unary minus</dt>
+        <dd>A minus sign with only <em>one</em> value, like <code>-2</code>, meaning "negative". "Unary" = one,
+        "binary" = two.<span class="js-like">same idea</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §6 -->
+  <h2 id="s6">6. Floats are approximate</h2>
+  <p>Python's float is the exact same kind of number as JS's, so you already know this one:</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>0.1 + 0.2
+<span class="tok-out">0.30000000000000004</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>0.1 + 0.2
+<span class="tok-out">0.30000000000000004</span>
+0.1 + 0.2 == 0.3
+<span class="tok-out">False</span></code></pre></div>
+  </div>
+  <p>A computer stores floats in binary, and most decimals like <code>0.1</code> can't be stored exactly.
+  Tiny mistakes creep in. These are called <em>floating-point errors</em>. They're fine for nearly everything,
+  but never compare floats with <code>==</code>.</p>
+  <div class="tip">
+    <span class="callout-label">Why this matters for the exercise</span>
+    <code>10.1 % 10</code> gives <code>0.09999999999999964</code>, not <code>0.1</code>. That's why Exercism's
+    tests for tasks 1, 2 and 5 use <code>assertAlmostEqual</code>, which accepts an answer that matches to about
+    7 decimal places (<a href="https://docs.python.org/3/library/unittest.html#unittest.TestCase.assertAlmostEqual">docs</a>).
+    So a tiny float error won't fail you there. Tasks 3, 4 and 6 use exact checks.
+  </div>
+  <p>For money in real apps, Python has two extra number types: <code>Decimal</code>, which stores decimals
+  exactly, and <code>Fraction</code>, which stores things like 1/3 exactly. They live in Python's
+  <em>standard library</em>, the set of extra tools that comes with Python. You switch one on with an
+  <code>import</code> line, like <code>from decimal import Decimal</code>. Exercism mentions them. You don't need
+  either for this exercise, and <code>import</code> gets its own bridge lesson later.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Floating-point error</dt>
+        <dd>The tiny mistake you get because most decimals can't be stored exactly in binary.
+        <code>0.1 + 0.2</code> isn't quite <code>0.3</code>.<span class="js-like">identical in JS, same kind of number</span></dd></div>
+      <div class="term"><dt><code>assertAlmostEqual</code></dt>
+        <dd>A test check that passes when two floats are equal to about 7 decimal places, instead of exactly.
+        <span class="js-like">like Jest's <code>toBeCloseTo</code></span></dd></div>
+      <div class="term"><dt>Standard library / <code>import</code> <span class="seen">(preview, bridge lesson later)</span></dt>
+        <dd>The standard library is the set of extra tools that come with Python. You switch one on with
+        <code>import</code>, e.g. <code>from decimal import Decimal</code>.<span class="js-like">Node's built-in modules, like <code>import fs from "fs"</code></span></dd></div>
+      <div class="term"><dt><code>Decimal</code> / <code>Fraction</code></dt>
+        <dd>Two extra number types in the standard library. <code>Decimal</code> stores decimals exactly (good for
+        money), <code>Fraction</code> stores things like 1/3 exactly.<span class="js-like">no built-in equivalent, you'd use a library</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- Summary -->
+  <h2 id="summary">The whole lesson in one table</h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th></tr></thead>
+    <tbody>
+      <tr><td>Number types</td><td><code>number</code> (+ <code>BigInt</code>)</td><td><code>int</code> and <code>float</code></td></tr>
+      <tr><td>Huge whole numbers</td><td>rounded, unless <code>BigInt</code></td><td>exact by default</td></tr>
+      <tr><td><code>6 / 2</code></td><td><code>3</code></td><td><code>3.0</code> (always a float)</td></tr>
+      <tr><td>Whole-number divide</td><td><code>Math.floor(a / b)</code></td><td><code>a // b</code> (float in → float out)</td></tr>
+      <tr><td>Remainder</td><td><code>%</code></td><td><code>%</code> (differs for negatives)</td></tr>
+      <tr><td>Power</td><td><code>**</code></td><td><code>**</code></td></tr>
+      <tr><td>Divide by zero</td><td><code>Infinity</code></td><td><code>ZeroDivisionError</code></td></tr>
+      <tr><td>Text to number</td><td><code>parseInt("4.5")</code> → <code>4</code></td><td><code>int("4.5")</code> → <code>ValueError</code></td></tr>
+      <tr><td>Drop decimals</td><td><code>Math.trunc(3.9)</code></td><td><code>int(3.9)</code></td></tr>
+      <tr><td>Round</td><td><code>Math.round(2.5)</code> → <code>3</code></td><td><code>round(2.5)</code> → <code>2</code> (half to even)</td></tr>
+      <tr><td><code>-2 ** 2</code></td><td><code>SyntaxError</code></td><td><code>-4</code></td></tr>
+      <tr><td><code>0.1 + 0.2</code></td><td><code>0.30000000000000004</code></td><td>same</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Also in the <a href="../reference/js-to-python.html#l3">JS → Python cheat sheet</a>.</p>
+
+  <!-- Quizzes -->
+  <h2 id="quiz">Check yourself: 5 questions</h2>
+  <p>From memory. Getting it wrong here costs nothing.</p>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">1. What type is <code>6 / 2</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>int, because 6 / 2 is exactly 3</button></li>
+      <li><button>float, because / always gives float</button></li>
+      <li><button>int, because both numbers are ints</button></li>
+      <li><button>TypeError, mixing types not allowed</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>float.</strong> <code>/</code> always returns a float, even when it divides
+    evenly: <code>6 / 2</code> is <code>3.0</code>. For a whole-number answer, use <code>//</code> or
+    <code>int()</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">2. What is <code>127.5 // 5</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>25</button></li>
+      <li><button>25.0</button></li>
+      <li><button>25.5</button></li>
+      <li><button>26</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>25.0.</strong> <code>//</code> rounds down, but a float going in means a float
+    coming out. This is the catch Exercism's hint warns about.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">3. What does <code>int("4.5")</code> give?</p>
+    <ul class="quiz-opts">
+      <li><button>4, the decimal part is cut off</button></li>
+      <li><button>4.5, it becomes a float instead</button></li>
+      <li><button>ValueError, not a whole number</button></li>
+      <li><button>5, it rounds to the nearest one</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>ValueError.</strong> <code>int()</code> on <em>text</em> needs the whole
+    text to be a whole number. (<code>int(4.5)</code>, the float, would give <code>4</code>. JS's
+    <code>parseInt("4.5")</code> would give <code>4</code> too.)</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">4. What is <code>round(2.5)</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>3, it rounds half up like JS</button></li>
+      <li><button>2, it rounds half to even</button></li>
+      <li><button>2.5, it is already rounded</button></li>
+      <li><button>TypeError, it needs two args</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>2.</strong> Exact halves go to the nearest even number. <code>round(3.5)</code>
+    is <code>4</code>, <code>round(2.5)</code> is <code>2</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">5. What happens with <code>1 / 0</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>Infinity, same as JavaScript</button></li>
+      <li><button>ZeroDivisionError, it stops</button></li>
+      <li><button>0, there is nothing to divide</button></li>
+      <li><button>None, the result is missing</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>ZeroDivisionError.</strong> Python stops instead of giving a strange value.
+    Same for <code>//</code> and <code>%</code>.</div>
+  </div>
+
+  <!-- Predict -->
+  <h2 id="predict">Predict the output: 6 snippets</h2>
+  <p>Say the output out loud, <strong>including whether it's an int or a float</strong> (<code>2</code> vs
+  <code>2.0</code>). If it's an error, say its name.</p>
+
+<pre><code>print(10 / 5, 10 // 4, 10 % 4)</code></pre>
+  <details class="reveal"><summary>P1 answer</summary>
+    <p><code>2.0 2 2</code>. <code>/</code> gives a float even though it divides evenly. Two whole 4s fit in 10,
+    and 2 is left over.</p>
+  </details>
+
+<pre><code>print(type(9 // 2), type(9.0 // 2))</code></pre>
+  <details class="reveal"><summary>P2 answer</summary>
+    <p><code>&lt;class 'int'&gt; &lt;class 'float'&gt;</code>. Same maths, but one float going in makes
+    <code>//</code> give back a float.</p>
+  </details>
+
+<pre><code>print(int(9.99) + float(1))</code></pre>
+  <details class="reveal"><summary>P3 answer</summary>
+    <p><code>10.0</code>. <code>int(9.99)</code> cuts off the decimals (it does not round), giving <code>9</code>.
+    <code>float(1)</code> is <code>1.0</code>. Int plus float gives a float.</p>
+  </details>
+
+<pre><code>print(round(4.5), round(5.5))</code></pre>
+  <details class="reveal"><summary>P4 answer</summary>
+    <p><code>4 6</code>. Both are exact halves, so each goes to its nearest even number. And no decimal places
+    were given, so both are ints.</p>
+  </details>
+
+<pre><code>print(7 // 2 * 2 + 7 % 2)</code></pre>
+  <details class="reveal"><summary>P5 answer</summary>
+    <p><code>7</code>. <code>//</code>, <code>*</code> and <code>%</code> all come before <code>+</code>, and the
+    first three go left to right: <code>(7 // 2) * 2</code> is <code>6</code>, <code>7 % 2</code> is <code>1</code>,
+    <code>6 + 1</code> is <code>7</code>. Whole 2s, plus what's left, gives back the original.</p>
+  </details>
+
+<pre><code>items = 0
+print(10 / items)</code></pre>
+  <details class="reveal"><summary>P6 answer</summary>
+    <p><code>ZeroDivisionError: division by zero</code>. JS would print <code>Infinity</code>.</p>
+  </details>
+
+  <!-- Handoff -->
+  <h2 id="exercise">Now do the Exercism exercise</h2>
+  <p>Go to Exercism and do <strong>Currency Exchange</strong>. Six small functions, each one a line or two.
+  Write them by hand.</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Task</th><th>What to watch</th><th>Where it's taught</th></tr></thead>
+    <tbody>
+      <tr><td>1-3</td><td>Pick the right operator</td><td><a href="#s2">§2</a></td></tr>
+      <tr><td>4</td><td>Whole bills only, and the test wants an <strong>int</strong> back</td><td><a href="#s2">§2 catch 1</a>, <a href="#s3">§3</a></td></tr>
+      <tr><td>5</td><td>"What's left over"; tiny float errors are fine here</td><td><a href="#s2">§2</a>, <a href="#s6">§6</a></td></tr>
+      <tr><td>6</td><td>Combines several steps; must return an <strong>int</strong></td><td><a href="#s3">§3</a>, <a href="#s5">§5</a> (use brackets)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>For task 6, read the instructions slowly. The "spread" is a <em>percentage</em>, and the instructions
+  explain how to apply it. Work out their example (<code>127.25, 1.20, 10, 20</code> → <code>80</code>) on paper
+  first, step by step, before writing any code.</p>
+
+  <div class="note">
+    <span class="callout-label">Primary source</span>
+    <a href="https://exercism.org/tracks/python/concepts/numbers">Exercism: Python Numbers</a>. Read it after this
+    page. It should feel like a recap.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Stuck on anything?</strong> Ask me about any line here, any word in the Exercism chapter, or a
+    failing test. I'll trace it with you, not write the answer.
+    <br><br>
+    <strong>Done?</strong> Paste your solution for a quick review. Finishing this also unlocks
+    <strong>Leap</strong> and <strong>Triangle</strong> (the 2 locked Bools exercises). Do those next, then send the
+    <a href="https://exercism.org/tracks/python/concepts/conditionals">conditionals</a> link.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0002-bools.html">← Lesson 2: Bools</a>
+    <a href="0004-conditionals.html">Lesson 4: Conditionals →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

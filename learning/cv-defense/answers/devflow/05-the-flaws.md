@@ -18,7 +18,7 @@ first one containing 97% of the code.
 > "You'll notice it went in as basically one commit. That's the day I wrote it down, not the day I
 > worked it out. I'd been running this by hand for about a year — across my own projects and my work
 > one — and the plugin is the extraction of it. Once you already know every rule you want, typing it out
-> is the fast part. There's an attribution file with 16 sources showing where the techniques I borrowed
+> is the fast part. There's an attribution file with 15 sources showing where the techniques I borrowed
 > came from, and the rest is stuff that bit me and became a rule."
 
 **Why this is strong rather than defensive:** most candidates describe a workflow they read about. You
@@ -120,7 +120,7 @@ Deliberate non-fixes are as much a signal as fixes — they show you're making c
 
 | They ask | I say |
 |---|---|
-| *"How much of this did you actually write?"* | I designed the architecture and every rule in it, and I picked the source material — there's an attribution file with 16 sources. The prose was written with AI assistance, which is what the repo is a workflow for, so it would be strange if it weren't. I directed it, I reviewed it, I own it. |
+| *"How much of this did you actually write?"* | I designed the architecture and every rule in it, and I picked the source material — there's an attribution file with 15 sources. The prose was written with AI assistance, which is what the repo is a workflow for, so it would be strange if it weren't. I directed it, I reviewed it, I own it. |
 | *"What would you change if you started over?"* | I'd wire the CI before writing the linter, and I'd design the tool permissions against the trifecta from day one instead of retrofitting. |
 | *"Has it broken?"* | Yes. On my current project the full multi-document pipeline wasn't earning its overhead for the size of changes I was making, so I collapsed it into a single working document plus a run log. That adaptation is logged. |
 | *"Would you use this at our company?"* | Not as-is. The contract is per-project by design, so onboarding would be step one. And I'd want to know your test situation before deciding which verification mode is honest. |

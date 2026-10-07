@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 6b · Map, Set &amp; the weak ones — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 6b · Module 6 — JavaScript Foundations</p>
+    <h1>Map, Set &amp; the weak ones</h1>
+    <p class="subtitle">You already know why a plain object is a bad dictionary. You told me in the probe:
+    <strong>every key becomes a string.</strong> <code>Map</code> is the fix for that sentence, and
+    <code>WeakMap</code> is the fix for a problem <code>Map</code> creates.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">Where this sits, and what the 10-06 probe found</span>
+    This is the second page of M6. It comes straight after Lesson 6. You chose to move on with the L6 gate
+    still open, so §0 here carries that gate.
+    <br><br>
+    I asked six questions before building this page, and here is what they showed:
+    <ul>
+      <li><strong>Keys become strings: right.</strong> <code>obj[{ id: 1 }]</code> stores
+      <code>"[object Object]"</code>. That is the whole reason <code>Map</code> exists, so §1 starts from it.</li>
+      <li><strong>Dedupe with <code>[...new Set(arr)]</code>: right.</strong> You know one use of
+      <code>Set</code>. The page adds the other one, fast lookup.</li>
+      <li><strong>Key order: half.</strong> Integer keys first was right. But after them, the string keys come
+      back in <em>insertion</em> order (<code>b</code>, <code>a</code>), not alphabetical order.</li>
+      <li><strong>Iterable: mostly right.</strong> Arrays and strings yes, plain objects no. Missing: what
+      makes something iterable, and the fact that <code>Map</code> and <code>Set</code> are iterable too.</li>
+      <li><strong>When memory is freed: the real gap.</strong> You said <code>delete</code> frees it, or
+      re-assigning the variable does. Neither is the rule. The rule is <strong>reachability</strong>, and
+      <code>WeakMap</code> makes no sense without it, so §5 teaches that layer before §6 uses it.</li>
+      <li><strong>Used Map or Set in real code: no.</strong> So every section ends with <em>when you would
+      reach for it</em>, not only what it does.</li>
+    </ul>
+  </div>
+
+  <h2>0 · Gate check — carried from Lesson 6</h2>
+  <p>The L6 label round scored 4/8 on 10-04, and the bar is 7/8. This is a fresh set, so you have
+  never seen these eight. Answer all three items <strong>before you scroll</strong>.</p>
+
+  <details class="reveal">
+    <summary>G1 · Label-only, 8 fresh shapes. Labels only. Bar 7/8.</summary>
+    <p>Labels: <strong>NEW</strong> (new array, original unchanged) · <strong>SAME</strong> (changes the
+    original, returns that same array) · <strong>REMOVED</strong> (changes the original, returns what it
+    removed) · <strong>LENGTH</strong> (changes the original, returns the new length) ·
+    <strong>NOTHING</strong> (returns <code>undefined</code>) · <strong>ONE</strong> (returns a single value,
+    original unchanged).</p>
+    <ol>
+      <li><code>arr.unshift(0)</code></li>
+      <li><code>arr.toReversed()</code></li>
+      <li><code>arr.shift()</code></li>
+      <li><code>arr.sort((a, b) =&gt; b - a)</code></li>
+      <li><code>arr.concat([5])</code></li>
+      <li><code>arr.forEach(f)</code></li>
+      <li><code>arr.push(1, 2)</code></li>
+      <li><code>arr.every(f)</code></li>
+    </ol>
+    <details class="reveal">
+      <summary>Answers (only after you have written all eight)</summary>
+      <ol>
+        <li><code>unshift</code> — <strong>LENGTH</strong></li>
+        <li><code>toReversed</code> — <strong>NEW</strong> (the non-mutating twin)</li>
+        <li><code>shift</code> — <strong>REMOVED</strong> (the element itself)</li>
+        <li><code>sort</code> with a comparator — <strong>SAME</strong>. The comparator changes the order, not
+        what comes back.</li>
+        <li><code>concat</code> — <strong>NEW</strong></li>
+        <li><code>forEach</code> — <strong>NOTHING</strong></li>
+        <li><code>push(1, 2)</code> — <strong>LENGTH</strong>. Two arguments, still one number back.</li>
+        <li><code>every</code> — <strong>ONE</strong> (a boolean)</li>
+      </ol>
+      <p>#4, #5 and #7 are the three you missed on 10-04, in new shapes. Ask <em>what did it return?</em>
+      first. Do not let <em>did it change?</em> answer it for you.</p>
+    </details>
+  </details>
+
+  <details class="reveal">
+    <summary>G2 · What does this return?</summary>
+    <pre><code>["a", "b"].map(s =&gt; {
+  if (s === "a") return s.toUpperCase();
+});</code></pre>
+    <p><strong><code>["A", undefined]</code></strong>. For <code>"b"</code> the callback reaches the end
+    with no <code>return</code>, so it returns <code>undefined</code>, and <code>map</code> stores whatever
+    comes back. There is no "keep the original". L6 §2b.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>G3 · Say it out loud: why does <code>(a, b) =&gt; a &gt; b</code> not sort?</summary>
+    <p>The comparator has to return a <strong>number</strong>, and its <strong>sign</strong> decides the
+    order: negative puts <code>a</code> first, positive puts <code>b</code> first, zero keeps the order.
+    <code>a &gt; b</code> returns a <strong>boolean</strong>, which becomes <code>1</code> or
+    <code>0</code>. It is <strong>never negative</strong>, so sort is never told "a goes first".
+    <code>[3, 1, 2].sort((a, b) =&gt; a &gt; b)</code> comes back unchanged on Node 24. And the comparator
+    gets the real values. Strings only happen when there is <em>no</em> comparator.</p>
+  </details>
+
+  <h2>1 · Why Map exists: the plain object is a bad dictionary</h2>
+  <p>A <strong>dictionary</strong> means a lookup table: you put values in under keys you don't know in
+  advance (user IDs, words, cache keys) and look them up later. People use plain objects for this all the
+  time. It mostly works, and it has <strong>four problems</strong>, all of which you have already met.</p>
+
+  <h3>Problem 1: every key becomes a string</h3>
+  <p>Your probe answer, and correct. That means two different objects used as keys <strong>collide on the
+  same key</strong>:</p>
+  <pre><code>const o = {};
+const k1 = { id: 1 }, k2 = { id: 2 };
+o[k1] = "one";
+o[k2] = "two";
+console.log(Object.keys(o), o[k1]);
+<span class="tok-out">// ["[object Object]"]  "two"   — k2 overwrote k1</span></code></pre>
+  <p>Numbers are converted too: <code>o[1]</code> and <code>o["1"]</code> are the <strong>same key</strong>.</p>
+
+  <h3>Problem 2: inherited keys are already "in" it</h3>
+  <p>This is the prototype-chain <code>in</code> bug you found yourself in <code>memoize</code> on 07-30. An
+  empty object is not empty: it inherits <code>toString</code>, <code>constructor</code> and others from
+  <code>Object.prototype</code>. Here is the version that hits a real word counter:</p>
+  <pre><code>const counts = {};
+for (const w of ["constructor", "a"]) counts[w] = (counts[w] || 0) + 1;
+console.log(counts.constructor);
+<span class="tok-out">// "function Object() { [native code] }1"</span></code></pre>
+  <p><code>counts["constructor"]</code> was never <code>undefined</code>. It found the inherited function,
+  so <code>|| 0</code> never fired, and <code>+ 1</code> concatenated onto the function's source text (L1
+  coercion). Any text input containing the word "constructor" breaks this counter.</p>
+
+  <h3>Problem 3: the order isn't the order you added</h3>
+  <p>Probe question 5. You add <code>b</code>, <code>a</code>, <code>2</code>, <code>1</code>:</p>
+  <pre><code>Object.keys(obj)   <span class="tok-out">// ["1", "2", "b", "a"]</span></code></pre>
+  <p>The rule: <strong>integer-like keys first, in ascending order, then string keys in insertion
+  order.</strong> You had the first half. The second half is insertion order, so <code>b</code> before
+  <code>a</code>, not alphabetical.</p>
+
+  <h3>Problem 4: no size, and you can't for...of it</h3>
+  <p>There is no <code>.size</code>. You count with <code>Object.keys(o).length</code>, which builds a whole
+  array to do it. And <code>for...of</code> on a plain object throws <code>TypeError</code>, which you met in
+  L6.</p>
+
+  <p><strong>A <code>Map</code> has none of the four.</strong> Keys can be any value and are never
+  converted. It starts truly empty. It always keeps insertion order. It has <code>.size</code>, and you can
+  <code>for...of</code> it.</p>
+
+  <h2>2 · Map: the API, through question 7</h2>
+  <p>Ask L6's question 7 of every method: <em>what does it return?</em> The answers are where the traps are.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Call</th><th>Does</th><th>Returns</th></tr></thead>
+    <tbody>
+      <tr><td><code>new Map(entries)</code></td><td>creates; optional array of <code>[key, value]</code> pairs</td><td>the map</td></tr>
+      <tr><td><code>m.set(key, value)</code></td><td>adds or overwrites</td><td><strong>the map itself</strong>, so calls chain</td></tr>
+      <tr><td><code>m.get(key)</code></td><td>looks up</td><td>the value, or <code>undefined</code></td></tr>
+      <tr><td><code>m.has(key)</code></td><td>checks</td><td><code>true</code> / <code>false</code></td></tr>
+      <tr><td><code>m.delete(key)</code></td><td>removes</td><td><code>true</code> if it was there, else <code>false</code></td></tr>
+      <tr><td><code>m.clear()</code></td><td>empties it</td><td><code>undefined</code></td></tr>
+      <tr><td><code>m.size</code></td><td>counts entries</td><td>a number. <strong>A property, not a method</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <pre><code>const m = new Map();
+m.set("a", 1).set("b", 2);         <span class="tok-com">// chains, because set returns the map</span>
+m.get("a");      <span class="tok-out">// 1</span>
+m.get("zz");     <span class="tok-out">// undefined</span>
+m.delete("a");   <span class="tok-out">// true</span>
+m.delete("a");   <span class="tok-out">// false — already gone</span>
+m.size;          <span class="tok-out">// 1</span></code></pre>
+
+  <h3>Keys are compared by identity (L6's question 6)</h3>
+  <p>A <code>Map</code> never converts keys. That gives you two facts, one helpful and one a trap:</p>
+  <pre><code>const t = new Map();
+t.set(1, "num");
+t.set("1", "str");
+t.size;              <span class="tok-out">// 2 — 1 and "1" are different keys now</span>
+
+const u = new Map();
+u.set({ id: 1 }, "a");
+u.get({ id: 1 });    <span class="tok-out">// undefined</span></code></pre>
+  <p>The second one is easy to misread, and on 10-06 it was. It looks like <code>get({ id: 1 })</code> means
+  <em>"find me a key that looks like this"</em>. It doesn't. Two facts:</p>
+  <p><strong>Fact 1: the <code>{ }</code> runs before <code>get</code> does.</strong> JavaScript evaluates
+  what's inside the parentheses <em>first</em>, then calls the method. So this one line is exactly these
+  two:</p>
+  <pre><code>u.get({ id: 1 });
+<span class="tok-com">// is the same as:</span>
+const temp = { id: 1 };   <span class="tok-com">// the { } builds a NEW object, right now</span>
+u.get(temp);              <span class="tok-com">// get receives that new object, never the text you typed</span></code></pre>
+  <p><strong>Fact 2: <code>get</code> asks "same object?", not "looks the same?"</strong> It compares keys
+  the way <code>===</code> does, and <code>{ id: 1 } === { id: 1 }</code> is <code>false</code> (L4). So
+  keep the reference you stored with and look up with that:</p>
+  <pre><code>const key = { id: 1 };
+u.set(key, "a");
+u.get(key);    <span class="tok-out">// "a" — the same object</span>
+const b = key;
+u.get(b);      <span class="tok-out">// "a" — b points at the same object too</span></code></pre>
+  <p><strong>Why it feels like it should work:</strong> a plain object <em>does</em> "find" it.
+  <code>o[{ id: 1 }] = "a"; o[{ id: 1 }]</code> gives <code>"a"</code>. But so does
+  <code>o[{ id: 999 }]</code>, because every object key collapses to the same string
+  <code>"[object Object]"</code> (§1 problem 1). That isn't matching contents, it's the bug. A Map refuses
+  to do it.</p>
+  <p>(One small exception to "compared like <code>===</code>": <code>NaN</code> works as a key, even though
+  <code>NaN !== NaN</code>. Trivia, you won't need it.)</p>
+
+  <h3>The trap: <code>m[key] = value</code> is not an entry</h3>
+  <pre><code>const b = new Map();
+b["a"] = 1;
+b.size;      <span class="tok-out">// 0</span>
+b.get("a");  <span class="tok-out">// undefined</span>
+b.a;         <span class="tok-out">// 1</span></code></pre>
+  <p>A Map is an object too, so brackets do what they always do: they put a <strong>plain property on the
+  Map object</strong>. Entries only go in through <code>set</code>. This is the same fact as L6 P5, where
+  <code>arr.extra = "x"</code> was a property on the array object, not an element. <em>A named property on a
+  collection is not part of the collection.</em></p>
+
+  <h3><code>size</code> is a getter. That's 5b.</h3>
+  <p><code>size</code> lives on <code>Map.prototype</code> as an <strong>accessor property</strong>: it has a
+  <code>get</code>, no <code>set</code>, and no <code>value</code>. That one fact explains three
+  behaviours:</p>
+  <ul>
+    <li><code>m.size()</code> throws <code>TypeError: m.size is not a function</code>. Reading
+    <code>m.size</code> runs the getter and gives you a number, and you can't call a number.</li>
+    <li><code>m.size = 10</code> is silently ignored in sloppy mode. There is no setter to run.</li>
+    <li>In strict mode the same line throws <code>TypeError: Cannot set property size of #&lt;Map&gt; which has
+    only a getter</code>.</li>
+  </ul>
+
+  <h3>Looping a Map</h3>
+  <pre><code>const scores = new Map([["asha", 9], ["ravi", 7]]);
+
+for (const [name, score] of scores) console.log(name, score);   <span class="tok-com">// each entry is [key, value]</span>
+<span class="tok-out">// asha 9      ravi 7</span>
+
+scores.forEach((value, key) =&gt; console.log(key, value));       <span class="tok-com">// value FIRST</span>
+[...scores.keys()]      <span class="tok-out">// ["asha", "ravi"]</span>
+[...scores.values()]    <span class="tok-out">// [9, 7]</span></code></pre>
+  <p><strong><code>forEach</code> passes the value first, then the key.</strong> That matches the array
+  contract from L6 §2: value, then where it lives (index for an array, key for a Map), then the collection.
+  The order is the same; only the position is a key instead of an index.</p>
+
+  <h3>Converting both ways</h3>
+  <pre><code>new Map(Object.entries({ a: 1 }))       <span class="tok-out">// Map(1) { "a" =&gt; 1 }</span>
+Object.fromEntries(new Map([["a", 1]]))  <span class="tok-out">// { a: 1 }</span>
+JSON.stringify(new Map([["a", 1]]))      <span class="tok-out">// "{}"   — the trap</span></code></pre>
+  <p><code>JSON.stringify</code> doesn't know about Map entries. It sees an object with no own enumerable
+  properties and writes <code>{}</code>. To send a Map to an API or put it in <code>localStorage</code>,
+  convert it first with <code>Object.fromEntries</code> or <code>[...m]</code>. <code>fromEntries</code> converts
+  the keys back to strings, so an object key comes out as <code>"[object Object]"</code> again. Problem 1,
+  back for one line.</p>
+
+  <h2>3 · Map vs object: the answer you say</h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th>Plain object</th><th><code>Map</code></th></tr></thead>
+    <tbody>
+      <tr><td>Key types</td><td>strings and symbols; anything else is converted to a string</td><td>any value; objects by identity</td></tr>
+      <tr><td>Starts empty?</td><td>no: inherits <code>toString</code>, <code>constructor</code>…</td><td>yes</td></tr>
+      <tr><td>Order</td><td>integer-like keys ascending, then strings in insertion order</td><td>always insertion order</td></tr>
+      <tr><td>Size</td><td><code>Object.keys(o).length</code></td><td><code>m.size</code></td></tr>
+      <tr><td><code>for...of</code></td><td>throws <code>TypeError</code></td><td>works, gives <code>[key, value]</code></td></tr>
+      <tr><td>JSON</td><td>works</td><td>gives <code>"{}"</code></td></tr>
+      <tr><td>Reach for it when</td><td>it's a <strong>record</strong>: a fixed shape you know in advance (a user, a config, props)</td><td>it's a <strong>dictionary</strong>: keys added at runtime, non-string keys, lots of add/delete, counting, caching</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note">
+    <span class="callout-label">Say it like this</span>
+    "An object is for a record, where I know the shape. A Map is for a dictionary. Map keys can be any type and
+    aren't converted to strings. It has no inherited keys, it keeps insertion order, and it has
+    <code>size</code> and is iterable. I'd use a Map for counting, caching, or anything keyed by an object.
+    The one thing an object does better is JSON."
+  </div>
+  <p>Follow-up you should expect: <em>"Can't you just use <code>Object.create(null)</code>?"</em> That fixes
+  problem 2 (no inherited keys), but not problems 1, 3 or 4. Keys still become strings, the order is still
+  integers first, and there's still no size.</p>
+
+  <h2>4 · Set: unique values, and fast "have I seen this?"</h2>
+  <p>A <code>Set</code> is a collection of <strong>unique values</strong>, with no keys. You knew the dedupe
+  use. The second use matters more in coding rounds.</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Call</th><th>Returns</th></tr></thead>
+    <tbody>
+      <tr><td><code>new Set(iterable)</code></td><td>the set, with duplicates dropped</td></tr>
+      <tr><td><code>s.add(value)</code></td><td><strong>the set itself</strong> (chains, like <code>m.set</code>)</td></tr>
+      <tr><td><code>s.has(value)</code></td><td><code>true</code> / <code>false</code></td></tr>
+      <tr><td><code>s.delete(value)</code></td><td><code>true</code> if it was there, else <code>false</code></td></tr>
+      <tr><td><code>s.size</code></td><td>a number (a getter, like Map's)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>Use 1: dedupe (you knew this)</h3>
+  <pre><code>[...new Set([3, 1, 3, 2, 1])]   <span class="tok-out">// [3, 1, 2]  — first-appearance order, NOT sorted</span>
+new Set("hello").size            <span class="tok-out">// 4  — a string is iterable, so you get h e l o</span></code></pre>
+
+  <h3>Uniqueness is by identity</h3>
+  <pre><code>new Set([{ a: 1 }, { a: 1 }]).size   <span class="tok-out">// 2  — two different objects</span>
+const r = { a: 1 };
+new Set([r, r]).size                 <span class="tok-out">// 1  — the same object twice</span></code></pre>
+  <p>This is why <code>new Set</code> could <strong>not</strong> solve your 10-01 unique-objects drill on its
+  own, and you needed <code>some</code> with a name comparison. A Set compares objects by identity, and you
+  wanted them compared by a field.</p>
+
+  <h3>Use 2: fast lookup (the one that matters in coding rounds)</h3>
+  <p><code>arr.includes(x)</code> walks the array: <strong>O(n)</strong>. <code>set.has(x)</code> is a hash
+  lookup, so on average it takes <strong>constant time</strong> no matter how big the set is (the spec only
+  promises "sublinear"). Inside a loop that's the difference between O(n²) and O(n). Whenever a solution
+  says <em>"for each item, have I seen X before?"</em>, the seen-list should be a Set. Drill B is exactly this.</p>
+
+  <h3>Union and intersection</h3>
+  <pre><code>const a = new Set([1, 2]), b = new Set([2, 3]);
+new Set([...a, ...b])                  <span class="tok-out">// union: {1, 2, 3}</span>
+[...a].filter(x =&gt; b.has(x))           <span class="tok-out">// intersection: [2]</span>
+a.union(b); a.intersection(b);         <span class="tok-com">// built-in since 2024 (Node 22+), same results</span></code></pre>
+  <p>In an interview, write the spread/filter version and mention the built-ins. It shows you know both.</p>
+
+  <h2>5 · The floor under WeakMap: when memory is actually freed</h2>
+  <p>This is the layer the probe found missing. You said memory is freed when you <code>delete</code> a
+  property or re-assign the variable. Both are close, and both miss the rule.</p>
+
+  <div class="note">
+    <span class="callout-label">The one rule</span>
+    JavaScript frees an object <strong>when nothing can reach it any more</strong>. "Reach" means there's a
+    chain of references to it starting from a <strong>root</strong>: a global variable, a variable of a
+    function that's running right now, or a variable a still-reachable closure holds on to. You never free
+    memory yourself. The <strong>garbage collector</strong> does it automatically, at a moment the engine
+    picks.
+  </div>
+
+  <p>So <code>delete obj.prop</code> and <code>x = null</code> each remove <strong>one reference</strong>.
+  Whether the object is freed depends on whether any <em>other</em> reference still leads to it:</p>
+  <pre><code>let user = { name: "Asha" };
+const admins = [user];
+user = null;              <span class="tok-com">// one reference gone…</span>
+console.log(admins[0]);   <span class="tok-out">// { name: "Asha" } — still reachable through admins, so NOT freed</span></code></pre>
+  <p>Remove the last path and it becomes collectable. Not "the moment you re-assign", but "once nothing
+  reaches it". That one distinction is the difference between your probe answer and the real rule.</p>
+
+  <h3>A memory leak, said properly</h3>
+  <p>A leak is memory the program <strong>no longer needs but can still reach</strong>, so it can never be
+  freed. Your closure example was a real one, with one condition added: a closure keeps its outer variables
+  reachable <strong>for as long as the closure itself is reachable</strong>. It leaks when something
+  long-lived holds the closure. The usual suspects:</p>
+  <ul>
+    <li>an event listener or <code>setInterval</code> that's never removed. It holds the callback, the callback
+    holds its closure, and the closure holds whatever big data it closed over. In React this is the missing
+    <code>useEffect</code> cleanup.</li>
+    <li>a global cache (an object or a <strong>Map</strong>) that only ever grows.</li>
+    <li>a DOM node removed from the page but still referenced from a variable ("detached DOM").</li>
+  </ul>
+  <p>The second one is the setup for §6. A Map used as a cache keyed by objects <strong>holds every key
+  object strongly</strong>. Even when the rest of the app is done with an object, the Map still reaches it,
+  so it can never be freed.</p>
+
+  <h2>6 · WeakMap and WeakSet</h2>
+  <p>A <code>WeakMap</code> is a Map whose hold on its <strong>keys</strong> is <strong>weak</strong>: the
+  WeakMap's reference to a key <em>does not count</em> for reachability. If the key object can't be reached
+  any other way, the engine is free to collect it, and the entry (key and value) disappears with it.</p>
+  <pre><code>const meta = new WeakMap();
+let node = { id: 7 };
+meta.set(node, { clicks: 3 });
+meta.get(node);   <span class="tok-out">// { clicks: 3 }</span>
+node = null;      <span class="tok-com">// nothing else reaches the object; the entry can now be collected</span></code></pre>
+
+  <h3>Every restriction follows from that one idea</h3>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Restriction</th><th>Why it has to be that way</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Keys must be objects.</strong> <code>wm.set("a", 1)</code> throws
+      <code>TypeError: Invalid value used as weak map key</code></td>
+      <td>A primitive like <code>"a"</code> has no identity that can become unreachable: you can always write
+      <code>"a"</code> again. Only an object can be "the one nobody reaches any more". (Since 2023,
+      non-registered symbols are also allowed. You won't be asked.)</td></tr>
+      <tr><td><strong>No <code>size</code>, no <code>keys()</code>/<code>values()</code>/<code>entries()</code>,
+      no <code>for...of</code>, no <code>forEach</code>, no <code>clear()</code>.</strong> Only
+      <code>set</code>, <code>get</code>, <code>has</code>, <code>delete</code>.</td>
+      <td>Entries can vanish whenever the GC runs, and you can't know when that is. So there's no stable
+      answer to "what's in it?" or "how many?", and the API doesn't pretend there is.
+      <code>wm.size</code> is <code>undefined</code>, and <code>for...of</code> throws
+      <code>TypeError: wm is not iterable</code>.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Be honest about this if asked: <strong>you can't watch an entry disappear from normal code.</strong>
+  That isn't a gap in the demo. It's the design.</p>
+
+  <h3>When you would reach for it</h3>
+  <ul>
+    <li><strong>Caching per object.</strong> Your <code>memoize</code> turned arguments into a string key with
+    <code>JSON.stringify</code>, which broke on key order and functions. When the argument is a single object,
+    a <code>WeakMap</code> keyed by <em>the object itself</em> needs no string at all, and the cache entry dies
+    when the object does. No leak.</li>
+    <li><strong>Extra data about objects you don't own</strong>, like DOM nodes or another library's objects,
+    without adding properties to them.</li>
+    <li><strong>Circular references in <code>deepClone</code>.</strong> The standard fix is a
+    <code>seen</code> WeakMap from original to clone. Before cloning an object, check whether you've already
+    cloned it.</li>
+  </ul>
+  <p><code>WeakSet</code> is the same idea without values: <code>add</code>, <code>has</code>,
+  <code>delete</code>, objects only. Use it for "have I already processed this object?" (visited nodes,
+  objects already validated) without keeping those objects alive.</p>
+
+  <div class="note">
+    <span class="callout-label">Say it like this</span>
+    "A WeakMap holds its keys weakly, so an entry doesn't keep its key object alive. Once nothing else
+    references the key, the entry can be garbage-collected. That's why keys have to be objects, and why it
+    has no size and isn't iterable: its contents can change whenever the GC runs. I'd use it to cache or
+    attach data per object without causing a leak."
+  </div>
+
+  <h2>7 · The procedure: no eighth question</h2>
+  <p>This page doesn't need a new question. The two you already have do all the work:</p>
+  <ul>
+    <li><strong>Q6, same object or a new one?</strong> decides every Map and Set lookup, because keys and
+    values are compared by identity.</li>
+    <li><strong>Q7, what does it return?</strong> catches every API trap: <code>set</code>/<code>add</code>
+    return the collection, <code>delete</code> returns a boolean, <code>get</code> can return
+    <code>undefined</code>, and <code>size</code> isn't a function at all.</li>
+  </ul>
+
+  <h2>8 · Retrieval quiz</h2>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">Which one can use an object as a key <em>without</em> converting it to a string?</p>
+    <ul class="quiz-opts">
+      <li><button>a plain object</button></li>
+      <li><button>a Map</button></li>
+      <li><button>both of them</button></li>
+      <li><button>neither of them</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>A Map.</strong> A plain object converts every key to a string, so
+    any object key becomes <code>"[object Object]"</code> and they all collide.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q"><code>map.set("a", 1)</code> returns…</p>
+    <ul class="quiz-opts">
+      <li><button>undefined</button></li>
+      <li><button>true</button></li>
+      <li><button>the map itself</button></li>
+      <li><button>the value 1</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The map itself.</strong> That's why <code>m.set(...).set(...)</code>
+    chains. <code>set.add</code> does the same. It's L6's SAME label, on a new collection.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">When does JavaScript free an object's memory?</p>
+    <ul class="quiz-opts">
+      <li><button>when you call delete on it</button></li>
+      <li><button>when you set its variable to null</button></li>
+      <li><button>once nothing can reach it any more</button></li>
+      <li><button>when its function returns</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Once nothing can reach it.</strong> <code>delete</code> and
+    <code>= null</code> each remove one reference. If another reference still leads to the object, it stays.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">Why can't you loop over a WeakMap?</p>
+    <ul class="quiz-opts">
+      <li><button>entries can vanish at any GC</button></li>
+      <li><button>its keys are private fields</button></li>
+      <li><button>it is always empty</button></li>
+      <li><button>it's an engine limitation</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Entries can vanish whenever the GC runs</strong>, and you can't know
+    when. There's no stable list to hand you, so the API has no size, keys, iteration or clear.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q"><code>[...new Set([3, 1, 3, 2, 1])]</code> is…</p>
+    <ul class="quiz-opts">
+      <li><button>[1, 2, 3]</button></li>
+      <li><button>[3, 1, 2]</button></li>
+      <li><button>[3, 1, 3, 2, 1]</button></li>
+      <li><button>[2, 1, 3]</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>[3, 1, 2]</code></strong>. Duplicates are dropped and the first
+    appearance wins its place. A Set keeps insertion order; it doesn't sort.</div>
+  </div>
+
+  <h2>9 · Output drills</h2>
+  <p>Cold. For each one, run <strong>Q6</strong> (same object or a new one?) and <strong>Q7</strong>
+  (what does it return?) before you answer.</p>
+
+  <details class="reveal">
+    <summary>D1 · object vs Map, same two keys</summary>
+    <pre><code>const o = {}, m = new Map();
+o[1] = "a";  o["1"] = "b";
+m.set(1, "a");  m.set("1", "b");
+console.log(Object.keys(o).length, m.size);</code></pre>
+    <p><strong><code>1 2</code></strong>. The object converts <code>1</code> to <code>"1"</code>, so the
+    second write overwrites the first. The Map keeps the number and the string as two keys.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 · the key you didn't keep</summary>
+    <pre><code>const m = new Map();
+const k = { id: 1 };
+m.set(k, "first");
+m.set({ id: 1 }, "second");
+console.log(m.size, m.get(k), m.get({ id: 1 }));</code></pre>
+    <p><strong><code>2 "first" undefined</code></strong>. Three different objects are written as
+    <code>{ id: 1 }</code>. Only <code>k</code> was kept, so only <code>k</code> can find its entry. The
+    third lookup creates a brand-new object that was never a key.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 · brackets on a Map</summary>
+    <pre><code>const m = new Map();
+m["x"] = 1;
+m.set("y", 2);
+console.log(m.size, m.get("x"), m.x);</code></pre>
+    <p><strong><code>1 undefined 1</code></strong>. <code>m["x"]</code> made a plain property on the Map
+    object, not an entry. Only <code>"y"</code> went in through <code>set</code>, so the size is 1.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 · what a Set counts as a duplicate</summary>
+    <pre><code>const s = new Set([1, "1", 1, { a: 1 }, { a: 1 }]);
+console.log(s.size);</code></pre>
+    <p><strong><code>4</code></strong>. <code>1</code> appears once, <code>"1"</code> is a different value,
+    and the two <code>{ a: 1 }</code> are two different objects.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 · order: object vs Map</summary>
+    <pre><code>const obj = { b: 1, 10: 1, a: 1, 2: 1 };
+const map = new Map([["b", 1], [10, 1], ["a", 1], [2, 1]]);
+console.log(Object.keys(obj), [...map.keys()]);</code></pre>
+    <p><strong><code>["2", "10", "b", "a"]  ["b", 10, "a", 2]</code></strong>. In the object, the integer
+    keys jump to the front in ascending order and come back as strings. In the Map, the keys come back in
+    exactly the order they were added, and the numbers stay numbers.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 · Map's forEach argument order</summary>
+    <pre><code>new Map([["a", 1]]).forEach((x, y) =&gt; console.log(x, y));</code></pre>
+    <p><strong><code>1 "a"</code></strong>. Value first, then key. The parameter names
+    <code>x</code> and <code>y</code> don't change what's passed into those slots (L6 §2b: the method's own
+    code calls your callback, as <code>cb(value, key, map)</code>).</p>
+  </details>
+
+  <h2>10 · Label-only round</h2>
+  <p>No outputs, no explanations. One label each. <strong>Bar 7/8.</strong></p>
+  <ul>
+    <li><strong>SAME</strong>: returns the collection itself</li>
+    <li><strong>BOOL</strong>: returns <code>true</code> or <code>false</code></li>
+    <li><strong>VALUE</strong>: returns a stored value, or <code>undefined</code></li>
+    <li><strong>NUMBER</strong>: gives back a number</li>
+    <li><strong>NEW</strong>: returns a new array</li>
+    <li><strong>THROWS</strong>: throws <code>TypeError</code></li>
+  </ul>
+  <ol>
+    <li><code>m.set("a", 1)</code></li>
+    <li><code>s.add(1)</code></li>
+    <li><code>m.delete("missing")</code></li>
+    <li><code>m.get("missing")</code></li>
+    <li><code>m.size</code></li>
+    <li><code>m.size()</code></li>
+    <li><code>[...new Set(arr)]</code></li>
+    <li><code>new WeakMap().set("a", 1)</code></li>
+  </ol>
+
+  <details class="reveal">
+    <summary>Answers</summary>
+    <ol>
+      <li><code>m.set</code> — <strong>SAME</strong></li>
+      <li><code>s.add</code> — <strong>SAME</strong></li>
+      <li><code>m.delete("missing")</code> — <strong>BOOL</strong> (<code>false</code>)</li>
+      <li><code>m.get("missing")</code> — <strong>VALUE</strong> (<code>undefined</code>)</li>
+      <li><code>m.size</code> — <strong>NUMBER</strong></li>
+      <li><code>m.size()</code> — <strong>THROWS</strong> (<code>size</code> is a getter; the number isn't callable)</li>
+      <li><code>[...new Set(arr)]</code> — <strong>NEW</strong></li>
+      <li><code>new WeakMap().set("a", 1)</code> — <strong>THROWS</strong> (keys must be objects)</li>
+    </ol>
+    <p><strong>The planted traps are #1/#2, #6 and #8.</strong> <code>set</code> and <code>add</code> sound like
+    they return nothing, or a boolean like <code>delete</code>. They return the collection. #6
+    <em>looks</em> like a normal method call. #8 looks like an ordinary <code>set</code>, and the
+    surface hides that the key is a primitive. All three are surface-shape matching, in new clothes.</p>
+  </details>
+
+  <h2>11 · Coding drills</h2>
+
+  <h3>Drill A: count characters, then find the first one that appears once</h3>
+  <p>This is the ebook's problem 18, plus one step. Write <code>firstUnique(str)</code>:
+  <code>firstUnique("swiss")</code> is <code>"w"</code>, and <code>"aabb"</code> and <code>""</code> give
+  <code>undefined</code>. Use a <code>Map</code>. Attempt it before opening anything.</p>
+
+  <details class="reveal">
+    <summary>Hint ladder, then the answer</summary>
+    <p><strong>Hint 1.</strong> Two passes. The first counts. The second walks the counts and returns the first
+    one equal to 1. Which Map guarantee makes "the first one" mean "first in the string"?</p>
+    <p><strong>Hint 2.</strong> The count line is <code>c.set(ch, (c.get(ch) || 0) + 1)</code>. Q7 says
+    <code>get</code> returns <code>undefined</code> for a new character, and that's what <code>|| 0</code>
+    covers.</p>
+    <pre><code>function firstUnique(str) {
+  const counts = new Map();
+  for (const ch of str) counts.set(ch, (counts.get(ch) || 0) + 1);
+  for (const [ch, n] of counts) if (n === 1) return ch;
+  return undefined;
+}</code></pre>
+    <p><strong>Why Map and not an object, in one input:</strong> <code>firstUnique("ba1")</code> should be
+    <code>"b"</code>. The Map version returns <code>"b"</code>. The object version (<code>for...in</code> over
+    a counts object) returns <code>"1"</code>, because the integer-like key jumps to the front (§1 problem 3).
+    Verified on Node. (Problem 2 can't bite here, because a single character never matches an inherited name
+    like <code>constructor</code>. Count <em>words</em> instead of characters and it does.)</p>
+    <p><strong>And the ebook is wrong again.</strong> Its problem 18 says <code>"helaalo"</code> counts to
+    <code>{ h: 1, e: 1, l: 2, o: 1 }</code>. Count it yourself: it's missing <code>a: 2</code>. The code is
+    right, and the printed answer was typed by hand. Same lesson as L5's ebook bug: <em>run it, don't trust
+    the comment.</em></p>
+  </details>
+
+  <h3>Drill B: find the pairs that sum to a target</h3>
+  <p>The ebook's problem 26: <code>findPairs([1, 2, 3, 4, 5, 6, 7, 8, 9], 10)</code>. Do it in <strong>one
+  pass</strong> with a <code>Set</code>. Then say the time complexity, and what a nested-loop version would
+  cost.</p>
+
+  <details class="reveal">
+    <summary>Hint, then the answer</summary>
+    <p><strong>Hint.</strong> For each <code>n</code>, the number you need is <code>target - n</code>. Have
+    you seen it already? That's a <code>has</code> on a Set of everything to the left of you.</p>
+    <pre><code>function findPairs(arr, target) {
+  const seen = new Set();
+  const out = [];
+  for (const n of arr) {
+    if (seen.has(target - n)) out.push([target - n, n]);
+    seen.add(n);
+  }
+  return out;
+}</code></pre>
+    <p><strong>O(n)</strong>: one pass, and each <code>has</code>/<code>add</code> is constant time on
+    average. Two nested loops would be <strong>O(n²)</strong>. That swap is §4's "use 2", and it's the most
+    common reason a Set shows up in a coding round.</p>
+    <p>Output: <code>[[4, 6], [3, 7], [2, 8], [1, 9]]</code>. A pair is found when its <em>second</em>
+    number arrives, so the pairs come out in that order. The ebook prints two different outputs for this
+    problem, and the second one includes <code>[5, 5]</code>. That's impossible with one <code>5</code> in
+    the input: when 5 arrives, the 5 it needs isn't in <code>seen</code> yet. <code>findPairs([5, 5], 10)</code>
+    does give <code>[[5, 5]]</code>.</p>
+    <p>Edge cases to ask the interviewer about: <code>[4, 4, 4]</code> with target 8 gives
+    <code>[[4, 4], [4, 4]]</code>. Should repeated pairs count? Asking is the senior move, same as L6
+    Drill B.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/map-set">javascript.info — Map and Set</a> and
+    <a href="https://javascript.info/weakmap-weakset">WeakMap and WeakSet</a>, and the "Objects vs. Maps"
+    table on <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map">MDN
+    — Map</a>, which is §3 of this page from the people who wrote the docs. For §5, read
+    <a href="https://javascript.info/garbage-collection">javascript.info — Garbage collection</a>. Its
+    "reachability" diagrams are the clearest picture of the rule.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Drilled 2026-10-06. Gate not passed yet.</strong> Labels scored 5/8 (the L6 re-run) and 6/8 (this page),
+    and predict scored 3/7. Both coding drills are solved. Open items go into the next lesson's §0. Full record:
+    <code>learning-records/0006b-map-and-set.md</code>.
+    <br><br>
+    <strong>Next module:</strong> M7, async JavaScript and the event loop.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0006-arrays-and-iteration.html">← Lesson 6: Arrays &amp; iteration</a>
+    <a href="0007-event-loop-and-promises.html">Lesson 7: The event loop →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

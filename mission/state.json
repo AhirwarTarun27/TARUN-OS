@@ -48,9 +48,13 @@
     "iqaLessons": 0.5
   },
 
-  "applications": [],
+  "applications": [
+    { "date": "2026-09-30", "company": "Alepo Technologies", "role": "AI-Native Product Engineer", "status": "interviewing" }
+  ],
 
-  "interviews": [],
+  "interviews": [
+    { "date": "2026-09-30", "company": "Alepo Technologies", "round": "R1: AI-first development + soft skills", "result": "pending", "log": "mission/interviews/log/2026-09-30-alepo-r1.md" }
+  ],
 
   "waves": {
     "sacrificial": { "start": "2026-08-10", "end": "2026-09-27" },
