@@ -181,7 +181,7 @@ const id = setInterval(() =&gt; {
     <strong>to completion</strong>, then repeat. Forever.
   </div>
   <p>That's the whole thing for timers. §7 adds the second queue, the one Promises use. You need Promises
-  first.</p>
+  first. (To see this run step by step, jump to <strong>§7b · Watch it run</strong> and pick scenario 7.)</p>
 
   <h2>5 · Promises from zero</h2>
   <p>Before Promises, "give me the result later" meant passing a callback:
@@ -296,6 +296,17 @@ Promise.resolve().then(() =&gt; {
   <p>Row 1 has a trap of its own: <strong>"callback" does not mean "async".</strong> The function you pass to
   <code>map</code> runs synchronously, right there, inside <code>map</code> (L6 §2b). Only callbacks handed to
   the host or to a Promise wait.</p>
+
+  <h2>7b · Watch it run</h2>
+  <p>Everything in §1-§7, live. Pick a scenario, then press <strong>Step ▶</strong> (or the → key) and
+  read the line under the buttons. It says what just happened and why. Watch three things: <strong>what
+  is on the call stack</strong>, <strong>which queue the callback lands in</strong>, and <strong>the moment the
+  stack becomes empty</strong>. Each scenario is worth trying twice: once to predict the output in the box
+  at the bottom, once to step through it.</p>
+  <div data-elviz="basics,executor,drain,pingpong,chains,delays,blocking,promisify"></div>
+  <p>Every scenario's final output matches what Node actually printed when these snippets were run. Scenario 2
+  is the ebook's question 14, scenario 4 is drill D2 below, and scenario 7 is the frozen <code>while</code> loop
+  from §1, with time passing.</p>
 
   <h2>8 · The procedure: the eighth question</h2>
   <ol>
@@ -567,9 +578,9 @@ getUserP(-1).catch(e =&gt; console.log(e.message));   <span class="tok-out">// b
   </div>
 
   <div class="ask-teacher">
-    <strong>Not drilled yet.</strong> Reading this page is not the rep. Say <em>"drill me on L7"</em>. It opens
-    with §0 (the M6 carry items), then the speak half (event loop and Promises out loud), the "so why"
-    follow-ups, fresh output snippets you haven't read, and a fresh label-only round.
+    <strong>Drilled 2026-10-08. Gate passed</strong>: labels 7/8, predict 5/6. Still to fix cold: a
+    <code>.then</code> on a <em>pending</em> Promise queues only when it resolves; <code>at(-1)</code> gives an element;
+    <code>in</code> gives a boolean; and say all four steps of <code>new</code>.
     <br><br>
     <strong>Next page:</strong> Lesson 7b, <code>async</code>/<code>await</code> (and why it doesn't block),
     <code>Promise.all</code>/<code>allSettled</code>/<code>any</code>/<code>race</code>, error handling, and the
@@ -578,10 +589,11 @@ getUserP(-1).catch(e =&gt; console.log(e.message));   <span class="tok-out">// b
 
   <div class="lesson-nav">
     <a href="0006b-map-and-set.html">← Lesson 6b: Map, Set &amp; the weak ones</a>
-    <a href="../reference/course-map.html">Course map →</a>
+    <a href="0007b-async-await.html">Lesson 7b: async/await →</a>
   </div>
 
 </div>
 <script src="../assets/quiz.js"></script>
+<script src="../assets/event-loop-viz.js"></script>
 </body>
 </html>

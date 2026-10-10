@@ -222,6 +222,36 @@
       <dd>An <code>if</code> at the top that rejects bad input early.<span class="js-like">same pattern</span></dd></div>
   </dl>
 
+  <h2 id="l5">From Lesson 5 · Comparisons</h2>
+  <dl class="terms">
+    <div class="term"><dt>Comparison operator / relational operator</dt>
+      <dd>An operator that compares two values and answers <code>True</code> or <code>False</code>.<span class="js-like">same operators</span></dd></div>
+    <div class="term"><dt><code>===</code> / <code>!==</code></dt>
+      <dd>Don't exist in Python. <code>==</code> and <code>!=</code> already refuse to convert types.<span class="js-like">act like JS <code>===</code></span></dd></div>
+    <div class="term"><dt>Unicode / code point</dt>
+      <dd>The table that gives every character a number. That number is its code point.<span class="js-like">same table</span></dd></div>
+    <div class="term"><dt><code>ord()</code></dt>
+      <dd>The code point of one character: <code>ord("a")</code> is <code>97</code>.<span class="js-like"><code>charCodeAt(0)</code></span></dd></div>
+    <div class="term"><dt>Lexicographic order</dt>
+      <dd>Dictionary order by code point. Capitals sort before lowercase.<span class="js-like">same result</span></dd></div>
+    <div class="term"><dt>Container / list / tuple / dict</dt>
+      <dd>A container holds other values. List <code>[1, 2]</code>, tuple <code>(1, 2)</code> (can't change), dict <code>{"a": 1}</code>.<span class="js-like">array, no equivalent, object</span></dd></div>
+    <div class="term"><dt>Identity (<code>is</code> / <code>is not</code>)</dt>
+      <dd>"Same object?", not "same value?". <code>id()</code> gives an object's identity number.<span class="js-like"><code>===</code> on arrays</span></dd></div>
+    <div class="term"><dt>Alias</dt>
+      <dd>A second name for the same object. <code>c = a</code> is an alias, not a copy.<span class="js-like">two variables, one array</span></dd></div>
+    <div class="term"><dt>Singleton</dt>
+      <dd>An object with only one copy. <code>None</code> is one, so use <code>is None</code>.<span class="js-like"><code>null</code></span></dd></div>
+    <div class="term"><dt>Membership (<code>in</code> / <code>not in</code>)</dt>
+      <dd>"Is this inside that?" Text, lists and dict keys.<span class="js-like"><code>.includes()</code></span></dd></div>
+    <div class="term"><dt>Substring</dt>
+      <dd>A piece of text in one unbroken run: <code>"Bat"</code> in <code>"Super Batman"</code>.<span class="js-like">what <code>.includes()</code> finds</span></dd></div>
+    <div class="term"><dt>Key</dt>
+      <dd>The left-hand name in a dict entry. <code>in</code> checks keys, not values.<span class="js-like">property name</span></dd></div>
+    <div class="term"><dt>NaN</dt>
+      <dd>"Not a number". Compares <code>False</code> with everything, itself included.<span class="js-like">same in JS</span></dd></div>
+  </dl>
+
   <div class="lesson-nav">
     <a href="js-to-python.html">← JS → Python cheat sheet</a>
     <a href="course-map.html">Course map →</a>

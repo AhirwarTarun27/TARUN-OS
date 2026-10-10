@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 5 · Comparisons · Python for a JS Developer</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 5 · Exercism concept 5 of 17 · Comparisons</p>
+    <h1>Comparisons: <code>==</code>, <code>is</code>, <code>in</code></h1>
+    <p class="subtitle">The six operators you know work the same. What's new is <strong>what they can compare</strong>:
+    lists and dicts by their contents (JS says no), plus two new operators, <code>is</code> and <code>in</code>.
+    Three of the four JS traps here make JS say <code>false</code> where Python says <code>True</code>.
+    About 20 minutes.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">How this page works</span>
+    Same as before: <span class="lang js">JavaScript</span> next to <span class="lang py">Python</span>,
+    red boxes for JS habits that break, and a
+    <span style="color:var(--accent-2)">New words in this section</span> box at the end of each section.
+    Every output was run on Python 3.14 (and Node for the JS side) before it was written down.
+  </div>
+
+  <!-- §0 -->
+  <h2 id="s0">0. Warm-up (cold, no scrolling back)</h2>
+  <p>These four come from your drill misses. <strong>Write your answers down and paste them to me before you read
+  on.</strong> The reveals are for after.</p>
+<pre><code>print(not 1 == 2, True or False and False)</code></pre>
+  <details class="reveal"><summary>G1: what prints?</summary>
+    <p><code>True True</code>. <code>==</code> runs before <code>not</code>, so it's <code>not (1 == 2)</code>, which is
+    <code>not False</code>. And <code>and</code> runs before <code>or</code>, so the second one is
+    <code>True or (False and False)</code>. The ladder, tightest first: arithmetic, comparisons, <code>not</code>,
+    <code>and</code>, <code>or</code>.</p>
+  </details>
+<pre><code>def f():
+    return ValueError("neg")
+
+print(f())</code></pre>
+  <details class="reveal"><summary>G2: what prints, and does anything stop?</summary>
+    <p><code>neg</code>, and nothing stops. <code>return</code> hands the error object back as an ordinary value.
+    Only <code>raise</code> stops the program.</p>
+  </details>
+<pre><code>print(7 // 2, -7 % 3, 12 / 4 * 3)</code></pre>
+  <details class="reveal"><summary>G3: what prints?</summary>
+    <p><code>3 2 9.0</code>. <code>//</code> rounds down, so 3.5 becomes 3. For <code>-7 % 3</code>, the answer
+    always lands in 0 to 2: -7, -4, -1, 2. And <code>/</code> gives a float, so <code>12 / 4 * 3</code> is
+    <code>9.0</code>, not <code>9</code>.</p>
+  </details>
+<pre><code>print("1" + 1)</code></pre>
+  <details class="reveal"><summary>G4: what's the error's exact name?</summary>
+    <p><code>TypeError: can only concatenate str (not "int") to str</code>. Wrong <em>kind</em> of value is
+    <code>TypeError</code>. Right kind, wrong value (like <code>int("abc")</code>) is <code>ValueError</code>.</p>
+  </details>
+
+  <!-- §1 -->
+  <h2 id="s1">1. The six comparison operators</h2>
+  <p>A <em>comparison operator</em> looks at two values (its operands) and answers <code>True</code> or
+  <code>False</code>. Exercism also calls these <em>relational operators</em>. You know all six:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Python</th><th>Means</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><code>==</code></td><td>equal</td><td><code>3 == 3</code> → <code>True</code></td></tr>
+      <tr><td><code>!=</code></td><td>not equal</td><td><code>1 != 2</code> → <code>True</code></td></tr>
+      <tr><td><code>&gt;</code> <code>&lt;</code></td><td>greater, less</td><td><code>2 &lt; 1</code> → <code>False</code></td></tr>
+      <tr><td><code>&gt;=</code> <code>&lt;=</code></td><td>greater or equal, less or equal</td><td><code>3 &gt;= 3</code> → <code>True</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>The big difference is that Python has <strong>only one equality operator</strong>. There is no <code>===</code> and
+  no <code>!==</code>. And Python's <code>==</code> already acts like JS's <code>===</code>: it doesn't convert types
+  for you.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>17 == "17"     <span class="tok-out">true</span>    <span class="tok-com">// converts the string</span>
+17 === "17"    <span class="tok-out">false</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>17 == "17"     <span class="tok-out">False</span>
+17 == 17.0     <span class="tok-out">True</span>    <span class="tok-com"># numbers mix freely</span></code></pre></div>
+  </div>
+  <p>Values of different types are never equal, with one exception: numbers. An <code>int</code> and a
+  <code>float</code> with the same value are equal (Lesson 3).</p>
+  <div class="trap">
+    <span class="callout-label">Where comparisons sit in the order</span>
+    All the comparison operators tie with each other, and they run <strong>after</strong> arithmetic and
+    <strong>before</strong> <code>not</code>, <code>and</code> and <code>or</code>. The whole ladder, tightest first:
+    <code>**</code>, then <code>* / // %</code>, then <code>+ -</code>, then comparisons, then <code>not</code>, then
+    <code>and</code>, then <code>or</code>. So <code>not 1 == 2</code> is <code>not (1 == 2)</code>. Chains like
+    <code>1 &lt; x &lt; 10</code> (Lesson 4) work because of this tie.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Comparison operator / relational operator</dt>
+        <dd>An operator that compares two values and answers <code>True</code> or <code>False</code>. Two names for
+        the same thing.<span class="js-like">same operators, same idea</span></dd></div>
+      <div class="term"><dt><code>===</code> / <code>!==</code> <span class="seen">(don't exist in Python)</span></dt>
+        <dd>Python has only <code>==</code> and <code>!=</code>. They already refuse to convert types.
+        <span class="js-like">act like JS <code>===</code> and <code>!==</code></span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §2 -->
+  <h2 id="s2">2. Comparing text</h2>
+  <p>Strings are compared one character at a time, starting from the left, until two characters differ. Each
+  character has a number from <em>Unicode</em>, the big table that gives every letter, digit and emoji its own number.
+  That number is its <em>code point</em>. The built-in <code>ord()</code> shows it:</p>
+<pre><code>ord("A")  <span class="tok-out">65</span>
+ord("Z")  <span class="tok-out">90</span>
+ord("a")  <span class="tok-out">97</span></code></pre>
+  <p>So the comparison is really a comparison of those numbers. This way of ordering is called
+  <em>lexicographic order</em>: dictionary order, except that every capital letter comes before every lowercase one,
+  because capitals have smaller numbers.</p>
+<pre><code>"apple" &lt; "apricot"     <span class="tok-out">True</span>     <span class="tok-com"># 'p' = 'p', then 'p' &lt; 'r'</span>
+"Python" &gt; "Rust"       <span class="tok-out">False</span>    <span class="tok-com"># 'P' &lt; 'R'</span>
+"B" &lt; "a"               <span class="tok-out">True</span>     <span class="tok-com"># 66 &lt; 97</span></code></pre>
+  <p>JS gives the same answers for these. The point is that <code>"B" &lt; "a"</code> being <code>True</code> surprises
+  people, so don't use plain <code>&lt;</code> to sort names by hand.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Unicode / code point</dt>
+        <dd>Unicode is the table that gives every character a number. That number is its code point.
+        <span class="js-like">same table JS uses</span></dd></div>
+      <div class="term"><dt><code>ord()</code></dt>
+        <dd>Gives the code point of one character: <code>ord("a")</code> is <code>97</code>.
+        <span class="js-like"><code>"a".charCodeAt(0)</code></span></dd></div>
+      <div class="term"><dt>Lexicographic order</dt>
+        <dd>Dictionary order by code point, one character at a time from the left. Capitals sort before lowercase.
+        <span class="js-like">same result in JS</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §3 -->
+  <h2 id="s3">3. Comparing lists, tuples and dicts</h2>
+  <p>First, three new containers. A <em>container</em> is a value that holds other values. You'll learn each in its own
+  chapter, but you only need the look of them here:</p>
+  <ul>
+    <li>a <strong>list</strong> is Python's array: <code>[1, 2, 3]</code></li>
+    <li>a <strong>tuple</strong> is a list that can't be changed, written with round brackets: <code>(3, 4, 5)</code></li>
+    <li>a <strong>dict</strong> is Python's object: <code>{"name": "John", "age": 19}</code></li>
+  </ul>
+  <p>Python compares containers by <strong>what's inside them</strong>. Same contents means equal. JS doesn't do that. It
+  compares arrays and objects by <em>where they live in memory</em>, so two separate arrays with the same contents are
+  never equal.</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>[1, 2] === [1, 2]       <span class="tok-out">false</span>
+({a: 1}) === ({a: 1})   <span class="tok-out">false</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>[1, 2] == [1, 2]        <span class="tok-out">True</span>
+{"a": 1} == {"a": 1}    <span class="tok-out">True</span></code></pre></div>
+  </div>
+  <p>More details:</p>
+<pre><code>[2, 1] == [1, 2]        <span class="tok-out">False</span>   <span class="tok-com"># lists care about order</span>
+(3, 4, 5) == (5, 4, 3)  <span class="tok-out">False</span>   <span class="tok-com"># so do tuples</span>
+[1, 2] &lt; [1, 2, 3]      <span class="tok-out">True</span>    <span class="tok-com"># same start, shorter one is "less"</span>
+{"a": 1} == {"a": 2}    <span class="tok-out">False</span>   <span class="tok-com"># dicts compare their contents</span></code></pre>
+  <p>Order only matters for lists and tuples. Lists and tuples are compared position by position, like strings.</p>
+  <div class="trap">
+    <span class="callout-label">JS habit: comparing arrays by hand</span>
+    In JS you'd loop, or call <code>JSON.stringify</code> on both, to compare two arrays. In Python you just write
+    <code>==</code>. It compares the contents, however long they are.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Container / list / tuple / dict</dt>
+        <dd>A container holds other values. A list is <code>[1, 2]</code>, a tuple is <code>(1, 2)</code> and can't
+        change, a dict is <code>{"a": 1}</code>. Each gets its own chapter.<span class="js-like">array, (no equivalent), object</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §4 -->
+  <h2 id="s4">4. <code>is</code>: same <em>object</em>, not same value</h2>
+  <p>You met <code>is</code> in Lesson 2. It asks a different question from <code>==</code>:</p>
+  <ul>
+    <li><code>==</code> asks: "do these have the same <em>value</em>?"</li>
+    <li><code>is</code> asks: "are these the <em>very same object</em>?" That's called <em>identity</em>. <code>is not</code> is its opposite.</li>
+  </ul>
+  <p>Every object has an identity number that never changes, and the built-in <code>id()</code> shows it. Two lists can
+  hold the same items yet be two separate objects:</p>
+<pre><code>a = [1, 2]
+b = [1, 2]
+c = a
+a == b        <span class="tok-out">True</span>     <span class="tok-com"># same contents</span>
+a is b        <span class="tok-out">False</span>    <span class="tok-com"># two separate objects</span>
+a is c        <span class="tok-out">True</span>     <span class="tok-com"># c is just another name for a's object</span></code></pre>
+  <p>That last line, <code>c = a</code>, doesn't copy anything. It gives the object a second name. Another name for the
+  same object is called an <em>alias</em> (this is the "names point at objects" idea from Lesson 1).</p>
+
+  <h3>The one place you should use <code>is</code>: <code>None</code></h3>
+  <p>There is only ever one <code>None</code> in a whole program. An object like that, with a single copy, is called a
+  <em>singleton</em>. So the exact check is identity, and PEP 8 (Lesson 1) says to write it that way:</p>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>if (x === null) { ... }
+if (x !== null) { ... }</code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>if x is None:
+    ...
+if x is not None:
+    ...</code></pre></div>
+  </div>
+  <p><code>x == None</code> usually gives the same answer, but PEP 8 says don't. Always <code>is None</code> and
+  <code>is not None</code>.</p>
+  <div class="trap">
+    <span class="callout-label">Don't use <code>is</code> for numbers or text</span>
+    <code>is</code> is for <code>None</code> and for "same object?" questions. To ask "same value?" always use
+    <code>==</code>, even if <code>is</code> happens to work on a small number today.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Identity (<code>is</code> / <code>is not</code>)</dt>
+        <dd>Asks "same object?", not "same value?". <code>id()</code> gives each object's identity number.
+        <span class="js-like"><code>===</code> on arrays and objects</span></dd></div>
+      <div class="term"><dt>Alias</dt>
+        <dd>A second name for the same object. <code>c = a</code> makes an alias, not a copy.
+        <span class="js-like">two variables pointing at one array</span></dd></div>
+      <div class="term"><dt>Singleton</dt>
+        <dd>An object that only ever has one copy. <code>None</code> is one, so you check it with <code>is None</code>.
+        <span class="js-like"><code>null</code></span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §5 -->
+  <h2 id="s5">5. <code>in</code> and <code>not in</code>: is it inside?</h2>
+  <p><code>in</code> asks "is this a <em>member</em> of that?". This is called a <em>membership</em> test, and
+  <code>not in</code> is the opposite. It works on text, lists and dicts:</p>
+<pre><code>"Bat" in "Super Batman"        <span class="tok-out">True</span>     <span class="tok-com"># a piece of text inside text</span>
+"bat" in "Super Batman"        <span class="tok-out">False</span>    <span class="tok-com"># case matters</span>
+3 in [1, 2, 3]                 <span class="tok-out">True</span>
+5 not in [1, 2, 3]             <span class="tok-out">True</span>
+"age" in {"age": 33}           <span class="tok-out">True</span>
+33 in {"age": 33}              <span class="tok-out">False</span></code></pre>
+  <p>Two things to notice:</p>
+  <ul>
+    <li>For text, <code>in</code> checks for a <em>substring</em>: a piece of the text, of any length, in one
+    piece.</li>
+    <li>For a dict, <code>in</code> checks the <em>keys</em> only, the left-hand names like <code>"age"</code>. The values
+    (like <code>33</code>) don't count.</li>
+  </ul>
+  <div class="vs">
+    <div><span class="lang js">JavaScript</span>
+<pre><code>"Super Batman".includes("Bat")   <span class="tok-out">true</span>
+[10, 20, 30].includes(20)        <span class="tok-out">true</span>
+"age" in {age: 33}               <span class="tok-out">true</span></code></pre></div>
+    <div><span class="lang py">Python</span>
+<pre><code>"Bat" in "Super Batman"          <span class="tok-out">True</span>
+20 in [10, 20, 30]               <span class="tok-out">True</span>
+"age" in {"age": 33}             <span class="tok-out">True</span></code></pre></div>
+  </div>
+  <div class="trap">
+    <span class="callout-label">JS habit: <code>in</code> on an array</span>
+    In JS, <code>in</code> looks at <em>positions</em>, not values: <code>2 in [10, 20, 30]</code> is <code>true</code>,
+    because position 2 exists. In Python, <code>in</code> looks at <em>values</em>: <code>2 in [10, 20, 30]</code> is
+    <code>False</code>. Python's one <code>in</code> replaces JS's <code>.includes()</code> and its <code>in</code>.
+  </div>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>Membership (<code>in</code> / <code>not in</code>)</dt>
+        <dd>Asks "is this inside that?". Works on text, lists and dict keys.<span class="js-like"><code>.includes()</code></span></dd></div>
+      <div class="term"><dt>Substring</dt>
+        <dd>A piece of a string, any length, in one unbroken run: <code>"Bat"</code> is a substring of
+        <code>"Super Batman"</code>.<span class="js-like">what <code>.includes()</code> looks for</span></dd></div>
+      <div class="term"><dt>Key</dt>
+        <dd>The left-hand name in a dict entry, like <code>"age"</code>. <code>in</code> checks keys, not values.
+        <span class="js-like">a property name</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- §6 -->
+  <h2 id="s6">6. One strange value: NaN</h2>
+  <p><em>NaN</em> stands for "not a number". It's what you get when a calculation has no sensible number as an answer.
+  In Python you make one with <code>float("nan")</code>. Every ordered comparison with it is <code>False</code>, and it
+  isn't even equal to itself:</p>
+<pre><code>nan = float("nan")
+nan == nan     <span class="tok-out">False</span>
+3 &lt; nan        <span class="tok-out">False</span>
+nan &lt; 3        <span class="tok-out">False</span></code></pre>
+  <p>JS works the same way: <code>NaN === NaN</code> is <code>false</code>. You'll rarely meet NaN in Python, because
+  Python stops with an error instead (<code>1 / 0</code> is a <code>ZeroDivisionError</code>, Lesson 3). It shows up when
+  you load real-world data later.</p>
+  <p>That's the whole chapter. Your own classes can also decide what <code>==</code> and <code>&lt;</code> mean for
+  them. That's in the classes chapter, much later.</p>
+
+  <div class="words">
+    <p class="words-label">New words in this section</p>
+    <dl class="terms">
+      <div class="term"><dt>NaN</dt>
+        <dd>"Not a number". Compares <code>False</code> with everything, even itself. Made with
+        <code>float("nan")</code>.<span class="js-like">same behaviour in JS</span></dd></div>
+    </dl>
+  </div>
+
+  <!-- Summary -->
+  <h2 id="summary">The whole lesson in one table</h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th></tr></thead>
+    <tbody>
+      <tr><td>Equal</td><td><code>===</code> (and loose <code>==</code>)</td><td><code>==</code> only, no type conversion</td></tr>
+      <tr><td><code>17 == "17"</code></td><td><code>true</code></td><td><code>False</code></td></tr>
+      <tr><td>Two arrays, same items</td><td><code>[1,2] === [1,2]</code> → <code>false</code></td><td><code>[1, 2] == [1, 2]</code> → <code>True</code></td></tr>
+      <tr><td>Same object?</td><td><code>===</code> on arrays or objects</td><td><code>a is b</code></td></tr>
+      <tr><td>Is it null?</td><td><code>x === null</code></td><td><code>x is None</code></td></tr>
+      <tr><td>Is it inside?</td><td><code>.includes(x)</code></td><td><code>x in things</code></td></tr>
+      <tr><td><code>2 in [10, 20, 30]</code></td><td><code>true</code> (checks positions)</td><td><code>False</code> (checks values)</td></tr>
+      <tr><td>Text order</td><td>by code unit</td><td>by code point (same results here)</td></tr>
+      <tr><td><code>NaN == NaN</code></td><td><code>false</code></td><td><code>False</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Also in the <a href="../reference/js-to-python.html#l5">JS → Python cheat sheet</a>.</p>
+
+  <!-- Quizzes -->
+  <h2 id="quiz">Check yourself: 5 questions</h2>
+  <p>From memory. Getting it wrong here costs nothing.</p>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">1. What does <code>17 == "17"</code> give in Python?</p>
+    <ul class="quiz-opts">
+      <li><button>True, it converts the text to a number</button></li>
+      <li><button>False, different types are not equal</button></li>
+      <li><button>TypeError, can't compare int and text</button></li>
+      <li><button>None, because the two sides don't match</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>False.</strong> Python's <code>==</code> doesn't convert types, so it acts like
+    JS's <code>===</code>. No error, just <code>False</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">2. What does <code>[1, 2] == [1, 2]</code> give?</p>
+    <ul class="quiz-opts">
+      <li><button>False, they are two different arrays</button></li>
+      <li><button>TypeError, lists can't be compared</button></li>
+      <li><button>True, it compares what's inside</button></li>
+      <li><button>It depends on the memory address</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>True.</strong> Python compares lists by contents. The JS version gives
+    <code>false</code>. To ask "same object?", use <code>is</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">3. What does <code>2 in [10, 20, 30]</code> give?</p>
+    <ul class="quiz-opts">
+      <li><button>False, 2 is not one of the values</button></li>
+      <li><button>True, position 2 exists in the list</button></li>
+      <li><button>True, 2 is smaller than all of them</button></li>
+      <li><button>IndexError, the list has no 2</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>False.</strong> Python's <code>in</code> checks values. JS's <code>in</code> checks
+    positions, which is why <code>2 in [10, 20, 30]</code> is <code>true</code> there.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">4. How do you check that <code>x</code> is <code>None</code>?</p>
+    <ul class="quiz-opts">
+      <li><button><code>x === None</code></button></li>
+      <li><button><code>x = None</code></button></li>
+      <li><button><code>x == null</code></button></li>
+      <li><button><code>x is None</code></button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>x is None</code>.</strong> <code>===</code> and <code>null</code> don't
+    exist in Python, and a single <code>=</code> would try to assign. <code>x == None</code> usually works, but PEP 8
+    says to use <code>is</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">5. What does <code>"B" &lt; "a"</code> give?</p>
+    <ul class="quiz-opts">
+      <li><button>False, a comes before B in the alphabet</button></li>
+      <li><button>True, capitals have smaller code points</button></li>
+      <li><button>False, lowercase is always smaller than capitals</button></li>
+      <li><button>TypeError, can't compare two letters</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>True.</strong> <code>ord("B")</code> is 66 and <code>ord("a")</code> is 97, so
+    every capital letter sorts before every lowercase one.</div>
+  </div>
+
+  <!-- Predict -->
+  <h2 id="predict">Predict the output: 6 snippets</h2>
+  <p>Say the exact output out loud. If it's an error, say its exact name.</p>
+
+<pre><code>print(1 &lt; 2 &lt; 3, 1 &lt; 3 &lt; 2, 5 &gt; 3 &lt; 9)</code></pre>
+  <details class="reveal"><summary>P1 answer</summary>
+    <p><code>True False True</code>. Each chain is two comparisons joined by <code>and</code>. The third is
+    <code>5 &gt; 3 and 3 &lt; 9</code>.</p>
+  </details>
+
+<pre><code>a = [1, 2]
+b = [1, 2]
+c = a
+print(a == b, a is b, a is c)</code></pre>
+  <details class="reveal"><summary>P2 answer</summary>
+    <p><code>True False True</code>. Same contents, but <code>a</code> and <code>b</code> are two objects.
+    <code>c</code> is an alias for <code>a</code>'s object.</p>
+  </details>
+
+<pre><code>print("Bat" in "Super Batman", "bat" in "Super Batman")</code></pre>
+  <details class="reveal"><summary>P3 answer</summary>
+    <p><code>True False</code>. Case matters.</p>
+  </details>
+
+<pre><code>print("age" in {"age": 33}, 33 in {"age": 33})</code></pre>
+  <details class="reveal"><summary>P4 answer</summary>
+    <p><code>True False</code>. For a dict, <code>in</code> checks the keys only.</p>
+  </details>
+
+<pre><code>nan = float("nan")
+print(nan == nan, 3 &lt; nan)</code></pre>
+  <details class="reveal"><summary>P5 answer</summary>
+    <p><code>False False</code>. NaN isn't equal to anything, itself included, and every ordered comparison
+    with it is false.</p>
+  </details>
+
+<pre><code>print(17 == "17", 17 == 17.0, "k" == "K")</code></pre>
+  <details class="reveal"><summary>P6 answer</summary>
+    <p><code>False True False</code>. Different types are never equal, except numbers. And case matters in text.</p>
+  </details>
+
+  <!-- Handoff -->
+  <h2 id="exercise">Now do the Exercism exercise</h2>
+  <p>Go to Exercism and do <a href="https://exercism.org/tracks/python/exercises/black-jack"><strong>Black Jack</strong></a>.
+  Six small functions. Write them by hand.</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Task</th><th>What to watch</th><th>Where it's taught</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Card <code>'K'</code> is text, but its value is a number. <code>'Q' in 'KJQ'</code> checks a piece of text. <code>int('13')</code> turns text into a number (Lesson 3).</td><td><a href="#s1">§1</a>, <a href="#s5">§5</a></td></tr>
+      <tr><td>2</td><td>Calls task 1's function. Returns <strong>one card</strong>, or <strong>both</strong> when equal. See the note below.</td><td><a href="#s1">§1</a></td></tr>
+      <tr><td>3</td><td>Decide 1 or 11 for the ace. The ace you already hold counts as 1.</td><td><a href="#s1">§1</a>, Lesson 4 §2</td></tr>
+      <tr><td>4</td><td>The instructions ask you to check "is there an ace and a ten-card", not to add up the hand. Returns <code>True</code>/<code>False</code>.</td><td><a href="#s5">§5</a>, Lesson 4 §4</td></tr>
+      <tr><td>5</td><td>"Same value" is not "same card text": <code>'Q'</code> and <code>'K'</code> both count as 10.</td><td><a href="#s1">§1</a></td></tr>
+      <tr><td>6</td><td>Total of 9, 10 or 11. A range, so use the chained comparison.</td><td>Lesson 4 §5</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note">
+    <span class="callout-label">Task 2 returns two things</span>
+    Exercism tells you to write <code>return card_one, card_two</code>. A comma in a <code>return</code> packs both
+    values into one <em>tuple</em> (the fixed-size list from §3). Printed, it looks like <code>('K', '3')</code>. The
+    tuples chapter comes later. For now, that comma is all you need.
+  </div>
+
+  <h3>Then these practice exercises</h3>
+  <p>Where the others on the Exercism map stand:</p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Exercise</th><th>Do it</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://exercism.org/tracks/python/exercises/darts"><strong>Darts</strong></a></td><td><strong>Now, after Black Jack</strong></td><td>Only needs this chapter plus Lesson 3 maths. Use <code>x ** 2 + y ** 2</code>, and read the radius rings from the middle outward.</td></tr>
+      <tr><td><a href="https://exercism.org/tracks/python/exercises/armstrong-numbers"><strong>Armstrong Numbers</strong></a></td><td>After loops</td><td>You have to go digit by digit.</td></tr>
+      <tr><td><a href="https://exercism.org/tracks/python/exercises/collatz-conjecture"><strong>Collatz Conjecture</strong></a></td><td>After loops</td><td>Repeats until it reaches 1.</td></tr>
+      <tr><td><a href="https://exercism.org/tracks/python/exercises/perfect-numbers"><strong>Perfect Numbers</strong></a></td><td>After loops</td><td>Adds up all the factors.</td></tr>
+      <tr><td><a href="https://exercism.org/tracks/python/exercises/bob"><strong>Bob</strong></a> and <a href="https://exercism.org/tracks/python/exercises/pig-latin"><strong>Pig Latin</strong></a></td><td>After string methods</td><td>Both need text tools (<code>.strip()</code>, slicing) that come two chapters from now.</td></tr>
+      <tr><td><strong>Matching Brackets</strong></td><td>Locked</td><td>Needs lists, loops and strings first.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">Primary source</span>
+    <a href="https://exercism.org/tracks/python/concepts/comparisons">Exercism: Python Comparisons</a>. Read it
+    after this page. It should feel like a recap.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Stuck on anything?</strong> Ask me about any line here, any word in the Exercism chapter, or a
+    failing test. I'll trace it with you, not write the answer.
+    <br><br>
+    <strong>Done?</strong> Paste your solution for a review. Then we run the 10-minute <strong>trap drill</strong> for
+    this chapter. Then send the
+    <a href="https://exercism.org/tracks/python/concepts/strings">strings</a> link.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0004-conditionals.html">← Lesson 4: Conditionals</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

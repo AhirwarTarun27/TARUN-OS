@@ -83,7 +83,8 @@ The paid side-business: end-to-end websites for local businesses around Gandhidh
 - `learning/python/` — **the Python course for the AI-engineer path** (run by `/teach`; Exercism is his only
   Python resource). **Read `NOTES.md` before any Python lesson OR exercise review**, even without `/teach`: it
   holds his rules (never solve the exercise, new-words cards are a recap, run `tools/check_words.py`, no
-  Playwright, and during practice write only mistake patterns, never status). His solutions live in `practice/`.
+  Playwright, and during practice write only mistake patterns, never status). After each chapter's exercise
+  comes a light 10-min **trap drill** (method and drill queue in `NOTES.md`). His solutions live in `practice/`.
 - `shipped.md` — the done-log + streak counter. Everything you've shipped. Never delete from it.
 - `clients/` — **the web-solutions engagement registry.** One folder per client (`engagement.md` = source of truth, `findability.md` = the Phase 3 board, `handover.md`, `retainer.md`, `reports/`). Business data lives here; the client's *code* stays in its own repo. `_template/` gets copied for each new client. Driven by the `/client-*` skills — don't hand-edit in normal work.
 - `context/` — about you, your business, your priorities (filled by `/onboard`)
@@ -163,7 +164,7 @@ NOT a product-marketing channel; don't draft or post side-hustle content there. 
 
 Applies to this repo and to every project the pipeline scopes. The goal is fewer tokens: don't pay for live MCP round-trips to fetch knowledge that barely changes.
 
-- **Playwright MCP (`@playwright/mcp`)** — pre-approved standing exception. Browser verification can't be cached. Use it freely.
+- **Playwright MCP (`@playwright/mcp`)** — pre-approved, but **only for something genuinely new**: a new widget, component or layout, checked **once** when it's built, or when Tarun reports something looks broken. **Never re-check pages that reuse an already-tested layout or component** (e.g. every interview-qa lesson shares `course.css`, so check new lessons with Node and an HTML tag-balance script, not the browser). Set 2026-10-08, when repeated browser checks of the same visualizer were called unnecessary.
 - **Doc-reference MCPs (read-only — they only fetch docs/knowledge, e.g. `astro-docs`)** — do NOT install. When I approve one, research the resource it points at and write a local `references/mcp/<tool-name>.md` capturing its functions, params, and usage patterns. After that, read the local file instead of calling the MCP. Refresh only when I say "update the `<tool-name>` reference".
 - **Action MCPs (they execute things — GitHub, databases, filesystem, etc.)** — the exemption. A file can't run a command, so install the real MCP at least-privilege scope once I approve it.
 - Default for anything new: suggest first, wait for my yes, then pick the right path above. Never auto-install.

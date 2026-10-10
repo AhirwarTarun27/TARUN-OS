@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 7b · async/await &amp; the combinators — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 7b · Module 7 — JavaScript Foundations</p>
+    <h1><code>async</code>/<code>await</code> &amp; the combinators</h1>
+    <p class="subtitle"><code>await</code> doesn't stop JavaScript. It stops <strong>one function</strong>, and
+    everything else keeps running. Get that one sentence right and every question on this page follows.</p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">What your probe showed</span>
+    <ul>
+      <li><strong><code>async</code> returns a Promise: right.</strong></li>
+      <li><strong>Errors with <code>try</code>/<code>catch</code> around <code>await</code>: right.</strong></li>
+      <li><strong><code>Promise.all</code> fails if one fails, <code>allSettled</code> waits for all: right.</strong> This
+      page adds <code>race</code> and <code>any</code>, and exactly what each one gives back.</li>
+      <li><strong>The real gap: what <code>await</code> does.</strong> You predicted <code>f(); console.log(3)</code>
+      would print only <code>1</code>, as if <code>await</code> froze everything, including the code after
+      <code>f()</code>. The truth is <code>1 3 2</code>. <code>await</code> pauses <strong>only <code>f</code></strong>. §2 is
+      built around this.</li>
+    </ul>
+  </div>
+
+  <h2>0 · Gate check</h2>
+  <p>Open items from the event loop drill, in new shapes. Answer all three <strong>before you scroll</strong>.</p>
+
+  <details class="reveal">
+    <summary>G1 · What prints, and when exactly does <code>"then"</code> get queued?</summary>
+    <pre><code>let release;
+const p = new Promise(res =&gt; { release = res; });
+p.then(() =&gt; console.log("then"));
+console.log("sync");
+setTimeout(() =&gt; release(), 0);</code></pre>
+    <details class="reveal">
+      <summary>Answer</summary>
+      <p><strong><code>sync</code>, then <code>then</code></strong>. When <code>.then</code> runs, the Promise is
+      <strong>pending</strong>, so the callback is only <strong>registered</strong>. It joins the microtask queue at the
+      moment <code>release()</code> is called, which is inside the timer. The Promise was resolved by a function
+      that was <em>saved</em> and called later. That's still just "whoever writes the <code>()</code>".</p>
+    </details>
+  </details>
+
+  <details class="reveal">
+    <summary>G2 · <code>[5, 6].at(-1)</code> and <code>"k" in { k: 0 }</code>?</summary>
+    <details class="reveal">
+      <summary>Answer</summary>
+      <p><strong><code>6</code></strong>, the last element. <strong><code>true</code></strong>: <code>in</code> asks whether the
+      key exists, and it doesn't care that the value is <code>0</code>. Both were missed twice before.</p>
+    </details>
+  </details>
+
+  <details class="reveal">
+    <summary>G3 · Say it out loud: the 4 steps of <code>new</code></summary>
+    <p>① Create an empty object. ② <strong>Link</strong> its prototype to <code>Constructor.prototype</code>, which is
+    the step that makes inheritance work. ③ <strong>Run the constructor with <code>this</code> = that object.</strong>
+    ④ <strong>Return it</strong>, unless the constructor returns its own object. Steps ③ and ④ were the ones left out.</p>
+  </details>
+
+  <h2>1 · An <code>async</code> function always returns a Promise</h2>
+  <pre><code>async function f() { return 5; }
+f();                     <span class="tok-out">// a Promise, fulfilled with 5. Not 5 itself</span>
+f().then(v =&gt; console.log(v));   <span class="tok-out">// 5</span>
+
+async function g() { throw new Error("x"); }
+g();                     <span class="tok-out">// does NOT throw here. It returns a REJECTED Promise</span>
+g().catch(e =&gt; console.log(e.message));   <span class="tok-out">// x</span></code></pre>
+  <p>Two rules, and they're the same two rules as a <code>.then</code> callback: <strong>return a value → the
+  Promise fulfills with it. Throw → the Promise rejects.</strong> That's no coincidence, as §3 shows.</p>
+
+  <h2>2 · <code>await</code> pauses the function, not the program</h2>
+  <p>This is the whole page. When a function reaches <code>await</code>:</p>
+  <ol>
+    <li><strong>That function pauses.</strong> Only that one.</li>
+    <li>It <strong>returns to whoever called it</strong>, handing back its (still pending) Promise. The caller
+    <strong>keeps running</strong>.</li>
+    <li>When the awaited Promise resolves, <strong>the rest of the function</strong> goes into the
+    <strong>microtask queue</strong> and runs from there, picking up where it left off.</li>
+  </ol>
+  <pre><code>async function f() {
+  console.log(1);
+  await null;          <span class="tok-com">// pause f. Return to the caller</span>
+  console.log(2);      <span class="tok-com">// "the rest of f": a microtask</span>
+}
+f();
+console.log(3);        <span class="tok-com">// the caller keeps going</span>
+<span class="tok-out">// 1   3   2</span></code></pre>
+  <p>Two facts that interviewers test:</p>
+  <ul>
+    <li><strong>Everything before the first <code>await</code> runs synchronously.</strong> Calling an async function is
+    not "async" until it hits an <code>await</code>, which is why <code>1</code> prints first.</li>
+    <li><strong><code>await</code> on something that isn't a Promise still pauses.</strong> <code>await null</code> treats
+    <code>null</code> as an already-resolved Promise, so the rest still goes to the microtask queue. That's why
+    <code>2</code> comes after <code>3</code>.</li>
+  </ul>
+  <p>Watch it happen. Scenario 1 is the snippet above; scenario 2 is the ebook's classic two-await question:</p>
+  <div data-elviz="await,await2"></div>
+
+  <h2>3 · The one model: an async function is a <code>.then</code> chain in disguise</h2>
+  <p>You already know <code>.then</code> perfectly. <code>await</code> is just nicer syntax for it:</p>
+  <pre><code>async function f() {                       function f() {
+  console.log(1);                              console.log(1);
+  const x = await p;              ≈            return p.then(x =&gt; {
+  console.log(x);                                console.log(x);
+}                                              });
+                                             }</code></pre>
+  <p><strong>Everything after an <code>await</code> is a <code>.then</code> callback.</strong> So it's a microtask, it
+  runs after the current sync code, and a <code>throw</code> in it rejects the Promise. When an async output question
+  gets confusing, <strong>rewrite it as a <code>.then</code> chain in your head</strong> and use the event loop rules
+  you already have. (Both versions print the same thing, checked on Node.)</p>
+
+  <h2>4 · Errors</h2>
+  <h3>A rejected <code>await</code> <em>throws</em> at that line</h3>
+  <pre><code>async function load() {
+  try {
+    const data = await fetchSomething();   <span class="tok-com">// if this rejects, it THROWS right here</span>
+    console.log(data);                     <span class="tok-com">// skipped</span>
+  } catch (e) {
+    console.log("failed:", e.message);     <span class="tok-com">// lands here</span>
+  }
+}</code></pre>
+  <p>That's the point of <code>await</code>: async errors work with normal <code>try</code>/<code>catch</code>. No
+  <code>try</code>? Then the async function's <strong>own Promise rejects</strong>, and the caller's
+  <code>.catch</code> (or <em>its</em> <code>try</code>/<code>catch</code> around <code>await</code>) gets it.</p>
+
+  <h3>The bug: forgetting <code>await</code></h3>
+  <pre><code>async function oops() {
+  try {
+    Promise.reject(new Error("lost"));   <span class="tok-com">// no await!</span>
+  } catch (e) {
+    console.log("caught");               <span class="tok-com">// never runs</span>
+  }
+  console.log("finished");
+}
+<span class="tok-out">// finished   …then: Uncaught (in promise) Error: lost</span></code></pre>
+  <p>Without <code>await</code>, the <code>try</code> block finishes <strong>before</strong> the rejection is
+  noticed, so <code>try</code>/<code>catch</code> can't see it. It's the same lesson as <code>throw</code> inside a callback:
+  <strong>a <code>try</code> only catches what goes wrong while it's running.</strong></p>
+
+  <h2>5 · Sequential vs parallel</h2>
+  <pre><code>const wait = ms =&gt; new Promise(r =&gt; setTimeout(r, ms));
+
+<span class="tok-com">// sequential: the second wait doesn't START until the first finishes</span>
+await wait(100);
+await wait(100);                                   <span class="tok-out">// total ≈ 200ms</span>
+
+<span class="tok-com">// parallel: both start now, then wait for both</span>
+await Promise.all([wait(100), wait(100)]);         <span class="tok-out">// total ≈ 100ms</span></code></pre>
+  <p>Timed on Node: about 200ms vs about 100ms. <strong>Two <code>await</code>s in a row are one after the other.</strong>
+  If the two calls don't depend on each other (a user's profile and their orders, say), start them together with
+  <code>Promise.all</code>. This is one of the most common real-world performance questions: "this page makes 3 API
+  calls, why is it slow?"</p>
+
+  <h2>6 · <code>await</code> inside loops</h2>
+  <pre><code>[1, 2].forEach(async id =&gt; {
+  await null;
+  console.log("item", id);
+});
+console.log("done");
+<span class="tok-out">// done   item 1   item 2   ← forEach did NOT wait</span></code></pre>
+  <p><strong><code>forEach</code> doesn't wait for async callbacks.</strong> It calls your function once per element
+  and <strong>ignores what comes back</strong>, which here is a Promise. It's the same as <code>forEach</code> ignoring
+  any return value. The two fixes:</p>
+  <pre><code>for (const id of ids) { await doThing(id); }           <span class="tok-com">// one at a time, in order</span>
+await Promise.all(ids.map(id =&gt; doThing(id)));         <span class="tok-com">// all at once, wait for all</span></code></pre>
+
+  <h2>7 · The four combinators</h2>
+  <p>Each takes an array of Promises and returns <strong>one</strong> Promise. The question is always: <em>what makes
+  it settle, and with what?</em></p>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th>Fulfills when…</th><th>…with</th><th>Rejects when…</th><th>Use it for</th></tr></thead>
+    <tbody>
+      <tr><td><strong><code>all</code></strong></td><td>every one fulfills</td><td>an array of values, <strong>in input order</strong></td><td>the <strong>first</strong> rejection (fail-fast)</td><td>things you need <em>all</em> of: a page's required data</td></tr>
+      <tr><td><strong><code>allSettled</code></strong></td><td><strong>always</strong>, once all settle</td><td>an array of <code>{status, value}</code> / <code>{status, reason}</code></td><td>never</td><td>independent jobs where partial success is fine: a batch upload, separate widgets</td></tr>
+      <tr><td><strong><code>race</code></strong></td><td>the first to settle is a fulfill</td><td>that value</td><td>the first to settle is a reject</td><td>a <strong>timeout</strong> (Drill A)</td></tr>
+      <tr><td><strong><code>any</code></strong></td><td>the first to <strong>fulfill</strong></td><td>that value</td><td><strong>all</strong> reject, with an <code>AggregateError</code></td><td>the fastest of several mirrors or servers</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <ul>
+    <li><strong><code>all</code> keeps input order</strong>, not finish order. <code>Promise.all([slow, fast])</code> gives
+    <code>["slow", "fast"]</code>.</li>
+    <li><strong>Fail-fast doesn't cancel anything.</strong> The other Promises keep running; <code>all</code> just stops
+    waiting for them.</li>
+    <li><strong><code>race</code> vs <code>any</code></strong> is the classic follow-up. If a quick failure races a slow success,
+    <code>race</code> <strong>rejects</strong> (the first to settle was a failure) and <code>any</code> <strong>fulfills</strong> (it
+    skips failures and waits for a success).</li>
+    <li>The ebook's line on <code>any</code> is garbled. The correct version: it fulfills with the first success, and
+    rejects only if <strong>every</strong> Promise rejects.</li>
+  </ul>
+  <div class="note">
+    <span class="callout-label">Say it like this</span>
+    "<code>all</code> needs everything and fails fast. <code>allSettled</code> waits for everything and never fails, and
+    gives me a status for each. <code>race</code> takes the first to settle, success or failure, so it's good for
+    timeouts. <code>any</code> takes the first success, and fails only if they all fail."
+  </div>
+
+  <h2>8 · The procedure: no new question</h2>
+  <p>The eighth question (<em>sync, microtask, or task?</em>) already covers <code>await</code>, once you add one line:
+  <strong>the code after an <code>await</code> is a microtask</strong>, queued when the awaited thing resolves.</p>
+
+  <h2>9 · Solving async output questions</h2>
+  <ol>
+    <li>Everything up to each function's <strong>first <code>await</code></strong> is <strong>sync</strong>.</li>
+    <li>At each <code>await</code>, the function <strong>returns to its caller</strong>. Keep reading the caller.</li>
+    <li>"The rest of the function" is a <strong>microtask</strong>, queued when the awaited thing resolves. If it awaits a
+    timer, that's not until the timer's <strong>task</strong> runs.</li>
+  </ol>
+  <p>The ebook's question 15 (it's scenario 2 in the visualizer):</p>
+  <pre><code>async function foo() {
+  console.log("A");                               <span class="tok-com">// sync (foo was called synchronously)</span>
+  await Promise.resolve();                        <span class="tok-com">// pause foo → back to the caller</span>
+  console.log("B");                               <span class="tok-com">// microtask</span>
+  await new Promise(r =&gt; setTimeout(r, 0));       <span class="tok-com">// pause again, until a TIMER resolves it</span>
+  console.log("C");                               <span class="tok-com">// after that task, as a microtask</span>
+}
+console.log("D");                                 <span class="tok-com">// sync</span>
+foo();
+console.log("E");                                 <span class="tok-com">// sync: the caller kept going</span>
+<span class="tok-out">// D A E B C</span></code></pre>
+  <p>One correction to the ebook's explanation: it says control returns "to the caller function (foo())". It returns
+  to the code that <em>called</em> foo, which here is the script. Foo is the one that paused.</p>
+
+  <h2>10 · Retrieval quiz</h2>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q"><code>async function f() { return 5; }</code> What is <code>f()</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>the number 5</button></li>
+      <li><button>a Promise of 5</button></li>
+      <li><button>undefined</button></li>
+      <li><button>a function</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>A Promise fulfilled with 5.</strong> An async function always returns a Promise.
+    <code>return</code> sets what it fulfills with.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">When a function reaches <code>await</code>, what pauses?</p>
+    <ul class="quiz-opts">
+      <li><button>the whole program</button></li>
+      <li><button>the event loop</button></li>
+      <li><button>only that function</button></li>
+      <li><button>all async functions</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Only that function.</strong> It returns to its caller, which keeps running. The rest
+    of the function comes back later as a microtask.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">An async function throws and nothing catches it inside. What happens?</p>
+    <ul class="quiz-opts">
+      <li><button>its Promise rejects</button></li>
+      <li><button>the caller throws at once</button></li>
+      <li><button>it returns undefined</button></li>
+      <li><button>the error is ignored</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Its Promise rejects.</strong> The caller deals with it through <code>.catch</code>, or a
+    <code>try</code>/<code>catch</code> around <code>await</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q">A quick failure races a slow success. Which combinator <strong>fulfills</strong>?</p>
+    <ul class="quiz-opts">
+      <li><button>Promise.all</button></li>
+      <li><button>Promise.race</button></li>
+      <li><button>neither of them</button></li>
+      <li><button>Promise.any</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>any</code></strong>. It skips failures and waits for the first success.
+    <code>race</code> rejects, because the first to settle was a failure.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q"><code>ids.forEach(async id =&gt; await save(id)); console.log("done")</code>. When does "done" log?</p>
+    <ul class="quiz-opts">
+      <li><button>after every save</button></li>
+      <li><button>before any save finishes</button></li>
+      <li><button>after the first save</button></li>
+      <li><button>never</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Before any save finishes.</strong> <code>forEach</code> ignores the Promises your callback
+    returns. Use <code>for...of</code> with <code>await</code>, or <code>Promise.all</code>.</div>
+  </div>
+
+  <h2>11 · Output drills</h2>
+  <p>Cold. For each one, find each function's first <code>await</code>, then label sync, microtask, or task.</p>
+
+  <details class="reveal">
+    <summary>D1 · what an async function gives back</summary>
+    <pre><code>async function g() { return 7; }
+const r = g();
+console.log(r instanceof Promise);
+r.then(v =&gt; console.log(v));
+console.log("end");</code></pre>
+    <p><strong><code>true</code>, <code>end</code>, <code>7</code></strong>. <code>r</code> is a Promise, and its
+    <code>.then</code> is a microtask, so it runs after <code>end</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 · awaiting a timer</summary>
+    <pre><code>async function load() {
+  console.log("start");
+  await new Promise(r =&gt; setTimeout(r, 0));
+  console.log("loaded");
+}
+load();
+Promise.resolve().then(() =&gt; console.log("micro"));
+console.log("sync");</code></pre>
+    <p><strong><code>start sync micro loaded</code></strong>. <code>start</code> is sync. The <code>await</code> waits on a
+    <em>timer</em>, so <code>loaded</code> needs that task first. <code>micro</code> is an ordinary microtask, so it runs
+    as soon as the script ends.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 · two async functions</summary>
+    <pre><code>async function a() { console.log("a1"); await null; console.log("a2"); }
+async function b() { console.log("b1"); await null; console.log("b2"); }
+a(); b();
+console.log("main");</code></pre>
+    <p><strong><code>a1 b1 main a2 b2</code></strong>. Each runs synchronously up to its <code>await</code>, then hands
+    back. The two "rests" are microtasks, in the order they were queued.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 · try/catch with await</summary>
+    <pre><code>async function risky() {
+  try {
+    await Promise.reject(new Error("bad"));
+    console.log("after");
+  } catch (e) {
+    console.log("caught", e.message);
+  }
+  return "done";
+}
+risky().then(v =&gt; console.log(v));</code></pre>
+    <p><strong><code>caught bad</code>, <code>done</code></strong>. The rejected <code>await</code> throws, so
+    <code>after</code> is skipped. The catch handles it, and the function carries on and returns normally.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 · Promise.all keeps order</summary>
+    <pre><code>const slow = new Promise(r =&gt; setTimeout(() =&gt; r("slow"), 20));
+const fast = Promise.resolve("fast");
+Promise.all([slow, fast]).then(v =&gt; console.log(v));</code></pre>
+    <p><strong><code>["slow", "fast"]</code></strong>. That's input order, even though <code>fast</code> finished first.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 · allSettled's shape</summary>
+    <pre><code>Promise.allSettled([Promise.resolve(1), Promise.reject(new Error("no"))])
+  .then(r =&gt; console.log(r.map(x =&gt; x.status)));</code></pre>
+    <p><strong><code>["fulfilled", "rejected"]</code></strong>. It never rejects. Each entry is
+    <code>{ status: "fulfilled", value }</code> or <code>{ status: "rejected", reason }</code>.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D7 · race vs any</summary>
+    <pre><code>const quickFail = new Promise((_, rej) =&gt; setTimeout(() =&gt; rej(new Error("fail")), 10));
+const slowOk = new Promise(res =&gt; setTimeout(() =&gt; res("ok"), 20));
+Promise.race([quickFail, slowOk]).catch(e =&gt; console.log("race:", e.message));
+Promise.any([quickFail, slowOk]).then(v =&gt; console.log("any:", v));</code></pre>
+    <p><strong><code>race: fail</code>, then <code>any: ok</code></strong>. Same two Promises, opposite results.</p>
+  </details>
+
+  <h2>12 · Label-only round</h2>
+  <p>Does the resulting Promise <strong>FULFILL</strong> or <strong>REJECT</strong>? Labels only. <strong>Bar 7/8.</strong>
+  (<code>ok</code> fulfills and <code>fail</code> rejects. "Fast" and "slow" are about timing.)</p>
+  <ol>
+    <li><code>Promise.all([ok, ok])</code></li>
+    <li><code>Promise.all([ok, fail])</code></li>
+    <li><code>Promise.allSettled([ok, fail])</code></li>
+    <li><code>Promise.race([fastFail, slowOk])</code></li>
+    <li><code>Promise.any([fastFail, slowOk])</code></li>
+    <li><code>Promise.any([fail, fail])</code></li>
+    <li><code>(async () =&gt; { throw new Error("x"); })()</code></li>
+    <li><code>(async () =&gt; 5)()</code></li>
+  </ol>
+  <details class="reveal">
+    <summary>Answers</summary>
+    <ol>
+      <li><strong>FULFILL</strong></li>
+      <li><strong>REJECT</strong>: fail-fast</li>
+      <li><strong>FULFILL</strong>: allSettled never rejects</li>
+      <li><strong>REJECT</strong>: the first to settle was a failure</li>
+      <li><strong>FULFILL</strong>: any waits for a success</li>
+      <li><strong>REJECT</strong>: all failed, so <code>AggregateError</code></li>
+      <li><strong>REJECT</strong>: a throw in an async function becomes a rejected Promise, not a thrown error</li>
+      <li><strong>FULFILL</strong>, with 5</li>
+    </ol>
+    <p><strong>#3, #5 and #7 are the traps.</strong> #3 and #5 contain a failure but fulfill. #7 looks like it throws, but
+    it rejects instead.</p>
+  </details>
+
+  <h2>13 · Coding drills</h2>
+  <p>For each one, work in this order: <strong>how it's used → trace one example by hand → the steps as comments →
+  code.</strong></p>
+
+  <h3>Drill A: <code>withTimeout(promise, ms)</code></h3>
+  <p>Return a Promise that settles like <code>promise</code>, unless <code>ms</code> passes first, in which case it
+  rejects with <code>Error("timeout")</code>.</p>
+  <pre><code><span class="tok-com">// how it's used</span>
+withTimeout(fetchUser(), 3000)
+  .then(user =&gt; show(user))
+  .catch(e =&gt; console.log(e.message));   <span class="tok-com">// "timeout" if fetchUser takes over 3s</span></code></pre>
+  <details class="reveal">
+    <summary>Hint ladder, then the answer</summary>
+    <p><strong>Hint 1.</strong> It's a race between two Promises: the real one, and one that rejects after
+    <code>ms</code>. Which combinator takes whichever settles first?</p>
+    <p><strong>Hint 2.</strong> The timeout Promise is your <code>sleep</code> from the previous page, except it calls
+    <code>reject</code> instead of <code>resolve</code>.</p>
+    <pre><code>function withTimeout(promise, ms) {
+  const timeout = new Promise((_, reject) =&gt;
+    setTimeout(() =&gt; reject(new Error("timeout")), ms));
+  return Promise.race([promise, timeout]);
+}</code></pre>
+    <p>Verified on Node: a 20ms job with a 50ms limit gives <code>data</code>; an 80ms job with a 50ms limit gives
+    <code>timeout</code>. <strong>Limitation to say yourself:</strong> the timer keeps running after the real Promise
+    wins. A cleaner version keeps the timer's id and calls <code>clearTimeout</code> in a <code>.finally</code>. Also, the
+    slow job itself isn't cancelled; <code>race</code> just stops waiting for it.</p>
+  </details>
+
+  <h3>Drill B: write <code>myPromiseAll(promises)</code></h3>
+  <p>The most-asked Promise coding question. It has to behave like <code>Promise.all</code>: values in
+  <strong>input order</strong>, reject on the <strong>first</strong> failure, and <code>[]</code> gives <code>[]</code>.</p>
+  <pre><code><span class="tok-com">// how it's used</span>
+const slow = new Promise(r =&gt; setTimeout(() =&gt; r("slow"), 20));
+myPromiseAll([slow, Promise.resolve("fast"), 3]).then(v =&gt; console.log(v));
+<span class="tok-out">// ["slow", "fast", 3]   ← input order; a plain value (3) is allowed too</span></code></pre>
+  <details class="reveal">
+    <summary>Hint ladder, then the answer</summary>
+    <p><strong>Hint 1, the shape.</strong> Return a <code>new Promise</code>. Inside, attach a <code>.then</code> to each
+    input. Each <code>.then</code> stores its value, and when <em>all</em> have arrived, you call <code>resolve</code>.</p>
+    <p><strong>Hint 2, order.</strong> Values arrive in <em>finish</em> order. How do you put each one in its
+    <em>input</em> position? (You have the index from <code>forEach</code>.)</p>
+    <p><strong>Hint 3, "all arrived".</strong> Don't check <code>results.length</code>. Setting <code>results[1]</code> on
+    an empty array makes its length 2, even though only one value has arrived. Keep a counter.</p>
+    <pre><code>function myPromiseAll(promises) {
+  return new Promise((resolve, reject) =&gt; {
+    const results = [];
+    let done = 0;
+    if (promises.length === 0) return resolve([]);
+    promises.forEach((p, i) =&gt; {
+      Promise.resolve(p).then(value =&gt; {
+        results[i] = value;                         <span class="tok-com">// input position, not finish order</span>
+        done++;
+        if (done === promises.length) resolve(results);
+      }, reject);                                   <span class="tok-com">// the first failure rejects everything</span>
+    });
+  });
+}</code></pre>
+    <p>Four things to say out loud: <strong>index, not push</strong> (keeps order) · <strong>a counter, not length</strong>
+    (the sparse-array trap) · <strong><code>Promise.resolve(p)</code></strong> (so plain values like <code>3</code> work) ·
+    <strong>the empty-array case</strong> (otherwise it never resolves). Calling <code>reject</code> more than once is
+    harmless: a Promise settles once. All three cases verified on Node.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Primary source — read this next</span>
+    <a href="https://javascript.info/async-await">javascript.info — Async/await</a> and
+    <a href="https://javascript.info/promise-api">Promise API</a>, which covers the four combinators in §7. Then
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#promise_concurrency">MDN
+    — Promise concurrency</a> for the one-table summary.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Not drilled yet.</strong> Say <em>"drill me on L7b"</em>. It opens with the §0 gate, then the speak half
+    (what <code>await</code> does, sequential vs parallel, the four combinators), the "so why" follow-ups, fresh output
+    snippets, and the label round.
+    <br><br>
+    <strong>Next:</strong> M8, the browser, the DOM and networking.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0007-event-loop-and-promises.html">← Lesson 7: The event loop</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/event-loop-viz.js"></script>
+</body>
+</html>

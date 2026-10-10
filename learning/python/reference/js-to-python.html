@@ -107,6 +107,24 @@
   </table>
   </div>
 
+  <h2 id="l5">Lesson 5 · Comparisons <a href="../lessons/0005-comparisons.html" style="font-size:0.8rem">(lesson)</a></h2>
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Thing</th><th>JavaScript</th><th>Python</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td>Equal / not equal</td><td><code>===</code> <code>!==</code></td><td><code>==</code> <code>!=</code></td><td>no <code>===</code> in Python; <code>17 == "17"</code> is <code>False</code></td></tr>
+      <tr><td>Arrays, same items</td><td><code>[1,2] === [1,2]</code> → <code>false</code></td><td><code>[1, 2] == [1, 2]</code> → <code>True</code></td><td>compares contents; order matters</td></tr>
+      <tr><td>Objects, same entries</td><td><code>({a:1}) === ({a:1})</code> → <code>false</code></td><td><code>{"a": 1} == {"a": 1}</code> → <code>True</code></td><td>dicts compare contents</td></tr>
+      <tr><td>Same object?</td><td><code>a === b</code> (arrays, objects)</td><td><code>a is b</code></td><td><code>c = a</code> is an alias, not a copy</td></tr>
+      <tr><td>Is it null?</td><td><code>x === null</code></td><td><code>x is None</code></td><td>never <code>x == None</code> (PEP 8)</td></tr>
+      <tr><td>Is it inside?</td><td><code>.includes(x)</code>, <code>"k" in obj</code></td><td><code>x in things</code></td><td>lists: values. dicts: keys. text: substring</td></tr>
+      <tr><td><code>2 in [10, 20, 30]</code></td><td><code>true</code> (positions)</td><td><code>False</code> (values)</td><td>JS <code>in</code> on arrays checks indexes</td></tr>
+      <tr><td>Text order</td><td><code>"B" &lt; "a"</code> → <code>true</code></td><td><code>"B" &lt; "a"</code> → <code>True</code></td><td>capitals sort first; <code>ord("a")</code> is 97</td></tr>
+      <tr><td>NaN</td><td><code>NaN === NaN</code> → <code>false</code></td><td><code>nan == nan</code> → <code>False</code></td><td>make with <code>float("nan")</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
   <div class="lesson-nav">
     <a href="course-map.html">← Course map</a>
     <a href="glossary.html">Glossary →</a>
