@@ -153,12 +153,16 @@ react-window virtualization 🟢 (both Odin and CloudForestX) · Socket.IO 🟢 
 **Backend** — Node.js 🟢 (CloudForestX ingestion + APIs, raised 2026-07-24; **DentScribe CRUD/support
 modules, raised 2026-07-29**) · PostgreSQL 🟢 · Sequelize 🟢 (CloudForestX) ·
 **TypeORM 🟢 (DentScribe — added 2026-07-29)** · REST APIs 🟢 · Express 🟢 (CloudForestX backend) ·
+**NestJS 🔴 (DentScribe — re-added 2026-10-13, must learn before interviews)** ·
+**AWS SQS 🔴 (DentScribe workers — added 2026-10-13, see the boundary note below)** ·
 SignalR 🟢 (Dwellworks) · Socket.IO 🟢 (CloudForestX) · WebSockets 🟡 ·
 MongoDB 🟡 (MERN / education — **not** production)
 
-> **NestJS stays removed from the Skills list and from every stack line** (2026-07-24, Tarun's
-> instruction; reaffirmed 2026-07-29). Naming the framework invites a question with no upside. **Say
-> "Node.js" and "TypeScript REST endpoints"** — same fact, no invitation. Do not re-add NestJS.
+> ~~**NestJS stays removed from the Skills list and from every stack line** (2026-07-24, Tarun's
+> instruction; reaffirmed 2026-07-29).~~ **SUPERSEDED 2026-10-13 by Tarun's instruction:** NestJS is
+> back on the Skills line, the DentScribe stack line and the DentScribe backend bullet. He is targeting
+> full-stack roles and wants the backend keyword; he will learn NestJS from the DentScribe repo before
+> interviews. See "2026-10-13 changes" at the end of this file. **Do not strip it in `/cv-tailor`.**
 >
 > **DentScribe backend RAISED to 🟢 on 2026-07-29 — but only for the CRUD/support tier.** Grounded in
 > `Dentscribe/backend-api/src/BackendApi/app/modules/staff-contacts/` (controller + service + entity +
@@ -171,7 +175,10 @@ MongoDB 🟡 (MERN / education — **not** production)
 > that is the strongest true framing available for this project.
 >
 > **The pipeline boundary did NOT move and never may:** the transcription workers, the prompts, the
-> Sikka/PQL integration and the SNS/SQS wiring stay 🔴. The boundary paragraph in
+> Sikka/PQL integration and the SNS/SQS wiring stay 🔴.
+> **⚠️ 2026-10-13: the CV bullet now crosses this line by Tarun's choice.** It says he *built* the three
+> SQS workers and the scheduled writeback jobs. His 2026-07-29 account says he did not write the AI
+> pipeline. The 🔴 flag stands until he can explain the workers' code end to end. The boundary paragraph in
 > `dentscribe/03-portal-architecture.md` §6 is still the thing to say in the room — it now needs one
 > added clause: *"I wrote CRUD and support endpoints on that API; I did not write the AI pipeline."*
 >
@@ -346,9 +353,9 @@ When a JD uses the left-hand term, it is legitimate to use the mapped real skill
 
 | Project | Team | Period | Domain | Metrics (immutable) | Boundary |
 |---|---|---|---|---|---|
-| **Dwellworks** | 12 | **Jun 2025 – Present** · US | Corporate relocation platform | **20 webpack bundles** (verified) · 7 error boundaries | All frontend 🟢 + client-facing 🟢. No backend (.NET dropped on purpose). **Shadow resource under Navnit Singh** — verify work via `git log --author="avnit" --since=2025-06-01`, never by Tarun's own name (returns zero). |
+| **Dwellworks** | 12 | **Jun 2025 – Sep 2026** (left ThinkSys 2026-09-25) · US | Corporate relocation platform | **20 webpack bundles** (verified) · 7 error boundaries | All frontend 🟢 + client-facing 🟢. No backend (.NET dropped on purpose). **Shadow resource under Navnit Singh** — verify work via `git log --author="avnit" --since=2025-06-01`, never by Tarun's own name (returns zero). |
 | **CloudForestX** | 6 | **Jul 2023 – May 2025** | AWS cloud cost optimization, 200+ accounts | **200+ accounts · 470 TS files · 40 pages · 36 services** (40% bundle claim DELETED 2026-07-24) | Frontend 🟢. **Node ingestion + REST APIs 🟢** (raised from 🟡 on Tarun's instruction 2026-07-24 — he owns the STS→SDK→Postgres→API path). **Analysis/recommendation algorithms 🔴 — never claim them.** UI verbs only on waste-detection, rightsizing and power-scheduling. |
-| **DentScribe** | 10 | **Oct 2022 – Jun 2023** · US | AI dental documentation, saves 40-50 min/visit | 40-50 min/visit · **317 TS files · 19 surfaces · 10 slices** | Portal + admin 🟢. **CRUD/support REST endpoints on the API 🟢 (raised 2026-07-29 — see the Backend note above; grounded in `staff-contacts`).** **AI pipeline (Whisper→GPT→writeback), prompts, Sikka/PQL, SNS/SQS 🔴 — integrated, not authored.** Never name NestJS. |
+| **DentScribe** | 10 | **Oct 2022 – Jun 2023** · US | AI dental documentation, saves 40-50 min/visit | 40-50 min/visit · **317 TS files · 19 surfaces · 10 slices** | Portal + admin 🟢. **CRUD/support REST endpoints on the API 🟢 (raised 2026-07-29 — see the Backend note above; grounded in `staff-contacts`).** **AI pipeline (Whisper→GPT→writeback), prompts, Sikka/PQL, SNS/SQS 🔴 — integrated, not authored.** NestJS named on the CV since 2026-10-13 (Tarun's instruction). |
 | **MyWorkMyDay** ⚠️ **CUT FROM THE CV 2026-09-10** | 7 | **Apr 2022 – Sep 2022** | HR SaaS, 20+ clients | **-50% API calls 🟡 · 20+ clients** (3.2s→1.1s DELETED 2026-07-24) | Frontend 🟢. **No repo exists on this machine — confirmed 2026-07-24, searched all of `Documents/`.** Defensible by *mechanism only*, never by file. See `project-knowledge-base/myworkmyday/defense-notes.md`. |
 
 > **MyWorkMyDay was removed from `master.tex` entirely on 2026-09-10** (Tarun's instruction). It was the
@@ -529,3 +536,29 @@ framing undersold it. Three changes, all from claims already verified in `cloudf
 
 CloudForestX now runs **6** bullets, matching Dwellworks and DentScribe. **The 🔴 boundary is unchanged:**
 detection, rightsizing and recommendation algorithms are never his.
+
+## 2026-10-13 changes (Tarun's instruction, full-stack targeting)
+
+**CloudForestX: added as the first bullet** — *"Rewrote the legacy React class components from scratch as
+functional components with hooks."* 🟡, **his own account, not code-verified.** `cloudsaver-frontend-master`
+has no `.git`, so only the end state is visible: React **17.0.2**, one class component left
+(`src/ErrorBoundary.tsx`, which must be a class), 199 files using hooks. That is consistent with the claim
+but does not prove it. **Never say it moved the app off an older React version** — 17 is what it runs.
+
+**CloudForestX: removed** — *"A typed API layer over 36 service modules, with request-id guards against
+stale-response races."* A CV presentation cut, not a fact deletion. The request-id guard facts in the
+2026-09-10 section above stay valid for interview answers.
+
+**DentScribe: backend bullet replaced twice.** *"Node.js and TypeScript REST endpoints. Ownership-scoped
+queries, validated DTOs, pagination."* was cut for reading as AI-generated. An auth-only replacement (JWT +
+role guards) was rejected the same day as "middleware, not a skill". Final:
+*"Built NestJS services on PostgreSQL: a REST API, three SQS-driven workers for AI note generation, and
+scheduled jobs for SOAP note writeback."* 🔴. Grounded in `backend-api/src`: one NestJS codebase, 7
+entry points, each with its own Dockerfile — `BackendApi` (HTTP), `WorkerService` / `ReportWorkerService`
+/ `DraftReportWorkerService` (`@SqsMessageHandler`), `ScheduleService` / `SOAPWritebackScheduleService` /
+`DailyScheduleService` (scheduled, `createApplicationContext`). **The architecture is verified; his
+authorship of the workers is not** (see the boundary note in the Backend allow-list).
+**Breaks the one-line budget:** 141 characters against the 98 ceiling.
+
+**DentScribe stack line:** `Node.js` → `NestJS`, `AWS SQS` added. **Skills line:** `NestJS` added after
+`Node.js`.
