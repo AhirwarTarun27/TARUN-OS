@@ -168,7 +168,7 @@ Detailed notes = Tarun's notebook, not here. One-line gist only.
 1. **Binary per block.** Hit or miss. "Almost" is a miss. Same discipline as `/weekly-review`.
 2. **Short by design.** ~4 lines per day. If an entry sprawls, cut it. The log is a dashboard, not a diary.
 3. **Delegate the learning.** Never teach `sysdesign` or `interview-qa` here — that's `/teach`. This ritual only tracks that they happened and what they covered.
-4. **Employer boundary holds.** Office blocks are ✓/✗ time-adherence only. Never ask for or record thinksys work content.
+4. **Employer boundary holds.** He left ThinkSys on 2026-09-25. Never ask for or record ThinkSys work content.
 5. **Weekdays only.** No weekend prompts.
 6. **Name the real blocker.** For every miss, the honest cause in a few words — not "no time."
 7. **Never delete a month.** Compress → summary, archive → raw, then reset. The record survives.

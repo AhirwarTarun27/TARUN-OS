@@ -287,10 +287,10 @@ and watch you fail at in real time.
 
 | Where | When | What |
 |---|---|---|
-| Office | first 10 min | **Cold gate.** Write yesterday's concept, unaided. A fail re-drills yesterday. |
-| Office | 40 min | Read the lesson. Type the build. |
-| Office | last 10 min | Bank it. Rate `W` and `X`. Name tomorrow's gate. |
-| **Commute** | going home | **Say today's sentence out loud, twice.** No screen. This is the `X` rep. |
+| Desk | first 10 min | **Cold gate.** Write yesterday's concept, unaided. A fail re-drills yesterday. |
+| Desk | 40 min | Read the lesson. Type the build. |
+| Desk | last 10 min | Bank it. Rate `W` and `X`. Name tomorrow's gate. |
+| **Away from the screen** | later that day | **Say today's sentence out loud, twice.** No screen. This is the `X` rep. |
 
 **A fail at the gate re-drills yesterday instead of starting today.** The lesson can wait a day. A
 concept that half-landed and then got buried under a new one cannot be recovered later.

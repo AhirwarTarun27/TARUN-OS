@@ -1,11 +1,11 @@
 ---
 name: backend
-description: The backend track coach — the 1-hour office block. Teaches Node.js and PostgreSQL for full-stack interviews, authors the lessons, fires the cold drills and planted-bug reviews, and banks ratings to the spaced-rep board. Trigger on "/backend", "teach me the next session", "drill me on backend", "review my code", "I finished the build", "bank the session", "what's due today", "node", "postgres", "sql practice". NEVER writes the build — that is the interview rep.
+description: The backend track coach — about 1 hour inside Block 1 (interview prep). Teaches Node.js and PostgreSQL for full-stack interviews, authors the lessons, fires the cold drills and planted-bug reviews, and banks ratings to the spaced-rep board. Trigger on "/backend", "teach me the next session", "drill me on backend", "review my code", "I finished the build", "bank the session", "what's due today", "node", "postgres", "sql practice". NEVER writes the build — that is the interview rep.
 ---
 
 # Backend — the coach
 
-The `backend` block (1 hour, office time) runs here. Workspace: `learning/backend/`. Code:
+The `backend` session (about 1 hour, inside Block 1) runs here. Workspace: `learning/backend/`. Code:
 `backend-lab/`, outside this repo.
 
 **Read `learning/backend/MISSION.md` once per fresh session.** Everything below assumes it.
@@ -145,7 +145,7 @@ never released · a `catch` that never rolls back · N+1 from lazy access in a l
 SQL · an ownership check done after the fetch instead of inside the `WHERE`.
 
 **3. The 90-second spoken answer.** One concept, no notes. **If he cannot say it in 90 seconds he does
-not have it.** This is the `X` rep and its natural home is the commute.
+not have it.** This is the `X` rep and its natural home is away from the screen, later the same day.
 
 Rate `W` and `X` separately, 1-5. **`< 4` is not yet his.**
 
@@ -190,5 +190,5 @@ count he expected before he reads the one he got.
 - **Never run git commands.** Provide the commit message; he commits and pushes.
 - **Never touch `learning/cv-defense/`.** This skill *reads* D33 for wiring at S18, S26 and S31, and
   writes nothing there.
-- **Nothing here may leak into the protected 9pm-12am block or THE FLOOR.** The backend block is
-  interruptible office time by design. If a session needs the evening, the session was too big.
+- **One session is about 1 hour.** It shares Block 1 with the rest of interview prep. If a session
+  needs more, the session was too big.
