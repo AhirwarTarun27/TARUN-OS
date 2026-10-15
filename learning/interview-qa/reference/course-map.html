@@ -80,6 +80,7 @@
     <li>Problems: unique objects from an array · write <code>deepClone</code></li>
     <li><a href="../lessons/0005b-getters-setters-and-copying.html">→ Lesson 5b: Getters, setters &amp; what <code>=</code> really does</a> — <strong>the floor under L5 §4 and §8. Drill this FIRST</strong></li>
     <li><a href="../lessons/0005c-prototype-chain.html">→ Lesson 5c: The prototype chain, from the floor up</a> — <strong>the floor under L5 §5. Teaches <code>new</code>. Drill SECOND</strong></li>
+    <li><a href="../lessons/0005d-classes.html">→ Lesson 5d: Classes, from the floor up</a> — <strong>built, not yet drilled.</strong> class vs constructor function · <code>super</code> (the parent builds the object) · default constructors · overriding · init order · private <code>#fields</code> · <code>static</code> · <code>instanceof</code> · custom errors (ebook Q56) · React class components, legacy · <code>myInstanceOf</code> + <code>BankAccount</code>.</li>
     <li><a href="../lessons/0005-objects-and-prototypes.html">→ Start Lesson 5</a> — <strong>built, not yet drilled</strong></li></ul>
   </div>
 
@@ -96,20 +97,24 @@
     <ul><li>Theory: single-threaded / sync vs async · call stack · <code>setTimeout</code> / <code>setInterval</code> / <code>clearInterval</code> · Promises · <code>Promise.all/allSettled/any/race</code> · event loop, tasks vs microtasks</li>
     <li>Output drills: setTimeout-vs-Promise ordering · the tricky async logs</li>
     <li><a href="../lessons/0007-event-loop-and-promises.html">→ Start Lesson 7: the event loop &amp; Promises</a> — <strong>drilled 10-08, gate passed</strong> (labels 7/8, predict 5/6). Has the interactive event loop visualizer (§7b). Single thread, the task queue, the event loop, Promises from zero, chaining, microtasks. Its §0 carries the M6 open items.</li>
-    <li><a href="../lessons/0007b-async-await.html">→ Lesson 7b: <code>async</code>/<code>await</code> &amp; the combinators</a> — <strong>built, not yet drilled.</strong> await pauses the function not the program · the then-chain model · errors · sequential vs parallel · loops · all/allSettled/race/any · <code>withTimeout</code> + <code>myPromiseAll</code>.</li></ul>
+    <li><a href="../lessons/0007b-async-await.html">→ Lesson 7b: <code>async</code>/<code>await</code> &amp; the combinators</a> — <strong>built, not yet drilled.</strong> await pauses the function not the program · the then-chain model · errors · sequential vs parallel · loops · all/allSettled/race/any · <code>withTimeout</code> + <code>myPromiseAll</code>.</li>
+    <li>→ Lesson 7c: Polyfills &amp; currying — <strong>upcoming, after 7b is drilled.</strong> What a polyfill is (ebook Q24, and its broken <code>forEach</code> answer) · naming the four you've already written · currying · debounce vs throttle as theory (the build reps live in machine-coding).</li></ul>
   </div>
 
   <div class="module">
     <h3><span class="modnum">M8</span> Browser, DOM & networking <span class="status next">upcoming</span></h3>
-    <ul><li>Theory: event bubbling · local vs session storage (+ follow-ups) · CORS · web workers · interceptors · <code>fetch</code> vs <code>axios</code></li></ul>
+    <ul><li>Theory: event bubbling · event delegation · local vs session storage (+ follow-ups) · CORS · web workers · interceptors · <code>fetch</code> vs <code>axios</code></li></ul>
   </div>
 
   <div class="module">
     <h3><span class="modnum">M9</span> ES6+, modules & tooling <span class="status next">upcoming</span></h3>
-    <ul><li>Theory: ES6 feature roundup · modules · Babel · tree shaking · <code>^</code> vs <code>~</code> in package.json · TS vs JS · authentication vs authorization</li></ul>
+    <ul><li>Theory: ES6 feature roundup · modules · Babel · tree shaking · <code>^</code> vs <code>~</code> in package.json · TS vs JS · authentication vs authorization · generators (ebook Q26) · <code>?.</code> and <code>??</code> · <code>eval</code> (Q49) · DRY/KISS/YAGNI/SOLID (Q60)</li></ul>
   </div>
 
   <p class="part-label">Part B — React (your core library)</p>
+  <p>The ebook predates modern React. Every Part B lesson flags what is legacy (class components, lifecycle
+  methods, <code>PureComponent</code>, <code>forwardRef</code>, which react.dev lists under Legacy APIs) and adds the
+  modern topics interviews ask about that the ebook leaves out.</p>
 
   <div class="module">
     <h3><span class="modnum">M10</span> React mental model <span class="status next">upcoming</span></h3>

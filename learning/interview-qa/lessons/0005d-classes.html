@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lesson 5d · Classes, from the floor up — Interview Q&amp;A</title>
+<link rel="stylesheet" href="../assets/course.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Lesson 5d · Module 5 · gap page. Read after 5c.</p>
+    <h1>Classes, from the floor up</h1>
+    <p class="subtitle">5c showed that a class is the prototype chain with nicer syntax. This page covers the
+    rest: <code>constructor</code>, <code>super</code>, private fields, <code>static</code>, <code>instanceof</code>,
+    and the gotchas interviewers actually ask about. One idea holds the whole page together: <strong>in a child
+    class, the parent builds the object.</strong></p>
+  </header>
+
+  <div class="why">
+    <span class="callout-label">What your probe showed</span>
+    <ul>
+      <li><strong><code>new</code>, steps 1 and 2: right.</strong> Step 3 you couldn't remember. Step 3 is
+      <strong>run the constructor body with <code>this</code> set to the new object.</strong> This page is built on
+      it, because in a child class, <code>super</code> is how step 3 happens. §3.</li>
+      <li><strong>Class methods are non-enumerable, and the class body is strict: right.</strong> §2 adds the
+      other differences.</li>
+      <li><strong>"<code>extends</code> links multiple prototypes": no.</strong> A class has <strong>one</strong>
+      parent. <code>extends</code> adds one link, and the chain stays a single line. §3.</li>
+      <li><strong><code>super(props)</code>, a child with no constructor, calling the parent's method: "no
+      idea".</strong> §3, §4, §5.</li>
+      <li><strong>"<code>#count</code> is not accessible outside the class": right idea, no label.</strong> It's a
+      <strong><code>SyntaxError</code></strong>, so the file never runs at all. §7.</li>
+      <li><strong>"<code>instanceof</code> checks the Error prototype": half.</strong> It walks the
+      <em>left</em> side's chain, looking for the <em>right</em> side's <code>.prototype</code>. §10.</li>
+    </ul>
+    You asked to keep React class components short, since react.dev now treats them as legacy. §12 is one
+    section: what you need to read old code, and the one place a class is still required.
+  </div>
+
+  <h2>1 · A class, read line by line</h2>
+
+  <p>Every part of a class in one example. Read the comments: each says <strong>where that line ends up</strong>.
+  You already proved the field and method rows cold in 5c. This adds the rest.</p>
+
+  <pre><code>class Counter {
+  static created = 0;              <span class="tok-com">// static field   → on Counter itself</span>
+  #count = 0;                      <span class="tok-com">// private field  → on the instance, hidden</span>
+  label = "clicks";                <span class="tok-com">// public field   → on the instance</span>
+
+  constructor(start) {             <span class="tok-com">// runs during `new`, at step 3</span>
+    this.#count = start;
+    Counter.created++;
+  }
+
+  increment() { this.#count++; return this; }   <span class="tok-com">// method → Counter.prototype</span>
+  get value() { return this.#count; }           <span class="tok-com">// getter → Counter.prototype</span>
+  static describe() { return "counts things"; } <span class="tok-com">// static method → Counter</span>
+}
+
+const c = new Counter(5);
+c.increment().increment();
+c.value;              <span class="tok-out">// 7         ← a getter, so no ()</span>
+Counter.created;      <span class="tok-out">// 1</span>
+Counter.describe();   <span class="tok-out">// "counts things"</span>
+Object.keys(c);       <span class="tok-out">// ["label"] ← #count is not a key at all</span>
+typeof Counter;       <span class="tok-out">// "function" ← a class IS a function</span></code></pre>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>You write</th><th>It lands on</th><th>Own property of the instance?</th></tr></thead>
+    <tbody>
+      <tr><td><code>label = "clicks"</code> (field)</td><td>the instance</td><td><strong>yes</strong>, one per object</td></tr>
+      <tr><td><code>#count = 0</code> (private field)</td><td>the instance, hidden</td><td>not a property at all. No key, no spread, no JSON</td></tr>
+      <tr><td><code>increment() {}</code> (method)</td><td><code>Counter.prototype</code></td><td>no, shared through the chain</td></tr>
+      <tr><td><code>get value() {}</code> (getter)</td><td><code>Counter.prototype</code></td><td>no, shared through the chain</td></tr>
+      <tr><td><code>static ...</code></td><td><code>Counter</code>, the class itself</td><td>no, and instances can't reach it</td></tr>
+      <tr><td><code>constructor() {}</code></td><td>it becomes the body of the <code>Counter</code> function</td><td>n/a</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p><strong>Methods and getters go on the prototype. Fields go on the instance. Statics go on the class.</strong>
+  That's the 5c rule with two more rows.</p>
+
+  <h2>2 · Class vs constructor function: the same machine, with guards</h2>
+
+  <p>These two build the same thing: same prototype, same chain, same <code>rex.bark === fido.bark</code>.</p>
+
+  <pre><code><span class="tok-com">// the old way</span>
+function DogFn(name) { this.name = name; }
+DogFn.prototype.bark = function () { return this.name + " woof"; };
+
+<span class="tok-com">// the class way</span>
+class Dog {
+  constructor(name) { this.name = name; }
+  bark() { return this.name + " woof"; }
+}</code></pre>
+
+  <p>The structure is the same. The behaviour is not. A class adds guards that catch bugs the old way lets
+  through quietly:</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th></th><th>Constructor function</th><th>Class</th></tr></thead>
+    <tbody>
+      <tr><td>Called without <code>new</code></td><td>runs anyway. <code>this</code> is the global object, so <code>DogFn("ghost")</code> sets <code>globalThis.name</code></td><td><strong><code>TypeError</code></strong>: Class constructor Dog cannot be invoked without 'new'</td></tr>
+      <tr><td>Methods in <code>for...in</code></td><td>listed (<code>name</code>, <code>bark</code>)</td><td>hidden (<code>name</code> only). Methods are non-enumerable</td></tr>
+      <tr><td>Strict mode</td><td>only if you opt in</td><td><strong>always</strong>, for the whole class body</td></tr>
+      <tr><td>A lost method, <code>const f = rex.bark; f()</code></td><td><code>this</code> is the global object: <code>"undefined woof"</code> in Node</td><td><code>this</code> is <code>undefined</code>: <strong><code>TypeError</code></strong></td></tr>
+      <tr><td>Used before its line</td><td>a declaration is fully hoisted, so it works</td><td>hoisted but in the TDZ: <strong><code>ReferenceError</code></strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Look at the first and fourth rows. The old way <strong>doesn't fail. It writes to the global object and keeps
+  going</strong>, which is a far worse bug than an error. The class guards turn silent bugs into loud ones. The
+  TDZ row is the one from <a href="0002-scope-hoisting-tdz.html">Lesson 2</a>: <code>class</code> is hoisted the
+  way <code>let</code> is.</p>
+
+  <pre><code>new Early();          <span class="tok-out">// ReferenceError: Cannot access 'Early' before initialization</span>
+class Early {}</code></pre>
+
+  <h2>3 · The floor: step 3 of <code>new</code>, and why <code>super</code> exists</h2>
+
+  <p>Here's <code>new</code> from 5c, with the step you couldn't remember marked:</p>
+
+  <pre><code>const rex = new Dog("Rex");
+
+  1.  create a fresh empty object
+  2.  link it: its prototype = Dog.prototype
+  3.  RUN THE CONSTRUCTOR BODY with `this` = that object      ← this.name = "Rex" happens here
+  4.  return it</code></pre>
+
+  <p>For a class <em>without</em> <code>extends</code>, that's the whole story. A <strong>child</strong> class is
+  different. <strong>The child does not build the object. The parent does.</strong> When the child's constructor
+  starts, there is no object yet, so <code>this</code> doesn't exist. <code>super(...)</code> is the call that runs
+  the parent's constructor, which builds the object and hands it back. Only then does the child have a
+  <code>this</code>.</p>
+
+  <pre><code>class Animal {
+  constructor(name) { this.name = name; }
+}
+class Puppy extends Animal {
+  constructor(name) {
+    super(name);           <span class="tok-com">// the parent builds the object</span>
+    this.tricks = [];      <span class="tok-com">// now `this` exists</span>
+  }
+}
+
+new Puppy("Rex");
+
+  Puppy's constructor starts             this = (nothing yet)
+  super("Rex")  →  Animal's constructor runs:
+                    1. create {}
+                    2. link it to Puppy.prototype     ← the CHILD's prototype, not Animal's
+                    3. run Animal's body: this.name = "Rex"
+                    4. hand it back
+  this = that object                     ← only now
+  this.tricks = []
+  return it                              <span class="tok-out">// { name: "Rex", tricks: [] }</span></code></pre>
+
+  <p>Step 2 says <strong><code>Puppy.prototype</code></strong>. Animal builds the object, but links it to the
+  prototype of the class you actually called <code>new</code> on. That's why a puppy gets Puppy's methods
+  <em>and</em>, one link further up, Animal's. Checked on Node: inside Animal's constructor,
+  <code>Object.getPrototypeOf(this) === Puppy.prototype</code> is <code>true</code>.</p>
+
+  <h3>The error, and what it means</h3>
+
+  <pre><code>class Bad extends Animal {
+  constructor(name) {
+    this.x = 1;            <span class="tok-com">// no object yet</span>
+    super(name);
+  }
+}
+new Bad("a");
+<span class="tok-out">// ReferenceError: Must call super constructor in derived class
+//   before accessing 'this' or returning from derived constructor</span></code></pre>
+
+  <p><strong>It's a <code>ReferenceError</code>, not a <code>TypeError</code>.</strong> Same family as the TDZ:
+  <code>this</code> is a binding that isn't ready yet, like <code>let x</code> before its line. Leaving out
+  <code>super</code> altogether gives the same error, at the moment the constructor finishes.</p>
+
+  <div class="tip">
+    <span class="callout-label">The myth: "super must be the first line"</span>
+    False. The rule is only <strong>no <code>this</code> before <code>super</code></strong>. Ordinary code
+    before it is fine:
+    <pre><code>class Doubled extends Animal {
+  constructor(n) {
+    const twice = n + n;   <span class="tok-com">// fine: doesn't touch `this`</span>
+    super(twice);
+  }
+}
+new Doubled("ab").name;    <span class="tok-out">// "abab"</span></code></pre>
+  </div>
+
+  <h3>One parent only</h3>
+
+  <p><code>class C extends A, B {}</code> is a <strong><code>SyntaxError</code></strong>. <code>extends</code> takes one
+  class, and the chain is one line: <code>puppy → Puppy.prototype → Animal.prototype → Object.prototype →
+  null</code>. If you need behaviour from two places, combine objects (store a helper in a field) instead of
+  inheriting twice.</p>
+
+  <h3>What <code>extends</code> and <code>super</code> replace</h3>
+
+  <p>Interviewers ask "how did inheritance work before <code>class</code>?". It took four lines, and each one maps
+  to something you know from 5c:</p>
+
+  <pre><code>function AnimalFn(name) { this.name = name; }
+AnimalFn.prototype.speak = function () { return this.name + " speaks"; };
+
+function PuppyFn(name) {
+  AnimalFn.call(this, name);                          <span class="tok-com">// ≈ super(name). Borrow the parent's body</span>
+  this.tricks = [];
+}
+PuppyFn.prototype = Object.create(AnimalFn.prototype); <span class="tok-com">// the instance link</span>
+PuppyFn.prototype.constructor = PuppyFn;               <span class="tok-com">// repair the pointer you just replaced</span>
+Object.setPrototypeOf(PuppyFn, AnimalFn);              <span class="tok-com">// the static link (5c §6)</span>
+
+new PuppyFn("Bo").speak();                             <span class="tok-out">// "Bo speaks"</span></code></pre>
+
+  <p>There's one real difference, and it's the one that matters. In the old way, <strong>the child creates the
+  object</strong> and borrows the parent's body with <code>.call</code>. In a class, <strong>the parent creates
+  it</strong>. That's why a class can properly extend built-ins, whose constructors have to make the object
+  themselves:</p>
+
+  <pre><code>class MyArr extends Array {}
+const m = new MyArr();  m[5] = 1;
+m.length;  Array.isArray(m);   <span class="tok-out">// 6  true    ← a real array</span>
+
+<span class="tok-com">// the old way: Array.call(this) can't turn an ordinary object into an array</span>
+function MyArrFn() { Array.call(this); }
+MyArrFn.prototype = Object.create(Array.prototype);
+const f = new MyArrFn();  f[5] = 1;
+f.length;  Array.isArray(f);   <span class="tok-out">// 0  false   ← an ordinary object that inherits array methods</span></code></pre>
+
+  <div class="note">
+    <span class="callout-label">"Is class just syntactic sugar?"</span>
+    "Mostly. It builds the same prototype chain, and <code>typeof</code> a class is <code>"function"</code>. But
+    it isn't <em>only</em> sugar. It refuses to run without <code>new</code>, its body is always strict, its methods
+    are non-enumerable, and in a subclass the parent creates the object. That last part is why
+    <code>extends Error</code> and <code>extends Array</code> work properly. Private <code>#fields</code> have no
+    old-style equivalent either."
+  </div>
+
+  <h2>4 · No constructor? JavaScript writes one for you</h2>
+
+  <pre><code>class Animal { constructor(name) { this.name = name; } }
+class Puppy extends Animal {}          <span class="tok-com">// no constructor written</span>
+
+new Puppy("Rex").name;                 <span class="tok-out">// "Rex"   ← the parent's constructor ran</span></code></pre>
+
+  <p>A class without a constructor gets a <strong>default constructor</strong>:</p>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Class</th><th>The constructor you get for free</th></tr></thead>
+    <tbody>
+      <tr><td>no <code>extends</code></td><td><code>constructor() {}</code></td></tr>
+      <tr><td><code>extends Parent</code></td><td><code>constructor(...args) { super(...args); }</code>, which passes <strong>every</strong> argument up</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p><strong>The bug comes when you write your own.</strong> As soon as a child has a constructor, the free one is
+  gone, and passing arguments to <code>super</code> is your job:</p>
+
+  <pre><code>class Puppy2 extends Animal {
+  constructor(name, breed) {
+    super();               <span class="tok-com">// forgot to pass name up</span>
+    this.breed = breed;
+  }
+}
+const q = new Puppy2("Rex", "lab");
+q.name;    <span class="tok-out">// undefined   ← Animal ran with no argument</span>
+q.breed;   <span class="tok-out">// "lab"</span></code></pre>
+
+  <p>No error, just a missing value. The rule: <strong>only write a child constructor when the child needs its own
+  setup. If you write one, pass the parent's arguments to <code>super</code>.</strong></p>
+
+  <h2>5 · Overriding, and <code>super.method()</code></h2>
+
+  <p>A child can define a method with the same name as the parent's. The child's version wins, because it's
+  found first on the chain. That's 5c's shadowing, one level up. To <em>add to</em> the parent's version instead
+  of replacing it, call <code>super.method()</code>:</p>
+
+  <pre><code>class Animal {
+  constructor(name) { this.name = name; }
+  speak() { return this.name + " makes a sound"; }
+}
+class Dog extends Animal {
+  speak() { return super.speak() + ", then barks"; }
+}
+new Dog("Rex").speak();     <span class="tok-out">// "Rex makes a sound, then barks"</span></code></pre>
+
+  <pre><code>rex.speak()
+
+ rex                 { name: "Rex" }     speak? ✗
+  │
+  ▼
+ Dog.prototype       { speak }           speak? ✓  STOP   ← the override wins
+  │
+  ▼
+ Animal.prototype    { speak }           reached only through super.speak()
+  │
+  ▼
+ Object.prototype  →  null</code></pre>
+
+  <p><strong><code>super.speak()</code> starts the search one link above the class it's written in, but
+  <code>this</code> is still <code>rex</code>.</strong> That's why the parent's version prints "Rex".</p>
+
+  <div class="tip">
+    <span class="callout-label">The infinite-loop trap</span>
+    Writing <code>this.speak()</code> instead of <code>super.speak()</code> inside the override calls
+    <em>itself</em>, because <code>this.speak</code> finds Dog's version first. It runs until the stack is full:
+    <strong><code>RangeError: Maximum call stack size exceeded</code></strong>.
+  </div>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Form</th><th>Where</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>super(...)</code></td><td>only in a child's constructor</td><td>runs the parent's constructor, which <strong>creates <code>this</code></strong></td></tr>
+      <tr><td><code>super.x</code> / <code>super.x()</code></td><td>any method</td><td>looks <code>x</code> up on the parent's prototype, keeping the same <code>this</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>6 · The init-order trap</h2>
+
+  <p>This is the hardest class question you're likely to get, and it follows from §3. Predict before you read
+  the answer:</p>
+
+  <pre><code>class A {
+  name = "A";
+  constructor() {
+    console.log(this.name);
+    this.hello();
+  }
+  hello() { console.log("A hello"); }
+}
+class B extends A {
+  name = "B";
+  greeting = "hi";
+  hello() { console.log("B hello", this.greeting); }
+}
+new B();</code></pre>
+
+  <details class="reveal">
+    <summary>Answer</summary>
+    <pre><code><span class="tok-out">A
+B hello undefined</span></code></pre>
+    <p><strong>A class's fields are installed right after its <code>super()</code> returns.</strong> So in
+    <code>new B()</code>:</p>
+    <ol>
+      <li>B's free constructor calls <code>super()</code>, so A builds the object.</li>
+      <li>A's fields go on: <code>name = "A"</code>.</li>
+      <li>A's constructor body runs. It logs <code>"A"</code>, because B's <code>name</code> doesn't exist yet. Then it
+      calls <code>this.hello()</code>, which <strong>finds B's version</strong>, because methods are on the prototype
+      from the start. B's <code>greeting</code> isn't there yet, so <code>undefined</code>.</li>
+      <li><code>super()</code> returns. B's fields go on: <code>name = "B"</code>, <code>greeting = "hi"</code>.</li>
+      <li>The rest of B's constructor runs (there isn't any).</li>
+    </ol>
+    <p>After construction, <code>b.name</code> is <code>"B"</code>. It was only <code>"A"</code> while A's
+    constructor ran.</p>
+  </details>
+
+  <div class="note">
+    <span class="callout-label">Say it like this</span>
+    "A parent's constructor runs before the child's fields exist. So the parent can call the child's
+    <em>methods</em>, which are already on the prototype, but it can't see the child's <em>fields</em>. Don't call
+    overridable methods from a constructor."
+  </div>
+
+  <h2>7 · Private <code>#fields</code>: real privacy</h2>
+
+  <pre><code>class Wallet {
+  #balance = 0;
+  deposit(n) { this.#balance += n; return this.#balance; }
+  static isWallet(x) { return #balance in x; }      <span class="tok-com">// does x have this class's #balance?</span>
+}
+const w = new Wallet();
+w.deposit(50);          <span class="tok-out">// 50</span>
+w.balance;              <span class="tok-out">// undefined  ← there's no public property called balance</span>
+w["#balance"];          <span class="tok-out">// undefined  ← the string "#balance" is just a different key</span>
+Object.keys(w);         <span class="tok-out">// []</span>
+JSON.stringify(w);      <span class="tok-out">// "{}"</span>
+Wallet.isWallet(w);     <span class="tok-out">// true</span>
+Wallet.isWallet({});    <span class="tok-out">// false</span></code></pre>
+
+  <h3>Outside the class it's a <code>SyntaxError</code>, so nothing runs</h3>
+
+  <pre><code>console.log("line 1 ran");      <span class="tok-com">// never prints</span>
+class W { #b = 1; }
+const x = new W();
+console.log(x.#b);
+<span class="tok-out">// SyntaxError: Private field '#b' must be declared in an enclosing class</span></code></pre>
+
+  <p>"Not accessible" is the behaviour. <strong><code>SyntaxError</code> is the label</strong>, and it says
+  something specific: the engine rejects the file <em>before running any of it</em>, so even line 1 never runs.
+  Privacy is checked while the code is parsed, not while it runs.</p>
+
+  <ul>
+    <li><strong>A subclass can't see it either.</strong> <code>class Child extends Wallet { peek() { return
+    this.#balance; } }</code> is the same <code>SyntaxError</code>. <code>#</code> is private to <strong>the class body
+    it's written in</strong>. It's not "protected", and JavaScript has no protected.</li>
+    <li><strong>Calling a method on the wrong object</strong> fails at run time:
+    <code>w.deposit.call({}, 5)</code> gives <code>TypeError: Cannot read private member #balance from an object whose
+    class did not declare it</code>.</li>
+    <li><strong>Private methods</strong> work the same way: <code>#validate() {}</code>, called as
+    <code>this.#validate()</code>.</li>
+  </ul>
+
+  <div class="tbl-scroll">
+  <table class="tbl">
+    <thead><tr><th>Approach</th><th>Really private?</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td><code>this._balance</code></td><td><strong>no</strong>. It's a naming convention</td><td>anyone can read or change it, and <code>Object.keys</code> lists it</td></tr>
+      <tr><td>closure (<a href="0003-functions-closures-hofs.html">Lesson 3</a>)</td><td><strong>yes</strong></td><td>every method has to live in the constructor, so you get one copy of each method per object (5c §1's 1000 dogs)</td></tr>
+      <tr><td><code>#balance</code></td><td><strong>yes</strong>, enforced by the language</td><td>methods stay shared on the prototype. This is the modern answer</td></tr>
+      <tr><td>TypeScript <code>private balance</code></td><td><strong>only at compile time</strong></td><td>it compiles to a normal property: <code>Object.keys</code> gives <code>["balance"]</code> at run time</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>That last row is worth saying in an interview, since you write TypeScript. Checked by compiling it with
+  <code>tsc</code>: the output is a plain <code>balance = 100</code>.</p>
+
+  <h2>8 · <code>static</code>: on the class, not the instances</h2>
+
+  <pre><code>class User {
+  static count = 0;
+  constructor(name) { this.name = name; User.count++; }
+  static fromJSON(json) { return new this(JSON.parse(json).name); }
+}
+const u = User.fromJSON('{"name":"Asha"}');
+u.name;         <span class="tok-out">// "Asha"</span>
+User.count;     <span class="tok-out">// 1</span>
+u.count;        <span class="tok-out">// undefined   ← statics are not on instances</span>
+u.fromJSON();   <span class="tok-out">// TypeError: u.fromJSON is not a function   ← never found on u's chain</span></code></pre>
+
+  <ul>
+    <li><strong><code>this</code> inside a static method is the class.</strong> That's Lesson 4's rule 3:
+    <code>User.fromJSON()</code> has <code>User</code> left of the dot. So <code>new this(...)</code> builds whichever
+    class it was called on. <code>Admin.fromJSON(...)</code> builds an <code>Admin</code>, through the static link from
+    5c.</li>
+    <li><strong>Use statics for things that belong to the class as a whole:</strong> factory methods like
+    <code>fromJSON</code>, counters, constants, helpers.</li>
+    <li><strong>You've used statics all along:</strong> <code>Array.from</code>, <code>Array.isArray</code>,
+    <code>Object.keys</code>, <code>Promise.all</code>, <code>Number.isInteger</code>, <code>Date.now</code>. Every one
+    is called on the class, never on an instance. <code>[1,2].isArray</code> doesn't exist.</li>
+  </ul>
+
+  <h2>9 · Getters and setters in a class</h2>
+
+  <p><a href="0005b-getters-setters-and-copying.html">5b</a> taught accessors. In a class they look like this,
+  usually with a private field holding the real value:</p>
+
+  <pre><code>class Temp {
+  #c = 0;
+  get f() { return this.#c * 9 / 5 + 32; }
+  set f(v) { this.#c = (v - 32) * 5 / 9; }
+  get c() { return this.#c; }                 <span class="tok-com">// getter only: read-only from outside</span>
+}
+const t = new Temp();
+t.f = 212;      <span class="tok-com">// looks like storing a value. It runs the setter</span>
+t.c;            <span class="tok-out">// 100</span>
+Object.hasOwn(t, "f");             <span class="tok-out">// false   ← accessors live on Temp.prototype</span>
+Object.hasOwn(Temp.prototype, "f"); <span class="tok-out">// true</span></code></pre>
+
+  <p><strong>Writing to a getter-only property:</strong> in non-strict code it's silently ignored
+  (<code>t.c</code> stays <code>100</code>). In strict code, which includes every class body and every ES module, it's
+  <code>TypeError: Cannot set property c of #&lt;Temp&gt; which has only a getter</code>.</p>
+
+  <h2>10 · <code>instanceof</code> is a walk up the chain</h2>
+
+  <p><code>x instanceof C</code> asks one question: <strong>is <code>C.prototype</code> anywhere in
+  <code>x</code>'s chain?</strong> It walks the left side's chain and looks for the right side's
+  <code>.prototype</code>.</p>
+
+  <pre><code>class ValidationError extends Error {}
+const err = new ValidationError("bad email");
+
+ err ──► ValidationError.prototype ──► Error.prototype ──► Object.prototype ──► null
+
+err instanceof ValidationError;   <span class="tok-out">// true   ValidationError.prototype is on the chain</span>
+err instanceof Error;             <span class="tok-out">// true   Error.prototype is further up</span>
+err instanceof Object;            <span class="tok-out">// true</span>
+err instanceof TypeError;         <span class="tok-out">// false  TypeError.prototype is not on this chain</span></code></pre>
+
+  <p>Three gotchas, and each one follows from "it only checks the chain":</p>
+
+  <pre><code>"hi" instanceof String;                 <span class="tok-out">// false  ← a primitive isn't an object, so there's no chain to walk</span>
+
+class Cat { constructor() { this.lives = 9; } }
+const c = Object.create(Cat.prototype);
+c instanceof Cat;   c.lives;            <span class="tok-out">// true  undefined  ← linked, but the constructor never ran</span>
+
+Object.create(null) instanceof Object;  <span class="tok-out">// false  ← its chain is empty</span></code></pre>
+
+  <p>The middle one is the important one. <strong><code>instanceof</code> means "is linked to", not "was
+  built by".</strong> To check for an array, use <code>Array.isArray(x)</code>. It doesn't depend on the chain, so it
+  also works on arrays from another iframe, where <code>instanceof Array</code> fails.</p>
+
+  <h2>11 · Extending <code>Error</code>: custom errors</h2>
+
+  <p>The most common real-world reason to write <code>extends</code> today:</p>
+
+  <pre><code>class ValidationError extends Error {
+  constructor(message, field) {
+    super(message);                  <span class="tok-com">// Error's constructor sets .message and the stack</span>
+    this.name = "ValidationError";   <span class="tok-com">// otherwise .name is "Error"</span>
+    this.field = field;
+  }
+}
+
+try {
+  throw new ValidationError("email is required", "email");
+} catch (err) {
+  if (err instanceof ValidationError) console.log(err.name, err.field, err.message);
+  else throw err;                    <span class="tok-com">// not ours: let it keep going up</span>
+}
+<span class="tok-out">// ValidationError email email is required</span></code></pre>
+
+  <ul>
+    <li><strong>Why bother?</strong> So a <code>catch</code> can tell <em>your</em> expected failures (bad input, show
+    the user a message) apart from real bugs (rethrow them). <code>instanceof</code> makes that a one-line check.</li>
+    <li><strong>Forget <code>this.name</code></strong> and <code>String(err)</code> is <code>"Error: ..."</code>, and so is
+    the first line of the stack trace. The class works, but the logs say <code>Error</code>.</li>
+    <li><strong>The built-in error types are classes on the same chain.</strong> <code>SyntaxError</code>,
+    <code>ReferenceError</code>, <code>TypeError</code>, <code>RangeError</code>, and the
+    <code>AggregateError</code> from <code>Promise.any</code> all extend <code>Error</code>.
+    <code>new TypeError() instanceof Error</code> is <code>true</code>. That answers the ebook's "types of errors"
+    question.</li>
+    <li><strong>Wrapping an error</strong> (modern JS): <code>new Error("save failed", { cause: err })</code> keeps the
+    original on <code>.cause</code>.</li>
+  </ul>
+
+  <h2>12 · React class components: just enough to read old code</h2>
+
+  <p><strong>react.dev lists <code>Component</code> under "Legacy APIs"</strong> and says: <em>"We recommend
+  defining components as functions instead of classes."</em> Hooks don't work in classes. You won't write new
+  class components, but older codebases and the ebook are full of them, and now you can read every line:</p>
+
+  <pre><code>class Counter extends React.Component {
+  constructor(props) {
+    super(props);                                   <span class="tok-com">// §3: no `this` until the parent builds it</span>
+    this.state = { count: 0 };
+    this.handleClick = this.handleClick.bind(this); <span class="tok-com">// Lesson 4: the lost-dot fix</span>
+  }
+  handleClick() { this.setState({ count: this.state.count + 1 }); }
+  render() {
+    return &lt;button onClick={this.handleClick}&gt;{this.state.count}&lt;/button&gt;;
+  }
+}</code></pre>
+
+  <ul>
+    <li><strong>Why <code>super(props)</code>?</strong> Counter is a child of <code>React.Component</code>, so
+    <code>this</code> doesn't exist until <code>super</code> runs. The React docs say to call
+    <code>super(props)</code> before any other statement, so that <code>this.props</code> works inside the
+    constructor.</li>
+    <li><strong>Why the <code>bind</code>?</strong> <code>onClick={this.handleClick}</code> passes the function
+    <em>without its dot</em>. React calls it later as a plain function, so <code>this</code> is
+    <code>undefined</code> (class bodies are strict). That's the lost-method bug from
+    <a href="0004-this-and-binding.html">Lesson 4 §3</a>. The other fix is an arrow field,
+    <code>handleClick = () =&gt; {...}</code>, from 5c §7.</li>
+    <li><strong>The one place a class is still required: error boundaries.</strong> react.dev: <em>"There is currently
+    no way to write an Error Boundary as a function component."</em> An error boundary uses
+    <code>static getDerivedStateFromError</code> (a static, §8) and <code>componentDidCatch</code>. In practice, most
+    teams use the <code>react-error-boundary</code> package rather than writing the class.</li>
+  </ul>
+
+  <div class="note">
+    <span class="callout-label">Say it like this</span>
+    "Class components are legacy now. I write function components with hooks. The one place I still see a class
+    is an error boundary, because there's no hook for catching render errors yet. Usually I'd reach for
+    <code>react-error-boundary</code>."
+  </div>
+
+  <h2>13 · Quick checks</h2>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">In a child class constructor, why can't you use <code>this</code> before <code>super()</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>super must always be the first line</button></li>
+      <li><button>this points to the parent class</button></li>
+      <li><button>the parent hasn't built the object yet</button></li>
+      <li><button>class bodies are in strict mode</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The object doesn't exist yet.</strong> In a child class the parent's
+    constructor creates it, and <code>super()</code> is the call that runs it. Using <code>this</code> before that is
+    a <code>ReferenceError</code>. Code that doesn't touch <code>this</code> is allowed before <code>super</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="0">
+    <p class="quiz-q">A child class has no constructor. What happens on <code>new Child("a")</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>the parent constructor runs with "a"</button></li>
+      <li><button>TypeError, a constructor is required</button></li>
+      <li><button>the parent constructor runs, no args</button></li>
+      <li><button>nothing runs, an empty object returns</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>The parent's constructor runs with "a".</strong> The default child constructor
+    is <code>constructor(...args) { super(...args); }</code>, which passes every argument up.</div>
+  </div>
+
+  <div class="quiz" data-correct="3">
+    <p class="quiz-q"><code>obj.#secret</code> written outside the class. What happens?</p>
+    <ul class="quiz-opts">
+      <li><button>undefined is returned</button></li>
+      <li><button>TypeError at that line</button></li>
+      <li><button>ReferenceError at that line</button></li>
+      <li><button>SyntaxError, nothing in the file runs</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>SyntaxError.</strong> Private names are checked when the code is parsed, so the
+    whole file is rejected before line 1 runs. <code>obj["#secret"]</code> is different: that's an ordinary string
+    key, and it gives <code>undefined</code>.</div>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="quiz-q">What does <code>x instanceof C</code> actually check?</p>
+    <ul class="quiz-opts">
+      <li><button>whether C's constructor built x</button></li>
+      <li><button>whether C.prototype is on x's chain</button></li>
+      <li><button>whether x has C's own properties</button></li>
+      <li><button>whether x.constructor === C</button></li>
+    </ul>
+    <div class="quiz-explain"><strong>Whether <code>C.prototype</code> is anywhere on <code>x</code>'s chain.</strong>
+    That's why <code>Object.create(C.prototype) instanceof C</code> is <code>true</code> even though the constructor
+    never ran.</div>
+  </div>
+
+  <div class="quiz" data-correct="2">
+    <p class="quiz-q">Inside an override, how do you run the parent's version of <code>speak</code>?</p>
+    <ul class="quiz-opts">
+      <li><button>this.speak()</button></li>
+      <li><button>Parent.speak()</button></li>
+      <li><button>super.speak()</button></li>
+      <li><button>super().speak()</button></li>
+    </ul>
+    <div class="quiz-explain"><strong><code>super.speak()</code></strong>. It starts the search one link above the class
+    it's written in, and keeps the same <code>this</code>. <code>this.speak()</code> finds the override itself and
+    loops forever (<code>RangeError</code>). <code>Parent.speak</code> would look for a <em>static</em>.</div>
+  </div>
+
+  <h2>14 · Cold drills: predict the output</h2>
+  <p>Cover the answers. Say the output <strong>and</strong> the reason. All outputs were run on Node 24.</p>
+
+  <details class="reveal">
+    <summary>D1 · <code>class Car {}<br>try { Car(); } catch (e) { console.log(e.constructor.name); }</code></summary>
+    <p><strong><code>TypeError</code></strong>. A class refuses to be called without <code>new</code>. An old-style
+    constructor function would have run and written onto the global object instead.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D2 · <code>class A { constructor(x, y) { this.sum = x + y; } }<br>class B extends A {}<br>console.log(new B(2, 3).sum);</code></summary>
+    <p><strong><code>5</code></strong>. B gets the free constructor <code>constructor(...args) { super(...args); }</code>,
+    so both arguments reach A.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D3 · <code>class P { kind = "parent"; constructor() { console.log("P sees", this.kind); } }<br>class C extends P { kind = "child"; constructor() { super(); console.log("C sees", this.kind); } }<br>new C();</code></summary>
+    <p><strong><code>P sees parent</code>, then <code>C sees child</code></strong>. While P's constructor runs, only
+    P's field is installed. C's field goes on as soon as <code>super()</code> returns, so by C's
+    <code>console.log</code> it has replaced the value.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D4 · <code>class A { hi() { return "A"; } }<br>class B extends A { hi() { return super.hi() + "B"; } }<br>class C extends B { hi() { return super.hi() + "C"; } }<br>console.log(new C().hi());</code></summary>
+    <p><strong><code>"ABC"</code></strong>. Each <code>super.hi()</code> goes one link up from the class it's written
+    in: C's calls B's, B's calls A's. The strings are joined as the calls return, innermost first.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D5 · <code>class Cat { constructor() { this.lives = 9; } }<br>const c = Object.create(Cat.prototype);<br>console.log(c instanceof Cat, c.lives);</code></summary>
+    <p><strong><code>true undefined</code></strong>. <code>Object.create</code> set the link, which is all
+    <code>instanceof</code> checks. But only <code>new</code> runs the constructor (step 3), so <code>lives</code> was
+    never set.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D6 · <code>class S { #pin = 1234; id = 7; }<br>const s = new S();<br>console.log(JSON.stringify(s), { ...s });</code></summary>
+    <p><strong><code>{"id":7} { id: 7 }</code></strong>. A private field isn't a property, so JSON and spread never
+    see it. Only the public field is own and enumerable.</p>
+  </details>
+
+  <details class="reveal">
+    <summary>D7 · <code>class AppError extends Error {}<br>const e = new AppError("boom");<br>console.log(e.name, e instanceof Error, e.message);</code></summary>
+    <p><strong><code>Error true boom</code></strong>. <code>.message</code> comes through the free constructor, and the
+    chain makes it an <code>Error</code>. But <code>.name</code> is inherited from <code>Error.prototype</code>, which
+    says <code>"Error"</code>, because nothing set <code>this.name</code>.</p>
+  </details>
+
+  <h2>15 · Label-only round</h2>
+  <p>No outputs, no explanations. For each line, say: <strong>runs</strong>, <strong>TypeError</strong>,
+  <strong>ReferenceError</strong> or <strong>SyntaxError</strong>. 60 seconds. <strong>Bar 7/8.</strong></p>
+  <ol>
+    <li><code>Dog("Rex")</code>, where <code>Dog</code> is a class</li>
+    <li><code>new Early()</code> on the line <em>above</em> <code>class Early {}</code></li>
+    <li>a child constructor: <code>this.x = 1; super();</code></li>
+    <li><code>new Puppy("Rex")</code>, where <code>Puppy extends Animal</code> and has no constructor</li>
+    <li><code>w.#balance</code>, written outside the class</li>
+    <li><code>const f = rex.bark; f();</code>, where <code>bark()</code> is a class method that reads <code>this.name</code></li>
+    <li><code>rex.create()</code>, where <code>create</code> is <code>static</code> on the class</li>
+    <li>a child constructor: <code>const twice = n + n; super(twice);</code></li>
+  </ol>
+  <details class="reveal">
+    <summary>Answers</summary>
+    <ol>
+      <li><strong>TypeError</strong>: a class can't be called without <code>new</code></li>
+      <li><strong>ReferenceError</strong>: the class is in the TDZ</li>
+      <li><strong>ReferenceError</strong>: <code>this</code> isn't ready before <code>super</code></li>
+      <li><strong>runs</strong>: the free constructor passes the argument up</li>
+      <li><strong>SyntaxError</strong>: the file is rejected before anything runs</li>
+      <li><strong>TypeError</strong>: the dot was lost, and the class body is strict, so <code>this</code> is <code>undefined</code></li>
+      <li><strong>TypeError</strong>: statics aren't on instances, so <code>rex.create</code> is <code>undefined</code>, and "X is not a function" means "X was never found"</li>
+      <li><strong>runs</strong>: only <code>this</code> is forbidden before <code>super</code>, not other code</li>
+    </ol>
+    <p><strong>The traps are 4 and 8.</strong> Both <em>look</em> broken (a child with no constructor, code before
+    <code>super</code>) and both run. That's matching by surface shape again. <strong>The other discriminator is
+    1 vs 3.</strong> <code>ReferenceError</code> means a name or binding isn't usable <em>yet</em> (the TDZ, or
+    <code>this</code> before <code>super</code>). <code>TypeError</code> means the value exists, but you did something
+    illegal with it (called a class without <code>new</code>, called <code>undefined</code>, read a property of
+    <code>undefined</code>).</p>
+  </details>
+
+  <h2>16 · Coding drills</h2>
+  <p>For each one, work in this order: <strong>how it's used → trace one example by hand → the steps as comments →
+  code.</strong></p>
+
+  <h3>Drill A: write <code>myInstanceOf(obj, Ctor)</code></h3>
+  <p>A common polyfill question, and it's §10 turned into code. It must match the real
+  <code>instanceof</code>.</p>
+  <pre><code><span class="tok-com">// how it's used</span>
+class A {}  class B extends A {}
+myInstanceOf(new B(), A);                  <span class="tok-out">// true</span>
+myInstanceOf(new A(), B);                  <span class="tok-out">// false</span>
+myInstanceOf(Object.create(null), Object); <span class="tok-out">// false</span>
+myInstanceOf(5, Number);                   <span class="tok-out">// false  ← primitives have no chain</span></code></pre>
+  <details class="reveal">
+    <summary>Hint ladder, then the answer</summary>
+    <p><strong>Hint 1.</strong> Trace <code>myInstanceOf(new B(), A)</code> on paper. Which objects are on the
+    chain of <code>new B()</code>, in order? At which one do you stop?</p>
+    <p><strong>Hint 2.</strong> It's a loop: compare, then step up with <code>Object.getPrototypeOf</code>. What
+    value tells you the chain has ended?</p>
+    <p><strong>Hint 3.</strong> Primitives and <code>null</code> have to return <code>false</code> before the loop
+    starts.</p>
+    <pre><code>function myInstanceOf(obj, Ctor) {
+  if (obj === null || (typeof obj !== "object" &amp;&amp; typeof obj !== "function")) return false;
+  let proto = Object.getPrototypeOf(obj);
+  while (proto !== null) {
+    if (proto === Ctor.prototype) return true;   <span class="tok-com">// found the right side's .prototype</span>
+    proto = Object.getPrototypeOf(proto);        <span class="tok-com">// one link up</span>
+  }
+  return false;                                  <span class="tok-com">// walked off the end</span>
+}</code></pre>
+    <p>Checked on Node against the real <code>instanceof</code> for 8 cases, including arrays, arrow functions and
+    <code>null</code>: all match. Two things to say out loud: <strong>it compares against
+    <code>Ctor.prototype</code>, not <code>Ctor</code></strong>, and <strong>the loop ends at
+    <code>null</code></strong>.</p>
+  </details>
+
+  <h3>Drill B: a <code>BankAccount</code> class</h3>
+  <p>The "design a class" question. It uses private fields, a getter, a static, and a custom error.</p>
+  <pre><code><span class="tok-com">// how it's used</span>
+const acc = new BankAccount("Asha", 100);
+acc.deposit(50);        <span class="tok-out">// 150</span>
+acc.balance;            <span class="tok-out">// 150   ← readable</span>
+acc.balance = 1e9;      <span class="tok-com">// no effect: there's no setter</span>
+acc.withdraw(500);      <span class="tok-com">// throws InsufficientFundsError</span>
+                        <span class="tok-com">//   err.name === "InsufficientFundsError", err.shortBy === 350</span>
+JSON.stringify(acc);    <span class="tok-out">// '{"owner":"Asha"}'   ← the balance is private</span>
+BankAccount.count;      <span class="tok-out">// how many accounts have been created</span></code></pre>
+  <details class="reveal">
+    <summary>Hint ladder, then the answer</summary>
+    <p><strong>Hint 1.</strong> Which line in the usage makes <code>balance</code> read-only? What do you write so
+    that reading works and writing doesn't?</p>
+    <p><strong>Hint 2.</strong> <code>count</code> belongs to the class as a whole, not to one account.</p>
+    <p><strong>Hint 3.</strong> The error is its own class. What must its constructor call first, and which property
+    makes the logs say <code>InsufficientFundsError</code>?</p>
+    <pre><code>class InsufficientFundsError extends Error {
+  constructor(shortBy) {
+    super(`Short by ${shortBy}`);
+    this.name = "InsufficientFundsError";
+    this.shortBy = shortBy;
+  }
+}
+
+class BankAccount {
+  static count = 0;
+  #balance;
+
+  constructor(owner, opening = 0) {
+    this.owner = owner;
+    this.#balance = opening;
+    BankAccount.count++;
+  }
+
+  get balance() { return this.#balance; }
+
+  deposit(amount) {
+    this.#balance += amount;
+    return this.#balance;
+  }
+
+  withdraw(amount) {
+    if (amount &gt; this.#balance) throw new InsufficientFundsError(amount - this.#balance);
+    this.#balance -= amount;
+    return this.#balance;
+  }
+}</code></pre>
+    <p>Every line of the usage was checked on Node. Four things to say out loud: <strong><code>#</code>, not
+    <code>_</code></strong> (real privacy) · <strong>a getter with no setter</strong> (read-only from outside) ·
+    <strong><code>BankAccount.count</code>, not <code>this.count</code></strong> (it belongs to the class) · <strong>a
+    custom error</strong>, so the caller can <code>catch</code> it by type. Follow-up they'll ask: reject
+    <code>amount &lt;= 0</code>, which would be your input validation at the boundary.</p>
+  </details>
+
+  <h2>17 · The sentences you say</h2>
+
+  <div class="qa">
+    <p><strong>"Class vs constructor function?"</strong></p>
+    <p>"They build the same prototype chain, but a class adds guards. It throws if you call it without
+    <code>new</code>, the body is always strict, methods are non-enumerable, and it's hoisted into the TDZ like
+    <code>let</code>. It also gives you <code>extends</code>, <code>super</code>, <code>static</code> and private
+    <code>#fields</code>."</p>
+  </div>
+
+  <div class="qa">
+    <p><strong>"What does <code>super</code> do?"</strong></p>
+    <p>"Two things. <code>super(...)</code> in a child constructor runs the parent's constructor. In a subclass the
+    parent creates the object, so <code>this</code> doesn't exist until <code>super</code> returns. Using it earlier is
+    a <code>ReferenceError</code>. <code>super.method()</code> in any method calls the parent's version, with the same
+    <code>this</code>."</p>
+  </div>
+
+  <div class="qa">
+    <p><strong>"How do you make a property private?"</strong></p>
+    <p>"With a <code>#</code> field. It's enforced by the language: accessing it from outside the class is a
+    <code>SyntaxError</code>, and it doesn't show up in keys or JSON. Before that, people used closures, which cost
+    a copy of every method per object, or an underscore, which is only a convention. TypeScript's
+    <code>private</code> is compile-time only."</p>
+  </div>
+
+  <div class="qa">
+    <p><strong>"What does <code>instanceof</code> check?"</strong></p>
+    <p>"Whether the right side's <code>.prototype</code> appears anywhere on the left side's prototype chain. It
+    checks the link, not who built the object. For arrays I use <code>Array.isArray</code>, which also works across
+    iframes."</p>
+  </div>
+
+  <div class="qa">
+    <p><strong>"Why extend <code>Error</code>?"</strong></p>
+    <p>"So a <code>catch</code> can tell expected failures from bugs with <code>instanceof</code>. I call
+    <code>super(message)</code> first, set <code>this.name</code> so the logs show the right type, and rethrow anything
+    I don't handle."</p>
+  </div>
+
+  <div class="note">
+    <span class="callout-label">Primary source: read this next</span>
+    <a href="https://javascript.info/classes">javascript.info, Classes</a>. Seven short chapters: basic syntax,
+    inheritance (its "Overriding constructor" part is §3 of this page), static, private, extending built-ins,
+    <code>instanceof</code>, mixins. Then
+    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes">MDN, Classes</a> as the
+    reference.
+  </div>
+
+  <div class="ask-teacher">
+    <strong>Not drilled yet.</strong> Say <em>"drill me on 5d"</em>. It runs the speak half first (class vs
+    function, what <code>super</code> does, private fields, <code>instanceof</code>), then the "so why" follow-ups,
+    fresh output snippets you haven't read here, and the §15 label round.
+  </div>
+
+  <div class="lesson-nav">
+    <a href="0005c-prototype-chain.html">← Lesson 5c: The prototype chain</a>
+    <a href="../reference/course-map.html">Course map →</a>
+  </div>
+
+</div>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>
